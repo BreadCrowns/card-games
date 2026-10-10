@@ -16,9 +16,9 @@ Beware of **Red Contraband cards**—they are hot evidence! You cannot pair them
 
 | Card Group | Count | Details |
 | :--- | :---: | :--- |
-| **Clean Loot** | **38** | 7–8 Items (Cash, Diamonds, Watches, Paintings, Gold Bars, Crowns, Keys, Gems) with 4–5 clean copies each. |
-| **Red Contraband** | **8** | Bright crimson contraband items. Can **only** be discarded when paired with a matching Clean item of the same type (Laundromat). |
-| **"Look Out!" (Reverse)** | **8** | Single-card action. When played, immediately flip the **Security Camera** in the center—passing direction reverses! |
+| **Clean Loot** | **28** | 7 Items (Cash, Diamonds, Watches, Paintings, Gold Bars, Crowns, Keys) with 4 clean copies each. |
+| **Red Contraband** | **20** | Bright crimson contraband items (~37% of deck). Can **only** be discarded when paired with a matching Clean item of the same type (Laundromat). |
+| **"Look Out!" (Reverse)** | **6** | Single-card action. When played, immediately flip the **Security Camera** in the center—passing direction reverses! |
 | **Centerpiece / Reference** | **2** | 1 double-sided **Security Camera** indicator (Clockwise / Counter-Clockwise) + 1 Quick Reference Card. |
 
 ---

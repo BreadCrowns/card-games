@@ -236,24 +236,23 @@
 
     function buildDeck() {
       const cards = [];
-      // 38 Clean Loot cards (7 items x ~5 copies)
+      // 28 Clean Loot cards (7 items x 4 copies)
       ITEMS.forEach(it => {
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 4; i++) {
           cards.push({ type: 'LOOT', item: it.name, icon: it.icon, isRed: false });
         }
       });
-      cards.push({ type: 'LOOT', item: 'Diamond', icon: '💎', isRed: false });
-      cards.push({ type: 'LOOT', item: 'Cash', icon: '💵', isRed: false });
-      cards.push({ type: 'LOOT', item: 'Watch', icon: '⌚', isRed: false });
 
-      // 8 Red Contraband cards
-      ITEMS.forEach(it => {
-        cards.push({ type: 'LOOT', item: it.name, icon: it.icon, isRed: true });
+      // 20 Red Contraband cards (~37% of deck)
+      ITEMS.forEach((it, idx) => {
+        const copies = (idx < 6) ? 3 : 2; // 6 items x 3 + 1 item x 2 = 20 cards
+        for (let i = 0; i < copies; i++) {
+          cards.push({ type: 'LOOT', item: it.name, icon: it.icon, isRed: true });
+        }
       });
-      cards.push({ type: 'LOOT', item: 'Diamond', icon: '💎', isRed: true });
 
-      // 8 Look Out! Reverses
-      for (let i = 0; i < 8; i++) {
+      // 6 Look Out! Reverses
+      for (let i = 0; i < 6; i++) {
         cards.push({ type: 'REVERSE', item: 'Reverse', icon: '🔄', isRed: false });
       }
 
