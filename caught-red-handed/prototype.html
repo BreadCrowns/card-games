@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Caught Red-Handed — Playable Prototype</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes pulse-red {
+      0%, 100% { box-shadow: 0 0 15px rgba(239, 68, 68, 0.6); }
+      50% { box-shadow: 0 0 25px rgba(239, 68, 68, 0.9); }
+    }
+    .red-evidence {
+      animation: pulse-red 2s infinite;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans select-none overflow-x-hidden">
+
+  <!-- Header -->
+  <header class="bg-slate-900/90 border-b border-slate-800 px-6 py-3 flex justify-between items-center shadow-lg">
+    <div class="flex items-center gap-3">
+      <span class="text-2xl">🚨</span>
+      <div>
+        <h1 class="text-xl font-black tracking-wider text-rose-500 uppercase">Caught Red-Handed</h1>
+        <p class="text-xs text-slate-400">4-Player Tactical Heist Simulator</p>
+      </div>
+    </div>
+
+    <!-- Direction / Security Camera HUD -->
+    <div class="flex items-center gap-6 bg-slate-800/80 px-5 py-2 rounded-xl border border-slate-700 shadow-inner">
+      <div class="flex items-center gap-2">
+        <span class="text-xs font-bold text-slate-400 tracking-wider">CAMERA:</span>
+        <span id="camera-badge" class="px-3 py-1 rounded-full text-xs font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5 transition-all">
+          <span id="camera-icon">🔄</span> <span id="camera-text">CLOCKWISE (PASS LEFT)</span>
+        </span>
+      </div>
+      <div class="text-xs text-slate-300 font-mono">
+        Turn: <span id="turn-counter" class="font-bold text-amber-400 text-sm">1</span>
+      </div>
+      <div class="text-xs text-slate-300 font-mono">
+        Reverses: <span id="reverse-counter" class="font-bold text-amber-400 text-sm">0</span>
+      </div>
+    </div>
+
+    <button id="restart-btn" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-lg border border-slate-700 transition">
+      New Heist
+    </button>
+  </header>
+
+  <!-- Main Game Board -->
+  <main class="flex-1 max-w-6xl w-full mx-auto p-4 flex flex-col justify-between gap-4">
+
+    <!-- Top Opponent (Bot 3) -->
+    <div class="flex flex-col items-center">
+      <div id="bot3-area" class="bg-slate-900/60 border border-slate-800 rounded-2xl p-3 flex flex-col items-center gap-2 w-72 shadow-md transition-all">
+        <div class="flex items-center justify-between w-full px-2">
+          <div class="flex items-center gap-2">
+            <div class="w-7 h-7 rounded-full bg-indigo-600 flex items-center justify-center font-bold text-xs shadow">B3</div>
+            <span class="text-xs font-bold text-slate-300">Bot 3 (Across)</span>
+          </div>
+          <span id="bot3-count-badge" class="text-xs bg-slate-800 px-2.5 py-0.5 rounded-full font-bold text-amber-400 border border-slate-700">5 cards</span>
+        </div>
+        <div id="bot3-cards" class="flex -space-x-3 overflow-hidden py-1">
+          <!-- Card backs -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Middle Arena: Left Bot, Table Center, Right Bot -->
+    <div class="grid grid-cols-12 gap-4 items-center">
+
+      <!-- Left Opponent (Bot 4) -->
+      <div class="col-span-3 flex justify-start">
+        <div id="bot4-area" class="bg-slate-900/60 border border-slate-800 rounded-2xl p-3 flex flex-col items-center gap-2 w-64 shadow-md transition-all">
+          <div class="flex items-center justify-between w-full px-2">
+            <div class="flex items-center gap-2">
+              <div class="w-7 h-7 rounded-full bg-teal-600 flex items-center justify-center font-bold text-xs shadow">B4</div>
+              <span class="text-xs font-bold text-slate-300">Bot 4 (Right)</span>
+            </div>
+            <span id="bot4-count-badge" class="text-xs bg-slate-800 px-2.5 py-0.5 rounded-full font-bold text-amber-400 border border-slate-700">5 cards</span>
+          </div>
+          <div id="bot4-cards" class="flex -space-x-3 overflow-hidden py-1">
+            <!-- Card backs -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Center Tabletop: Evidence Locker & Discard Vault -->
+      <div class="col-span-6 bg-slate-900/40 border border-slate-800/80 rounded-3xl p-6 flex flex-col items-center justify-center gap-4 relative shadow-2xl backdrop-blur-sm">
+        
+        <!-- Large Directional Compass / Camera Graphic -->
+        <div class="absolute -top-3 px-4 py-0.5 bg-slate-950 border border-slate-700 rounded-full text-[10px] font-bold text-slate-400 tracking-wider flex items-center gap-1.5 shadow">
+          <span>📹 SECURITY CAMERA</span>
+        </div>
+
+        <div class="flex items-center justify-center gap-8 w-full">
+          
+          <!-- Evidence Locker (Draw Deck) -->
+          <div class="flex flex-col items-center gap-2">
+            <div id="draw-deck" class="w-24 h-36 bg-gradient-to-br from-slate-800 to-slate-900 border-2 border-slate-700 hover:border-amber-500 rounded-xl flex flex-col items-center justify-center shadow-xl cursor-pointer transition transform hover:-translate-y-1">
+              <span class="text-2xl mb-1">📦</span>
+              <span class="text-[10px] font-black text-slate-400 tracking-wider">LOCKER</span>
+              <span id="deck-count" class="text-sm font-black text-amber-400 mt-1">36</span>
+            </div>
+            <span class="text-[11px] font-bold text-slate-400">Draw Pile</span>
+          </div>
+
+          <!-- Active Direction Graphic -->
+          <div class="flex flex-col items-center justify-center">
+            <div id="compass-arrow" class="w-14 h-14 rounded-full bg-slate-800/80 border border-slate-700 flex items-center justify-center text-2xl shadow-inner transition-transform duration-500">
+              ➡️
+            </div>
+            <span id="compass-label" class="text-[10px] font-bold text-slate-400 mt-1">PASS LEFT</span>
+          </div>
+
+          <!-- Discard Vault -->
+          <div class="flex flex-col items-center gap-2">
+            <div id="vault-slot" class="w-24 h-36 bg-slate-900/80 border-2 border-dashed border-slate-700 rounded-xl flex flex-col items-center justify-center shadow-xl p-2 relative">
+              <span class="text-2xl mb-1 text-slate-600">🏛️</span>
+              <span class="text-[10px] font-bold text-slate-500 tracking-wider">VAULT</span>
+              <div id="last-discard-preview" class="absolute inset-0 flex items-center justify-center"></div>
+            </div>
+            <span class="text-[11px] font-bold text-slate-400">The Vault (<span id="vault-count">0</span>)</span>
+          </div>
+
+        </div>
+
+        <!-- Live Heist Banner -->
+        <div id="announcement-banner" class="w-full text-center py-1.5 px-4 bg-slate-950/70 border border-slate-800 rounded-xl text-xs font-semibold text-slate-300 min-h-[32px] flex items-center justify-center shadow-inner">
+          Welcome to the heist! Draw a card to begin your turn.
+        </div>
+      </div>
+
+      <!-- Right Opponent (Bot 2) -->
+      <div class="col-span-3 flex justify-end">
+        <div id="bot2-area" class="bg-slate-900/60 border border-slate-800 rounded-2xl p-3 flex flex-col items-center gap-2 w-64 shadow-md transition-all">
+          <div class="flex items-center justify-between w-full px-2">
+            <div class="flex items-center gap-2">
+              <div class="w-7 h-7 rounded-full bg-amber-600 flex items-center justify-center font-bold text-xs shadow">B2</div>
+              <span class="text-xs font-bold text-slate-300">Bot 2 (Left)</span>
+            </div>
+            <span id="bot2-count-badge" class="text-xs bg-slate-800 px-2.5 py-0.5 rounded-full font-bold text-amber-400 border border-slate-700">5 cards</span>
+          </div>
+          <div id="bot2-cards" class="flex -space-x-3 overflow-hidden py-1">
+            <!-- Card backs -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Player Area (Bottom) -->
+    <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-4 flex flex-col gap-3 shadow-2xl relative">
+      
+      <!-- Player Action Bar -->
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-full bg-rose-600 flex items-center justify-center font-black text-xs shadow">YOU</div>
+          <div>
+            <span class="text-xs font-black text-slate-200">PLAYER 1 (YOU)</span>
+            <span id="player-status-tag" class="ml-2 text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400">YOUR TURN</span>
+          </div>
+        </div>
+
+        <!-- Dynamic Action Buttons -->
+        <div class="flex items-center gap-2" id="action-controls">
+          <button id="btn-draw" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl shadow-lg transition flex items-center gap-1.5">
+            <span>📦</span> 1. Draw Card
+          </button>
+          <button id="btn-pair" disabled class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-30 disabled:pointer-events-none text-white text-xs font-bold rounded-xl shadow-lg transition flex items-center gap-1.5">
+            <span>✨</span> 2. Discard Pairs (<span id="pair-count-badge">0</span>)
+          </button>
+          <button id="btn-pass" disabled class="px-4 py-2 bg-rose-600 hover:bg-rose-500 disabled:opacity-30 disabled:pointer-events-none text-white text-xs font-bold rounded-xl shadow-lg transition flex items-center gap-1.5">
+            <span>👉</span> 3. Pass Selected Card
+          </button>
+        </div>
+      </div>
+
+      <!-- Player Hand View -->
+      <div class="min-h-[148px] flex items-center justify-center">
+        <div id="player-hand" class="flex gap-2.5 overflow-x-auto py-2 px-2 max-w-full justify-center items-center">
+          <!-- Cards rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- Helper Hint -->
+      <div class="text-center text-[11px] text-slate-500 font-medium">
+        Rule reminder: You can only win by discarding a matching pair down to 0 cards! Select a card to pass it to your neighbor.
+      </div>
+    </div>
+
+  </main>
+
+  <!-- "I'M CLEAN!" Victory Modal -->
+  <div id="clean-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-slate-900 border-2 border-rose-500 rounded-3xl p-8 max-w-lg w-full text-center shadow-2xl flex flex-col items-center gap-4">
+      <div class="w-16 h-16 rounded-full bg-rose-600/20 border-2 border-rose-500 flex items-center justify-center text-3xl shadow">
+        🚨
+      </div>
+      <h2 id="modal-title" class="text-3xl font-black text-rose-500 tracking-wider">"I'M CLEAN!"</h2>
+      <p id="modal-desc" class="text-slate-300 text-sm">A player emptied their hand with a final pair! The police raid is here!</p>
+      
+      <!-- Hands Breakdown -->
+      <div id="modal-scores" class="w-full bg-slate-950/80 border border-slate-800 rounded-2xl p-4 flex flex-col gap-2.5 text-xs text-left">
+        <!-- Scores injected here -->
+      </div>
+
+      <button id="modal-restart-btn" class="mt-2 w-full py-3 bg-rose-600 hover:bg-rose-500 text-white font-black text-sm rounded-xl shadow-lg transition">
+        PLAY NEXT HEIST
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // Game State & Definitions
+    const ITEMS = [
+      { name: 'Cash', icon: '💵' },
+      { name: 'Diamond', icon: '💎' },
+      { name: 'Watch', icon: '⌚' },
+      { name: 'Painting', icon: '🖼️' },
+      { name: 'Gold', icon: '🧈' },
+      { name: 'Crown', icon: '👑' },
+      { name: 'Key', icon: '🗝️' }
+    ];
+
+    let deck = [];
+    let vault = [];
+    let hands = [[], [], [], []]; // P0=User, P1=Bot2, P2=Bot3, P3=Bot4
+    let currentPlayer = 0;
+    let direction = 1; // 1 = Clockwise (Pass Left), -1 = Counter-Clockwise (Pass Right)
+    let turnCount = 1;
+    let reverseCount = 0;
+    let selectedPassCardIndex = null;
+    let playerStep = 'DRAW'; // 'DRAW', 'PAIR', 'PASS'
+
+    function buildDeck() {
+      const cards = [];
+      // 38 Clean Loot cards (7 items x ~5 copies)
+      ITEMS.forEach(it => {
+        for (let i = 0; i < 5; i++) {
+          cards.push({ type: 'LOOT', item: it.name, icon: it.icon, isRed: false });
+        }
+      });
+      cards.push({ type: 'LOOT', item: 'Diamond', icon: '💎', isRed: false });
+      cards.push({ type: 'LOOT', item: 'Cash', icon: '💵', isRed: false });
+      cards.push({ type: 'LOOT', item: 'Watch', icon: '⌚', isRed: false });
+
+      // 8 Red Contraband cards
+      ITEMS.forEach(it => {
+        cards.push({ type: 'LOOT', item: it.name, icon: it.icon, isRed: true });
+      });
+      cards.push({ type: 'LOOT', item: 'Diamond', icon: '💎', isRed: true });
+
+      // 8 Look Out! Reverses
+      for (let i = 0; i < 8; i++) {
+        cards.push({ type: 'REVERSE', item: 'Reverse', icon: '🔄', isRed: false });
+      }
+
+      // 2 Center Cards omitted from shuffle (exist as table markers)
+      // Shuffle Fisher-Yates
+      for (let i = cards.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [cards[i], cards[j]] = [cards[j], cards[i]];
+      }
+      return cards;
+    }
+
+    function initGame() {
+      deck = buildDeck();
+      vault = [];
+      hands = [[], [], [], []];
+      currentPlayer = 0;
+      direction = 1;
+      turnCount = 1;
+      reverseCount = 0;
+      selectedPassCardIndex = null;
+      playerStep = 'DRAW';
+
+      // Deal 5 cards each
+      for (let i = 0; i < 5; i++) {
+        for (let p = 0; p < 4; p++) {
+          hands[p].push(deck.pop());
+        }
+      }
+
+      // Initial discard of starting pairs for everyone
+      for (let p = 0; p < 4; p++) {
+        discardPlayerPairs(p, true);
+      }
+
+      updateUI();
+      logAnnouncement("Heist begins! Starting pairs have been cleared. Draw a card to start!");
+    }
+
+    function drawFromDeck() {
+      if (deck.length === 0 && vault.length > 0) {
+        logAnnouncement("Evidence Locker was empty! Shuffled Vault discard pile into fresh Locker.");
+        deck = [...vault];
+        vault = [];
+        for (let i = deck.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [deck[i], deck[j]] = [deck[j], deck[i]];
+        }
+      }
+      return deck.pop() || null;
+    }
+
+    function discardPlayerPairs(playerIdx, isInitial = false) {
+      const hand = hands[playerIdx];
+      let pairedAny = false;
+
+      // 1. Reverses
+      const revIdxs = [];
+      hand.forEach((c, idx) => { if (c.type === 'REVERSE') revIdxs.push(idx); });
+      // Play Reverses
+      if (revIdxs.length > 0) {
+        // Remove from highest to lowest index
+        revIdxs.reverse().forEach(idx => {
+          const revCard = hand.splice(idx, 1)[0];
+          vault.push(revCard);
+          if (!isInitial) {
+            direction = -direction;
+            reverseCount++;
+            pairedAny = true;
+            logAnnouncement(`${getPlayerName(playerIdx)} played "Look Out!" (Reverse)! Passing direction reversed!`);
+          }
+        });
+      }
+
+      // 2. Loot pairs (Laundered: Red + Blue, Clean: Blue + Blue)
+      ITEMS.forEach(it => {
+        let reds = hand.filter(c => c.type === 'LOOT' && c.item === it.name && c.isRed);
+        let blues = hand.filter(c => c.type === 'LOOT' && c.item === it.name && !c.isRed);
+
+        // Laundered Red + Blue
+        while (reds.length > 0 && blues.length > 0) {
+          const r = reds.pop();
+          const b = blues.pop();
+          hand.splice(hand.indexOf(r), 1);
+          hand.splice(hand.indexOf(b), 1);
+          vault.push(r, b);
+          pairedAny = true;
+          if (!isInitial) {
+            logAnnouncement(`${getPlayerName(playerIdx)} laundered a ${it.name} pair! Hot Red Evidence washed away!`);
+          }
+        }
+
+        // Clean Blue + Blue
+        while (blues.length >= 2) {
+          const b1 = blues.pop();
+          const b2 = blues.pop();
+          hand.splice(hand.indexOf(b1), 1);
+          hand.splice(hand.indexOf(b2), 1);
+          vault.push(b1, b2);
+          pairedAny = true;
+          if (!isInitial) {
+            logAnnouncement(`${getPlayerName(playerIdx)} discarded a clean pair of ${it.name}s.`);
+          }
+        }
+      });
+
+      return pairedAny;
+    }
+
+    function checkWinCondition(playerIdx) {
+      if (hands[playerIdx].length === 0) {
+        showVictoryModal(playerIdx);
+        return true;
+      }
+      return false;
+    }
+
+    function getPlayerName(p) {
+      return p === 0 ? "You (P1)" : `Bot ${p+1}`;
+    }
+
+    function getTargetNeighbor(p) {
+      return (p + direction + 4) % 4;
+    }
+
+    // Bot AI Turn
+    function playBotTurn(b) {
+      if (checkWinCondition(b)) return;
+
+      logAnnouncement(`${getPlayerName(b)} is drawing a card...`);
+      setTimeout(() => {
+        // 1. Draw
+        const card = drawFromDeck();
+        if (card) hands[b].push(card);
+
+        // 2. Discard Pairs
+        discardPlayerPairs(b);
+        updateUI();
+
+        // Win check
+        if (checkWinCondition(b)) return;
+
+        // 3. Pass
+        setTimeout(() => {
+          if (hands[b].length >= 2) {
+            const targetP = getTargetNeighbor(b);
+            // AI priority: Pass RED card first, else random
+            let cardToPassIdx = hands[b].findIndex(c => c.isRed);
+            if (cardToPassIdx === -1) cardToPassIdx = Math.floor(Math.random() * hands[b].length);
+
+            const passed = hands[b].splice(cardToPassIdx, 1)[0];
+            hands[targetP].push(passed);
+            logAnnouncement(`${getPlayerName(b)} passed a card to ${getPlayerName(targetP)}.`);
+          }
+
+          updateUI();
+          advanceTurn();
+        }, 600);
+
+      }, 500);
+    }
+
+    function advanceTurn() {
+      currentPlayer = (currentPlayer + direction + 4) % 4;
+      turnCount++;
+      updateUI();
+
+      if (currentPlayer === 0) {
+        playerStep = 'DRAW';
+        logAnnouncement("It's your turn! Click 'Draw Card' to begin.");
+        updateUI();
+      } else {
+        setTimeout(() => playBotTurn(currentPlayer), 400);
+      }
+    }
+
+    // UI Updates
+    function updateUI() {
+      document.getElementById('turn-counter').innerText = turnCount;
+      document.getElementById('reverse-counter').innerText = reverseCount;
+      document.getElementById('deck-count').innerText = deck.length;
+      document.getElementById('vault-count').innerText = vault.length;
+
+      // Camera HUD
+      const camBadge = document.getElementById('camera-badge');
+      const camText = document.getElementById('camera-text');
+      const camIcon = document.getElementById('camera-icon');
+      const compassArrow = document.getElementById('compass-arrow');
+      const compassLabel = document.getElementById('compass-label');
+
+      if (direction === 1) {
+        camBadge.className = "px-3 py-1 rounded-full text-xs font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5 transition-all";
+        camText.innerText = "CLOCKWISE (PASS LEFT)";
+        compassArrow.innerText = "➡️";
+        compassLabel.innerText = "PASS LEFT";
+        compassArrow.style.transform = "rotate(0deg)";
+      } else {
+        camBadge.className = "px-3 py-1 rounded-full text-xs font-black bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center gap-1.5 transition-all";
+        camText.innerText = "COUNTER-CLOCKWISE (PASS RIGHT)";
+        compassArrow.innerText = "⬅️";
+        compassLabel.innerText = "PASS RIGHT";
+        compassArrow.style.transform = "rotate(180deg)";
+      }
+
+      // Update Bots Hand Counts & Cards
+      [1, 2, 3].forEach(b => {
+        const count = hands[b].length;
+        document.getElementById(`bot${b+1}-count-badge`).innerText = `${count} cards`;
+        const container = document.getElementById(`bot${b+1}-cards`);
+        container.innerHTML = '';
+        for (let i = 0; i < Math.min(count, 8); i++) {
+          const cardEl = document.createElement('div');
+          cardEl.className = "w-7 h-10 bg-gradient-to-br from-slate-700 to-slate-900 border border-slate-600 rounded flex items-center justify-center text-[10px] shadow";
+          cardEl.innerText = "🔒";
+          container.appendChild(cardEl);
+        }
+
+        // Highlight active bot
+        const botArea = document.getElementById(`bot${b+1}-area`);
+        if (currentPlayer === b) {
+          botArea.classList.add('border-amber-500', 'bg-amber-950/20', 'scale-105');
+        } else {
+          botArea.classList.remove('border-amber-500', 'bg-amber-950/20', 'scale-105');
+        }
+      });
+
+      // Update Player Area
+      const statusTag = document.getElementById('player-status-tag');
+      if (currentPlayer === 0) {
+        statusTag.className = "ml-2 text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 animate-pulse";
+        statusTag.innerText = "YOUR TURN";
+      } else {
+        statusTag.className = "ml-2 text-[10px] font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-500";
+        statusTag.innerText = "WAITING...";
+      }
+
+      // Render Player Cards
+      renderPlayerHand();
+
+      // Controls State
+      const btnDraw = document.getElementById('btn-draw');
+      const btnPair = document.getElementById('btn-pair');
+      const btnPass = document.getElementById('btn-pass');
+
+      if (currentPlayer === 0) {
+        btnDraw.disabled = (playerStep !== 'DRAW');
+        btnPair.disabled = (playerStep !== 'PAIR');
+        btnPass.disabled = (playerStep !== 'PASS' || selectedPassCardIndex === null);
+      } else {
+        btnDraw.disabled = true;
+        btnPair.disabled = true;
+        btnPass.disabled = true;
+      }
+
+      // Vault preview
+      const vaultPreview = document.getElementById('last-discard-preview');
+      if (vault.length > 0) {
+        const top = vault[vault.length - 1];
+        vaultPreview.innerHTML = `
+          <div class="w-20 h-28 ${top.isRed ? 'border-rose-500 bg-rose-950/30' : 'border-slate-600 bg-slate-800'} border rounded-lg flex flex-col items-center justify-center p-1 shadow">
+            <span class="text-xl">${top.icon}</span>
+            <span class="text-[9px] font-bold text-slate-300 mt-1">${top.item}</span>
+          </div>
+        `;
+      } else {
+        vaultPreview.innerHTML = '';
+      }
+    }
+
+    function renderPlayerHand() {
+      const container = document.getElementById('player-hand');
+      container.innerHTML = '';
+
+      hands[0].forEach((c, idx) => {
+        const cardEl = document.createElement('div');
+        const isSelected = (selectedPassCardIndex === idx);
+        
+        let borderStyle = c.isRed 
+          ? "border-2 border-rose-500 bg-rose-950/50 red-evidence" 
+          : (c.type === 'REVERSE' ? "border-2 border-amber-500 bg-amber-950/40" : "border border-slate-700 bg-slate-800/90");
+
+        if (isSelected) {
+          borderStyle += " ring-4 ring-rose-400 -translate-y-3";
+        }
+
+        cardEl.className = `w-24 h-36 rounded-xl p-2 flex flex-col justify-between items-center shadow-xl cursor-pointer transition transform hover:-translate-y-1.5 select-none ${borderStyle}`;
+        
+        cardEl.innerHTML = `
+          <div class="w-full flex justify-between items-center text-[10px] font-black">
+            <span>${c.icon}</span>
+            ${c.isRed ? '<span class="text-rose-400 font-black">HOT!</span>' : ''}
+            ${c.type === 'REVERSE' ? '<span class="text-amber-400 font-black">ACTION</span>' : ''}
+          </div>
+          <div class="flex flex-col items-center justify-center my-auto">
+            <span class="text-3xl">${c.icon}</span>
+            <span class="text-[10px] font-bold text-slate-200 mt-1 uppercase text-center">${c.item}</span>
+          </div>
+          <div class="w-full text-center text-[9px] font-semibold text-slate-400 border-t border-slate-700/50 pt-1">
+            ${c.isRed ? 'Contraband' : (c.type === 'REVERSE' ? 'Reverse Dir' : 'Clean')}
+          </div>
+        `;
+
+        cardEl.onclick = () => {
+          if (currentPlayer === 0 && playerStep === 'PASS') {
+            selectedPassCardIndex = (selectedPassCardIndex === idx) ? null : idx;
+            updateUI();
+          }
+        };
+
+        container.appendChild(cardEl);
+      });
+    }
+
+    function logAnnouncement(msg) {
+      document.getElementById('announcement-banner').innerText = msg;
+    }
+
+    function showVictoryModal(winnerIdx) {
+      const modal = document.getElementById('clean-modal');
+      const title = document.getElementById('modal-title');
+      const desc = document.getElementById('modal-desc');
+      const scores = document.getElementById('modal-scores');
+
+      title.innerText = `${getPlayerName(winnerIdx)} SHOUTED "I'M CLEAN!"`;
+      desc.innerText = `${getPlayerName(winnerIdx)} successfully discarded their last pair! The round is over!`;
+
+      scores.innerHTML = '';
+      for (let p = 0; p < 4; p++) {
+        const redCards = hands[p].filter(c => c.isRed).length;
+        const totalRemaining = hands[p].length;
+        const isCaught = redCards > 0;
+
+        const row = document.createElement('div');
+        row.className = `flex justify-between items-center p-2 rounded-lg ${isCaught ? 'bg-rose-950/40 border border-rose-800' : 'bg-slate-900 border border-slate-800'}`;
+        row.innerHTML = `
+          <span class="font-bold text-slate-200">${getPlayerName(p)}</span>
+          <div class="flex items-center gap-3">
+            <span class="text-slate-400">${totalRemaining} cards left</span>
+            <span class="font-black ${isCaught ? 'text-rose-400' : 'text-emerald-400'}">
+              ${isCaught ? `🚨 CAUGHT! (+${redCards} Red Marks)` : '✅ CLEAN (0 Marks)'}
+            </span>
+          </div>
+        `;
+        scores.appendChild(row);
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    // Player Interactions
+    document.getElementById('btn-draw').onclick = () => {
+      if (currentPlayer !== 0 || playerStep !== 'DRAW') return;
+      const card = drawFromDeck();
+      if (card) hands[0].push(card);
+      logAnnouncement("You drew a card! Now check if you have any pairs to discard.");
+      playerStep = 'PAIR';
+      updateUI();
+    };
+
+    document.getElementById('btn-pair').onclick = () => {
+      if (currentPlayer !== 0 || playerStep !== 'PAIR') return;
+      const madePair = discardPlayerPairs(0);
+      updateUI();
+
+      if (checkWinCondition(0)) return;
+
+      logAnnouncement("Pairs discarded! Now select 1 card from your hand to pass to your neighbor.");
+      playerStep = 'PASS';
+      updateUI();
+    };
+
+    document.getElementById('btn-pass').onclick = () => {
+      if (currentPlayer !== 0 || playerStep !== 'PASS' || selectedPassCardIndex === null) return;
+      const targetP = getTargetNeighbor(0);
+      const passedCard = hands[0].splice(selectedPassCardIndex, 1)[0];
+      hands[targetP].push(passedCard);
+
+      selectedPassCardIndex = null;
+      logAnnouncement(`You passed a ${passedCard.item} to ${getPlayerName(targetP)}!`);
+      updateUI();
+
+      if (checkWinCondition(0)) return;
+
+      advanceTurn();
+    };
+
+    document.getElementById('restart-btn').onclick = initGame;
+    document.getElementById('modal-restart-btn').onclick = () => {
+      document.getElementById('clean-modal').classList.add('hidden');
+      initGame();
+    };
+
+    // Auto-init
+    initGame();
+  </script>
+</body>
+</html>
