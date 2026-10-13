@@ -133,7 +133,7 @@
 
         <!-- Live Heist Banner -->
         <div id="announcement-banner" class="w-full text-center py-1.5 px-4 bg-slate-950/70 border border-slate-800 rounded-xl text-xs font-semibold text-slate-300 min-h-[32px] flex items-center justify-center shadow-inner">
-          Turn starts: Draw a card, lay matching pairs into your stash, and pass 1 card in the direction of play.
+          Turn starts: Draw 1 card, lay up to 1 pair into your stash, and pass 1 card in direction of play.
         </div>
       </div>
 
@@ -178,7 +178,7 @@
 
         <!-- Banked Stash Display -->
         <div id="player-stash-container" class="flex items-center gap-1.5 overflow-x-auto max-w-sm px-2">
-          <!-- Small badges of banked pairs -->
+          <!-- Badges of banked pairs -->
         </div>
 
         <!-- Dynamic Action Buttons -->
@@ -187,7 +187,7 @@
             <span>📦</span> 1. Draw Card
           </button>
           <button id="btn-pair" disabled class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-30 disabled:pointer-events-none text-white text-xs font-bold rounded-xl shadow-lg transition flex items-center gap-1.5">
-            <span>💰</span> 2. Lay Pairs (<span id="pair-count-badge">0</span>)
+            <span>💰</span> 2. Lay 1 Pair (<span id="pair-count-badge">0</span>)
           </button>
           <button id="btn-pass" disabled class="px-4 py-2 bg-rose-600 hover:bg-rose-500 disabled:opacity-30 disabled:pointer-events-none text-white text-xs font-bold rounded-xl shadow-lg transition flex items-center gap-1.5">
             <span>👉</span> 3. Pass Selected Card
@@ -205,8 +205,9 @@
       <!-- Helper Hint -->
       <div class="text-center text-[11px] text-slate-400 font-medium flex items-center justify-center gap-4">
         <span>Clean pairs: <b>1+1=2 pts</b></span>
-        <span>Hot Red pairs: <b>1+3=4 pts</b> or <b>1+5=6 pts</b>!</span>
-        <span class="text-rose-400 font-bold">⚠️ Caught with Red/Gun at end = 0 pts!</span>
+        <span>Petty Red: <b>1+4=5 pts</b></span>
+        <span class="text-amber-300 font-bold">Grand Red: <b>1+9=10 pts!</b></span>
+        <span class="text-rose-400 font-bold">⚠️ Caught with Red at end = 0 pts!</span>
       </div>
     </div>
 
@@ -233,15 +234,15 @@
   </div>
 
   <script>
-    // Game Definitions & Cards
+    // Game Definitions & Cards (Petty = 4 pts, Grand = 9 pts, Clean = 1 pt)
     const ITEMS = [
-      { name: 'Cash', icon: '💵', cleanVal: 1, redVal: 3 },
-      { name: 'Diamond', icon: '💎', cleanVal: 1, redVal: 3 },
-      { name: 'Watch', icon: '⌚', cleanVal: 1, redVal: 3 },
-      { name: 'Key', icon: '🗝️', cleanVal: 1, redVal: 3 },
-      { name: 'Painting', icon: '🖼️', cleanVal: 1, redVal: 5 },
-      { name: 'Gold', icon: '🧈', cleanVal: 1, redVal: 5 },
-      { name: 'Crown', icon: '👑', cleanVal: 1, redVal: 5 }
+      { name: 'Cash', icon: '💵', cleanVal: 1, redVal: 4, isGrand: false },
+      { name: 'Diamond', icon: '💎', cleanVal: 1, redVal: 4, isGrand: false },
+      { name: 'Watch', icon: '⌚', cleanVal: 1, redVal: 4, isGrand: false },
+      { name: 'Key', icon: '🗝️', cleanVal: 1, redVal: 4, isGrand: false },
+      { name: 'Painting', icon: '🖼️', cleanVal: 1, redVal: 9, isGrand: true },
+      { name: 'Gold', icon: '🧈', cleanVal: 1, redVal: 9, isGrand: true },
+      { name: 'Crown', icon: '👑', cleanVal: 1, redVal: 9, isGrand: true }
     ];
 
     let deck = [];
@@ -260,34 +261,32 @@
       // 28 Clean Loot (7 items x 4 copies, val: 1)
       ITEMS.forEach(it => {
         for (let i = 0; i < 4; i++) {
-          cards.push({ type: 'LOOT', item: it.name, icon: it.icon, isRed: false, val: 1 });
+          cards.push({ type: 'LOOT', item: it.name, icon: it.icon, isRed: false, val: 1, isGrand: it.isGrand });
         }
       });
 
-      // 18 Red Contraband cards (vals: 3 or 5)
-      // 4 items x 3 copies (3 pts each)
-      ['Cash', 'Diamond', 'Watch', 'Key'].forEach(name => {
+      // 20 Red Contraband: 
+      // 4 Petty items x 3 copies (Val: 4) = 12 cards
+      ITEMS.filter(it => !it.isGrand).forEach(it => {
+        for (let i = 0; i < 3; i++) {
+          cards.push({ type: 'LOOT', item: it.name, icon: it.icon, isRed: true, val: 4, isGrand: false });
+        }
+      });
+      // 3 Grand items: 3 Paintings, 3 Gold, 2 Crowns (Val: 9) = 8 cards
+      ['Painting', 'Gold'].forEach(name => {
         const it = ITEMS.find(x => x.name === name);
         for (let i = 0; i < 3; i++) {
-          cards.push({ type: 'LOOT', item: it.name, icon: it.icon, isRed: true, val: 3 });
+          cards.push({ type: 'LOOT', item: it.name, icon: it.icon, isRed: true, val: 9, isGrand: true });
         }
       });
-      // 3 items x 2 copies (5 pts each)
-      ['Painting', 'Gold', 'Crown'].forEach(name => {
-        const it = ITEMS.find(x => x.name === name);
-        for (let i = 0; i < 2; i++) {
-          cards.push({ type: 'LOOT', item: it.name, icon: it.icon, isRed: true, val: 5 });
-        }
-      });
-
-      // 2 The Smoking Gun cards (Bear! val: 0, cannot pair)
+      const crown = ITEMS.find(x => x.name === 'Crown');
       for (let i = 0; i < 2; i++) {
-        cards.push({ type: 'BEAR', item: 'Smoking Gun', icon: '🔫', isRed: true, val: 0 });
+        cards.push({ type: 'LOOT', item: crown.name, icon: crown.icon, isRed: true, val: 9, isGrand: true });
       }
 
       // 6 Look Out! Reverses
       for (let i = 0; i < 6; i++) {
-        cards.push({ type: 'REVERSE', item: 'Reverse', icon: '🔄', isRed: false, val: 0 });
+        cards.push({ type: 'REVERSE', item: 'Reverse', icon: '🔄', isRed: false, val: 0, isGrand: false });
       }
 
       // Shuffle Fisher-Yates
@@ -316,13 +315,13 @@
         }
       }
 
-      // Initial opening drop: Lay any starting pairs
+      // Opening drop: each player lays AT MOST 1 pair
       for (let p = 0; p < 4; p++) {
         discardPlayerPairs(p, true);
       }
 
       updateUI();
-      logAnnouncement("Heist begins! Starting pairs banked. Draw 1 card to begin your turn.");
+      logAnnouncement("Heist begins! 1. Draw 1 card ──▶ 2. Lay at most 1 pair ──▶ 3. Pass 1 card.");
     }
 
     function drawFromDeck() {
@@ -342,60 +341,76 @@
       return stash.reduce((sum, pair) => sum + pair.points, 0);
     }
 
+    // RULE: On your turn, you may lay AT MOST 1 PAIR (not multiple)
     function discardPlayerPairs(playerIdx, isInitial = false) {
       const hand = hands[playerIdx];
-      let pairedAny = false;
 
-      // 1. Reverses
-      const revIdxs = [];
-      hand.forEach((c, idx) => { if (c.type === 'REVERSE') revIdxs.push(idx); });
-      if (revIdxs.length > 0) {
-        revIdxs.reverse().forEach(idx => {
-          const revCard = hand.splice(idx, 1)[0];
-          vault.push(revCard);
-          if (!isInitial) {
-            direction = -direction;
-            pairedAny = true;
-            logAnnouncement(`${getPlayerName(playerIdx)} played "Look Out!" (Reverse)! Passing direction reversed!`);
-          }
-        });
+      // 1. Check for Reverses (played immediately)
+      const revIdx = hand.findIndex(c => c.type === 'REVERSE');
+      if (revIdx !== -1) {
+        const revCard = hand.splice(revIdx, 1)[0];
+        vault.push(revCard);
+        if (!isInitial) {
+          direction = -direction;
+          logAnnouncement(`${getPlayerName(playerIdx)} played "Look Out!" (Reverse)! Passing direction reversed!`);
+        }
       }
 
-      // 2. Loot pairs (Blue+Blue: 1+1=2 pts, Blue+Red: 1+3=4 pts or 1+5=6 pts)
+      // 2. Find all possible pairs in hand
+      const possiblePairs = [];
+
       ITEMS.forEach(it => {
         let reds = hand.filter(c => c.type === 'LOOT' && c.item === it.name && c.isRed);
         let blues = hand.filter(c => c.type === 'LOOT' && c.item === it.name && !c.isRed);
 
-        // Laundered: Red + Blue (Score = 1 + red.val)
-        while (reds.length > 0 && blues.length > 0) {
-          const r = reds.pop();
-          const b = blues.pop();
-          hand.splice(hand.indexOf(r), 1);
-          hand.splice(hand.indexOf(b), 1);
-          const pts = b.val + r.val;
-          stashes[playerIdx].push({ item: it.name, icon: it.icon, isRed: true, points: pts });
-          pairedAny = true;
-          if (!isInitial) {
-            logAnnouncement(`${getPlayerName(playerIdx)} laundered a ${it.name} pair! Banked +${pts} points!`);
-          }
+        // Laundered pair (Red + Blue)
+        if (reds.length > 0 && blues.length > 0) {
+          const pts = blues[0].val + reds[0].val; // 1 + 4 = 5, or 1 + 9 = 10
+          possiblePairs.push({
+            item: it.name,
+            icon: it.icon,
+            isRed: true,
+            points: pts,
+            c1: reds[0],
+            c2: blues[0]
+          });
         }
 
-        // Clean: Blue + Blue (Score = 1 + 1 = 2 pts)
-        while (blues.length >= 2) {
-          const b1 = blues.pop();
-          const b2 = blues.pop();
-          hand.splice(hand.indexOf(b1), 1);
-          hand.splice(hand.indexOf(b2), 1);
-          const pts = b1.val + b2.val;
-          stashes[playerIdx].push({ item: it.name, icon: it.icon, isRed: false, points: pts });
-          pairedAny = true;
-          if (!isInitial) {
-            logAnnouncement(`${getPlayerName(playerIdx)} banked a clean pair of ${it.name}s (+${pts} pts).`);
-          }
+        // Clean pair (Blue + Blue)
+        if (blues.length >= 2) {
+          const pts = blues[0].val + blues[1].val; // 1 + 1 = 2
+          possiblePairs.push({
+            item: it.name,
+            icon: it.icon,
+            isRed: false,
+            points: pts,
+            c1: blues[0],
+            c2: blues[1]
+          });
         }
       });
 
-      return pairedAny;
+      // Prioritize the highest-value pair (e.g. 10pts Grand Laundered > 5pts Petty Laundered > 2pts Clean)
+      if (possiblePairs.length > 0) {
+        possiblePairs.sort((a, b) => b.points - a.points);
+        const bestPair = possiblePairs[0];
+
+        // Lay ONLY this 1 pair!
+        hand.splice(hand.indexOf(bestPair.c1), 1);
+        hand.splice(hand.indexOf(bestPair.c2), 1);
+        stashes[playerIdx].push({ item: bestPair.item, icon: bestPair.icon, isRed: bestPair.isRed, points: bestPair.points });
+
+        if (!isInitial) {
+          if (bestPair.isRed) {
+            logAnnouncement(`${getPlayerName(playerIdx)} laundered a ${bestPair.item} pair! Massive +${bestPair.points} points banked!`);
+          } else {
+            logAnnouncement(`${getPlayerName(playerIdx)} banked a clean pair of ${bestPair.item}s (+${bestPair.points} pts).`);
+          }
+        }
+        return true;
+      }
+
+      return false;
     }
 
     function checkWinCondition(playerIdx) {
@@ -420,28 +435,41 @@
 
       logAnnouncement(`${getPlayerName(b)} is drawing a card...`);
       setTimeout(() => {
-        // 1. Draw
+        // 1. Draw 1 card
         const card = drawFromDeck();
         if (card) hands[b].push(card);
 
-        // 2. Lay Pairs
+        // 2. Lay AT MOST 1 pair
         discardPlayerPairs(b);
         updateUI();
 
-        // Win check if laying pairs emptied their hand
+        // Win check if laying pair emptied their hand
         if (checkWinCondition(b)) return;
 
         // 3. Pass in direction of play (legal to pass last card!)
         setTimeout(() => {
           if (hands[b].length > 0) {
             const targetP = getTargetNeighbor(b);
-            // Bot passing priority:
-            // 1) The Smoking Gun (pure poison)
-            // 2) Any Red Card
-            // 3) Random card
-            let cardToPassIdx = hands[b].findIndex(c => c.type === 'BEAR');
-            if (cardToPassIdx === -1) cardToPassIdx = hands[b].findIndex(c => c.isRed);
-            if (cardToPassIdx === -1) cardToPassIdx = Math.floor(Math.random() * hands[b].length);
+            
+            // Bot passing heuristic:
+            // High incentive to hold 9-point Grand Reds if safe, but dump 4-point Reds or pass if in danger!
+            let cardToPassIdx = -1;
+            const reds = hands[b].map((c, i) => ({ card: c, idx: i })).filter(x => x.card.isRed);
+            const blues = hands[b].map((c, i) => ({ card: c, idx: i })).filter(x => !x.card.isRed && x.card.type !== 'REVERSE');
+
+            // If holding 9-pt Grand Red and has 3+ cards, gamble and pass a 4-pt Red or a Blue card!
+            const hasGrandRed = reds.some(r => r.card.val === 9);
+            const pettyReds = reds.filter(r => r.card.val === 4);
+
+            if (pettyReds.length > 0) {
+              cardToPassIdx = pettyReds[0].idx; // Pass petty red first!
+            } else if (hasGrandRed && blues.length > 0 && Math.random() < 0.4) {
+              cardToPassIdx = blues[0].idx; // Hold onto 9-pt Red greedily!
+            } else if (reds.length > 0) {
+              cardToPassIdx = reds[0].idx;
+            } else {
+              cardToPassIdx = Math.floor(Math.random() * hands[b].length);
+            }
 
             const passed = hands[b].splice(cardToPassIdx, 1)[0];
             hands[targetP].push(passed);
@@ -450,7 +478,7 @@
 
           updateUI();
 
-          // Check if bot emptied their hand by passing their last card!
+          // Check if bot emptied hand by passing last card!
           if (checkWinCondition(b)) return;
 
           advanceTurn();
@@ -466,7 +494,7 @@
 
       if (currentPlayer === 0) {
         playerStep = 'DRAW';
-        logAnnouncement("It's your turn! 1. Draw Card ──▶ 2. Lay Pairs ──▶ 3. Pass.");
+        logAnnouncement("It's your turn! 1. Draw Card ──▶ 2. Lay 1 Pair ──▶ 3. Pass 1 Card.");
         updateUI();
       } else {
         setTimeout(() => playBotTurn(currentPlayer), 400);
@@ -592,11 +620,9 @@
         const cardEl = document.createElement('div');
         const isSelected = (selectedPassCardIndex === idx);
         
-        let borderStyle = (c.type === 'BEAR')
-          ? "border-2 border-rose-600 bg-rose-950/80 red-evidence"
-          : (c.isRed 
-            ? "border-2 border-rose-500 bg-rose-950/50 red-evidence" 
-            : (c.type === 'REVERSE' ? "border-2 border-amber-500 bg-amber-950/40" : "border border-slate-700 bg-slate-800/90"));
+        let borderStyle = c.isRed 
+          ? (c.val === 9 ? "border-2 border-amber-400 bg-rose-950/70 red-evidence" : "border-2 border-rose-500 bg-rose-950/50 red-evidence")
+          : (c.type === 'REVERSE' ? "border-2 border-amber-500 bg-amber-950/40" : "border border-slate-700 bg-slate-800/90");
 
         if (isSelected) {
           borderStyle += " ring-4 ring-rose-400 -translate-y-3";
@@ -607,8 +633,7 @@
         cardEl.innerHTML = `
           <div class="w-full flex justify-between items-center text-[10px] font-black">
             <span>${c.icon}</span>
-            ${c.type === 'BEAR' ? '<span class="text-rose-400 font-black animate-pulse">GUN!</span>' : ''}
-            ${c.isRed && c.type !== 'BEAR' ? `<span class="text-rose-400 font-black">+${c.val}pts</span>` : ''}
+            ${c.isRed ? `<span class="${c.val === 9 ? 'text-amber-300 font-black' : 'text-rose-400 font-black'}">+${c.val}pts</span>` : ''}
             ${!c.isRed && c.type === 'LOOT' ? `<span class="text-emerald-400 font-black">+${c.val}pt</span>` : ''}
             ${c.type === 'REVERSE' ? '<span class="text-amber-400 font-black">ACTION</span>' : ''}
           </div>
@@ -617,7 +642,7 @@
             <span class="text-[10px] font-bold text-slate-200 mt-1 uppercase text-center">${c.item}</span>
           </div>
           <div class="w-full text-center text-[9px] font-semibold text-slate-400 border-t border-slate-700/50 pt-1">
-            ${c.type === 'BEAR' ? 'Unpairable' : (c.isRed ? `Hot (${c.val}pts)` : (c.type === 'REVERSE' ? 'Reverse' : 'Clean (1pt)'))}
+            ${c.isRed ? (c.val === 9 ? 'Grand (+9pts)' : 'Petty (+4pts)') : (c.type === 'REVERSE' ? 'Reverse' : 'Clean (+1pt)')}
           </div>
         `;
 
@@ -647,7 +672,7 @@
 
       scores.innerHTML = '';
       for (let p = 0; p < 4; p++) {
-        const redCards = hands[p].filter(c => c.isRed || c.type === 'BEAR').length;
+        const redCards = hands[p].filter(c => c.isRed).length;
         const bankedPoints = calculateStashPoints(stashes[p]);
         const isWinner = (p === winnerIdx);
         const isCaught = !isWinner && (redCards > 0);
@@ -687,7 +712,7 @@
       if (currentPlayer !== 0 || playerStep !== 'DRAW') return;
       const card = drawFromDeck();
       if (card) hands[0].push(card);
-      logAnnouncement("You drew a card! Now lay any matching pairs into your Stash.");
+      logAnnouncement("You drew a card! Now lay up to 1 matching pair into your Stash.");
       playerStep = 'PAIR';
       updateUI();
     };
@@ -697,10 +722,10 @@
       discardPlayerPairs(0);
       updateUI();
 
-      // Win check if laying pairs emptied your hand
+      // Win check if laying pair emptied your hand
       if (checkWinCondition(0)) return;
 
-      logAnnouncement("Pairs banked! Now select 1 card from your hand to pass to your neighbor.");
+      logAnnouncement("Pair banked! Now select 1 card from your hand to pass to your neighbor.");
       playerStep = 'PASS';
       updateUI();
     };
