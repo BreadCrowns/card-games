@@ -1,26 +1,28 @@
 {
   "game": "Caught Red-Handed",
   "deckSize": 56,
-  "description": "56-card poker deck distribution with high Red Contraband density (~37%)",
+  "description": "56-card poker deck with card-printed points, high-value Red Contraband, and The Smoking Gun",
   "cards": [
-    { "id": "loot_cash_clean", "name": "Cash Stack", "item": "Cash", "type": "Clean", "copies": 4, "icon": "💵" },
-    { "id": "loot_diamond_clean", "name": "Diamond", "item": "Diamond", "type": "Clean", "copies": 4, "icon": "💎" },
-    { "id": "loot_watch_clean", "name": "Gold Watch", "item": "Watch", "type": "Clean", "copies": 4, "icon": "⌚" },
-    { "id": "loot_painting_clean", "name": "Masterpiece", "item": "Painting", "type": "Clean", "copies": 4, "icon": "🖼️" },
-    { "id": "loot_gold_clean", "name": "Gold Ingot", "item": "Gold", "type": "Clean", "copies": 4, "icon": "🧈" },
-    { "id": "loot_crown_clean", "name": "Royal Crown", "item": "Crown", "type": "Clean", "copies": 4, "icon": "👑" },
-    { "id": "loot_key_clean", "name": "Vault Key", "item": "Key", "type": "Clean", "copies": 4, "icon": "🗝️" },
+    { "id": "loot_cash_clean", "name": "Cash Stack", "item": "Cash", "type": "Clean", "value": 1, "copies": 4, "icon": "💵" },
+    { "id": "loot_diamond_clean", "name": "Diamond", "item": "Diamond", "type": "Clean", "value": 1, "copies": 4, "icon": "💎" },
+    { "id": "loot_watch_clean", "name": "Gold Watch", "item": "Watch", "type": "Clean", "value": 1, "copies": 4, "icon": "⌚" },
+    { "id": "loot_painting_clean", "name": "Masterpiece", "item": "Painting", "type": "Clean", "value": 1, "copies": 4, "icon": "🖼️" },
+    { "id": "loot_gold_clean", "name": "Gold Ingot", "item": "Gold", "type": "Clean", "value": 1, "copies": 4, "icon": "🧈" },
+    { "id": "loot_crown_clean", "name": "Royal Crown", "item": "Crown", "type": "Clean", "value": 1, "copies": 4, "icon": "👑" },
+    { "id": "loot_key_clean", "name": "Vault Key", "item": "Key", "type": "Clean", "value": 1, "copies": 4, "icon": "🗝️" },
     
-    { "id": "loot_cash_red", "name": "Marked Cash", "item": "Cash", "type": "Contraband", "copies": 3, "icon": "🚨💵" },
-    { "id": "loot_diamond_red", "name": "Blood Diamond", "item": "Diamond", "type": "Contraband", "copies": 3, "icon": "🚨💎" },
-    { "id": "loot_watch_red", "name": "Tracked Watch", "item": "Watch", "type": "Contraband", "copies": 3, "icon": "🚨⌚" },
-    { "id": "loot_painting_red", "name": "Stolen Canvas", "item": "Painting", "type": "Contraband", "copies": 3, "icon": "🚨🖼️" },
-    { "id": "loot_gold_red", "name": "Hot Gold Bar", "item": "Gold", "type": "Contraband", "copies": 3, "icon": "🚨🧈" },
-    { "id": "loot_crown_red", "name": "Cursed Crown", "item": "Crown", "type": "Contraband", "copies": 3, "icon": "🚨👑" },
-    { "id": "loot_key_red", "name": "Evidence Key", "item": "Key", "type": "Contraband", "copies": 2, "icon": "🚨🗝️" },
+    { "id": "loot_cash_red", "name": "Marked Cash", "item": "Cash", "type": "Contraband", "value": 3, "copies": 3, "icon": "🚨💵" },
+    { "id": "loot_diamond_red", "name": "Blood Diamond", "item": "Diamond", "type": "Contraband", "value": 3, "copies": 3, "icon": "🚨💎" },
+    { "id": "loot_watch_red", "name": "Tracked Watch", "item": "Watch", "type": "Contraband", "value": 3, "copies": 3, "icon": "🚨⌚" },
+    { "id": "loot_painting_red", "name": "Stolen Canvas", "item": "Painting", "type": "Contraband", "value": 5, "copies": 2, "icon": "🚨🖼️" },
+    { "id": "loot_gold_red", "name": "Hot Gold Bar", "item": "Gold", "type": "Contraband", "value": 5, "copies": 2, "icon": "🚨🧈" },
+    { "id": "loot_crown_red", "name": "Cursed Crown", "item": "Crown", "type": "Contraband", "value": 5, "copies": 2, "icon": "🚨👑" },
+    { "id": "loot_key_red", "name": "Evidence Key", "item": "Key", "type": "Contraband", "value": 3, "copies": 3, "icon": "🚨🗝️" },
 
-    { "id": "action_reverse", "name": "Look Out!", "item": "Action", "type": "Reverse", "copies": 6, "icon": "🔄" },
-    { "id": "ref_camera", "name": "Security Camera (Flippable Direction)", "item": "Tracker", "type": "Indicator", "copies": 1, "icon": "📹" },
-    { "id": "ref_rules", "name": "Heist Rules & Penalty Tracker", "item": "Rules", "type": "Reference", "copies": 1, "icon": "📋" }
+    { "id": "bear_smoking_gun", "name": "The Smoking Gun", "item": "Smoking Gun", "type": "Bear", "value": 0, "copies": 2, "icon": "🔫", "notes": "Cannot be paired or laundered. Pure radioactive evidence!" },
+
+    { "id": "action_reverse", "name": "Look Out!", "item": "Action", "type": "Reverse", "value": 0, "copies": 6, "icon": "🔄" },
+    { "id": "ref_camera", "name": "Security Camera (Flippable Direction)", "item": "Tracker", "type": "Indicator", "value": 0, "copies": 1, "icon": "📹" },
+    { "id": "ref_rules", "name": "Heist Rules & Point Tracker", "item": "Rules", "type": "Reference", "value": 0, "copies": 1, "icon": "📋" }
   ]
 }
