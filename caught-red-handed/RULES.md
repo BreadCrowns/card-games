@@ -26,9 +26,9 @@ Laundering **Red Contraband** scores massive points—up to **20 points in a sin
 
 ## 3. Setup (30 Seconds)
 1. Place the **Security Camera** card in the center pointing **Clockwise (Pass Left)**.
-2. Deal **5 cards** face-down to each player.
+2. Deal **7 cards** face-down to each player.
 3. The remaining cards form the face-down **Evidence Locker** (draw pile).
-4. **Opening Drop**: All players check their starting hands and immediately lay **up to 1 matching pair** into their **Personal Score Stash**.
+4. **No Free Starting Pairs**: There is no pre-game discard. All players keep their full 7-card hand and must wait for their turn to bank pairs!
 
 ---
 

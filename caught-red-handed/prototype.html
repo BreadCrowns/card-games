@@ -58,7 +58,7 @@
           </div>
           <div class="flex items-center gap-2">
             <span id="bot3-score-badge" class="text-xs bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 px-2 py-0.5 rounded-full font-bold">Stash: 0 pts</span>
-            <span id="bot3-count-badge" class="text-xs bg-slate-800 px-2.5 py-0.5 rounded-full font-bold text-amber-400 border border-slate-700">5 cards</span>
+            <span id="bot3-count-badge" class="text-xs bg-slate-800 px-2.5 py-0.5 rounded-full font-bold text-amber-400 border border-slate-700">7 cards</span>
           </div>
         </div>
         <div id="bot3-cards" class="flex -space-x-3 overflow-hidden py-1">
@@ -81,7 +81,7 @@
               <div class="w-7 h-7 rounded-full bg-teal-600 flex items-center justify-center font-bold text-xs shadow">B4</div>
               <span class="text-xs font-bold text-slate-300">Bot 4 (Right)</span>
             </div>
-            <span id="bot4-count-badge" class="text-xs bg-slate-800 px-2.5 py-0.5 rounded-full font-bold text-amber-400 border border-slate-700">5 cards</span>
+            <span id="bot4-count-badge" class="text-xs bg-slate-800 px-2.5 py-0.5 rounded-full font-bold text-amber-400 border border-slate-700">7 cards</span>
           </div>
           <div class="w-full flex justify-between px-2 text-[10px]">
             <span id="bot4-score-badge" class="bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 px-2 py-0.5 rounded-full font-bold">Stash: 0 pts</span>
@@ -106,7 +106,7 @@
             <div id="draw-deck" class="w-24 h-36 bg-gradient-to-br from-slate-800 to-slate-900 border-2 border-slate-700 hover:border-amber-500 rounded-xl flex flex-col items-center justify-center shadow-xl cursor-pointer transition transform hover:-translate-y-1">
               <span class="text-2xl mb-1">📦</span>
               <span class="text-[10px] font-black text-slate-400 tracking-wider">LOCKER</span>
-              <span id="deck-count" class="text-sm font-black text-amber-400 mt-1">36</span>
+              <span id="deck-count" class="text-sm font-black text-amber-400 mt-1">28</span>
             </div>
             <span class="text-[11px] font-bold text-slate-400">Draw Pile</span>
           </div>
@@ -145,7 +145,7 @@
               <div class="w-7 h-7 rounded-full bg-amber-600 flex items-center justify-center font-bold text-xs shadow">B2</div>
               <span class="text-xs font-bold text-slate-300">Bot 2 (Left)</span>
             </div>
-            <span id="bot2-count-badge" class="text-xs bg-slate-800 px-2.5 py-0.5 rounded-full font-bold text-amber-400 border border-slate-700">5 cards</span>
+            <span id="bot2-count-badge" class="text-xs bg-slate-800 px-2.5 py-0.5 rounded-full font-bold text-amber-400 border border-slate-700">7 cards</span>
           </div>
           <div class="w-full flex justify-between px-2 text-[10px]">
             <span id="bot2-score-badge" class="bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 px-2 py-0.5 rounded-full font-bold">Stash: 0 pts</span>
@@ -308,20 +308,17 @@
       selectedPassCardIndex = null;
       playerStep = 'DRAW';
 
-      // Deal 5 cards each
-      for (let i = 0; i < 5; i++) {
+      // Deal 7 cards each
+      for (let i = 0; i < 7; i++) {
         for (let p = 0; p < 4; p++) {
           hands[p].push(deck.pop());
         }
       }
 
-      // Opening drop: each player lays AT MOST 1 pair
-      for (let p = 0; p < 4; p++) {
-        discardPlayerPairs(p, true);
-      }
+      // No pre-game pair discard: players keep full 7 cards and must wait for their turn!
 
       updateUI();
-      logAnnouncement("Heist begins! 1. Draw 1 card ──▶ 2. Lay at most 1 pair ──▶ 3. Pass 1 card.");
+      logAnnouncement("Heist begins! All players start with 7 cards. Wait for your turn to bank your first pair!");
     }
 
     function drawFromDeck() {
