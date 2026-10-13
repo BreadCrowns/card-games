@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Caught Red-Handed — Playable Heist Prototype</title>
+  <title>Caught Red-Handed — Classic Hustle Edition</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @keyframes pulse-red {
@@ -13,35 +13,57 @@
     .red-evidence {
       animation: pulse-red 2s infinite;
     }
+    @keyframes pulse-green {
+      0%, 100% { box-shadow: 0 0 12px rgba(16, 185, 129, 0.5); }
+      50% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.8); }
+    }
+    .green-fake {
+      animation: pulse-green 2.5s infinite;
+    }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans select-none overflow-x-hidden">
 
   <!-- Header -->
-  <header class="bg-slate-900/90 border-b border-slate-800 px-6 py-3 flex justify-between items-center shadow-lg">
+  <header class="bg-slate-900/95 border-b border-slate-800 px-6 py-2.5 flex justify-between items-center shadow-lg">
     <div class="flex items-center gap-3">
       <span class="text-2xl">🚨</span>
       <div>
-        <h1 class="text-xl font-black tracking-wider text-rose-500 uppercase">Caught Red-Handed</h1>
-        <p class="text-xs text-slate-400">Heist Loot Stashing & Getaway Race (5 / 10 / 15 Pts)</p>
+        <div class="flex items-center gap-2">
+          <h1 class="text-lg font-black tracking-wider text-rose-500 uppercase">Caught Red-Handed</h1>
+          <span class="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-2 py-0.5 rounded-full font-bold">CLASSIC HUSTLE</span>
+        </div>
+        <p class="text-[11px] text-slate-400">First crew member to <span class="text-amber-400 font-bold">200 Points</span> wins the heist match!</p>
       </div>
     </div>
 
     <!-- Direction / Security Camera HUD -->
-    <div class="flex items-center gap-6 bg-slate-800/80 px-5 py-2 rounded-xl border border-slate-700 shadow-inner">
+    <div class="flex items-center gap-5 bg-slate-800/80 px-4 py-1.5 rounded-xl border border-slate-700 shadow-inner">
       <div class="flex items-center gap-2">
-        <span class="text-xs font-bold text-slate-400 tracking-wider">CAMERA:</span>
-        <span id="camera-badge" class="px-3 py-1 rounded-full text-xs font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5 transition-all">
+        <span class="text-[10px] font-bold text-slate-400 tracking-wider">CAMERA:</span>
+        <span id="camera-badge" class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1 transition-all">
           <span id="camera-icon">🔄</span> <span id="camera-text">CLOCKWISE (PASS LEFT)</span>
         </span>
       </div>
-      <div class="text-xs text-slate-300 font-mono">
-        Turn: <span id="turn-counter" class="font-bold text-amber-400 text-sm">1</span>
+      <div class="text-xs text-slate-300 font-mono flex items-center gap-3">
+        <span>Round <span id="round-counter" class="font-bold text-emerald-400">1</span></span>
+        <span>Turn <span id="turn-counter" class="font-bold text-amber-400">1</span></span>
       </div>
     </div>
 
-    <button id="restart-btn" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-lg border border-slate-700 transition">
-      New Heist
+    <!-- Match Standings Widget -->
+    <div class="flex items-center gap-3 bg-slate-950/70 border border-slate-800 px-3 py-1.5 rounded-xl text-xs">
+      <div class="flex items-center gap-1 font-bold text-slate-400">
+        <span>🎯 TARGET:</span> <span class="text-amber-400 font-black">200 PTS</span>
+      </div>
+      <div class="h-4 w-px bg-slate-800"></div>
+      <div id="header-match-scores" class="flex gap-2.5 text-[11px] font-mono">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+
+    <button id="restart-match-btn" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-lg border border-slate-700 transition">
+      Reset Match
     </button>
   </header>
 
@@ -54,7 +76,10 @@
         <div class="flex items-center justify-between w-full px-2">
           <div class="flex items-center gap-2">
             <div class="w-7 h-7 rounded-full bg-indigo-600 flex items-center justify-center font-bold text-xs shadow">B3</div>
-            <span class="text-xs font-bold text-slate-300">Bot 3 (Across)</span>
+            <div>
+              <div class="text-xs font-bold text-slate-300 leading-none">Bot 3 (Across)</div>
+              <div id="bot3-match-total" class="text-[10px] text-amber-400 font-mono font-bold">Match: 0/200 pts</div>
+            </div>
           </div>
           <div class="flex items-center gap-2">
             <span id="bot3-score-badge" class="text-xs bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 px-2 py-0.5 rounded-full font-bold">Stash: 0 pts</span>
@@ -65,7 +90,7 @@
           <!-- Card backs -->
         </div>
         <div id="bot3-stash-preview" class="text-[10px] text-slate-400 flex gap-1 items-center overflow-hidden">
-          <span>Banked:</span> <span id="bot3-stash-items" class="text-slate-300 italic">None</span>
+          <span>Round Bank:</span> <span id="bot3-stash-items" class="text-slate-300 italic">None</span>
         </div>
       </div>
     </div>
@@ -79,7 +104,10 @@
           <div class="flex items-center justify-between w-full px-2">
             <div class="flex items-center gap-2">
               <div class="w-7 h-7 rounded-full bg-teal-600 flex items-center justify-center font-bold text-xs shadow">B4</div>
-              <span class="text-xs font-bold text-slate-300">Bot 4 (Right)</span>
+              <div>
+                <div class="text-xs font-bold text-slate-300 leading-none">Bot 4 (Right)</div>
+                <div id="bot4-match-total" class="text-[10px] text-amber-400 font-mono font-bold">Match: 0/200 pts</div>
+              </div>
             </div>
             <span id="bot4-count-badge" class="text-xs bg-slate-800 px-2.5 py-0.5 rounded-full font-bold text-amber-400 border border-slate-700">7 cards</span>
           </div>
@@ -106,7 +134,7 @@
             <div id="draw-deck" class="w-24 h-36 bg-gradient-to-br from-slate-800 to-slate-900 border-2 border-slate-700 hover:border-amber-500 rounded-xl flex flex-col items-center justify-center shadow-xl cursor-pointer transition transform hover:-translate-y-1">
               <span class="text-2xl mb-1">📦</span>
               <span class="text-[10px] font-black text-slate-400 tracking-wider">LOCKER</span>
-              <span id="deck-count" class="text-sm font-black text-amber-400 mt-1">28</span>
+              <span id="deck-count" class="text-sm font-black text-amber-400 mt-1">26</span>
             </div>
             <span class="text-[11px] font-bold text-slate-400">Draw Pile</span>
           </div>
@@ -119,7 +147,7 @@
             <span id="compass-label" class="text-[10px] font-bold text-slate-400 mt-1">PASS LEFT</span>
           </div>
 
-          <!-- Discard Vault (Reverses & Cleared Cards) -->
+          <!-- Discard Vault (Reverses) -->
           <div class="flex flex-col items-center gap-2">
             <div id="vault-slot" class="w-24 h-36 bg-slate-900/80 border-2 border-dashed border-slate-700 rounded-xl flex flex-col items-center justify-center shadow-xl p-2 relative">
               <span class="text-2xl mb-1 text-slate-600">🏛️</span>
@@ -143,7 +171,10 @@
           <div class="flex items-center justify-between w-full px-2">
             <div class="flex items-center gap-2">
               <div class="w-7 h-7 rounded-full bg-amber-600 flex items-center justify-center font-bold text-xs shadow">B2</div>
-              <span class="text-xs font-bold text-slate-300">Bot 2 (Left)</span>
+              <div>
+                <div class="text-xs font-bold text-slate-300 leading-none">Bot 2 (Left)</div>
+                <div id="bot2-match-total" class="text-[10px] text-amber-400 font-mono font-bold">Match: 0/200 pts</div>
+              </div>
             </div>
             <span id="bot2-count-badge" class="text-xs bg-slate-800 px-2.5 py-0.5 rounded-full font-bold text-amber-400 border border-slate-700">7 cards</span>
           </div>
@@ -164,14 +195,15 @@
       <!-- Player Header & Banked Stash -->
       <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
         <div class="flex items-center gap-3">
-          <div class="w-8 h-8 rounded-full bg-rose-600 flex items-center justify-center font-black text-xs shadow">YOU</div>
+          <div class="w-9 h-9 rounded-full bg-rose-600 flex items-center justify-center font-black text-xs shadow">YOU</div>
           <div>
             <div class="flex items-center gap-2">
               <span class="text-xs font-black text-slate-200">PLAYER 1 (YOU)</span>
               <span id="player-status-tag" class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400">YOUR TURN</span>
             </div>
-            <div class="text-[11px] text-emerald-400 font-bold mt-0.5">
-              Banked Loot: <span id="player-score-display" class="font-mono text-sm text-emerald-300 font-black">0</span> Points
+            <div class="text-[11px] text-slate-300 font-bold mt-0.5 flex items-center gap-3">
+              <span>Round Stash: <span id="player-score-display" class="font-mono text-sm text-emerald-300 font-black">0</span> pts</span>
+              <span class="text-amber-400">Match Total: <span id="player-match-total" class="font-mono text-sm font-black">0</span> / 200 pts</span>
             </div>
           </div>
         </div>
@@ -187,7 +219,7 @@
             <span>📦</span> 1. Draw Card
           </button>
           <button id="btn-pair" disabled class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-30 disabled:pointer-events-none text-white text-xs font-bold rounded-xl shadow-lg transition flex items-center gap-1.5">
-            <span>💰</span> 2. Lay 1 Pair (<span id="pair-count-badge">0</span>)
+            <span>💰</span> <span id="btn-pair-text">2. Lay Pair</span> (<span id="pair-count-badge">0</span>)
           </button>
           <button id="btn-pass" disabled class="px-4 py-2 bg-rose-600 hover:bg-rose-500 disabled:opacity-30 disabled:pointer-events-none text-white text-xs font-bold rounded-xl shadow-lg transition flex items-center gap-1.5">
             <span>👉</span> 3. Pass Selected Card
@@ -202,91 +234,109 @@
         </div>
       </div>
 
-      <!-- Helper Hint -->
-      <div class="text-center text-[11px] text-slate-400 font-medium flex items-center justify-center gap-4">
-        <span>Clean pairs: <b>5+5=10 pts</b></span>
-        <span>Petty Red: <b>5+10=15 pts</b></span>
-        <span class="text-amber-300 font-bold">Grand Red: <b>5+15=20 pts!</b></span>
+      <!-- Helper Hint Footer -->
+      <div class="text-center text-[11px] text-slate-400 font-medium flex items-center justify-center gap-4 flex-wrap">
+        <span>Clean Pair: <b class="text-emerald-400">5+5=10 pts</b></span>
+        <span>Petty Red: <b class="text-rose-400">5+10=15 pts</b></span>
+        <span>Grand Red: <b class="text-amber-300">5+15=20 pts</b></span>
+        <span>Counterfeit (Fake): <b class="text-teal-400">5+0=5 pts</b></span>
         <span class="text-rose-400 font-bold">⚠️ Caught with Red at end = 0 pts!</span>
       </div>
     </div>
 
   </main>
 
-  <!-- "GETAWAY CAR!" Victory Modal -->
-  <div id="clean-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 z-50 hidden">
+  <!-- Round End / Heist Result Modal -->
+  <div id="clean-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 z-50 hidden">
     <div class="bg-slate-900 border-2 border-rose-500 rounded-3xl p-8 max-w-lg w-full text-center shadow-2xl flex flex-col items-center gap-4">
-      <div class="w-16 h-16 rounded-full bg-rose-600/20 border-2 border-rose-500 flex items-center justify-center text-3xl shadow">
+      <div id="modal-icon" class="w-16 h-16 rounded-full bg-rose-600/20 border-2 border-rose-500 flex items-center justify-center text-3xl shadow">
         🚗💨
       </div>
-      <h2 id="modal-title" class="text-3xl font-black text-rose-500 tracking-wider uppercase">"GETAWAY CAR!"</h2>
-      <p id="modal-desc" class="text-slate-300 text-sm">A player emptied their hand! The getaway car speeds off into the night!</p>
+      <h2 id="modal-title" class="text-2xl font-black text-rose-500 tracking-wider uppercase">"GETAWAY CAR!"</h2>
+      <p id="modal-desc" class="text-slate-300 text-xs">A player emptied their hand! The getaway car speeds off into the night!</p>
       
       <!-- Hands & Score Breakdown -->
       <div id="modal-scores" class="w-full bg-slate-950/80 border border-slate-800 rounded-2xl p-4 flex flex-col gap-2.5 text-xs text-left">
         <!-- Scores injected here -->
       </div>
 
-      <button id="modal-restart-btn" class="mt-2 w-full py-3 bg-rose-600 hover:bg-rose-500 text-white font-black text-sm rounded-xl shadow-lg transition">
-        PLAY NEXT HEIST
+      <button id="modal-next-btn" class="mt-2 w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-sm rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+        <span>NEXT ROUND</span> ➡️
       </button>
     </div>
   </div>
 
   <script>
-    // Game Definitions & Cards: 5 / 10 / 15 Point Economy
+    // Classic Hustle Definition: First to 200 pts, Green Fakes (0 pts), 5 / 10 / 15 Point Economy
     const ITEMS = [
-      { name: 'Cash', icon: '💵', cleanVal: 5, redVal: 10, isGrand: false },
-      { name: 'Diamond', icon: '💎', cleanVal: 5, redVal: 10, isGrand: false },
-      { name: 'Watch', icon: '⌚', cleanVal: 5, redVal: 10, isGrand: false },
-      { name: 'Key', icon: '🗝️', cleanVal: 5, redVal: 10, isGrand: false },
-      { name: 'Painting', icon: '🖼️', cleanVal: 5, redVal: 15, isGrand: true },
-      { name: 'Gold', icon: '🧈', cleanVal: 5, redVal: 15, isGrand: true },
-      { name: 'Crown', icon: '👑', cleanVal: 5, redVal: 15, isGrand: true }
+      { name: 'Cash', icon: '💵', cleanVal: 5, pettyVal: 10, grandVal: 0, isGrand: false },
+      { name: 'Diamond', icon: '💎', cleanVal: 5, pettyVal: 10, grandVal: 0, isGrand: false },
+      { name: 'Watch', icon: '⌚', cleanVal: 5, pettyVal: 10, grandVal: 0, isGrand: false },
+      { name: 'Key', icon: '🗝️', cleanVal: 5, pettyVal: 10, grandVal: 0, isGrand: false },
+      { name: 'Painting', icon: '🖼️', cleanVal: 5, pettyVal: 0, grandVal: 15, isGrand: true },
+      { name: 'Gold', icon: '🧈', cleanVal: 5, pettyVal: 0, grandVal: 15, isGrand: true },
+      { name: 'Crown', icon: '👑', cleanVal: 5, pettyVal: 0, grandVal: 15, isGrand: true }
     ];
 
+    // Match State
+    let matchScores = [0, 0, 0, 0]; // Cumulative points towards 200
+    let roundNumber = 1;
+    let starterPlayer = 0; // Rotates each round
+
+    // Round State
     let deck = [];
     let vault = [];
     let hands = [[], [], [], []]; // P0=User, P1=Bot2, P2=Bot3, P3=Bot4
-    let stashes = [[], [], [], []]; // Banked pairs for each player
+    let stashes = [[], [], [], []]; // Banked pairs for current round
     let currentPlayer = 0;
     let direction = 1; // 1 = Clockwise (Pass Left), -1 = Counter-Clockwise (Pass Right)
     let turnCount = 1;
     let selectedPassCardIndex = null;
     let playerStep = 'DRAW'; // 'DRAW', 'PAIR', 'PASS'
 
+    // Build the 54-card playable Classic Hustle deck
     function buildDeck() {
       const cards = [];
 
-      // 28 Clean Loot (7 items x 4 copies, val: 5)
+      // 1. 24 Clean Loot (Blue, 5 pts each)
+      // 4 Cash, 4 Diamond, 4 Watch, 3 Key, 3 Painting, 3 Gold, 3 Crown = 24
+      const blueCounts = { Cash: 4, Diamond: 4, Watch: 4, Key: 3, Painting: 3, Gold: 3, Crown: 3 };
       ITEMS.forEach(it => {
-        for (let i = 0; i < 4; i++) {
-          cards.push({ type: 'LOOT', item: it.name, icon: it.icon, isRed: false, val: 5, isGrand: it.isGrand });
+        for (let i = 0; i < blueCounts[it.name]; i++) {
+          cards.push({ type: 'LOOT', color: 'BLUE', item: it.name, icon: it.icon, val: 5, isGrand: it.isGrand, isRed: false });
         }
       });
 
-      // 20 Red Contraband: 
-      // 4 Petty items x 3 copies (Val: 10) = 12 cards
-      ITEMS.filter(it => !it.isGrand).forEach(it => {
-        for (let i = 0; i < 3; i++) {
-          cards.push({ type: 'LOOT', item: it.name, icon: it.icon, isRed: true, val: 10, isGrand: false });
-        }
-      });
-      // 3 Grand items: 3 Paintings, 3 Gold, 2 Crowns (Val: 15) = 8 cards
-      ['Painting', 'Gold'].forEach(name => {
+      // 2. 16 Red Contraband:
+      // 10 Petty (10 pts): 3 Cash, 3 Diamond, 2 Watch, 2 Key
+      const pettyCounts = { Cash: 3, Diamond: 3, Watch: 2, Key: 2 };
+      Object.keys(pettyCounts).forEach(name => {
         const it = ITEMS.find(x => x.name === name);
-        for (let i = 0; i < 3; i++) {
-          cards.push({ type: 'LOOT', item: it.name, icon: it.icon, isRed: true, val: 15, isGrand: true });
+        for (let i = 0; i < pettyCounts[name]; i++) {
+          cards.push({ type: 'LOOT', color: 'RED', item: it.name, icon: it.icon, val: 10, isGrand: false, isRed: true });
         }
       });
-      const crown = ITEMS.find(x => x.name === 'Crown');
-      for (let i = 0; i < 2; i++) {
-        cards.push({ type: 'LOOT', item: crown.name, icon: crown.icon, isRed: true, val: 15, isGrand: true });
-      }
+      // 6 Grand (15 pts): 2 Paintings, 2 Gold, 2 Crowns
+      ['Painting', 'Gold', 'Crown'].forEach(name => {
+        const it = ITEMS.find(x => x.name === name);
+        for (let i = 0; i < 2; i++) {
+          cards.push({ type: 'LOOT', color: 'RED', item: it.name, icon: it.icon, val: 15, isGrand: true, isRed: true });
+        }
+      });
 
-      // 6 Look Out! Reverses
+      // 3. 8 Green Fakes (0 pts each, cannot pair together, needs matching Blue to bank)
+      // 2 Cash, 2 Diamond, 1 Watch, 1 Key, 1 Painting, 1 Gold
+      const fakeCounts = { Cash: 2, Diamond: 2, Watch: 1, Key: 1, Painting: 1, Gold: 1 };
+      Object.keys(fakeCounts).forEach(name => {
+        const it = ITEMS.find(x => x.name === name);
+        for (let i = 0; i < fakeCounts[name]; i++) {
+          cards.push({ type: 'LOOT', color: 'GREEN', item: it.name, icon: it.icon, val: 0, isGrand: false, isRed: false, isFake: true });
+        }
+      });
+
+      // 4. 6 Action Reverses
       for (let i = 0; i < 6; i++) {
-        cards.push({ type: 'REVERSE', item: 'Reverse', icon: '🔄', isRed: false, val: 0, isGrand: false });
+        cards.push({ type: 'REVERSE', color: 'SPECIAL', item: 'Reverse', icon: '🔄', val: 0, isGrand: false, isRed: false });
       }
 
       // Shuffle Fisher-Yates
@@ -297,33 +347,42 @@
       return cards;
     }
 
-    function initGame() {
+    function initRound() {
       deck = buildDeck();
       vault = [];
       hands = [[], [], [], []];
       stashes = [[], [], [], []];
-      currentPlayer = 0;
+      currentPlayer = starterPlayer;
       direction = 1;
       turnCount = 1;
       selectedPassCardIndex = null;
-      playerStep = 'DRAW';
+      playerStep = (currentPlayer === 0) ? 'DRAW' : 'BOT';
 
-      // Deal 7 cards each
+      // Deal 7 cards each (54 - 28 = 26 left in locker)
       for (let i = 0; i < 7; i++) {
         for (let p = 0; p < 4; p++) {
           hands[p].push(deck.pop());
         }
       }
 
-      // No pre-game pair discard: players keep full 7 cards and must wait for their turn!
-
       updateUI();
-      logAnnouncement("Heist begins! All players start with 7 cards. Wait for your turn to bank your first pair!");
+      logAnnouncement(`Round ${roundNumber} begins! Dealing 7 cards to each crew member. Reach 200 pts to win!`);
+
+      if (currentPlayer !== 0) {
+        setTimeout(() => playBotTurn(currentPlayer), 700);
+      }
+    }
+
+    function resetEntireMatch() {
+      matchScores = [0, 0, 0, 0];
+      roundNumber = 1;
+      starterPlayer = 0;
+      initRound();
     }
 
     function drawFromDeck() {
       if (deck.length === 0 && vault.length > 0) {
-        logAnnouncement("Evidence Locker empty! Shuffled Vault into fresh Locker.");
+        logAnnouncement("Evidence Locker empty! Shuffled played Reverses back into fresh Locker.");
         deck = [...vault];
         vault = [];
         for (let i = deck.length - 1; i > 0; i--) {
@@ -338,8 +397,67 @@
       return stash.reduce((sum, pair) => sum + pair.points, 0);
     }
 
+    // Find candidate pairs in hand
+    function getCandidatePairs(playerIdx) {
+      const hand = hands[playerIdx];
+      const candidates = [];
+
+      ITEMS.forEach(it => {
+        const blues = hand.filter(c => c.type === 'LOOT' && c.item === it.name && c.color === 'BLUE');
+        const reds = hand.filter(c => c.type === 'LOOT' && c.item === it.name && c.color === 'RED');
+        const greens = hand.filter(c => c.type === 'LOOT' && c.item === it.name && c.color === 'GREEN');
+
+        // 1. Laundered Contraband (Blue + Red): 15 or 20 pts
+        if (blues.length > 0 && reds.length > 0) {
+          const pts = blues[0].val + reds[0].val;
+          candidates.push({
+            item: it.name,
+            icon: it.icon,
+            color: 'RED',
+            category: it.isGrand ? 'GRAND' : 'PETTY',
+            points: pts,
+            c1: reds[0],
+            c2: blues[0],
+            label: `${it.name} Laundered (+${pts}pts)`
+          });
+        }
+
+        // 2. Clean Pair (Blue + Blue): 10 pts
+        if (blues.length >= 2) {
+          const pts = blues[0].val + blues[1].val;
+          candidates.push({
+            item: it.name,
+            icon: it.icon,
+            color: 'BLUE',
+            category: 'CLEAN',
+            points: pts,
+            c1: blues[0],
+            c2: blues[1],
+            label: `${it.name} Clean (+${pts}pts)`
+          });
+        }
+
+        // 3. Counterfeit Pair (Blue + Green Fake): 5 pts ($5 + 0$)
+        if (blues.length > 0 && greens.length > 0) {
+          const pts = blues[0].val + greens[0].val; // 5 + 0 = 5
+          candidates.push({
+            item: it.name,
+            icon: it.icon,
+            color: 'GREEN',
+            category: 'FAKE',
+            points: pts,
+            c1: greens[0],
+            c2: blues[0],
+            label: `${it.name} Counterfeit (+${pts}pts)`
+          });
+        }
+      });
+
+      return candidates;
+    }
+
     // RULE: On your turn, lay AT MOST 1 PAIR (not multiple)
-    function discardPlayerPairs(playerIdx, isInitial = false) {
+    function discardPlayerPairs(playerIdx) {
       const hand = hands[playerIdx];
 
       // 1. Reverses
@@ -347,61 +465,35 @@
       if (revIdx !== -1) {
         const revCard = hand.splice(revIdx, 1)[0];
         vault.push(revCard);
-        if (!isInitial) {
-          direction = -direction;
-          logAnnouncement(`${getPlayerName(playerIdx)} played "Look Out!" (Reverse)! Passing direction reversed!`);
-        }
+        direction = -direction;
+        logAnnouncement(`${getPlayerName(playerIdx)} played "Look Out!" (Reverse)! Passing direction reversed!`);
+        return true;
       }
 
       // 2. Find candidate pairs
-      const possiblePairs = [];
+      const possiblePairs = getCandidatePairs(playerIdx);
 
-      ITEMS.forEach(it => {
-        let reds = hand.filter(c => c.type === 'LOOT' && c.item === it.name && c.isRed);
-        let blues = hand.filter(c => c.type === 'LOOT' && c.item === it.name && !c.isRed);
-
-        // Laundered pair (Red + Blue)
-        if (reds.length > 0 && blues.length > 0) {
-          const pts = blues[0].val + reds[0].val; // 5 + 10 = 15, or 5 + 15 = 20
-          possiblePairs.push({
-            item: it.name,
-            icon: it.icon,
-            isRed: true,
-            points: pts,
-            c1: reds[0],
-            c2: blues[0]
-          });
-        }
-
-        // Clean pair (Blue + Blue)
-        if (blues.length >= 2) {
-          const pts = blues[0].val + blues[1].val; // 5 + 5 = 10
-          possiblePairs.push({
-            item: it.name,
-            icon: it.icon,
-            isRed: false,
-            points: pts,
-            c1: blues[0],
-            c2: blues[1]
-          });
-        }
-      });
-
-      // Lay ONLY the single highest-value pair!
+      // Lay the single highest-scoring pair
       if (possiblePairs.length > 0) {
         possiblePairs.sort((a, b) => b.points - a.points);
         const bestPair = possiblePairs[0];
 
         hand.splice(hand.indexOf(bestPair.c1), 1);
         hand.splice(hand.indexOf(bestPair.c2), 1);
-        stashes[playerIdx].push({ item: bestPair.item, icon: bestPair.icon, isRed: bestPair.isRed, points: bestPair.points });
+        stashes[playerIdx].push({
+          item: bestPair.item,
+          icon: bestPair.icon,
+          color: bestPair.color,
+          points: bestPair.points,
+          category: bestPair.category
+        });
 
-        if (!isInitial) {
-          if (bestPair.isRed) {
-            logAnnouncement(`${getPlayerName(playerIdx)} laundered a ${bestPair.item} pair! Massive +${bestPair.points} points banked!`);
-          } else {
-            logAnnouncement(`${getPlayerName(playerIdx)} banked a clean pair of ${bestPair.item}s (+${bestPair.points} pts).`);
-          }
+        if (bestPair.color === 'RED') {
+          logAnnouncement(`${getPlayerName(playerIdx)} laundered a ${bestPair.item} pair! Massive +${bestPair.points} points banked!`);
+        } else if (bestPair.color === 'GREEN') {
+          logAnnouncement(`${getPlayerName(playerIdx)} dumped a Counterfeit ${bestPair.item} pair with a real Blue card (+${bestPair.points} pts).`);
+        } else {
+          logAnnouncement(`${getPlayerName(playerIdx)} banked a clean pair of ${bestPair.item}s (+${bestPair.points} pts).`);
         }
         return true;
       }
@@ -411,7 +503,7 @@
 
     function checkWinCondition(playerIdx) {
       if (hands[playerIdx].length === 0) {
-        showVictoryModal(playerIdx);
+        showRoundModal(playerIdx);
         return true;
       }
       return false;
@@ -425,7 +517,7 @@
       return (p + direction + 4) % 4;
     }
 
-    // Bot AI Turn
+    // Bot AI Turn matching Classic Hustle Passing Strategy
     function playBotTurn(b) {
       if (checkWinCondition(b)) return;
 
@@ -445,22 +537,47 @@
         setTimeout(() => {
           if (hands[b].length > 0) {
             const targetP = getTargetNeighbor(b);
-            
+            const hand = hands[b];
+
+            const reds = hand.map((c, i) => ({ card: c, idx: i })).filter(x => x.card.color === 'RED');
+            const greens = hand.map((c, i) => ({ card: c, idx: i })).filter(x => x.card.color === 'GREEN');
+            const blues = hand.map((c, i) => ({ card: c, idx: i })).filter(x => x.card.color === 'BLUE');
+
+            const minOppHand = hands.filter((_, idx) => idx !== b).reduce((min, h) => Math.min(min, h.length), 99);
+            const myBanked = calculateStashPoints(stashes[b]);
+
             let cardToPassIdx = -1;
-            const reds = hands[b].map((c, i) => ({ card: c, idx: i })).filter(x => x.card.isRed);
-            const blues = hands[b].map((c, i) => ({ card: c, idx: i })).filter(x => !x.card.isRed && x.card.type !== 'REVERSE');
 
-            const hasGrandRed = reds.some(r => r.card.val === 15);
-            const pettyReds = reds.filter(r => r.card.val === 10);
+            // Panic Dump: If opponent has <= 2 cards or bot has >= 25 banked points, dump dangerous RED!
+            if ((minOppHand <= 2 || myBanked >= 25) && reds.length > 0) {
+              cardToPassIdx = reds.sort((a, b) => b.card.val - a.card.val)[0].idx;
+            }
+            // Tactical Dump: Pass worthless Green Fakes to gum up neighbor's hand!
+            else if (greens.length > 0) {
+              const unmatchableGreens = greens.filter(g => !blues.some(bl => bl.card.item === g.card.item));
+              if (unmatchableGreens.length > 0) {
+                cardToPassIdx = unmatchableGreens[0].idx;
+              } else if (Math.random() < 0.65) {
+                cardToPassIdx = greens[0].idx;
+              }
+            }
 
-            if (pettyReds.length > 0) {
-              cardToPassIdx = pettyReds[0].idx;
-            } else if (hasGrandRed && blues.length > 0 && Math.random() < 0.45) {
-              cardToPassIdx = blues[0].idx; // Hold onto 15-pt Grand Red greedily!
-            } else if (reds.length > 0) {
-              cardToPassIdx = reds[0].idx;
-            } else {
-              cardToPassIdx = Math.floor(Math.random() * hands[b].length);
+            // Fallback: Pass Petty Red
+            if (cardToPassIdx === -1 && reds.length > 0) {
+              const petty = reds.filter(r => r.card.val === 10);
+              if (petty.length > 0) cardToPassIdx = petty[0].idx;
+              else if (blues.length > 0 && Math.random() < 0.45) {
+                cardToPassIdx = blues[0].idx; // Hold onto 15-pt Grand Red greedily
+              } else {
+                cardToPassIdx = reds[0].idx;
+              }
+            }
+
+            // Otherwise pass Green, then Blue, else random
+            if (cardToPassIdx === -1) {
+              if (greens.length > 0) cardToPassIdx = greens[0].idx;
+              else if (blues.length > 0) cardToPassIdx = blues[0].idx;
+              else cardToPassIdx = Math.floor(Math.random() * hand.length);
             }
 
             const passed = hands[b].splice(cardToPassIdx, 1)[0];
@@ -473,9 +590,9 @@
           if (checkWinCondition(b)) return;
 
           advanceTurn();
-        }, 600);
+        }, 550);
 
-      }, 500);
+      }, 450);
     }
 
     function advanceTurn() {
@@ -485,18 +602,31 @@
 
       if (currentPlayer === 0) {
         playerStep = 'DRAW';
-        logAnnouncement("It's your turn! 1. Draw Card ──▶ 2. Lay 1 Pair ──▶ 3. Pass 1 Card.");
+        logAnnouncement("It's your turn! 1. Draw Card ──▶ 2. Lay 1 Pair (or skip) ──▶ 3. Pass 1 Card.");
         updateUI();
       } else {
-        setTimeout(() => playBotTurn(currentPlayer), 400);
+        setTimeout(() => playBotTurn(currentPlayer), 350);
       }
     }
 
     // UI Updates
     function updateUI() {
+      document.getElementById('round-counter').innerText = roundNumber;
       document.getElementById('turn-counter').innerText = turnCount;
       document.getElementById('deck-count').innerText = deck.length;
       document.getElementById('vault-count').innerText = vault.length;
+
+      // Header match scoreboard
+      const scoreHeader = document.getElementById('header-match-scores');
+      scoreHeader.innerHTML = `
+        <span class="${matchScores[0] >= 150 ? 'text-amber-300 font-black' : 'text-slate-300'}">You: ${matchScores[0]}</span>
+        <span class="text-slate-600">|</span>
+        <span class="${matchScores[1] >= 150 ? 'text-amber-300 font-black' : 'text-slate-400'}">B2: ${matchScores[1]}</span>
+        <span class="text-slate-600">|</span>
+        <span class="${matchScores[2] >= 150 ? 'text-amber-300 font-black' : 'text-slate-400'}">B3: ${matchScores[2]}</span>
+        <span class="text-slate-600">|</span>
+        <span class="${matchScores[3] >= 150 ? 'text-amber-300 font-black' : 'text-slate-400'}">B4: ${matchScores[3]}</span>
+      `;
 
       // Camera HUD
       const camBadge = document.getElementById('camera-badge');
@@ -505,25 +635,26 @@
       const compassLabel = document.getElementById('compass-label');
 
       if (direction === 1) {
-        camBadge.className = "px-3 py-1 rounded-full text-xs font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5 transition-all";
+        camBadge.className = "px-2.5 py-0.5 rounded-full text-[11px] font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1 transition-all";
         camText.innerText = "CLOCKWISE (PASS LEFT)";
         compassArrow.innerText = "➡️";
         compassLabel.innerText = "PASS LEFT";
         compassArrow.style.transform = "rotate(0deg)";
       } else {
-        camBadge.className = "px-3 py-1 rounded-full text-xs font-black bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center gap-1.5 transition-all";
+        camBadge.className = "px-2.5 py-0.5 rounded-full text-[11px] font-black bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center gap-1 transition-all";
         camText.innerText = "COUNTER-CLOCKWISE (PASS RIGHT)";
         compassArrow.innerText = "⬅️";
         compassLabel.innerText = "PASS RIGHT";
         compassArrow.style.transform = "rotate(180deg)";
       }
 
-      // Update Bots Stashes & Cards
+      // Update Bots
       [1, 2, 3].forEach(b => {
         const count = hands[b].length;
         const pts = calculateStashPoints(stashes[b]);
         document.getElementById(`bot${b+1}-count-badge`).innerText = `${count} cards`;
         document.getElementById(`bot${b+1}-score-badge`).innerText = `Stash: ${pts} pts`;
+        document.getElementById(`bot${b+1}-match-total`).innerText = `Match: ${matchScores[b]}/200 pts`;
 
         const container = document.getElementById(`bot${b+1}-cards`);
         container.innerHTML = '';
@@ -549,15 +680,21 @@
       // Update Player Area
       const statusTag = document.getElementById('player-status-tag');
       const playerScoreDisplay = document.getElementById('player-score-display');
+      const playerMatchTotal = document.getElementById('player-match-total');
       const playerStashContainer = document.getElementById('player-stash-container');
 
       const userPts = calculateStashPoints(stashes[0]);
       playerScoreDisplay.innerText = userPts;
+      playerMatchTotal.innerText = matchScores[0];
 
       playerStashContainer.innerHTML = '';
       stashes[0].forEach(p => {
         const badge = document.createElement('div');
-        badge.className = `px-2 py-0.5 rounded text-[10px] font-bold border flex items-center gap-1 ${p.isRed ? 'bg-rose-950/60 border-rose-600 text-rose-300' : 'bg-slate-800 border-slate-700 text-slate-300'}`;
+        let style = 'bg-slate-800 border-slate-700 text-slate-300';
+        if (p.color === 'RED') style = 'bg-rose-950/60 border-rose-600 text-rose-300';
+        else if (p.color === 'GREEN') style = 'bg-emerald-950/60 border-emerald-600 text-emerald-300';
+
+        badge.className = `px-2 py-0.5 rounded text-[10px] font-bold border flex items-center gap-1 ${style}`;
         badge.innerHTML = `<span>${p.icon}</span><span>+${p.points}pts</span>`;
         playerStashContainer.appendChild(badge);
       });
@@ -569,6 +706,15 @@
         statusTag.className = "text-[10px] font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-500";
         statusTag.innerText = "WAITING...";
       }
+
+      // Check available candidate pairs for player
+      const pairsAvailable = getCandidatePairs(0);
+      const revInHand = hands[0].some(c => c.type === 'REVERSE');
+      const pairCount = pairsAvailable.length + (revInHand ? 1 : 0);
+      document.getElementById('pair-count-badge').innerText = pairCount;
+
+      const btnPairText = document.getElementById('btn-pair-text');
+      btnPairText.innerText = (pairCount > 0) ? '2. Lay Pair' : '2. Skip Pair';
 
       // Render Player Cards
       renderPlayerHand();
@@ -611,9 +757,19 @@
         const cardEl = document.createElement('div');
         const isSelected = (selectedPassCardIndex === idx);
         
-        let borderStyle = c.isRed 
-          ? (c.val === 15 ? "border-2 border-amber-400 bg-rose-950/70 red-evidence" : "border-2 border-rose-500 bg-rose-950/50 red-evidence")
-          : (c.type === 'REVERSE' ? "border-2 border-amber-500 bg-amber-950/40" : "border border-slate-700 bg-slate-800/90");
+        let borderStyle = "border border-slate-700 bg-slate-800/90";
+
+        if (c.color === 'RED') {
+          borderStyle = (c.val === 15)
+            ? "border-2 border-amber-400 bg-rose-950/70 red-evidence" 
+            : "border-2 border-rose-500 bg-rose-950/50 red-evidence";
+        } else if (c.color === 'GREEN') {
+          borderStyle = "border-2 border-emerald-500 bg-emerald-950/40 green-fake";
+        } else if (c.type === 'REVERSE') {
+          borderStyle = "border-2 border-amber-500 bg-amber-950/40";
+        } else if (c.color === 'BLUE') {
+          borderStyle = "border-2 border-blue-500/70 bg-blue-950/40";
+        }
 
         if (isSelected) {
           borderStyle += " ring-4 ring-rose-400 -translate-y-3";
@@ -621,19 +777,29 @@
 
         cardEl.className = `w-24 h-36 rounded-xl p-2 flex flex-col justify-between items-center shadow-xl cursor-pointer transition transform hover:-translate-y-1.5 select-none ${borderStyle}`;
         
+        let badgeText = '';
+        if (c.color === 'RED') badgeText = `<span class="${c.val === 15 ? 'text-amber-300' : 'text-rose-400'} font-black">+${c.val}pts</span>`;
+        else if (c.color === 'GREEN') badgeText = `<span class="text-emerald-400 font-black">0pts</span>`;
+        else if (c.color === 'BLUE') badgeText = `<span class="text-blue-400 font-black">+5pts</span>`;
+        else if (c.type === 'REVERSE') badgeText = `<span class="text-amber-400 font-black">ACTION</span>`;
+
+        let typeSubtitle = '';
+        if (c.color === 'RED') typeSubtitle = (c.val === 15) ? 'Grand (+15)' : 'Petty (+10)';
+        else if (c.color === 'GREEN') typeSubtitle = 'Fake (Needs Blue)';
+        else if (c.color === 'BLUE') typeSubtitle = 'Clean (+5)';
+        else if (c.type === 'REVERSE') typeSubtitle = 'Reverse';
+
         cardEl.innerHTML = `
           <div class="w-full flex justify-between items-center text-[10px] font-black">
             <span>${c.icon}</span>
-            ${c.isRed ? `<span class="${c.val === 15 ? 'text-amber-300 font-black' : 'text-rose-400 font-black'}">+${c.val}pts</span>` : ''}
-            ${!c.isRed && c.type === 'LOOT' ? `<span class="text-emerald-400 font-black">+${c.val}pts</span>` : ''}
-            ${c.type === 'REVERSE' ? '<span class="text-amber-400 font-black">ACTION</span>' : ''}
+            ${badgeText}
           </div>
           <div class="flex flex-col items-center justify-center my-auto">
             <span class="text-3xl">${c.icon}</span>
             <span class="text-[10px] font-bold text-slate-200 mt-1 uppercase text-center">${c.item}</span>
           </div>
-          <div class="w-full text-center text-[9px] font-semibold text-slate-400 border-t border-slate-700/50 pt-1">
-            ${c.isRed ? (c.val === 15 ? 'Grand (+15pts)' : 'Petty (+10pts)') : (c.type === 'REVERSE' ? 'Reverse' : 'Clean (+5pts)')}
+          <div class="w-full text-center text-[8px] font-semibold text-slate-400 border-t border-slate-700/50 pt-1">
+            ${typeSubtitle}
           </div>
         `;
 
@@ -652,43 +818,85 @@
       document.getElementById('announcement-banner').innerText = msg;
     }
 
-    function showVictoryModal(winnerIdx) {
+    function showRoundModal(winnerIdx) {
       const modal = document.getElementById('clean-modal');
+      const icon = document.getElementById('modal-icon');
       const title = document.getElementById('modal-title');
       const desc = document.getElementById('modal-desc');
       const scores = document.getElementById('modal-scores');
+      const nextBtn = document.getElementById('modal-next-btn');
 
-      title.innerText = `${getPlayerName(winnerIdx)} SHOUTED "GETAWAY CAR!"`;
-      desc.innerText = `${getPlayerName(winnerIdx)} emptied their hand and escaped! The police have surrounded the building!`;
+      // Update match scores
+      const roundPointsEarned = [0, 0, 0, 0];
+
+      for (let p = 0; p < 4; p++) {
+        const hasRed = hands[p].some(c => c.color === 'RED');
+        const bankedPoints = calculateStashPoints(stashes[p]);
+        const isWinner = (p === winnerIdx);
+        const isCaught = !isWinner && hasRed;
+
+        if (isWinner) {
+          roundPointsEarned[p] = bankedPoints + 15; // +15 Escape bonus!
+        } else if (isCaught) {
+          roundPointsEarned[p] = 0; // Busted!
+        } else {
+          roundPointsEarned[p] = bankedPoints; // Escaped clean
+        }
+
+        matchScores[p] += roundPointsEarned[p];
+      }
+
+      const matchWinner = matchScores.findIndex(s => s >= 200);
+      const isMatchOver = (matchWinner !== -1);
+
+      if (isMatchOver) {
+        const grandChamp = Array.from(matchScores.entries()).reduce((max, curr) => curr[1] > max[1] ? curr : max)[0];
+        icon.innerText = "👑";
+        title.innerText = `${getPlayerName(grandChamp)} WINS THE HEIST!`;
+        desc.innerText = `${getPlayerName(grandChamp)} crossed 200 points (${matchScores[grandChamp]} pts) and takes the crown!`;
+        nextBtn.innerHTML = `<span>START NEW HEIST MATCH</span> 🔄`;
+        nextBtn.className = "mt-2 w-full py-3 bg-amber-600 hover:bg-amber-500 text-white font-black text-sm rounded-xl shadow-lg transition flex items-center justify-center gap-2";
+      } else {
+        icon.innerText = "🚗💨";
+        title.innerText = `${getPlayerName(winnerIdx)} SHOUTED "GETAWAY CAR!"`;
+        desc.innerText = `${getPlayerName(winnerIdx)} emptied their hand and escaped! Police sirens echo through the streets!`;
+        nextBtn.innerHTML = `<span>PROCEED TO ROUND ${roundNumber + 1}</span> ➡️`;
+        nextBtn.className = "mt-2 w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-sm rounded-xl shadow-lg transition flex items-center justify-center gap-2";
+      }
 
       scores.innerHTML = '';
       for (let p = 0; p < 4; p++) {
-        const redCards = hands[p].filter(c => c.isRed).length;
+        const redCards = hands[p].filter(c => c.color === 'RED').length;
+        const greenCards = hands[p].filter(c => c.color === 'GREEN').length;
         const bankedPoints = calculateStashPoints(stashes[p]);
         const isWinner = (p === winnerIdx);
         const isCaught = !isWinner && (redCards > 0);
-        
-        let finalScore = isWinner ? (bankedPoints + 10) : (isCaught ? 0 : bankedPoints);
+        const ptsEarned = roundPointsEarned[p];
 
         const row = document.createElement('div');
         row.className = `flex justify-between items-center p-2.5 rounded-xl ${isWinner ? 'bg-amber-950/40 border border-amber-600' : (isCaught ? 'bg-rose-950/40 border border-rose-800' : 'bg-emerald-950/40 border border-emerald-800')}`;
         
+        let statusSub = '';
+        if (isWinner) statusSub = 'Escaped clean with the stash!';
+        else if (isCaught) statusSub = `Caught holding ${redCards} Red Contraband! Banked stash seized!`;
+        else statusSub = `Escaped clean${greenCards > 0 ? ` (held ${greenCards} worthless Fakes)` : ''}!`;
+
         row.innerHTML = `
           <div>
             <div class="font-bold text-slate-200 flex items-center gap-1.5">
               <span>${getPlayerName(p)}</span>
-              ${isWinner ? '<span class="text-[10px] bg-amber-500/20 text-amber-300 px-1.5 py-0.2 rounded font-black">+10 GETAWAY BONUS</span>' : ''}
+              ${isWinner ? '<span class="text-[10px] bg-amber-500/20 text-amber-300 px-1.5 py-0.2 rounded font-black">+15 GETAWAY BONUS</span>' : ''}
             </div>
             <div class="text-[11px] text-slate-400 mt-0.5">
-              ${isWinner ? 'Escaped clean with the loot!' : (isCaught ? `Caught holding ${redCards} Red cards! Stash seized!` : 'Escaped unnoticed!')}
+              ${statusSub}
             </div>
           </div>
           <div class="text-right">
-            <span class="text-lg font-black ${isWinner ? 'text-amber-400' : (isCaught ? 'text-rose-400 line-through' : 'text-emerald-400')}">
-              ${bankedPoints} pts
-            </span>
-            <div class="text-xs font-black ${isCaught ? 'text-rose-400' : 'text-emerald-400'}">
-              ${isCaught ? '0 PTS (BUSTED!)' : `Score: ${finalScore} pts`}
+            <div class="text-xs font-black ${isCaught ? 'text-rose-400 line-through' : 'text-emerald-400'}">
+              +${ptsEarned} pts this round
+            </div>
+            <div class="text-sm font-black text-amber-400 mt-0.5">
+              Match Total: ${matchScores[p]} / 200
             </div>
           </div>
         `;
@@ -696,6 +904,17 @@
       }
 
       modal.classList.remove('hidden');
+
+      nextBtn.onclick = () => {
+        modal.classList.add('hidden');
+        if (isMatchOver) {
+          resetEntireMatch();
+        } else {
+          roundNumber++;
+          starterPlayer = (starterPlayer + 1) % 4;
+          initRound();
+        }
+      };
     }
 
     // Player Interactions
@@ -703,7 +922,7 @@
       if (currentPlayer !== 0 || playerStep !== 'DRAW') return;
       const card = drawFromDeck();
       if (card) hands[0].push(card);
-      logAnnouncement("You drew a card! Now lay up to 1 matching pair into your Stash.");
+      logAnnouncement("You drew a card! Now lay 1 pair into your Stash (or click Skip), then pass 1 card.");
       playerStep = 'PAIR';
       updateUI();
     };
@@ -715,7 +934,7 @@
 
       if (checkWinCondition(0)) return;
 
-      logAnnouncement("Pair banked! Now select 1 card from your hand to pass to your neighbor.");
+      logAnnouncement("Now select 1 card from your hand to pass to your neighbor.");
       playerStep = 'PASS';
       updateUI();
     };
@@ -735,14 +954,10 @@
       advanceTurn();
     };
 
-    document.getElementById('restart-btn').onclick = initGame;
-    document.getElementById('modal-restart-btn').onclick = () => {
-      document.getElementById('clean-modal').classList.add('hidden');
-      initGame();
-    };
+    document.getElementById('restart-match-btn').onclick = resetEntireMatch;
 
     // Auto-init
-    initGame();
+    initRound();
   </script>
 </body>
 </html>
