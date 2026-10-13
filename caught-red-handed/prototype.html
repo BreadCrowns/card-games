@@ -23,7 +23,7 @@
       <span class="text-2xl">🚨</span>
       <div>
         <h1 class="text-xl font-black tracking-wider text-rose-500 uppercase">Caught Red-Handed</h1>
-        <p class="text-xs text-slate-400">Heist Loot Stashing & Getaway Race</p>
+        <p class="text-xs text-slate-400">Heist Loot Stashing & Getaway Race (5 / 10 / 15 Pts)</p>
       </div>
     </div>
 
@@ -204,9 +204,9 @@
 
       <!-- Helper Hint -->
       <div class="text-center text-[11px] text-slate-400 font-medium flex items-center justify-center gap-4">
-        <span>Clean pairs: <b>1+1=2 pts</b></span>
-        <span>Petty Red: <b>1+4=5 pts</b></span>
-        <span class="text-amber-300 font-bold">Grand Red: <b>1+9=10 pts!</b></span>
+        <span>Clean pairs: <b>5+5=10 pts</b></span>
+        <span>Petty Red: <b>5+10=15 pts</b></span>
+        <span class="text-amber-300 font-bold">Grand Red: <b>5+15=20 pts!</b></span>
         <span class="text-rose-400 font-bold">⚠️ Caught with Red at end = 0 pts!</span>
       </div>
     </div>
@@ -234,15 +234,15 @@
   </div>
 
   <script>
-    // Game Definitions & Cards (Petty = 4 pts, Grand = 9 pts, Clean = 1 pt)
+    // Game Definitions & Cards: 5 / 10 / 15 Point Economy
     const ITEMS = [
-      { name: 'Cash', icon: '💵', cleanVal: 1, redVal: 4, isGrand: false },
-      { name: 'Diamond', icon: '💎', cleanVal: 1, redVal: 4, isGrand: false },
-      { name: 'Watch', icon: '⌚', cleanVal: 1, redVal: 4, isGrand: false },
-      { name: 'Key', icon: '🗝️', cleanVal: 1, redVal: 4, isGrand: false },
-      { name: 'Painting', icon: '🖼️', cleanVal: 1, redVal: 9, isGrand: true },
-      { name: 'Gold', icon: '🧈', cleanVal: 1, redVal: 9, isGrand: true },
-      { name: 'Crown', icon: '👑', cleanVal: 1, redVal: 9, isGrand: true }
+      { name: 'Cash', icon: '💵', cleanVal: 5, redVal: 10, isGrand: false },
+      { name: 'Diamond', icon: '💎', cleanVal: 5, redVal: 10, isGrand: false },
+      { name: 'Watch', icon: '⌚', cleanVal: 5, redVal: 10, isGrand: false },
+      { name: 'Key', icon: '🗝️', cleanVal: 5, redVal: 10, isGrand: false },
+      { name: 'Painting', icon: '🖼️', cleanVal: 5, redVal: 15, isGrand: true },
+      { name: 'Gold', icon: '🧈', cleanVal: 5, redVal: 15, isGrand: true },
+      { name: 'Crown', icon: '👑', cleanVal: 5, redVal: 15, isGrand: true }
     ];
 
     let deck = [];
@@ -258,30 +258,30 @@
     function buildDeck() {
       const cards = [];
 
-      // 28 Clean Loot (7 items x 4 copies, val: 1)
+      // 28 Clean Loot (7 items x 4 copies, val: 5)
       ITEMS.forEach(it => {
         for (let i = 0; i < 4; i++) {
-          cards.push({ type: 'LOOT', item: it.name, icon: it.icon, isRed: false, val: 1, isGrand: it.isGrand });
+          cards.push({ type: 'LOOT', item: it.name, icon: it.icon, isRed: false, val: 5, isGrand: it.isGrand });
         }
       });
 
       // 20 Red Contraband: 
-      // 4 Petty items x 3 copies (Val: 4) = 12 cards
+      // 4 Petty items x 3 copies (Val: 10) = 12 cards
       ITEMS.filter(it => !it.isGrand).forEach(it => {
         for (let i = 0; i < 3; i++) {
-          cards.push({ type: 'LOOT', item: it.name, icon: it.icon, isRed: true, val: 4, isGrand: false });
+          cards.push({ type: 'LOOT', item: it.name, icon: it.icon, isRed: true, val: 10, isGrand: false });
         }
       });
-      // 3 Grand items: 3 Paintings, 3 Gold, 2 Crowns (Val: 9) = 8 cards
+      // 3 Grand items: 3 Paintings, 3 Gold, 2 Crowns (Val: 15) = 8 cards
       ['Painting', 'Gold'].forEach(name => {
         const it = ITEMS.find(x => x.name === name);
         for (let i = 0; i < 3; i++) {
-          cards.push({ type: 'LOOT', item: it.name, icon: it.icon, isRed: true, val: 9, isGrand: true });
+          cards.push({ type: 'LOOT', item: it.name, icon: it.icon, isRed: true, val: 15, isGrand: true });
         }
       });
       const crown = ITEMS.find(x => x.name === 'Crown');
       for (let i = 0; i < 2; i++) {
-        cards.push({ type: 'LOOT', item: crown.name, icon: crown.icon, isRed: true, val: 9, isGrand: true });
+        cards.push({ type: 'LOOT', item: crown.name, icon: crown.icon, isRed: true, val: 15, isGrand: true });
       }
 
       // 6 Look Out! Reverses
@@ -341,11 +341,11 @@
       return stash.reduce((sum, pair) => sum + pair.points, 0);
     }
 
-    // RULE: On your turn, you may lay AT MOST 1 PAIR (not multiple)
+    // RULE: On your turn, lay AT MOST 1 PAIR (not multiple)
     function discardPlayerPairs(playerIdx, isInitial = false) {
       const hand = hands[playerIdx];
 
-      // 1. Check for Reverses (played immediately)
+      // 1. Reverses
       const revIdx = hand.findIndex(c => c.type === 'REVERSE');
       if (revIdx !== -1) {
         const revCard = hand.splice(revIdx, 1)[0];
@@ -356,7 +356,7 @@
         }
       }
 
-      // 2. Find all possible pairs in hand
+      // 2. Find candidate pairs
       const possiblePairs = [];
 
       ITEMS.forEach(it => {
@@ -365,7 +365,7 @@
 
         // Laundered pair (Red + Blue)
         if (reds.length > 0 && blues.length > 0) {
-          const pts = blues[0].val + reds[0].val; // 1 + 4 = 5, or 1 + 9 = 10
+          const pts = blues[0].val + reds[0].val; // 5 + 10 = 15, or 5 + 15 = 20
           possiblePairs.push({
             item: it.name,
             icon: it.icon,
@@ -378,7 +378,7 @@
 
         // Clean pair (Blue + Blue)
         if (blues.length >= 2) {
-          const pts = blues[0].val + blues[1].val; // 1 + 1 = 2
+          const pts = blues[0].val + blues[1].val; // 5 + 5 = 10
           possiblePairs.push({
             item: it.name,
             icon: it.icon,
@@ -390,12 +390,11 @@
         }
       });
 
-      // Prioritize the highest-value pair (e.g. 10pts Grand Laundered > 5pts Petty Laundered > 2pts Clean)
+      // Lay ONLY the single highest-value pair!
       if (possiblePairs.length > 0) {
         possiblePairs.sort((a, b) => b.points - a.points);
         const bestPair = possiblePairs[0];
 
-        // Lay ONLY this 1 pair!
         hand.splice(hand.indexOf(bestPair.c1), 1);
         hand.splice(hand.indexOf(bestPair.c2), 1);
         stashes[playerIdx].push({ item: bestPair.item, icon: bestPair.icon, isRed: bestPair.isRed, points: bestPair.points });
@@ -443,28 +442,24 @@
         discardPlayerPairs(b);
         updateUI();
 
-        // Win check if laying pair emptied their hand
         if (checkWinCondition(b)) return;
 
-        // 3. Pass in direction of play (legal to pass last card!)
+        // 3. Pass in direction of play
         setTimeout(() => {
           if (hands[b].length > 0) {
             const targetP = getTargetNeighbor(b);
             
-            // Bot passing heuristic:
-            // High incentive to hold 9-point Grand Reds if safe, but dump 4-point Reds or pass if in danger!
             let cardToPassIdx = -1;
             const reds = hands[b].map((c, i) => ({ card: c, idx: i })).filter(x => x.card.isRed);
             const blues = hands[b].map((c, i) => ({ card: c, idx: i })).filter(x => !x.card.isRed && x.card.type !== 'REVERSE');
 
-            // If holding 9-pt Grand Red and has 3+ cards, gamble and pass a 4-pt Red or a Blue card!
-            const hasGrandRed = reds.some(r => r.card.val === 9);
-            const pettyReds = reds.filter(r => r.card.val === 4);
+            const hasGrandRed = reds.some(r => r.card.val === 15);
+            const pettyReds = reds.filter(r => r.card.val === 10);
 
             if (pettyReds.length > 0) {
-              cardToPassIdx = pettyReds[0].idx; // Pass petty red first!
-            } else if (hasGrandRed && blues.length > 0 && Math.random() < 0.4) {
-              cardToPassIdx = blues[0].idx; // Hold onto 9-pt Red greedily!
+              cardToPassIdx = pettyReds[0].idx;
+            } else if (hasGrandRed && blues.length > 0 && Math.random() < 0.45) {
+              cardToPassIdx = blues[0].idx; // Hold onto 15-pt Grand Red greedily!
             } else if (reds.length > 0) {
               cardToPassIdx = reds[0].idx;
             } else {
@@ -478,7 +473,6 @@
 
           updateUI();
 
-          // Check if bot emptied hand by passing last card!
           if (checkWinCondition(b)) return;
 
           advanceTurn();
@@ -621,7 +615,7 @@
         const isSelected = (selectedPassCardIndex === idx);
         
         let borderStyle = c.isRed 
-          ? (c.val === 9 ? "border-2 border-amber-400 bg-rose-950/70 red-evidence" : "border-2 border-rose-500 bg-rose-950/50 red-evidence")
+          ? (c.val === 15 ? "border-2 border-amber-400 bg-rose-950/70 red-evidence" : "border-2 border-rose-500 bg-rose-950/50 red-evidence")
           : (c.type === 'REVERSE' ? "border-2 border-amber-500 bg-amber-950/40" : "border border-slate-700 bg-slate-800/90");
 
         if (isSelected) {
@@ -633,8 +627,8 @@
         cardEl.innerHTML = `
           <div class="w-full flex justify-between items-center text-[10px] font-black">
             <span>${c.icon}</span>
-            ${c.isRed ? `<span class="${c.val === 9 ? 'text-amber-300 font-black' : 'text-rose-400 font-black'}">+${c.val}pts</span>` : ''}
-            ${!c.isRed && c.type === 'LOOT' ? `<span class="text-emerald-400 font-black">+${c.val}pt</span>` : ''}
+            ${c.isRed ? `<span class="${c.val === 15 ? 'text-amber-300 font-black' : 'text-rose-400 font-black'}">+${c.val}pts</span>` : ''}
+            ${!c.isRed && c.type === 'LOOT' ? `<span class="text-emerald-400 font-black">+${c.val}pts</span>` : ''}
             ${c.type === 'REVERSE' ? '<span class="text-amber-400 font-black">ACTION</span>' : ''}
           </div>
           <div class="flex flex-col items-center justify-center my-auto">
@@ -642,7 +636,7 @@
             <span class="text-[10px] font-bold text-slate-200 mt-1 uppercase text-center">${c.item}</span>
           </div>
           <div class="w-full text-center text-[9px] font-semibold text-slate-400 border-t border-slate-700/50 pt-1">
-            ${c.isRed ? (c.val === 9 ? 'Grand (+9pts)' : 'Petty (+4pts)') : (c.type === 'REVERSE' ? 'Reverse' : 'Clean (+1pt)')}
+            ${c.isRed ? (c.val === 15 ? 'Grand (+15pts)' : 'Petty (+10pts)') : (c.type === 'REVERSE' ? 'Reverse' : 'Clean (+5pts)')}
           </div>
         `;
 
@@ -677,7 +671,7 @@
         const isWinner = (p === winnerIdx);
         const isCaught = !isWinner && (redCards > 0);
         
-        let finalScore = isWinner ? (bankedPoints + 3) : (isCaught ? 0 : bankedPoints);
+        let finalScore = isWinner ? (bankedPoints + 10) : (isCaught ? 0 : bankedPoints);
 
         const row = document.createElement('div');
         row.className = `flex justify-between items-center p-2.5 rounded-xl ${isWinner ? 'bg-amber-950/40 border border-amber-600' : (isCaught ? 'bg-rose-950/40 border border-rose-800' : 'bg-emerald-950/40 border border-emerald-800')}`;
@@ -686,10 +680,10 @@
           <div>
             <div class="font-bold text-slate-200 flex items-center gap-1.5">
               <span>${getPlayerName(p)}</span>
-              ${isWinner ? '<span class="text-[10px] bg-amber-500/20 text-amber-300 px-1.5 py-0.2 rounded font-black">+3 GETAWAY BONUS</span>' : ''}
+              ${isWinner ? '<span class="text-[10px] bg-amber-500/20 text-amber-300 px-1.5 py-0.2 rounded font-black">+10 GETAWAY BONUS</span>' : ''}
             </div>
             <div class="text-[11px] text-slate-400 mt-0.5">
-              ${isWinner ? 'Escaped clean!' : (isCaught ? `Caught holding ${redCards} Red cards! Stash confiscated!` : 'Escaped unnoticed!')}
+              ${isWinner ? 'Escaped clean with the loot!' : (isCaught ? `Caught holding ${redCards} Red cards! Stash seized!` : 'Escaped unnoticed!')}
             </div>
           </div>
           <div class="text-right">
@@ -722,7 +716,6 @@
       discardPlayerPairs(0);
       updateUI();
 
-      // Win check if laying pair emptied your hand
       if (checkWinCondition(0)) return;
 
       logAnnouncement("Pair banked! Now select 1 card from your hand to pass to your neighbor.");
@@ -740,7 +733,6 @@
       logAnnouncement(`You passed a card to ${getPlayerName(targetP)}!`);
       updateUI();
 
-      // Check if passing your last card emptied your hand!
       if (checkWinCondition(0)) return;
 
       advanceTurn();
