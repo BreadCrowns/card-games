@@ -50,25 +50,28 @@ On your turn, execute these **3 steps** in order:
 Draw **1 card** from the center Evidence Locker.  
 *(If the Locker runs out, continue playing from hands until someone escapes or no pairs remain).*
 
-### Step 2: Lay At Most 1 Pair (The Golden Rule of Pairs)
+### Step 2: Lay At Most 1 Pair (The 3 Legal Pairs)
 > 🔑 **THE GOLDEN PAIRING LAW**:  
-> **Every single pair in the game REQUIRES a Clean (Blue) card!**
+> **Every pair requires either matching items (Blue+Blue or Blue+Red), OR a Green Wild (which pairs with ANY card, Blue or Red)!**
 
-You may lay at most **1 pair** per turn into your front-of-table Stash. A Blue card can be paired with:
+You may lay at most **1 pair** per turn into your front-of-table Stash:
 
-1. **Another Matching Blue Card** ──▶ **Clean Pair**:
+1. **Two Matching Blue Cards** ──▶ **Clean Pair**:
    * Example: Blue Cash + Blue Cash.
    * **Score**: $5 + 5 = \mathbf{10\text{ Points}}$!
-2. **A Matching Red Card** ──▶ **Laundered Contraband Pair**:
+2. **A Matching Blue + Red Card** ──▶ **Laundered Contraband Pair**:
    * Example: Blue Diamond + Red Diamond.
    * **Score**: Petty = $5 + 10 = \mathbf{15\text{ Points}}$; Grand = $5 + 15 = \mathbf{20\text{ Points}}$!
    * Cleans dangerous contraband from your hand so you won't bust!
-3. **ANY Green Counterfeit Wild** ──▶ **Counterfeit Wild Pair**:
-   * Example: Green Wild + ANY Blue card (does **not** need to match items!).
-   * **Score**: $5 + 0 = \mathbf{5\text{ Points}}$!
-   * 🔄 **CAMERA FLIP**: Immediately flip the **Security Camera** card to reverse play direction!
+3. **ANY Green Counterfeit Wild + ANY Card (Blue OR Red!)** ──▶ **Wild Pair**:
+   * **Wild + ANY Blue (Clean Counterfeit)**:  
+     * **Score**: $5 + 0 = \mathbf{5\text{ Points}}$!
+   * **Wild + ANY Red (Bribed Contraband)**:  
+     * **Score**: Petty = $\mathbf{10\text{ Points}}$; Grand = $\mathbf{15\text{ Points}}$!
+     * *The Ultimate Lifeline:* Uses a counterfeit wild to launder dangerous Red Contraband safely out of your hand so you won't bust!
+   * 🔄 **CAMERA FLIP**: Laying any pair containing a Green Wild immediately flips the **Security Camera** card to reverse play direction!
 
-> *Illegal Pairs: Red + Red (cannot launder contraband with contraband), Green + Green (fakes need real items), and Red + Green (cannot counterfeit contraband).*
+> *Illegal Pairs: Red + Red (cannot pair contraband with contraband) and Green + Green (two fakes make nothing).*
 
 ### Step 3: Pass in Direction of Play
 Choose **1 card** from your hand and slide it face-down to your neighbor in the active direction (Left if Clockwise, Right if Counter-Clockwise).  
