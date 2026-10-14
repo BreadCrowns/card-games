@@ -120,7 +120,7 @@
         </div>
       </div>
 
-      <!-- Center Tabletop: Evidence Locker & Security Camera (Zero Central Discard) -->
+      <!-- Center Tabletop: Evidence Locker & Security Camera -->
       <div class="col-span-6 bg-slate-900/40 border border-slate-800/80 rounded-3xl p-6 flex flex-col items-center justify-center gap-4 relative shadow-2xl backdrop-blur-sm">
         
         <div class="absolute -top-3 px-4 py-0.5 bg-slate-950 border border-slate-700 rounded-full text-[10px] font-bold text-slate-400 tracking-wider flex items-center gap-1.5 shadow">
@@ -206,16 +206,19 @@
           <!-- Badges of banked pairs -->
         </div>
 
-        <!-- Dynamic Action Buttons -->
+        <!-- Dynamic Action Buttons: Allows choosing which cards to discard/pair! -->
         <div class="flex items-center gap-2" id="action-controls">
-          <button id="btn-draw" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl shadow-lg transition flex items-center gap-1.5">
+          <button id="btn-draw" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl shadow-lg transition flex items-center gap-1.5">
             <span>📦</span> 1. Draw Card
           </button>
-          <button id="btn-pair" disabled class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-30 disabled:pointer-events-none text-white text-xs font-bold rounded-xl shadow-lg transition flex items-center gap-1.5">
-            <span>💰</span> <span id="btn-pair-text">2. Lay Pair</span> (<span id="pair-count-badge">0</span>)
+          <button id="btn-pair" disabled class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-30 disabled:pointer-events-none text-white text-xs font-bold rounded-xl shadow-lg transition flex items-center gap-1.5">
+            <span>💰</span> <span id="btn-pair-text">2. Lay Selected Pair</span>
           </button>
-          <button id="btn-pass" disabled class="px-4 py-2 bg-rose-600 hover:bg-rose-500 disabled:opacity-30 disabled:pointer-events-none text-white text-xs font-bold rounded-xl shadow-lg transition flex items-center gap-1.5">
-            <span>👉</span> 3. Pass Selected Card
+          <button id="btn-skip-pair" disabled class="px-3 py-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 disabled:pointer-events-none text-slate-300 text-xs font-bold rounded-xl border border-slate-700 shadow transition flex items-center gap-1">
+            <span>Skip Pair</span> ➡️
+          </button>
+          <button id="btn-pass" disabled class="px-3.5 py-2 bg-rose-600 hover:bg-rose-500 disabled:opacity-30 disabled:pointer-events-none text-white text-xs font-bold rounded-xl shadow-lg transition flex items-center gap-1.5">
+            <span>👉</span> 3. Pass Card
           </button>
         </div>
       </div>
@@ -283,9 +286,10 @@
     let direction = 1; // 1 = Clockwise (Pass Left), -1 = Counter-Clockwise (Pass Right)
     let turnCount = 1;
     let selectedPassCardIndex = null;
+    let selectedPairIndices = []; // Stores user's selected cards for laying a pair
     let playerStep = 'DRAW'; // 'DRAW', 'PAIR', 'PASS'
 
-    // Build the 54-card playable deck (Zero central discard pile needed!)
+    // Build the 54-card playable deck
     function buildDeck() {
       const cards = [];
 
@@ -334,6 +338,7 @@
       direction = 1;
       turnCount = 1;
       selectedPassCardIndex = null;
+      selectedPairIndices = [];
       playerStep = (currentPlayer === 0) ? 'DRAW' : 'BOT';
 
       // Deal 7 cards each (54 - 28 = 26 in draw deck)
@@ -366,7 +371,74 @@
       return stash.reduce((sum, pair) => sum + pair.points, 0);
     }
 
-    // THE GOLDEN PAIRING LAW: Every single pair REQUIRES at least one Blue card!
+    // Evaluates any 2 cards selected by the player against the Golden Pairing Law
+    function evaluateSelectedPair(c1, c2) {
+      if (!c1 || !c2) return { valid: false, error: "Select 2 cards to form a pair." };
+
+      let blue = null;
+      let other = null;
+
+      if (c1.color === 'BLUE' && c2.color !== 'BLUE') {
+        blue = c1; other = c2;
+      } else if (c2.color === 'BLUE' && c1.color !== 'BLUE') {
+        blue = c2; other = c1;
+      } else if (c1.color === 'BLUE' && c2.color === 'BLUE') {
+        // Both Blue: Must match the same item
+        if (c1.item === c2.item) {
+          return {
+            valid: true,
+            item: c1.item,
+            icon: c1.icon,
+            color: 'BLUE',
+            category: 'CLEAN',
+            points: 10,
+            flipsCamera: false,
+            label: `Clean ${c1.item} Pair`
+          };
+        } else {
+          return { valid: false, error: `Clean pairs must match (${c1.item} ≠ ${c2.item})!` };
+        }
+      } else {
+        return { valid: false, error: "Every pair requires at least one Blue card!" };
+      }
+
+      // One is Blue, other is Green Wild
+      if (other.color === 'GREEN') {
+        return {
+          valid: true,
+          item: `Wild (${blue.item})`,
+          icon: '🎭🔄',
+          color: 'GREEN',
+          category: 'WILD',
+          points: 5,
+          flipsCamera: true,
+          label: `Counterfeit Wild w/ ${blue.item}`
+        };
+      }
+
+      // One is Blue, other is Red Contraband
+      if (other.color === 'RED') {
+        if (other.item === blue.item) {
+          const pts = blue.val + other.val;
+          return {
+            valid: true,
+            item: other.item,
+            icon: other.icon,
+            color: 'RED',
+            category: other.isGrand ? 'GRAND' : 'PETTY',
+            points: pts,
+            flipsCamera: false,
+            label: `Laundered ${other.item} Pair`
+          };
+        } else {
+          return { valid: false, error: `Contraband must match item (${other.item} ≠ ${blue.item})!` };
+        }
+      }
+
+      return { valid: false, error: "Invalid combination!" };
+    }
+
+    // Available candidate pairs for bot AI
     function getCandidatePairs(playerIdx) {
       const hand = hands[playerIdx];
       const candidates = [];
@@ -375,7 +447,7 @@
       const reds = hand.filter(c => c.color === 'RED');
       const greens = hand.filter(c => c.color === 'GREEN');
 
-      if (blues.length === 0) return candidates; // Cannot lay ANY pair without a Blue card!
+      if (blues.length === 0) return candidates;
 
       // 1. Red + Blue (Laundered Contraband: 15 or 20 pts)
       reds.forEach(r => {
@@ -390,8 +462,7 @@
             points: pts,
             flipsCamera: false,
             c1: r,
-            c2: matchBlue,
-            label: `${r.item} Laundered (+${pts}pts)`
+            c2: matchBlue
           });
         }
       });
@@ -408,15 +479,13 @@
             points: 10,
             flipsCamera: false,
             c1: itemBlues[0],
-            c2: itemBlues[1],
-            label: `${it.name} Clean (+10pts)`
+            c2: itemBlues[1]
           });
         }
       });
 
       // 3. ANY Green Wild + ANY Blue card (Counterfeit Wild: 5 pts + 🔄FLIP!)
       if (greens.length > 0 && blues.length > 0) {
-        // Pair with any blue that doesn't break a better red match if possible
         const bestBlueToBurn = blues[0];
         candidates.push({
           item: `Wild (${bestBlueToBurn.item})`,
@@ -426,29 +495,26 @@
           points: 5,
           flipsCamera: true,
           c1: greens[0],
-          c2: bestBlueToBurn,
-          label: `Counterfeit Wild (+5pts & 🔄FLIP)`
+          c2: bestBlueToBurn
         });
       }
 
       return candidates;
     }
 
-    // Lay at most 1 pair per turn
-    function discardPlayerPairs(playerIdx) {
-      const hand = hands[playerIdx];
-      const candidates = getCandidatePairs(playerIdx);
+    // Bot AI pair playing
+    function discardBotPairs(b) {
+      const hand = hands[b];
+      const candidates = getCandidatePairs(b);
 
       if (candidates.length > 0) {
-        // Priority: Grand Laundered (20) > Petty Laundered (15) > Clean (10) > Counterfeit Wild (5 + FLIP)
-        // Unless rushing out or wanting to reverse
         candidates.sort((a, b) => b.points - a.points);
         const bestPair = candidates[0];
 
         hand.splice(hand.indexOf(bestPair.c1), 1);
         hand.splice(hand.indexOf(bestPair.c2), 1);
 
-        stashes[playerIdx].push({
+        stashes[b].push({
           item: bestPair.item,
           icon: bestPair.icon,
           color: bestPair.color,
@@ -458,11 +524,11 @@
 
         if (bestPair.flipsCamera) {
           direction = -direction;
-          logAnnouncement(`${getPlayerName(playerIdx)} banked a Counterfeit Wild with a Clean Blue card! Passing direction reversed! 🔄`);
+          logAnnouncement(`${getPlayerName(b)} banked a Counterfeit Wild with a Clean Blue card! Passing direction reversed! 🔄`);
         } else if (bestPair.color === 'RED') {
-          logAnnouncement(`${getPlayerName(playerIdx)} laundered a ${bestPair.item} pair! Massive +${bestPair.points} points banked!`);
+          logAnnouncement(`${getPlayerName(b)} laundered a ${bestPair.item} pair! Massive +${bestPair.points} points banked!`);
         } else {
-          logAnnouncement(`${getPlayerName(playerIdx)} banked a clean pair of ${bestPair.item}s (+${bestPair.points} pts).`);
+          logAnnouncement(`${getPlayerName(b)} banked a clean pair of ${bestPair.item}s (+${bestPair.points} pts).`);
         }
         return true;
       }
@@ -497,7 +563,7 @@
         if (card) hands[b].push(card);
 
         // 2. Lay AT MOST 1 pair
-        discardPlayerPairs(b);
+        discardBotPairs(b);
         updateUI();
 
         if (checkWinCondition(b)) return;
@@ -562,7 +628,9 @@
 
       if (currentPlayer === 0) {
         playerStep = 'DRAW';
-        logAnnouncement("It's your turn! 1. Draw Card ──▶ 2. Lay 1 Pair (needs a Blue card) ──▶ 3. Pass 1 Card.");
+        selectedPairIndices = [];
+        selectedPassCardIndex = null;
+        logAnnouncement("It's your turn! 1. Click Draw Card to start.");
         updateUI();
       } else {
         setTimeout(() => playBotTurn(currentPlayer), 350);
@@ -666,40 +734,73 @@
         statusTag.innerText = "WAITING...";
       }
 
-      // Check available candidate pairs for player
-      const pairsAvailable = getCandidatePairs(0);
-      document.getElementById('pair-count-badge').innerText = pairsAvailable.length;
-
-      const btnPairText = document.getElementById('btn-pair-text');
-      btnPairText.innerText = (pairsAvailable.length > 0) ? '2. Lay Pair' : '2. Skip Pair';
-
-      // Render Player Cards
-      renderPlayerHand();
-
-      // Controls State
+      // Dynamic Controls State for Pair Selection
       const btnDraw = document.getElementById('btn-draw');
       const btnPair = document.getElementById('btn-pair');
+      const btnSkipPair = document.getElementById('btn-skip-pair');
       const btnPass = document.getElementById('btn-pass');
+      const btnPairText = document.getElementById('btn-pair-text');
 
       if (currentPlayer === 0) {
         btnDraw.disabled = (playerStep !== 'DRAW');
-        btnPair.disabled = (playerStep !== 'PAIR');
+        btnSkipPair.disabled = (playerStep !== 'PAIR');
+
+        if (playerStep === 'PAIR') {
+          if (selectedPairIndices.length === 2) {
+            const c1 = hands[0][selectedPairIndices[0]];
+            const c2 = hands[0][selectedPairIndices[1]];
+            const evalRes = evaluateSelectedPair(c1, c2);
+
+            if (evalRes.valid) {
+              btnPair.disabled = false;
+              btnPair.className = "px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black rounded-xl shadow-lg ring-2 ring-emerald-400 transition flex items-center gap-1.5 animate-bounce";
+              btnPairText.innerText = `Bank ${evalRes.label} (+${evalRes.points}pts${evalRes.flipsCamera ? ' & 🔄FLIP' : ''})`;
+            } else {
+              btnPair.disabled = true;
+              btnPair.className = "px-3.5 py-2 bg-slate-800 text-rose-400 border border-rose-800/60 text-xs font-bold rounded-xl shadow opacity-75 cursor-not-allowed flex items-center gap-1.5";
+              btnPairText.innerText = `Invalid Pair (${evalRes.error})`;
+            }
+          } else if (selectedPairIndices.length === 1) {
+            btnPair.disabled = true;
+            btnPair.className = "px-3.5 py-2 bg-emerald-600/30 text-emerald-300/50 text-xs font-bold rounded-xl shadow flex items-center gap-1.5 cursor-not-allowed";
+            btnPairText.innerText = "Select 2nd Card (1/2)";
+          } else {
+            btnPair.disabled = true;
+            btnPair.className = "px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-30 disabled:pointer-events-none text-white text-xs font-bold rounded-xl shadow-lg transition flex items-center gap-1.5";
+            btnPairText.innerText = "2. Click 2 Cards to Bank";
+          }
+        } else {
+          btnPair.disabled = true;
+          btnPair.className = "px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-30 disabled:pointer-events-none text-white text-xs font-bold rounded-xl shadow-lg transition flex items-center gap-1.5";
+          btnPairText.innerText = "2. Lay Selected Pair";
+        }
+
         btnPass.disabled = (playerStep !== 'PASS' || selectedPassCardIndex === null);
       } else {
         btnDraw.disabled = true;
         btnPair.disabled = true;
+        btnSkipPair.disabled = true;
         btnPass.disabled = true;
       }
+
+      // Render Player Cards
+      renderPlayerHand();
     }
 
     function renderPlayerHand() {
       const container = document.getElementById('player-hand');
       container.innerHTML = '';
 
+      const evalRes = (selectedPairIndices.length === 2 && playerStep === 'PAIR')
+        ? evaluateSelectedPair(hands[0][selectedPairIndices[0]], hands[0][selectedPairIndices[1]])
+        : null;
+
       hands[0].forEach((c, idx) => {
         const cardEl = document.createElement('div');
-        const isSelected = (selectedPassCardIndex === idx);
-        
+        const isPassSelected = (playerStep === 'PASS' && selectedPassCardIndex === idx);
+        const pairSelectionIndex = (playerStep === 'PAIR') ? selectedPairIndices.indexOf(idx) : -1;
+        const isPairSelected = (pairSelectionIndex !== -1);
+
         let borderStyle = "border border-slate-700 bg-slate-800/90";
 
         if (c.color === 'RED') {
@@ -712,11 +813,22 @@
           borderStyle = "border-2 border-blue-500/80 bg-blue-950/40";
         }
 
-        if (isSelected) {
-          borderStyle += " ring-4 ring-rose-400 -translate-y-3";
+        // Selection Visual Styling
+        if (isPassSelected) {
+          borderStyle += " ring-4 ring-rose-400 -translate-y-3.5 shadow-2xl scale-105";
+        } else if (isPairSelected) {
+          if (selectedPairIndices.length === 2) {
+            if (evalRes && evalRes.valid) {
+              borderStyle += " ring-4 ring-emerald-400 bg-emerald-950/80 -translate-y-3.5 shadow-2xl scale-105";
+            } else {
+              borderStyle += " ring-4 ring-rose-500 bg-rose-950/80 -translate-y-3 shadow-xl";
+            }
+          } else {
+            borderStyle += " ring-4 ring-amber-400 bg-amber-950/70 -translate-y-3 shadow-xl scale-105";
+          }
         }
 
-        cardEl.className = `w-24 h-36 rounded-xl p-2 flex flex-col justify-between items-center shadow-xl cursor-pointer transition transform hover:-translate-y-1.5 select-none ${borderStyle}`;
+        cardEl.className = `w-24 h-36 rounded-xl p-2 flex flex-col justify-between items-center shadow-xl cursor-pointer transition transform hover:-translate-y-1.5 select-none relative ${borderStyle}`;
         
         let badgeText = '';
         if (c.color === 'RED') badgeText = `<span class="${c.val === 15 ? 'text-amber-300' : 'text-rose-400'} font-black">+${c.val}pts</span>`;
@@ -728,7 +840,17 @@
         else if (c.color === 'GREEN') typeSubtitle = 'Pairs w/ Any Blue';
         else if (c.color === 'BLUE') typeSubtitle = 'Clean (+5)';
 
+        // Badges for active selection
+        let selectionPill = '';
+        if (isPairSelected) {
+          const pillColor = (selectedPairIndices.length === 2 && evalRes && !evalRes.valid) ? 'bg-rose-600' : 'bg-amber-500';
+          selectionPill = `<div class="absolute -top-2 px-2 py-0.5 ${pillColor} text-white font-black text-[9px] rounded-full shadow tracking-wider uppercase">Pair #${pairSelectionIndex + 1}</div>`;
+        } else if (isPassSelected) {
+          selectionPill = `<div class="absolute -top-2 px-2 py-0.5 bg-rose-600 text-white font-black text-[9px] rounded-full shadow tracking-wider uppercase">Pass 👉</div>`;
+        }
+
         cardEl.innerHTML = `
+          ${selectionPill}
           <div class="w-full flex justify-between items-center text-[10px] font-black">
             <span>${c.icon}</span>
             ${badgeText}
@@ -743,8 +865,44 @@
         `;
 
         cardEl.onclick = () => {
-          if (currentPlayer === 0 && playerStep === 'PASS') {
+          if (currentPlayer !== 0) return;
+
+          if (playerStep === 'PAIR') {
+            const pos = selectedPairIndices.indexOf(idx);
+            if (pos !== -1) {
+              selectedPairIndices.splice(pos, 1); // Deselect
+            } else {
+              if (selectedPairIndices.length < 2) {
+                selectedPairIndices.push(idx);
+              } else {
+                selectedPairIndices[1] = idx; // Replace second selection
+              }
+            }
+
+            // Real-time helpful banner feedback
+            if (selectedPairIndices.length === 1) {
+              const sel1 = hands[0][selectedPairIndices[0]];
+              logAnnouncement(`Selected ${sel1.item} (${sel1.color}). Click a second card to pair with it, or click 'Skip Pair'.`);
+            } else if (selectedPairIndices.length === 2) {
+              const res = evaluateSelectedPair(hands[0][selectedPairIndices[0]], hands[0][selectedPairIndices[1]]);
+              if (res.valid) {
+                logAnnouncement(`Valid Pair: ${res.label} (+${res.points} pts${res.flipsCamera ? ' & 🔄FLIP' : ''})! Click 'Bank Pair' to lay it.`);
+              } else {
+                logAnnouncement(`⚠️ ${res.error}`);
+              }
+            } else {
+              logAnnouncement("Click 2 cards to bank a pair (remember: every pair needs a Blue card!), or click 'Skip Pair'.");
+            }
+
+            updateUI();
+          } else if (playerStep === 'PASS') {
             selectedPassCardIndex = (selectedPassCardIndex === idx) ? null : idx;
+            if (selectedPassCardIndex !== null) {
+              const pCard = hands[0][selectedPassCardIndex];
+              logAnnouncement(`Selected ${pCard.item} (${pCard.color}) to pass. Click '3. Pass Card' to slide it to your neighbor.`);
+            } else {
+              logAnnouncement("Click 1 card from your hand to select it for passing.");
+            }
             updateUI();
           }
         };
@@ -856,28 +1014,72 @@
       };
     }
 
-    // Player Interactions
+    // Player Interaction Handlers
     document.getElementById('btn-draw').onclick = () => {
       if (currentPlayer !== 0 || playerStep !== 'DRAW') return;
       const card = drawFromDeck();
       if (card) hands[0].push(card);
-      logAnnouncement("You drew a card! Now lay 1 pair (needs a Blue card, or click Skip), then pass 1 card.");
+      logAnnouncement("You drew a card! Now click 2 cards to bank a pair (Every pair needs a Blue card!), or click 'Skip Pair'.");
       playerStep = 'PAIR';
+      selectedPairIndices = [];
       updateUI();
     };
 
+    // User banks the chosen pair
     document.getElementById('btn-pair').onclick = () => {
-      if (currentPlayer !== 0 || playerStep !== 'PAIR') return;
-      discardPlayerPairs(0);
+      if (currentPlayer !== 0 || playerStep !== 'PAIR' || selectedPairIndices.length !== 2) return;
+      
+      const idx1 = selectedPairIndices[0];
+      const idx2 = selectedPairIndices[1];
+      const c1 = hands[0][idx1];
+      const c2 = hands[0][idx2];
+
+      const evalRes = evaluateSelectedPair(c1, c2);
+      if (!evalRes.valid) return;
+
+      // Remove the 2 cards (highest index first to preserve index stability)
+      const first = Math.max(idx1, idx2);
+      const second = Math.min(idx1, idx2);
+      hands[0].splice(first, 1);
+      hands[0].splice(second, 1);
+
+      stashes[0].push({
+        item: evalRes.item,
+        icon: evalRes.icon,
+        color: evalRes.color,
+        points: evalRes.points,
+        category: evalRes.category
+      });
+
+      if (evalRes.flipsCamera) {
+        direction = -direction;
+        logAnnouncement(`You banked a Counterfeit Wild with a Clean Blue card! Passing direction reversed! 🔄`);
+      } else if (evalRes.color === 'RED') {
+        logAnnouncement(`You laundered a ${evalRes.item} pair! Massive +${evalRes.points} points banked!`);
+      } else {
+        logAnnouncement(`You banked a clean pair of ${evalRes.item}s (+${evalRes.points} pts).`);
+      }
+
+      selectedPairIndices = [];
       updateUI();
 
       if (checkWinCondition(0)) return;
 
-      logAnnouncement("Now select 1 card from your hand to pass to your neighbor.");
       playerStep = 'PASS';
+      logAnnouncement("Pair banked! Now click 1 card in your hand to select it for passing.");
       updateUI();
     };
 
+    // User skips pair laying
+    document.getElementById('btn-skip-pair').onclick = () => {
+      if (currentPlayer !== 0 || playerStep !== 'PAIR') return;
+      selectedPairIndices = [];
+      playerStep = 'PASS';
+      logAnnouncement("Skipped laying a pair. Now click 1 card in your hand to pass to your neighbor.");
+      updateUI();
+    };
+
+    // User passes selected card
     document.getElementById('btn-pass').onclick = () => {
       if (currentPlayer !== 0 || playerStep !== 'PASS' || selectedPassCardIndex === null) return;
       const targetP = getTargetNeighbor(0);
