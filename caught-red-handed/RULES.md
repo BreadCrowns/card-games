@@ -78,13 +78,12 @@ Choose **1 card** from your hand and slide it face-down to your neighbor in the 
 
 ## 5. End of Round & Scoring
 
-The split second a player empties their hand:
+A round ends immediately in one of two ways:
 
-```
-🚗💨 "GETAWAY CAR!"
-```
+1. 🚗💨 **The Getaway (Hand Emptied)**: The split second a player empties their hand (either by laying a pair or passing their final card), they shout *"GETAWAY CAR!"* and the round ends immediately.
+2. 🚨 **The Standoff (Locker Empty & Full Rotation Without Melds)**: If the Locker (draw pile) is completely empty and every player takes a turn in sequence without anyone laying down a meld, sirens wail and the round ends immediately! (This eliminates infinite stalemates and creates a sudden-death scramble when only unmatchable contraband remains circulating).
 
-The round ends immediately! **FREEZE!**
+In either case, **FREEZE!** End of round scoring applies immediately:
 
 1. **The Escape Check**: All players score what they successfully banked in their personal Stash:
    * **The Getaway Driver (First Out)**:  
@@ -94,7 +93,7 @@ The round ends immediately! **FREEZE!**
    * **Caught Red-Handed (Holding 1+ Red Cards)**:  
      🚨 **BUSTED!** The sirens wail, the cops swarm, and **your entire banked haul for that round is seized (0 Points)!**
 
-> **Pure Loot Scoring**: There is no artificial point bonus for going out first. Shouting *"Getaway Car!"* is your ultimate offensive weapon: it guarantees your own safety while catching your opponents with Red Contraband to wipe their stashes to 0!
+> **Pure Loot Scoring**: There is no artificial point bonus for going out first. Ending the round is your ultimate offensive weapon: it guarantees your own safety while catching your opponents with Red Contraband to wipe their stashes to 0!
 
 ---
 

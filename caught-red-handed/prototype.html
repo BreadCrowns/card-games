@@ -269,6 +269,8 @@
     let selectedPassCardIndex = null;
     let selectedPairIndices = []; // Stores user's selected cards for laying a pair
     let playerStep = 'DRAW'; // 'DRAW', 'PAIR', 'PASS'
+    let consecutiveTurnsWithoutMeld = 0; // Tracks standoff rule: 4 consecutive turns without any melds ends round
+    let playerMadeMeldThisTurn = false;
 
     // Build the 54-card playable deck (Option 3 Asymmetrical Balanced Tier)
     function buildDeck() {
@@ -309,6 +311,8 @@
       currentPlayer = starterPlayer;
       direction = 1;
       turnCount = 1;
+      consecutiveTurnsWithoutMeld = 0;
+      playerMadeMeldThisTurn = false;
       selectedPassCardIndex = null;
       selectedPairIndices = [];
       playerStep = (currentPlayer === 0) ? 'DRAW' : 'BOT';
@@ -577,10 +581,19 @@
         const card = drawFromDeck();
         if (card) hands[b].push(card);
 
-        discardBotPairs(b);
+        const botMeld = discardBotPairs(b);
+        if (botMeld) {
+          consecutiveTurnsWithoutMeld = 0;
+        } else {
+          consecutiveTurnsWithoutMeld++;
+        }
         updateUI();
 
         if (checkWinCondition(b)) return;
+        if (deck.length === 0 && consecutiveTurnsWithoutMeld >= 4) {
+          showRoundModal(-1, 'STANDOFF');
+          return;
+        }
 
         setTimeout(() => {
           if (hands[b].length > 0) {
@@ -647,6 +660,10 @@
           updateUI();
 
           if (checkWinCondition(b)) return;
+          if (deck.length === 0 && consecutiveTurnsWithoutMeld >= 4) {
+            showRoundModal(-1, 'STANDOFF');
+            return;
+          }
 
           advanceTurn();
         }, 500);
@@ -977,7 +994,7 @@
       document.getElementById('announcement-banner').innerText = msg;
     }
 
-    function showRoundModal(winnerIdx) {
+    function showRoundModal(winnerIdx, endReason = 'NORMAL') {
       const modal = document.getElementById('clean-modal');
       const icon = document.getElementById('modal-icon');
       const title = document.getElementById('modal-title');
@@ -986,19 +1003,20 @@
       const nextBtn = document.getElementById('modal-next-btn');
 
       const roundPointsEarned = [0, 0, 0, 0];
+      const isStandoff = (endReason === 'STANDOFF' || winnerIdx === -1);
 
       for (let p = 0; p < 4; p++) {
         const hasRed = hands[p].some(c => c.color === 'RED');
         const bankedPoints = calculateStashPoints(stashes[p]);
-        const isWinner = (p === winnerIdx);
-        const isCaught = !isWinner && hasRed;
+        const isWinner = (p === winnerIdx && !isStandoff);
+        const isCaught = hasRed;
 
         if (isWinner) {
           roundPointsEarned[p] = bankedPoints; // 0 Escape Bonus (pure stash scoring)
         } else if (isCaught) {
-          roundPointsEarned[p] = 0;
+          roundPointsEarned[p] = 0; // Caught Red-Handed!
         } else {
-          roundPointsEarned[p] = bankedPoints;
+          roundPointsEarned[p] = bankedPoints; // Escaped Clean
         }
 
         matchScores[p] += roundPointsEarned[p];
@@ -1014,6 +1032,12 @@
         desc.innerText = `${getPlayerName(grandChamp)} crossed 300 points (${matchScores[grandChamp]} pts) and takes the crown!`;
         nextBtn.innerHTML = `<span>START NEW HEIST MATCH</span> 🔄`;
         nextBtn.className = "w-full py-2.5 bg-amber-600 hover:bg-amber-500 text-white font-black text-xs rounded-xl shadow-lg transition flex items-center justify-center gap-2";
+      } else if (isStandoff) {
+        icon.innerText = "🚨";
+        title.innerText = "STANDOFF! POLICE RAID!";
+        desc.innerText = `All 4 players took a turn without any melds! Sirens wail as cops raid the hideout!`;
+        nextBtn.innerHTML = `<span>PROCEED TO ROUND ${roundNumber + 1}</span> ➡️`;
+        nextBtn.className = "w-full py-2.5 bg-rose-600 hover:bg-rose-500 text-white font-black text-xs rounded-xl shadow-lg transition flex items-center justify-center gap-2";
       } else {
         icon.innerText = "🚗💨";
         title.innerText = `${getPlayerName(winnerIdx)} ESCAPED!`;
@@ -1036,14 +1060,15 @@
         
         let statusSub = '';
         if (isWinner) statusSub = 'Getaway driver! Kept full stash safe.';
-        else if (isCaught) statusSub = `Busted! Held ${redCards} Red Contraband!`;
-        else statusSub = `Escaped clean${greenCards > 0 ? ` (held ${greenCards} Wilds)` : ''}!`;
+        else if (isCaught) statusSub = isStandoff ? `Busted in standoff! Held ${redCards} Contraband!` : `Busted! Held ${redCards} Red Contraband!`;
+        else statusSub = isStandoff ? `Safe! Kept stash clean during standoff${greenCards > 0 ? ` (+${greenCards} Wilds)` : ''}.` : `Escaped clean${greenCards > 0 ? ` (held ${greenCards} Wilds)` : ''}!`;
 
         row.innerHTML = `
           <div>
             <div class="font-bold text-slate-200 flex items-center gap-1 text-[11px]">
               <span>${getPlayerName(p)}</span>
               ${isWinner ? '<span class="text-[8px] bg-amber-500/20 text-amber-300 px-1 py-0.2 rounded font-black">GETAWAY DRIVER 🚗</span>' : ''}
+              ${isStandoff && !isCaught ? '<span class="text-[8px] bg-emerald-500/20 text-emerald-300 px-1 py-0.2 rounded font-black">CLEAN 🛡️</span>' : ''}
             </div>
             <div class="text-[10px] text-slate-400">
               ${statusSub}
@@ -1078,6 +1103,7 @@
     // Player Interaction Handlers
     function handleDrawAction() {
       if (currentPlayer !== 0 || playerStep !== 'DRAW') return;
+      playerMadeMeldThisTurn = false;
       const card = drawFromDeck();
       if (card) hands[0].push(card);
       logAnnouncement("You drew a card! Tap 2 cards to bank a pair (needs a Blue card!), or tap 'Skip'.");
@@ -1114,6 +1140,9 @@
         category: evalRes.category
       });
 
+      playerMadeMeldThisTurn = true;
+      consecutiveTurnsWithoutMeld = 0;
+
       if (evalRes.flipsCamera) {
         direction = -direction;
         logAnnouncement(`You banked a Counterfeit Wild with a Clean Blue card! Passing direction reversed! 🔄`);
@@ -1149,11 +1178,19 @@
       const passedCard = hands[0].splice(selectedPassCardIndex, 1)[0];
       hands[targetP].push(passedCard);
 
+      if (!playerMadeMeldThisTurn) {
+        consecutiveTurnsWithoutMeld++;
+      }
+
       selectedPassCardIndex = null;
       logAnnouncement(`You passed a card to ${getPlayerName(targetP)}!`);
       updateUI();
 
       if (checkWinCondition(0)) return;
+      if (deck.length === 0 && consecutiveTurnsWithoutMeld >= 4) {
+        showRoundModal(-1, 'STANDOFF');
+        return;
+      }
 
       advanceTurn();
     };
