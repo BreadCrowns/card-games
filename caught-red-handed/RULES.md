@@ -16,12 +16,14 @@ You and your crew just pulled off a daring robbery. You want to walk away with t
 
 ## 2. Deck Anatomy (56 Cards)
 
+The deck features **8 Asymmetrical Heist Items** and Counterfeit Wilds:
+
 | Card Group | Count | Details & Values |
 | :--- | :---: | :--- |
-| **Clean Loot (Blue)** | **28** | 7 Items (Cash, Diamonds, Watches, Keys, Paintings, Gold, Crowns). 4 copies each. **Value: 5 pts each**. |
-| **Petty Contraband (Red)** | **10** | Cash (3), Diamonds (3), Watches (2), Keys (2). **Value: 10 pts each**. |
-| **Grand Contraband (Red)** | **6** | Paintings (2), Gold Bars (2), Crowns (2). **Value: 15 pts each**! |
-| **Counterfeit Wilds (Green)** | **10** | Prop Cash & Counterfeits. **Value: 0 pts each**. Pairs with **ANY** Blue card and flips direction! |
+| **Clean Loot (Blue)** | **30** | 8 Items: Cash (4), Diamonds (4), Watches (4), Keys (4), Paintings (4), Gold (4), Crowns (3), Relics (3). **Value: 5 pts each**. |
+| **Petty Contraband (Red)** | **8** | Cash (2), Diamonds (2), Watches (2), Keys (2). **Value: 10 pts each**. |
+| **Grand Contraband (Red)** | **8** | Paintings (2), Gold (2), Crowns (2), Relics (2). **Value: 15 pts each**! |
+| **Counterfeit Wilds (Green)** | **8** | Prop Cash & Counterfeits. **Value: 0 pts each**. Pairs with **ANY** Blue card and flips direction! |
 | **Table Markers** | **2** | 1 Flippable **Security Camera** card (Clockwise / Counter-Clockwise) + 1 Match Scorecard / Ref Card. |
 
 > **Zero Central Discard Piles**: Every card in the game is either in the Draw Pile, in players' hands, banked in front of players in their Stash, or being passed!
@@ -84,12 +86,15 @@ The split second a player empties their hand:
 
 The round ends immediately! **FREEZE!**
 
-1. **The Escape Check**: All other players reveal their remaining hands:
+1. **The Escape Check**: All players score what they successfully banked in their personal Stash:
+   * **The Getaway Driver (First Out)**:  
+     You trigger the alarm and get away scot-free! You keep 100% of your banked Stash points.
    * **Clean Hand (Zero Red Cards)**:  
      You slip away clean! Count up all the points on your banked pairs in front of you and add them to your match score! *(Green cards in hand are worth 0 pts, but they do NOT cause a bust).*
    * **Caught Red-Handed (Holding 1+ Red Cards)**:  
      🚨 **BUSTED!** The sirens wail, the cops swarm, and **your entire banked haul for that round is seized (0 Points)!**
-2. **The Getaway Driver**: The player who emptied their hand earns all their banked points **+ a 15-Point Getaway Bonus**!
+
+> **Pure Loot Scoring**: There is no artificial point bonus for going out first. Shouting *"Getaway Car!"* is your ultimate offensive weapon: it guarantees your own safety while catching your opponents with Red Contraband to wipe their stashes to 0!
 
 ---
 
@@ -97,4 +102,4 @@ The round ends immediately! **FREEZE!**
 
 Add each player's round score to their cumulative match total on the scorecard:
 * If at least one player reaches **300 points**, the heist series ends immediately! The player with the highest total score is crowned the **Master Thief**!
-* If no player has reached 300 points, gather all 54 cards, rotate the first player, deal 7 fresh cards, and start the next round! (Typically takes **~5 rounds**).
+* If no player has reached 300 points, gather all 54 cards, rotate the first player, deal 7 fresh cards, and start the next round! (Typically takes **~5–6 rounds**).

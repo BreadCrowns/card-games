@@ -242,14 +242,16 @@
 
   <script>
     // Counterfeit Wild Edition: Every pair requires at least one Blue card!
+    // 8 Asymmetrical Heist Items (30 Blue + 16 Red + 8 Green Wilds = 54 play cards)
     const ITEMS = [
-      { name: 'Cash', icon: '💵', isGrand: false },
-      { name: 'Diamond', icon: '💎', isGrand: false },
-      { name: 'Watch', icon: '⌚', isGrand: false },
-      { name: 'Key', icon: '🗝️', isGrand: false },
-      { name: 'Painting', icon: '🖼️', isGrand: true },
-      { name: 'Gold', icon: '🧈', isGrand: true },
-      { name: 'Crown', icon: '👑', isGrand: true }
+      { name: 'Cash', icon: '💵', isGrand: false, blueCopies: 4, redCopies: 2, redVal: 10 },
+      { name: 'Diamond', icon: '💎', isGrand: false, blueCopies: 4, redCopies: 2, redVal: 10 },
+      { name: 'Watch', icon: '⌚', isGrand: false, blueCopies: 4, redCopies: 2, redVal: 10 },
+      { name: 'Key', icon: '🗝️', isGrand: false, blueCopies: 4, redCopies: 2, redVal: 10 },
+      { name: 'Painting', icon: '🖼️', isGrand: true, blueCopies: 4, redCopies: 2, redVal: 15 },
+      { name: 'Gold', icon: '🧈', isGrand: true, blueCopies: 4, redCopies: 2, redVal: 15 },
+      { name: 'Crown', icon: '👑', isGrand: true, blueCopies: 3, redCopies: 2, redVal: 15 },
+      { name: 'Relic', icon: '🏺', isGrand: true, blueCopies: 3, redCopies: 2, redVal: 15 }
     ];
 
     // Match State
@@ -268,36 +270,27 @@
     let selectedPairIndices = []; // Stores user's selected cards for laying a pair
     let playerStep = 'DRAW'; // 'DRAW', 'PAIR', 'PASS'
 
-    // Build the 54-card playable deck
+    // Build the 54-card playable deck (Option 3 Asymmetrical Balanced Tier)
     function buildDeck() {
       const cards = [];
 
-      // 1. 28 Clean Loot (Blue, 5 pts each, 4 of each of the 7 items)
+      // 1. 30 Clean Loot (Blue, 5 pts each)
       ITEMS.forEach(it => {
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < it.blueCopies; i++) {
           cards.push({ type: 'LOOT', color: 'BLUE', item: it.name, icon: it.icon, val: 5, isGrand: it.isGrand });
         }
       });
 
       // 2. 16 Red Contraband:
-      // 10 Petty (10 pts): 3 Cash, 3 Diamond, 2 Watch, 2 Key
-      const pettyCounts = { Cash: 3, Diamond: 3, Watch: 2, Key: 2 };
-      Object.keys(pettyCounts).forEach(name => {
-        const it = ITEMS.find(x => x.name === name);
-        for (let i = 0; i < pettyCounts[name]; i++) {
-          cards.push({ type: 'LOOT', color: 'RED', item: it.name, icon: it.icon, val: 10, isGrand: false });
-        }
-      });
-      // 6 Grand (15 pts): 2 Paintings, 2 Gold, 2 Crowns
-      ['Painting', 'Gold', 'Crown'].forEach(name => {
-        const it = ITEMS.find(x => x.name === name);
-        for (let i = 0; i < 2; i++) {
-          cards.push({ type: 'LOOT', color: 'RED', item: it.name, icon: it.icon, val: 15, isGrand: true });
+      // 8 Petty (10 pts) + 8 Grand (15 pts)
+      ITEMS.forEach(it => {
+        for (let i = 0; i < it.redCopies; i++) {
+          cards.push({ type: 'LOOT', color: 'RED', item: it.name, icon: it.icon, val: it.redVal, isGrand: it.isGrand });
         }
       });
 
-      // 3. 10 Green Counterfeit Wilds (0 pts, pairs with ANY Blue, flips direction)
-      for (let i = 0; i < 10; i++) {
+      // 3. 8 Green Counterfeit Wilds (0 pts, pairs with ANY Blue, flips direction)
+      for (let i = 0; i < 8; i++) {
         cards.push({ type: 'LOOT', color: 'GREEN', item: 'Wild', icon: '🎭🔄', val: 0, isGrand: false, isWild: true });
       }
 
@@ -1001,7 +994,7 @@
         const isCaught = !isWinner && hasRed;
 
         if (isWinner) {
-          roundPointsEarned[p] = bankedPoints + 15;
+          roundPointsEarned[p] = bankedPoints; // 0 Escape Bonus (pure stash scoring)
         } else if (isCaught) {
           roundPointsEarned[p] = 0;
         } else {
@@ -1042,7 +1035,7 @@
         row.className = `flex justify-between items-center p-2 rounded-lg ${isWinner ? 'bg-amber-950/40 border border-amber-600' : (isCaught ? 'bg-rose-950/40 border border-rose-800' : 'bg-emerald-950/40 border border-emerald-800')}`;
         
         let statusSub = '';
-        if (isWinner) statusSub = 'Escaped clean!';
+        if (isWinner) statusSub = 'Getaway driver! Kept full stash safe.';
         else if (isCaught) statusSub = `Busted! Held ${redCards} Red Contraband!`;
         else statusSub = `Escaped clean${greenCards > 0 ? ` (held ${greenCards} Wilds)` : ''}!`;
 
@@ -1050,7 +1043,7 @@
           <div>
             <div class="font-bold text-slate-200 flex items-center gap-1 text-[11px]">
               <span>${getPlayerName(p)}</span>
-              ${isWinner ? '<span class="text-[8px] bg-amber-500/20 text-amber-300 px-1 py-0.2 rounded font-black">+15 BONUS</span>' : ''}
+              ${isWinner ? '<span class="text-[8px] bg-amber-500/20 text-amber-300 px-1 py-0.2 rounded font-black">GETAWAY DRIVER 🚗</span>' : ''}
             </div>
             <div class="text-[10px] text-slate-400">
               ${statusSub}
