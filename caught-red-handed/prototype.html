@@ -46,7 +46,7 @@
       <span class="text-slate-600">•</span>
       <span>T<span id="turn-counter" class="font-bold text-amber-400">1</span></span>
       <span class="text-slate-600">•</span>
-      <span class="text-amber-400 font-black">300 PTS WIN</span>
+      <span id="header-target-label" class="text-amber-400 font-black">300 PTS WIN</span>
     </div>
 
     <button id="restart-match-btn" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-semibold rounded border border-slate-700 transition">
@@ -54,9 +54,21 @@
     </button>
   </header>
 
-  <!-- ZONE 2: 3 Bots Strip (Top Opponents, ~78px) -->
+  <!-- GAME MODE SELECTOR (4P Heist vs 2P Duel C1) -->
+  <div class="bg-slate-900/90 border-b border-slate-800 px-3 py-1 flex justify-center items-center shrink-0">
+    <div class="inline-flex rounded-lg p-0.5 bg-slate-950 border border-slate-800 text-[10px] font-bold">
+      <button id="mode-4p-btn" class="px-2.5 py-0.5 rounded-md bg-rose-600 text-white shadow transition">
+        👥 4P Heist (54c)
+      </button>
+      <button id="mode-2p-btn" class="px-2.5 py-0.5 rounded-md text-slate-400 hover:text-slate-200 transition">
+        ⚔️ 2P Duel C1 (28c Petty)
+      </button>
+    </div>
+  </div>
+
+  <!-- ZONE 2: Bots Strip (Top Opponents) -->
   <div class="bg-slate-900/60 border-b border-slate-800/80 px-2 py-1 shrink-0">
-    <div class="grid grid-cols-3 gap-1.5 max-w-xl mx-auto w-full">
+    <div id="bots-grid" class="grid grid-cols-3 gap-1.5 max-w-xl mx-auto w-full">
       
       <!-- Bot 4 (Right Neighbor) -->
       <div id="bot4-area" class="bg-slate-900/80 border border-slate-800 rounded-xl p-1.5 flex flex-col justify-between transition-all relative overflow-hidden">
@@ -255,7 +267,10 @@
     ];
 
     // Match State
-    let matchScores = [0, 0, 0, 0]; // Cumulative points towards 300
+    let gameMode = '4P'; // '4P' (54 cards to 300 pts) or '2P' (28 cards C1 to 200 pts)
+    let numPlayers = 4;
+    let targetMatchScore = 300;
+    let matchScores = [0, 0, 0, 0];
     let roundNumber = 1;
     let starterPlayer = 0; // Rotates each round
 
@@ -269,30 +284,52 @@
     let selectedPassCardIndex = null;
     let selectedPairIndices = []; // Stores user's selected cards for laying a pair
     let playerStep = 'DRAW'; // 'DRAW', 'PAIR', 'PASS'
-    let consecutiveTurnsWithoutMeld = 0; // Tracks standoff rule: 4 consecutive turns without any melds ends round
+    let consecutiveTurnsWithoutMeld = 0; // Tracks standoff rule: full rotation without melds ends round
     let playerMadeMeldThisTurn = false;
 
-    // Build the 54-card playable deck (Option 3 Asymmetrical Balanced Tier)
+    function setGameMode(mode) {
+      if (gameMode === mode) return;
+      gameMode = mode;
+      numPlayers = (mode === '2P') ? 2 : 4;
+      targetMatchScore = (mode === '2P') ? 200 : 300;
+
+      const btn4p = document.getElementById('mode-4p-btn');
+      const btn2p = document.getElementById('mode-2p-btn');
+      if (mode === '2P') {
+        btn2p.className = "px-2.5 py-0.5 rounded-md bg-amber-600 text-white shadow transition font-black";
+        btn4p.className = "px-2.5 py-0.5 rounded-md text-slate-400 hover:text-slate-200 transition";
+      } else {
+        btn4p.className = "px-2.5 py-0.5 rounded-md bg-rose-600 text-white shadow transition font-black";
+        btn2p.className = "px-2.5 py-0.5 rounded-md text-slate-400 hover:text-slate-200 transition";
+      }
+      resetEntireMatch();
+    }
+
+    // Build the playable deck (4P: 54 cards, 2P Duel C1: 28 cards)
     function buildDeck() {
       const cards = [];
+      const activeItems = (gameMode === '2P')
+        ? ITEMS.filter(it => !it.isGrand) // 4 Petty items (Cash, Diamond, Watch, Key: 16 Blue, 8 Red)
+        : ITEMS; // All 8 items (30 Blue, 16 Red)
 
-      // 1. 30 Clean Loot (Blue, 5 pts each)
-      ITEMS.forEach(it => {
+      const wildsCount = (gameMode === '2P') ? 4 : 8;
+
+      // 1. Clean Loot (Blue, 5 pts each)
+      activeItems.forEach(it => {
         for (let i = 0; i < it.blueCopies; i++) {
           cards.push({ type: 'LOOT', color: 'BLUE', item: it.name, icon: it.icon, val: 5, isGrand: it.isGrand });
         }
       });
 
-      // 2. 16 Red Contraband:
-      // 8 Petty (10 pts) + 8 Grand (15 pts)
-      ITEMS.forEach(it => {
+      // 2. Red Contraband
+      activeItems.forEach(it => {
         for (let i = 0; i < it.redCopies; i++) {
           cards.push({ type: 'LOOT', color: 'RED', item: it.name, icon: it.icon, val: it.redVal, isGrand: it.isGrand });
         }
       });
 
-      // 3. 8 Green Counterfeit Wilds (0 pts, pairs with ANY Blue, flips direction)
-      for (let i = 0; i < 8; i++) {
+      // 3. Green Counterfeit Wilds (0 pts, pairs with ANY Blue, flips direction)
+      for (let i = 0; i < wildsCount; i++) {
         cards.push({ type: 'LOOT', color: 'GREEN', item: 'Wild', icon: '🎭🔄', val: 0, isGrand: false, isWild: true });
       }
 
@@ -305,10 +342,16 @@
     }
 
     function initRound() {
+      numPlayers = (gameMode === '2P') ? 2 : 4;
+      targetMatchScore = (gameMode === '2P') ? 200 : 300;
       deck = buildDeck();
-      hands = [[], [], [], []];
-      stashes = [[], [], [], []];
-      currentPlayer = starterPlayer;
+      hands = [];
+      stashes = [];
+      for (let p = 0; p < numPlayers; p++) {
+        hands.push([]);
+        stashes.push([]);
+      }
+      currentPlayer = starterPlayer % numPlayers;
       direction = 1;
       turnCount = 1;
       consecutiveTurnsWithoutMeld = 0;
@@ -317,15 +360,18 @@
       selectedPairIndices = [];
       playerStep = (currentPlayer === 0) ? 'DRAW' : 'BOT';
 
-      // Deal 7 cards each (54 - 28 = 26 in draw deck)
+      // Deal 7 cards each
       for (let i = 0; i < 7; i++) {
-        for (let p = 0; p < 4; p++) {
+        for (let p = 0; p < numPlayers; p++) {
           hands[p].push(deck.pop());
         }
       }
 
       updateUI();
-      logAnnouncement(`Round ${roundNumber} begins! Dealing 7 cards to each crew member. Reach 300 pts to win!`);
+      const modeAnnouncement = (gameMode === '2P')
+        ? `⚔️ 2-Player Duel C1! 28 cards (4 Petty Items + 4 Wilds). First to 200 pts!`
+        : `👥 Round ${roundNumber} begins! Dealing 7 cards to each crew member. Reach 300 pts to win!`;
+      logAnnouncement(modeAnnouncement);
 
       if (currentPlayer !== 0) {
         setTimeout(() => playBotTurn(currentPlayer), 600);
@@ -565,10 +611,12 @@
     }
 
     function getPlayerName(p) {
-      return p === 0 ? "You (P1)" : `Bot ${p+1}`;
+      if (p === 0) return "You (P1)";
+      return (numPlayers === 2) ? "Rival Thief (Bot 2)" : `Bot ${p+1}`;
     }
 
     function getTargetNeighbor(p) {
+      if (numPlayers === 2) return 1 - p;
       return (p + direction + 4) % 4;
     }
 
@@ -590,7 +638,7 @@
         updateUI();
 
         if (checkWinCondition(b)) return;
-        if (deck.length === 0 && consecutiveTurnsWithoutMeld >= 4) {
+        if (deck.length === 0 && consecutiveTurnsWithoutMeld >= numPlayers) {
           showRoundModal(-1, 'STANDOFF');
           return;
         }
@@ -612,25 +660,13 @@
               let score = 0;
 
               if (card.color === 'RED') {
-                // Conservative bots (low risk tolerance) desperately want Reds OUT
                 score += (1.0 - mindset.val) * 60;
-
-                // When opponents run low on cards, emergency dump
                 if (minOppHand <= 3) score += (4 - minOppHand) * 35;
-
-                // Protect banked stash points
                 if (myBanked >= 20) score += 30;
-
-                // High value reds have higher bust penalty
                 score += (card.val === 15 ? 15 : 5) * (1.2 - mindset.val);
-
-                // TARGETED ASSASSINATION: Dump Red contraband on the match leader!
                 if (passingToLeader) score += 55;
-
-                // Greedy bots hold reds hoping to pair them if runway exists
                 if (mindset.val > 0.7 && minOppHand > 3) score -= 35;
               } else if (card.color === 'GREEN') {
-                // Safe card: conservative bots love holding it, aggressive bots pass it
                 score += mindset.val * 30;
                 const bluesCount = hand.filter(c => c.color === 'BLUE').length;
                 const greensCount = hand.filter(c => c.color === 'GREEN').length;
@@ -660,7 +696,7 @@
           updateUI();
 
           if (checkWinCondition(b)) return;
-          if (deck.length === 0 && consecutiveTurnsWithoutMeld >= 4) {
+          if (deck.length === 0 && consecutiveTurnsWithoutMeld >= numPlayers) {
             showRoundModal(-1, 'STANDOFF');
             return;
           }
@@ -672,7 +708,11 @@
     }
 
     function advanceTurn() {
-      currentPlayer = (currentPlayer + direction + 4) % 4;
+      if (numPlayers === 2) {
+        currentPlayer = 1 - currentPlayer;
+      } else {
+        currentPlayer = (currentPlayer + direction + 4) % 4;
+      }
       turnCount++;
       updateUI();
 
@@ -695,21 +735,52 @@
 
       // Header match scoreboard
       const scoreHeader = document.getElementById('header-match-scores');
-      scoreHeader.innerHTML = `
-        <span class="${matchScores[0] >= 225 ? 'text-amber-300 font-black' : 'text-slate-300'}">You:${matchScores[0]}</span>
-        <span class="text-slate-600">|</span>
-        <span class="${matchScores[1] >= 225 ? 'text-amber-300 font-black' : 'text-slate-400'}">B2:${matchScores[1]}</span>
-        <span class="text-slate-600">|</span>
-        <span class="${matchScores[2] >= 225 ? 'text-amber-300 font-black' : 'text-slate-400'}">B3:${matchScores[2]}</span>
-        <span class="text-slate-600">|</span>
-        <span class="${matchScores[3] >= 225 ? 'text-amber-300 font-black' : 'text-slate-400'}">B4:${matchScores[3]}</span>
-      `;
+      const targetLabel = document.getElementById('header-target-label');
+      if (numPlayers === 2) {
+        scoreHeader.innerHTML = `
+          <span class="${matchScores[0] >= 150 ? 'text-amber-300 font-black' : 'text-slate-300'}">You:${matchScores[0]}</span>
+          <span class="text-slate-600">vs</span>
+          <span class="${matchScores[1] >= 150 ? 'text-amber-300 font-black' : 'text-slate-400'}">Rival:${matchScores[1]}</span>
+        `;
+        if (targetLabel) targetLabel.innerText = "200 PTS WIN";
+      } else {
+        scoreHeader.innerHTML = `
+          <span class="${matchScores[0] >= 225 ? 'text-amber-300 font-black' : 'text-slate-300'}">You:${matchScores[0]}</span>
+          <span class="text-slate-600">|</span>
+          <span class="${matchScores[1] >= 225 ? 'text-amber-300 font-black' : 'text-slate-400'}">B2:${matchScores[1]}</span>
+          <span class="text-slate-600">|</span>
+          <span class="${matchScores[2] >= 225 ? 'text-amber-300 font-black' : 'text-slate-400'}">B3:${matchScores[2]}</span>
+          <span class="text-slate-600">|</span>
+          <span class="${matchScores[3] >= 225 ? 'text-amber-300 font-black' : 'text-slate-400'}">B4:${matchScores[3]}</span>
+        `;
+        if (targetLabel) targetLabel.innerText = "300 PTS WIN";
+      }
+
+      // Update bot area grid layout
+      const botsGrid = document.getElementById('bots-grid');
+      const bot3Area = document.getElementById('bot3-area');
+      const bot4Area = document.getElementById('bot4-area');
+      if (botsGrid) {
+        if (numPlayers === 2) {
+          botsGrid.className = "grid grid-cols-1 max-w-xs mx-auto w-full";
+          if (bot3Area) bot3Area.classList.add('hidden');
+          if (bot4Area) bot4Area.classList.add('hidden');
+        } else {
+          botsGrid.className = "grid grid-cols-3 gap-1.5 max-w-xl mx-auto w-full";
+          if (bot3Area) bot3Area.classList.remove('hidden');
+          if (bot4Area) bot4Area.classList.remove('hidden');
+        }
+      }
 
       // Camera HUD
       const compassArrow = document.getElementById('compass-arrow');
       const compassLabel = document.getElementById('compass-label');
 
-      if (direction === 1) {
+      if (numPlayers === 2) {
+        compassArrow.innerText = "⚔️";
+        compassLabel.innerText = "DUEL (PASS OVER)";
+        compassArrow.style.transform = "rotate(0deg)";
+      } else if (direction === 1) {
         compassArrow.innerText = "➡️";
         compassLabel.innerText = "PASS LEFT";
         compassArrow.style.transform = "rotate(0deg)";
@@ -719,9 +790,9 @@
         compassArrow.style.transform = "rotate(180deg)";
       }
 
-      // Update Bots
-      // Update Bots with Prominent Card Counts & Dynamic Moods
-      [1, 2, 3].forEach(b => {
+      // Update Active Bots
+      const activeBots = (numPlayers === 2) ? [1] : [1, 2, 3];
+      activeBots.forEach(b => {
         const count = hands[b].length;
         const pts = calculateStashPoints(stashes[b]);
         const mindset = getBotMindset(b);
@@ -751,7 +822,7 @@
           }
         }
 
-        // Visual Card Silhouette Pips (tactile peripheral visibility)
+        // Visual Card Silhouette Pips
         const pipsEl = document.getElementById(`bot${b+1}-pips`);
         if (pipsEl) {
           pipsEl.innerHTML = '';
@@ -767,7 +838,7 @@
         }
 
         document.getElementById(`bot${b+1}-score-badge`).innerText = `Stash: ${pts}`;
-        document.getElementById(`bot${b+1}-match-total`).innerText = `${matchScores[b]}/300`;
+        document.getElementById(`bot${b+1}-match-total`).innerText = `${matchScores[b]}/${targetMatchScore}`;
 
         const botArea = document.getElementById(`bot${b+1}-area`);
         if (currentPlayer === b) {
@@ -1002,10 +1073,10 @@
       const scores = document.getElementById('modal-scores');
       const nextBtn = document.getElementById('modal-next-btn');
 
-      const roundPointsEarned = [0, 0, 0, 0];
+      const roundPointsEarned = new Array(numPlayers).fill(0);
       const isStandoff = (endReason === 'STANDOFF' || winnerIdx === -1);
 
-      for (let p = 0; p < 4; p++) {
+      for (let p = 0; p < numPlayers; p++) {
         const hasRed = hands[p].some(c => c.color === 'RED');
         const bankedPoints = calculateStashPoints(stashes[p]);
         const isWinner = (p === winnerIdx && !isStandoff);
@@ -1022,20 +1093,22 @@
         matchScores[p] += roundPointsEarned[p];
       }
 
-      const matchWinner = matchScores.findIndex(s => s >= 300);
+      const matchWinner = matchScores.slice(0, numPlayers).findIndex(s => s >= targetMatchScore);
       const isMatchOver = (matchWinner !== -1);
 
       if (isMatchOver) {
-        const grandChamp = Array.from(matchScores.entries()).reduce((max, curr) => curr[1] > max[1] ? curr : max)[0];
+        const grandChamp = Array.from(matchScores.slice(0, numPlayers).entries()).reduce((max, curr) => curr[1] > max[1] ? curr : max)[0];
         icon.innerText = "👑";
         title.innerText = `${getPlayerName(grandChamp)} WINS!`;
-        desc.innerText = `${getPlayerName(grandChamp)} crossed 300 points (${matchScores[grandChamp]} pts) and takes the crown!`;
+        desc.innerText = `${getPlayerName(grandChamp)} crossed ${targetMatchScore} points (${matchScores[grandChamp]} pts) and takes the crown!`;
         nextBtn.innerHTML = `<span>START NEW HEIST MATCH</span> 🔄`;
         nextBtn.className = "w-full py-2.5 bg-amber-600 hover:bg-amber-500 text-white font-black text-xs rounded-xl shadow-lg transition flex items-center justify-center gap-2";
       } else if (isStandoff) {
         icon.innerText = "🚨";
         title.innerText = "STANDOFF! POLICE RAID!";
-        desc.innerText = `All 4 players took a turn without any melds! Sirens wail as cops raid the hideout!`;
+        desc.innerText = (numPlayers === 2) 
+          ? "Both players took a turn without any melds! Sirens wail as cops raid the hideout!" 
+          : "All 4 players took a turn without any melds! Sirens wail as cops raid the hideout!";
         nextBtn.innerHTML = `<span>PROCEED TO ROUND ${roundNumber + 1}</span> ➡️`;
         nextBtn.className = "w-full py-2.5 bg-rose-600 hover:bg-rose-500 text-white font-black text-xs rounded-xl shadow-lg transition flex items-center justify-center gap-2";
       } else {
@@ -1047,7 +1120,7 @@
       }
 
       scores.innerHTML = '';
-      for (let p = 0; p < 4; p++) {
+      for (let p = 0; p < numPlayers; p++) {
         const redCards = hands[p].filter(c => c.color === 'RED').length;
         const greenCards = hands[p].filter(c => c.color === 'GREEN').length;
         const bankedPoints = calculateStashPoints(stashes[p]);
@@ -1079,7 +1152,7 @@
               +${ptsEarned} pts
             </div>
             <div class="text-[10px] font-black text-amber-400">
-              Total: ${matchScores[p]}/300
+              Total: ${matchScores[p]}/${targetMatchScore}
             </div>
           </div>
         `;
@@ -1187,7 +1260,7 @@
       updateUI();
 
       if (checkWinCondition(0)) return;
-      if (deck.length === 0 && consecutiveTurnsWithoutMeld >= 4) {
+      if (deck.length === 0 && consecutiveTurnsWithoutMeld >= numPlayers) {
         showRoundModal(-1, 'STANDOFF');
         return;
       }
@@ -1195,6 +1268,8 @@
       advanceTurn();
     };
 
+    document.getElementById('mode-4p-btn').onclick = () => setGameMode('4P');
+    document.getElementById('mode-2p-btn').onclick = () => setGameMode('2P');
     document.getElementById('restart-match-btn').onclick = resetEntireMatch;
 
     // Auto-init

@@ -101,4 +101,17 @@ In either case, **FREEZE!** End of round scoring applies immediately:
 
 Add each player's round score to their cumulative match total on the scorecard:
 * If at least one player reaches **300 points**, the heist series ends immediately! The player with the highest total score is crowned the **Master Thief**!
-* If no player has reached 300 points, gather all 54 cards, rotate the first player, deal 7 fresh cards, and start the next round! (Typically takes **~5–6 rounds**).
+* If no player has reached 300 points, gather all cards, rotate the first player, deal 7 fresh cards, and start the next round! (Typically takes **~5–6 rounds**).
+
+---
+
+## 7. Player Count Setups & Variants
+
+| Player Count | Deck Composition | Cards in Deck | Starting Hand | Target Score | Typical Match |
+| :---: | :--- | :---: | :---: | :---: | :---: |
+| **2 Players**<br>*(The Quickdraw Duel)* | **Setup C1 (Petty Loot + Wilds)**<br>Remove all 4 Grand items & 4 Wilds.<br>*(Cash, Diamond, Watch, Key + 4 Wilds)* | **28 cards**<br>*(16 Blue, 8 Red, 4 Green)* | 7 cards each<br>*(14 in Locker)* | **200 Points** | **~3.4 rounds**<br>(12 turns/rd, 90% escapes) |
+| **3–4 Players**<br>*(Standard Heist)* | **Standard Full Deck**<br>All 8 Items + 8 Counterfeit Wilds | **54 cards**<br>*(30 Blue, 16 Red, 8 Green)* | 7 cards each | **300 Points** | **~5.5 rounds**<br>(22–25 turns/rd) |
+| **5–6 Players**<br>*(Grand Syndicate)* | **Double Deck**<br>Shuffle 2 full decks together | **108 cards**<br>*(60 Blue, 32 Red, 16 Green)* | 7 cards each | **300 Points** | **~5.6 rounds**<br>(35–40 turns/rd) |
+
+> 💡 **Why the 2-Player Quickdraw (28 Cards) Works**:  
+> In a 2-player game with the full 54-card deck, 40 cards sit in the draw pile, diluting item matches across 8 items. The **28-card Quickdraw** creates a tight **4:2:1 ratio** (16 Clean : 8 Contraband : 4 Wilds). Dealing 7 cards each leaves exactly 14 cards in the Locker—the deck cycles in a single breathless pass, eliminating sluggish stalemates and delivering sharp head-to-head tension.
