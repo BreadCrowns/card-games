@@ -2,260 +2,211 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Caught Red-Handed — Counterfeit Wild Edition</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Caught Red-Handed — Mobile Edition</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @keyframes pulse-red {
-      0%, 100% { box-shadow: 0 0 15px rgba(239, 68, 68, 0.6); }
-      50% { box-shadow: 0 0 25px rgba(239, 68, 68, 0.9); }
+      0%, 100% { box-shadow: 0 0 10px rgba(239, 68, 68, 0.6); }
+      50% { box-shadow: 0 0 18px rgba(239, 68, 68, 0.9); }
     }
     .red-evidence {
       animation: pulse-red 2s infinite;
     }
     @keyframes pulse-green {
-      0%, 100% { box-shadow: 0 0 14px rgba(16, 185, 129, 0.6); }
-      50% { box-shadow: 0 0 24px rgba(16, 185, 129, 0.9); }
+      0%, 100% { box-shadow: 0 0 10px rgba(16, 185, 129, 0.6); }
+      50% { box-shadow: 0 0 18px rgba(16, 185, 129, 0.9); }
     }
     .green-wild {
       animation: pulse-green 2.5s infinite;
     }
+    /* Hide scrollbars for slick mobile card swiping */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans select-none overflow-x-hidden">
+<body class="bg-slate-950 text-slate-100 h-screen max-h-[100dvh] w-screen flex flex-col font-sans select-none overflow-hidden touch-manipulation">
 
-  <!-- Header -->
-  <header class="bg-slate-900/95 border-b border-slate-800 px-6 py-2.5 flex justify-between items-center shadow-lg">
-    <div class="flex items-center gap-3">
-      <span class="text-2xl">🚨</span>
-      <div>
-        <div class="flex items-center gap-2">
-          <h1 class="text-lg font-black tracking-wider text-rose-500 uppercase">Caught Red-Handed</h1>
-          <span class="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-2 py-0.5 rounded-full font-bold">COUNTERFEIT WILDS</span>
+  <!-- ZONE 1: Ultra-Compact Mobile Header (~40px) -->
+  <header class="bg-slate-900/95 border-b border-slate-800 px-3 py-1 flex justify-between items-center shadow shrink-0 h-10">
+    <div class="flex items-center gap-1.5">
+      <span class="text-lg">🚨</span>
+      <h1 class="text-xs sm:text-sm font-black tracking-wider text-rose-500 uppercase leading-none">Caught Red-Handed</h1>
+      <span class="text-[9px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-1.5 py-0.2 rounded-full font-bold hidden sm:inline">WILDS</span>
+    </div>
+
+    <!-- Center Status & Round / Turn info -->
+    <div class="flex items-center gap-2 text-[10px] text-slate-300 font-mono">
+      <span>R<span id="round-counter" class="font-bold text-emerald-400">1</span></span>
+      <span class="text-slate-600">•</span>
+      <span>T<span id="turn-counter" class="font-bold text-amber-400">1</span></span>
+      <span class="text-slate-600">•</span>
+      <span class="text-amber-400 font-black">200 PTS WIN</span>
+    </div>
+
+    <button id="restart-match-btn" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-semibold rounded border border-slate-700 transition">
+      ↺ Reset
+    </button>
+  </header>
+
+  <!-- ZONE 2: 3 Bots Strip (Top Opponents, ~68px) -->
+  <div class="bg-slate-900/40 border-b border-slate-800/80 px-2 py-1 shrink-0">
+    <div class="grid grid-cols-3 gap-1.5 max-w-xl mx-auto w-full">
+      
+      <!-- Bot 4 (Right Neighbor) -->
+      <div id="bot4-area" class="bg-slate-900/80 border border-slate-800 rounded-xl p-1.5 flex flex-col justify-between transition-all">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-1">
+            <div class="w-4 h-4 rounded-full bg-teal-600 flex items-center justify-center font-black text-[9px]">4</div>
+            <span class="text-[10px] font-bold text-slate-300 truncate">Bot 4</span>
+          </div>
+          <span id="bot4-count-badge" class="text-[9px] bg-slate-800 px-1 py-0.2 rounded font-mono font-bold text-amber-400">7🎴</span>
         </div>
-        <p class="text-[11px] text-slate-400">Every pair needs a <span class="text-blue-400 font-bold">Blue card</span>. First crew member to <span class="text-amber-400 font-bold">200 Points</span> wins!</p>
+        <div class="flex items-center justify-between text-[9px] mt-0.5 font-mono">
+          <span id="bot4-score-badge" class="text-emerald-400 font-semibold">Stash: 0</span>
+          <span id="bot4-match-total" class="text-amber-300/80 font-bold">0/200</span>
+        </div>
       </div>
+
+      <!-- Bot 3 (Across) -->
+      <div id="bot3-area" class="bg-slate-900/80 border border-slate-800 rounded-xl p-1.5 flex flex-col justify-between transition-all">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-1">
+            <div class="w-4 h-4 rounded-full bg-indigo-600 flex items-center justify-center font-black text-[9px]">3</div>
+            <span class="text-[10px] font-bold text-slate-300 truncate">Bot 3</span>
+          </div>
+          <span id="bot3-count-badge" class="text-[9px] bg-slate-800 px-1 py-0.2 rounded font-mono font-bold text-amber-400">7🎴</span>
+        </div>
+        <div class="flex items-center justify-between text-[9px] mt-0.5 font-mono">
+          <span id="bot3-score-badge" class="text-emerald-400 font-semibold">Stash: 0</span>
+          <span id="bot3-match-total" class="text-amber-300/80 font-bold">0/200</span>
+        </div>
+      </div>
+
+      <!-- Bot 2 (Left Neighbor) -->
+      <div id="bot2-area" class="bg-slate-900/80 border border-slate-800 rounded-xl p-1.5 flex flex-col justify-between transition-all">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-1">
+            <div class="w-4 h-4 rounded-full bg-amber-600 flex items-center justify-center font-black text-[9px]">2</div>
+            <span class="text-[10px] font-bold text-slate-300 truncate">Bot 2</span>
+          </div>
+          <span id="bot2-count-badge" class="text-[9px] bg-slate-800 px-1 py-0.2 rounded font-mono font-bold text-amber-400">7🎴</span>
+        </div>
+        <div class="flex items-center justify-between text-[9px] mt-0.5 font-mono">
+          <span id="bot2-score-badge" class="text-emerald-400 font-semibold">Stash: 0</span>
+          <span id="bot2-match-total" class="text-amber-300/80 font-bold">0/200</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ZONE 3: Center Arena Tabletop (Draw Pile, Camera HUD, Live Announcement, ~115px) -->
+  <div class="flex-1 min-h-0 flex flex-col items-center justify-center px-3 py-1 gap-1.5 max-w-xl mx-auto w-full">
+    
+    <div class="flex items-center justify-center gap-6 w-full">
+      
+      <!-- Evidence Locker (Draw Deck) - Tap to Draw! -->
+      <div id="draw-deck" class="w-16 h-22 sm:w-20 sm:h-26 bg-gradient-to-br from-slate-800 to-slate-900 border-2 border-slate-700 hover:border-amber-400 rounded-xl flex flex-col items-center justify-center shadow-lg cursor-pointer transition transform active:scale-95">
+        <span class="text-2xl sm:text-3xl leading-none">📦</span>
+        <span class="text-[8px] font-black text-slate-400 tracking-wider mt-0.5">LOCKER</span>
+        <span id="deck-count" class="text-xs sm:text-sm font-black text-amber-400 leading-none">26</span>
+      </div>
+
+      <!-- Center Security Camera Indicator -->
+      <div class="flex flex-col items-center justify-center gap-1 bg-slate-900/90 border border-slate-700/80 px-3 py-1.5 rounded-2xl shadow w-40">
+        <div id="compass-arrow" class="w-10 h-10 rounded-full bg-slate-800 border-2 border-amber-500 flex items-center justify-center text-xl shadow-inner transition-transform duration-500">
+          ➡️
+        </div>
+        <div class="text-center">
+          <div id="compass-label" class="text-[10px] font-black text-amber-400 uppercase tracking-wide">PASS LEFT</div>
+          <div class="text-[8px] text-slate-400 leading-none">Green Wild flips 🔄</div>
+        </div>
+      </div>
+
     </div>
 
-    <!-- Direction / Security Camera HUD -->
-    <div class="flex items-center gap-5 bg-slate-800/80 px-4 py-1.5 rounded-xl border border-slate-700 shadow-inner">
+    <!-- Match Standings Pill -->
+    <div id="header-match-scores" class="flex gap-2 text-[10px] font-mono text-slate-400 bg-slate-900/60 border border-slate-800/80 px-2.5 py-0.5 rounded-full shadow-inner">
+      <!-- Injected dynamically -->
+    </div>
+
+    <!-- Live Announcement Banner -->
+    <div id="announcement-banner" class="w-full text-center py-1 px-3 bg-slate-900/90 border border-slate-800 rounded-xl text-[10px] sm:text-xs font-semibold text-slate-300 min-h-[26px] flex items-center justify-center shadow truncate">
+      Turn starts: Draw 1 card, bank 1 pair using a Blue card, then pass 1 card in direction of play.
+    </div>
+  </div>
+
+  <!-- ZONE 4 & 5: Bottom Player Deck, Controls & Hand (Primary Touch Zone, ~230px) -->
+  <div class="bg-slate-900/95 border-t border-slate-800 p-2 sm:p-3 flex flex-col gap-1.5 shrink-0 shadow-2xl">
+    
+    <!-- Player Stash & Status Row -->
+    <div class="flex items-center justify-between px-1">
       <div class="flex items-center gap-2">
-        <span class="text-[10px] font-bold text-slate-400 tracking-wider">CAMERA:</span>
-        <span id="camera-badge" class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1 transition-all">
-          <span id="camera-icon">🔄</span> <span id="camera-text">CLOCKWISE (PASS LEFT)</span>
-        </span>
+        <div class="w-5 h-5 rounded-full bg-rose-600 flex items-center justify-center font-black text-[9px] shadow">YOU</div>
+        <div class="flex items-center gap-2 text-[11px] font-bold">
+          <span id="player-status-tag" class="px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 text-[10px]">YOUR TURN</span>
+          <span class="text-emerald-300">Bank: <span id="player-score-display" class="font-mono text-xs font-black">0</span> pts</span>
+          <span class="text-amber-400">Total: <span id="player-match-total" class="font-mono text-xs font-black">0</span>/200</span>
+        </div>
       </div>
-      <div class="text-xs text-slate-300 font-mono flex items-center gap-3">
-        <span>Round <span id="round-counter" class="font-bold text-emerald-400">1</span></span>
-        <span>Turn <span id="turn-counter" class="font-bold text-amber-400">1</span></span>
-      </div>
-    </div>
 
-    <!-- Match Standings Widget -->
-    <div class="flex items-center gap-3 bg-slate-950/70 border border-slate-800 px-3 py-1.5 rounded-xl text-xs">
-      <div class="flex items-center gap-1 font-bold text-slate-400">
-        <span>🎯 TARGET:</span> <span class="text-amber-400 font-black">200 PTS</span>
-      </div>
-      <div class="h-4 w-px bg-slate-800"></div>
-      <div id="header-match-scores" class="flex gap-2.5 text-[11px] font-mono">
+      <!-- Banked Stash Pills Scroll -->
+      <div id="player-stash-container" class="flex items-center gap-1 overflow-x-auto max-w-[150px] sm:max-w-xs no-scrollbar">
         <!-- Rendered dynamically -->
       </div>
     </div>
 
-    <button id="restart-match-btn" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-lg border border-slate-700 transition">
-      Reset Match
-    </button>
-  </header>
+    <!-- Ergonomic Mobile Action Controls Bar (40px high) -->
+    <div class="grid grid-cols-4 gap-1.5 w-full" id="action-controls">
+      <button id="btn-draw" class="h-9 sm:h-10 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-30 disabled:pointer-events-none text-white text-[11px] font-bold rounded-xl shadow transition flex items-center justify-center gap-1">
+        <span>📦</span> <span>1. Draw</span>
+      </button>
+      <button id="btn-pair" disabled class="col-span-2 h-9 sm:h-10 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-30 disabled:pointer-events-none text-white text-[11px] font-bold rounded-xl shadow transition flex items-center justify-center gap-1 truncate px-1">
+        <span>💰</span> <span id="btn-pair-text" class="truncate">2. Lay Pair</span>
+      </button>
+      <button id="btn-skip-pair" disabled class="h-9 sm:h-10 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 disabled:pointer-events-none text-slate-300 text-[11px] font-bold rounded-xl border border-slate-700 shadow transition flex items-center justify-center gap-1">
+        <span>Skip</span> ➡️
+      </button>
+      <button id="btn-pass" disabled class="h-9 sm:h-10 bg-rose-600 hover:bg-rose-500 disabled:opacity-30 disabled:pointer-events-none text-white text-[11px] font-bold rounded-xl shadow transition flex items-center justify-center gap-1 col-span-4 mt-0.5 sm:col-span-1 sm:mt-0">
+        <span>👉</span> <span>3. Pass Card</span>
+      </button>
+    </div>
 
-  <!-- Main Game Board -->
-  <main class="flex-1 max-w-6xl w-full mx-auto p-4 flex flex-col justify-between gap-4">
-
-    <!-- Top Opponent (Bot 3) -->
-    <div class="flex flex-col items-center">
-      <div id="bot3-area" class="bg-slate-900/60 border border-slate-800 rounded-2xl p-3 flex flex-col items-center gap-2 w-80 shadow-md transition-all">
-        <div class="flex items-center justify-between w-full px-2">
-          <div class="flex items-center gap-2">
-            <div class="w-7 h-7 rounded-full bg-indigo-600 flex items-center justify-center font-bold text-xs shadow">B3</div>
-            <div>
-              <div class="text-xs font-bold text-slate-300 leading-none">Bot 3 (Across)</div>
-              <div id="bot3-match-total" class="text-[10px] text-amber-400 font-mono font-bold">Match: 0/200 pts</div>
-            </div>
-          </div>
-          <div class="flex items-center gap-2">
-            <span id="bot3-score-badge" class="text-xs bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 px-2 py-0.5 rounded-full font-bold">Stash: 0 pts</span>
-            <span id="bot3-count-badge" class="text-xs bg-slate-800 px-2.5 py-0.5 rounded-full font-bold text-amber-400 border border-slate-700">7 cards</span>
-          </div>
-        </div>
-        <div id="bot3-cards" class="flex -space-x-3 overflow-hidden py-1">
-          <!-- Card backs -->
-        </div>
-        <div id="bot3-stash-preview" class="text-[10px] text-slate-400 flex gap-1 items-center overflow-hidden">
-          <span>Round Bank:</span> <span id="bot3-stash-items" class="text-slate-300 italic">None</span>
-        </div>
+    <!-- Touch Hand Carousel (Mobile optimized scale: 72px x 112px) -->
+    <div class="relative w-full overflow-hidden">
+      <div id="player-hand" class="flex gap-1.5 sm:gap-2 overflow-x-auto py-2 px-1 items-end justify-start sm:justify-center w-full no-scrollbar min-h-[120px]">
+        <!-- Cards rendered dynamically -->
       </div>
     </div>
 
-    <!-- Middle Arena: Left Bot, Table Center, Right Bot -->
-    <div class="grid grid-cols-12 gap-4 items-center">
-
-      <!-- Left Opponent (Bot 4) -->
-      <div class="col-span-3 flex justify-start">
-        <div id="bot4-area" class="bg-slate-900/60 border border-slate-800 rounded-2xl p-3 flex flex-col items-center gap-2 w-64 shadow-md transition-all">
-          <div class="flex items-center justify-between w-full px-2">
-            <div class="flex items-center gap-2">
-              <div class="w-7 h-7 rounded-full bg-teal-600 flex items-center justify-center font-bold text-xs shadow">B4</div>
-              <div>
-                <div class="text-xs font-bold text-slate-300 leading-none">Bot 4 (Right)</div>
-                <div id="bot4-match-total" class="text-[10px] text-amber-400 font-mono font-bold">Match: 0/200 pts</div>
-              </div>
-            </div>
-            <span id="bot4-count-badge" class="text-xs bg-slate-800 px-2.5 py-0.5 rounded-full font-bold text-amber-400 border border-slate-700">7 cards</span>
-          </div>
-          <div class="w-full flex justify-between px-2 text-[10px]">
-            <span id="bot4-score-badge" class="bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 px-2 py-0.5 rounded-full font-bold">Stash: 0 pts</span>
-          </div>
-          <div id="bot4-cards" class="flex -space-x-3 overflow-hidden py-1">
-            <!-- Card backs -->
-          </div>
-        </div>
-      </div>
-
-      <!-- Center Tabletop: Evidence Locker & Security Camera -->
-      <div class="col-span-6 bg-slate-900/40 border border-slate-800/80 rounded-3xl p-6 flex flex-col items-center justify-center gap-4 relative shadow-2xl backdrop-blur-sm">
-        
-        <div class="absolute -top-3 px-4 py-0.5 bg-slate-950 border border-slate-700 rounded-full text-[10px] font-bold text-slate-400 tracking-wider flex items-center gap-1.5 shadow">
-          <span>📹 SECURITY CAMERA SYSTEM</span>
-        </div>
-
-        <div class="flex items-center justify-center gap-12 w-full py-2">
-          
-          <!-- Evidence Locker (Draw Deck) -->
-          <div class="flex flex-col items-center gap-2">
-            <div id="draw-deck" class="w-24 h-36 bg-gradient-to-br from-slate-800 to-slate-900 border-2 border-slate-700 hover:border-amber-500 rounded-xl flex flex-col items-center justify-center shadow-xl cursor-pointer transition transform hover:-translate-y-1">
-              <span class="text-3xl mb-1">📦</span>
-              <span class="text-[10px] font-black text-slate-400 tracking-wider">LOCKER</span>
-              <span id="deck-count" class="text-sm font-black text-amber-400 mt-1">26</span>
-            </div>
-            <span class="text-[11px] font-bold text-slate-400">Draw Pile</span>
-          </div>
-
-          <!-- Active Security Camera Indicator Card -->
-          <div class="flex flex-col items-center justify-center gap-2 bg-slate-950/80 border-2 border-slate-700 p-4 rounded-2xl shadow-xl w-48">
-            <div id="compass-arrow" class="w-14 h-14 rounded-full bg-slate-800/90 border-2 border-amber-500/70 flex items-center justify-center text-3xl shadow-inner transition-transform duration-500">
-              ➡️
-            </div>
-            <div class="text-center">
-              <div id="compass-label" class="text-xs font-black text-amber-400 uppercase tracking-wide">PASS LEFT</div>
-              <div class="text-[9px] text-slate-400 mt-0.5">Green Wild flips camera!</div>
-            </div>
-          </div>
-
-        </div>
-
-        <!-- Live Heist Banner -->
-        <div id="announcement-banner" class="w-full text-center py-1.5 px-4 bg-slate-950/70 border border-slate-800 rounded-xl text-xs font-semibold text-slate-300 min-h-[32px] flex items-center justify-center shadow-inner">
-          Turn starts: Draw 1 card, bank 1 pair using a Blue card, then pass 1 card in direction of play.
-        </div>
-      </div>
-
-      <!-- Right Opponent (Bot 2) -->
-      <div class="col-span-3 flex justify-end">
-        <div id="bot2-area" class="bg-slate-900/60 border border-slate-800 rounded-2xl p-3 flex flex-col items-center gap-2 w-64 shadow-md transition-all">
-          <div class="flex items-center justify-between w-full px-2">
-            <div class="flex items-center gap-2">
-              <div class="w-7 h-7 rounded-full bg-amber-600 flex items-center justify-center font-bold text-xs shadow">B2</div>
-              <div>
-                <div class="text-xs font-bold text-slate-300 leading-none">Bot 2 (Left)</div>
-                <div id="bot2-match-total" class="text-[10px] text-amber-400 font-mono font-bold">Match: 0/200 pts</div>
-              </div>
-            </div>
-            <span id="bot2-count-badge" class="text-xs bg-slate-800 px-2.5 py-0.5 rounded-full font-bold text-amber-400 border border-slate-700">7 cards</span>
-          </div>
-          <div class="w-full flex justify-between px-2 text-[10px]">
-            <span id="bot2-score-badge" class="bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 px-2 py-0.5 rounded-full font-bold">Stash: 0 pts</span>
-          </div>
-          <div id="bot2-cards" class="flex -space-x-3 overflow-hidden py-1">
-            <!-- Card backs -->
-          </div>
-        </div>
-      </div>
-
+    <!-- Micro Rule Hint -->
+    <div class="text-center text-[9px] text-slate-400 font-medium leading-none">
+      Every pair needs a <span class="text-blue-400 font-bold">Blue</span> • <span class="text-emerald-400 font-bold">Green Wild</span> flips camera • <span class="text-rose-400 font-bold">Red in hand at end busts!</span>
     </div>
 
-    <!-- Player Area (Bottom) -->
-    <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-4 flex flex-col gap-3 shadow-2xl relative">
-      
-      <!-- Player Header & Banked Stash -->
-      <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
-        <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-full bg-rose-600 flex items-center justify-center font-black text-xs shadow">YOU</div>
-          <div>
-            <div class="flex items-center gap-2">
-              <span class="text-xs font-black text-slate-200">PLAYER 1 (YOU)</span>
-              <span id="player-status-tag" class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400">YOUR TURN</span>
-            </div>
-            <div class="text-[11px] text-slate-300 font-bold mt-0.5 flex items-center gap-3">
-              <span>Round Stash: <span id="player-score-display" class="font-mono text-sm text-emerald-300 font-black">0</span> pts</span>
-              <span class="text-amber-400">Match Total: <span id="player-match-total" class="font-mono text-sm font-black">0</span> / 200 pts</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Banked Stash Display -->
-        <div id="player-stash-container" class="flex items-center gap-1.5 overflow-x-auto max-w-sm px-2">
-          <!-- Badges of banked pairs -->
-        </div>
-
-        <!-- Dynamic Action Buttons: Allows choosing which cards to discard/pair! -->
-        <div class="flex items-center gap-2" id="action-controls">
-          <button id="btn-draw" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl shadow-lg transition flex items-center gap-1.5">
-            <span>📦</span> 1. Draw Card
-          </button>
-          <button id="btn-pair" disabled class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-30 disabled:pointer-events-none text-white text-xs font-bold rounded-xl shadow-lg transition flex items-center gap-1.5">
-            <span>💰</span> <span id="btn-pair-text">2. Lay Selected Pair</span>
-          </button>
-          <button id="btn-skip-pair" disabled class="px-3 py-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 disabled:pointer-events-none text-slate-300 text-xs font-bold rounded-xl border border-slate-700 shadow transition flex items-center gap-1">
-            <span>Skip Pair</span> ➡️
-          </button>
-          <button id="btn-pass" disabled class="px-3.5 py-2 bg-rose-600 hover:bg-rose-500 disabled:opacity-30 disabled:pointer-events-none text-white text-xs font-bold rounded-xl shadow-lg transition flex items-center gap-1.5">
-            <span>👉</span> 3. Pass Card
-          </button>
-        </div>
-      </div>
-
-      <!-- Player Hand View -->
-      <div class="min-h-[148px] flex items-center justify-center">
-        <div id="player-hand" class="flex gap-2.5 overflow-x-auto py-2 px-2 max-w-full justify-center items-center">
-          <!-- Cards rendered dynamically -->
-        </div>
-      </div>
-
-      <!-- Helper Hint Footer -->
-      <div class="text-center text-[11px] text-slate-400 font-medium flex items-center justify-center gap-4 flex-wrap">
-        <span>Clean Pair: <b class="text-blue-400">Blue + Blue = 10 pts</b></span>
-        <span>Laundered: <b class="text-rose-400">Blue + Red = 15/20 pts</b></span>
-        <span>Counterfeit Wild: <b class="text-emerald-400">Blue + Green Wild = 5 pts + 🔄FLIP</b></span>
-        <span class="text-rose-400 font-bold">⚠️ Holding Red at round end = 0 pts!</span>
-      </div>
-    </div>
-
-  </main>
+  </div>
 
   <!-- Round End / Heist Result Modal -->
-  <div id="clean-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 z-50 hidden">
-    <div class="bg-slate-900 border-2 border-rose-500 rounded-3xl p-8 max-w-lg w-full text-center shadow-2xl flex flex-col items-center gap-4">
-      <div id="modal-icon" class="w-16 h-16 rounded-full bg-rose-600/20 border-2 border-rose-500 flex items-center justify-center text-3xl shadow">
+  <div id="clean-modal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-3 z-50 hidden">
+    <div class="bg-slate-900 border-2 border-rose-500 rounded-3xl p-5 max-w-sm sm:max-w-md w-full text-center shadow-2xl flex flex-col items-center gap-3 max-h-[90vh] overflow-y-auto">
+      <div id="modal-icon" class="w-12 h-12 rounded-full bg-rose-600/20 border-2 border-rose-500 flex items-center justify-center text-2xl shadow">
         🚗💨
       </div>
-      <h2 id="modal-title" class="text-2xl font-black text-rose-500 tracking-wider uppercase">"GETAWAY CAR!"</h2>
-      <p id="modal-desc" class="text-slate-300 text-xs">A player emptied their hand! The getaway car speeds off into the night!</p>
+      <h2 id="modal-title" class="text-xl font-black text-rose-500 tracking-wider uppercase">"GETAWAY CAR!"</h2>
+      <p id="modal-desc" class="text-slate-300 text-[11px]">A player emptied their hand! The getaway car speeds off into the night!</p>
       
       <!-- Hands & Score Breakdown -->
-      <div id="modal-scores" class="w-full bg-slate-950/80 border border-slate-800 rounded-2xl p-4 flex flex-col gap-2.5 text-xs text-left">
+      <div id="modal-scores" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl p-3 flex flex-col gap-2 text-xs text-left">
         <!-- Scores injected here -->
       </div>
 
-      <button id="modal-next-btn" class="mt-2 w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-sm rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+      <button id="modal-next-btn" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs rounded-xl shadow-lg transition flex items-center justify-center gap-2">
         <span>NEXT ROUND</span> ➡️
       </button>
     </div>
@@ -349,10 +300,10 @@
       }
 
       updateUI();
-      logAnnouncement(`Round ${roundNumber} begins! Dealing 7 cards to each player. First to 200 pts wins!`);
+      logAnnouncement(`Round ${roundNumber} begins! Dealing 7 cards to each crew member. Reach 200 pts to win!`);
 
       if (currentPlayer !== 0) {
-        setTimeout(() => playBotTurn(currentPlayer), 700);
+        setTimeout(() => playBotTurn(currentPlayer), 600);
       }
     }
 
@@ -373,7 +324,7 @@
 
     // Evaluates any 2 cards selected by the player against the Golden Pairing Law
     function evaluateSelectedPair(c1, c2) {
-      if (!c1 || !c2) return { valid: false, error: "Select 2 cards to form a pair." };
+      if (!c1 || !c2) return { valid: false, error: "Select 2 cards." };
 
       let blue = null;
       let other = null;
@@ -383,7 +334,6 @@
       } else if (c2.color === 'BLUE' && c1.color !== 'BLUE') {
         blue = c2; other = c1;
       } else if (c1.color === 'BLUE' && c2.color === 'BLUE') {
-        // Both Blue: Must match the same item
         if (c1.item === c2.item) {
           return {
             valid: true,
@@ -393,16 +343,16 @@
             category: 'CLEAN',
             points: 10,
             flipsCamera: false,
-            label: `Clean ${c1.item} Pair`
+            label: `Clean ${c1.item}`
           };
         } else {
-          return { valid: false, error: `Clean pairs must match (${c1.item} ≠ ${c2.item})!` };
+          return { valid: false, error: `Must match (${c1.item} ≠ ${c2.item})!` };
         }
       } else {
-        return { valid: false, error: "Every pair requires at least one Blue card!" };
+        return { valid: false, error: "Needs 1 Blue card!" };
       }
 
-      // One is Blue, other is Green Wild
+      // One Blue + Green Wild
       if (other.color === 'GREEN') {
         return {
           valid: true,
@@ -412,11 +362,11 @@
           category: 'WILD',
           points: 5,
           flipsCamera: true,
-          label: `Counterfeit Wild w/ ${blue.item}`
+          label: `Wild w/ ${blue.item}`
         };
       }
 
-      // One is Blue, other is Red Contraband
+      // One Blue + Red Contraband
       if (other.color === 'RED') {
         if (other.item === blue.item) {
           const pts = blue.val + other.val;
@@ -428,10 +378,10 @@
             category: other.isGrand ? 'GRAND' : 'PETTY',
             points: pts,
             flipsCamera: false,
-            label: `Laundered ${other.item} Pair`
+            label: `Laundered ${other.item}`
           };
         } else {
-          return { valid: false, error: `Contraband must match item (${other.item} ≠ ${blue.item})!` };
+          return { valid: false, error: `Mismatch (${other.item} ≠ ${blue.item})!` };
         }
       }
 
@@ -449,7 +399,7 @@
 
       if (blues.length === 0) return candidates;
 
-      // 1. Red + Blue (Laundered Contraband: 15 or 20 pts)
+      // 1. Red + Blue
       reds.forEach(r => {
         const matchBlue = blues.find(b => b.item === r.item);
         if (matchBlue) {
@@ -467,7 +417,7 @@
         }
       });
 
-      // 2. Blue + Blue (Clean Pair: 10 pts)
+      // 2. Blue + Blue
       ITEMS.forEach(it => {
         const itemBlues = blues.filter(b => b.item === it.name);
         if (itemBlues.length >= 2) {
@@ -484,7 +434,7 @@
         }
       });
 
-      // 3. ANY Green Wild + ANY Blue card (Counterfeit Wild: 5 pts + 🔄FLIP!)
+      // 3. ANY Green Wild + ANY Blue
       if (greens.length > 0 && blues.length > 0) {
         const bestBlueToBurn = blues[0];
         candidates.push({
@@ -524,11 +474,11 @@
 
         if (bestPair.flipsCamera) {
           direction = -direction;
-          logAnnouncement(`${getPlayerName(b)} banked a Counterfeit Wild with a Clean Blue card! Passing direction reversed! 🔄`);
+          logAnnouncement(`${getPlayerName(b)} banked Counterfeit Wild! Direction flipped! 🔄`);
         } else if (bestPair.color === 'RED') {
-          logAnnouncement(`${getPlayerName(b)} laundered a ${bestPair.item} pair! Massive +${bestPair.points} points banked!`);
+          logAnnouncement(`${getPlayerName(b)} laundered ${bestPair.item} pair (+${bestPair.points} pts)!`);
         } else {
-          logAnnouncement(`${getPlayerName(b)} banked a clean pair of ${bestPair.item}s (+${bestPair.points} pts).`);
+          logAnnouncement(`${getPlayerName(b)} banked clean ${bestPair.item}s (+${bestPair.points} pts).`);
         }
         return true;
       }
@@ -552,23 +502,20 @@
       return (p + direction + 4) % 4;
     }
 
-    // Bot AI Turn matching Counterfeit Wild Strategy
+    // Bot AI Turn
     function playBotTurn(b) {
       if (checkWinCondition(b)) return;
 
-      logAnnouncement(`${getPlayerName(b)} is drawing a card...`);
+      logAnnouncement(`${getPlayerName(b)} is drawing...`);
       setTimeout(() => {
-        // 1. Draw 1 card
         const card = drawFromDeck();
         if (card) hands[b].push(card);
 
-        // 2. Lay AT MOST 1 pair
         discardBotPairs(b);
         updateUI();
 
         if (checkWinCondition(b)) return;
 
-        // 3. Pass in direction of play
         setTimeout(() => {
           if (hands[b].length > 0) {
             const targetP = getTargetNeighbor(b);
@@ -583,23 +530,16 @@
 
             let cardToPassIdx = -1;
 
-            // Panic Dump: If opponent has <= 2 cards or bot has >= 25 banked points, dump dangerous RED!
             if ((minOppHand <= 2 || myBanked >= 25) && reds.length > 0) {
               cardToPassIdx = reds.sort((a, b) => b.card.val - a.card.val)[0].idx;
-            }
-            // If bot has Green fakes and NO blues to pair them with, pass Green!
-            else if (greens.length > 0 && blues.length === 0) {
+            } else if (greens.length > 0 && blues.length === 0) {
               cardToPassIdx = greens[0].idx;
-            }
-            // Pass Petty Red
-            else if (reds.some(r => r.card.val === 10)) {
+            } else if (reds.some(r => r.card.val === 10)) {
               cardToPassIdx = reds.find(r => r.card.val === 10).idx;
-            }
-            // Pass duplicate Greens
-            else if (greens.length >= 2) {
+            } else if (greens.length >= 2) {
               cardToPassIdx = greens[0].idx;
             }
-            // Otherwise pass Green, then Blue, else random
+
             if (cardToPassIdx === -1) {
               if (greens.length > 0) cardToPassIdx = greens[0].idx;
               else if (blues.length > 0) cardToPassIdx = blues[0].idx;
@@ -616,9 +556,9 @@
           if (checkWinCondition(b)) return;
 
           advanceTurn();
-        }, 550);
+        }, 500);
 
-      }, 450);
+      }, 400);
     }
 
     function advanceTurn() {
@@ -630,7 +570,7 @@
         playerStep = 'DRAW';
         selectedPairIndices = [];
         selectedPassCardIndex = null;
-        logAnnouncement("It's your turn! 1. Click Draw Card to start.");
+        logAnnouncement("Your turn! Tap Draw Card or tap the Locker.");
         updateUI();
       } else {
         setTimeout(() => playBotTurn(currentPlayer), 350);
@@ -646,30 +586,24 @@
       // Header match scoreboard
       const scoreHeader = document.getElementById('header-match-scores');
       scoreHeader.innerHTML = `
-        <span class="${matchScores[0] >= 150 ? 'text-amber-300 font-black' : 'text-slate-300'}">You: ${matchScores[0]}</span>
+        <span class="${matchScores[0] >= 150 ? 'text-amber-300 font-black' : 'text-slate-300'}">You:${matchScores[0]}</span>
         <span class="text-slate-600">|</span>
-        <span class="${matchScores[1] >= 150 ? 'text-amber-300 font-black' : 'text-slate-400'}">B2: ${matchScores[1]}</span>
+        <span class="${matchScores[1] >= 150 ? 'text-amber-300 font-black' : 'text-slate-400'}">B2:${matchScores[1]}</span>
         <span class="text-slate-600">|</span>
-        <span class="${matchScores[2] >= 150 ? 'text-amber-300 font-black' : 'text-slate-400'}">B3: ${matchScores[2]}</span>
+        <span class="${matchScores[2] >= 150 ? 'text-amber-300 font-black' : 'text-slate-400'}">B3:${matchScores[2]}</span>
         <span class="text-slate-600">|</span>
-        <span class="${matchScores[3] >= 150 ? 'text-amber-300 font-black' : 'text-slate-400'}">B4: ${matchScores[3]}</span>
+        <span class="${matchScores[3] >= 150 ? 'text-amber-300 font-black' : 'text-slate-400'}">B4:${matchScores[3]}</span>
       `;
 
       // Camera HUD
-      const camBadge = document.getElementById('camera-badge');
-      const camText = document.getElementById('camera-text');
       const compassArrow = document.getElementById('compass-arrow');
       const compassLabel = document.getElementById('compass-label');
 
       if (direction === 1) {
-        camBadge.className = "px-2.5 py-0.5 rounded-full text-[11px] font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1 transition-all";
-        camText.innerText = "CLOCKWISE (PASS LEFT)";
         compassArrow.innerText = "➡️";
         compassLabel.innerText = "PASS LEFT";
         compassArrow.style.transform = "rotate(0deg)";
       } else {
-        camBadge.className = "px-2.5 py-0.5 rounded-full text-[11px] font-black bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center gap-1 transition-all";
-        camText.innerText = "COUNTER-CLOCKWISE (PASS RIGHT)";
         compassArrow.innerText = "⬅️";
         compassLabel.innerText = "PASS RIGHT";
         compassArrow.style.transform = "rotate(180deg)";
@@ -679,30 +613,17 @@
       [1, 2, 3].forEach(b => {
         const count = hands[b].length;
         const pts = calculateStashPoints(stashes[b]);
-        document.getElementById(`bot${b+1}-count-badge`).innerText = `${count} cards`;
-        document.getElementById(`bot${b+1}-score-badge`).innerText = `Stash: ${pts} pts`;
-        document.getElementById(`bot${b+1}-match-total`).innerText = `Match: ${matchScores[b]}/200 pts`;
-
-        const container = document.getElementById(`bot${b+1}-cards`);
-        container.innerHTML = '';
-        for (let i = 0; i < Math.min(count, 8); i++) {
-          const cardEl = document.createElement('div');
-          cardEl.className = "w-7 h-10 bg-gradient-to-br from-slate-700 to-slate-900 border border-slate-600 rounded flex items-center justify-center text-[10px] shadow";
-          cardEl.innerText = "🔒";
-          container.appendChild(cardEl);
-        }
+        document.getElementById(`bot${b+1}-count-badge`).innerText = `${count}🎴`;
+        document.getElementById(`bot${b+1}-score-badge`).innerText = `Stash: ${pts}`;
+        document.getElementById(`bot${b+1}-match-total`).innerText = `${matchScores[b]}/200`;
 
         const botArea = document.getElementById(`bot${b+1}-area`);
         if (currentPlayer === b) {
-          botArea.classList.add('border-amber-500', 'bg-amber-950/20', 'scale-105');
+          botArea.className = "bg-amber-950/40 border-2 border-amber-400 rounded-xl p-1.5 flex flex-col justify-between shadow-lg scale-102 ring-1 ring-amber-400/50";
         } else {
-          botArea.classList.remove('border-amber-500', 'bg-amber-950/20', 'scale-105');
+          botArea.className = "bg-slate-900/80 border border-slate-800 rounded-xl p-1.5 flex flex-col justify-between";
         }
       });
-
-      // Bot 3 stash text
-      const b3Items = stashes[2].map(p => `${p.icon}+${p.points}`).join(' ') || 'None';
-      document.getElementById('bot3-stash-items').innerText = b3Items;
 
       // Update Player Area
       const statusTag = document.getElementById('player-status-tag');
@@ -718,20 +639,20 @@
       stashes[0].forEach(p => {
         const badge = document.createElement('div');
         let style = 'bg-slate-800 border-slate-700 text-slate-300';
-        if (p.color === 'RED') style = 'bg-rose-950/60 border-rose-600 text-rose-300';
-        else if (p.color === 'GREEN') style = 'bg-emerald-950/60 border-emerald-600 text-emerald-300';
+        if (p.color === 'RED') style = 'bg-rose-950/80 border-rose-600 text-rose-300';
+        else if (p.color === 'GREEN') style = 'bg-emerald-950/80 border-emerald-600 text-emerald-300';
 
-        badge.className = `px-2 py-0.5 rounded text-[10px] font-bold border flex items-center gap-1 ${style}`;
-        badge.innerHTML = `<span>${p.icon}</span><span>+${p.points}pts</span>`;
+        badge.className = `px-1.5 py-0.5 rounded text-[9px] font-bold border flex items-center gap-0.5 shrink-0 ${style}`;
+        badge.innerHTML = `<span>${p.icon}</span><span>+${p.points}</span>`;
         playerStashContainer.appendChild(badge);
       });
 
       if (currentPlayer === 0) {
-        statusTag.className = "text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 animate-pulse";
+        statusTag.className = "px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold animate-pulse";
         statusTag.innerText = "YOUR TURN";
       } else {
-        statusTag.className = "text-[10px] font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-500";
-        statusTag.innerText = "WAITING...";
+        statusTag.className = "px-1.5 py-0.2 rounded bg-slate-800 text-slate-500 text-[10px] font-bold";
+        statusTag.innerText = "WAITING";
       }
 
       // Dynamic Controls State for Pair Selection
@@ -753,26 +674,26 @@
 
             if (evalRes.valid) {
               btnPair.disabled = false;
-              btnPair.className = "px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black rounded-xl shadow-lg ring-2 ring-emerald-400 transition flex items-center gap-1.5 animate-bounce";
-              btnPairText.innerText = `Bank ${evalRes.label} (+${evalRes.points}pts${evalRes.flipsCamera ? ' & 🔄FLIP' : ''})`;
+              btnPair.className = "col-span-2 h-9 sm:h-10 bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-black rounded-xl shadow-lg ring-2 ring-emerald-400 transition flex items-center justify-center gap-1 animate-bounce";
+              btnPairText.innerText = `Bank ${evalRes.label} (+${evalRes.points}pts${evalRes.flipsCamera ? ' & 🔄' : ''})`;
             } else {
               btnPair.disabled = true;
-              btnPair.className = "px-3.5 py-2 bg-slate-800 text-rose-400 border border-rose-800/60 text-xs font-bold rounded-xl shadow opacity-75 cursor-not-allowed flex items-center gap-1.5";
-              btnPairText.innerText = `Invalid Pair (${evalRes.error})`;
+              btnPair.className = "col-span-2 h-9 sm:h-10 bg-slate-800 text-rose-400 border border-rose-800/60 text-[10px] font-bold rounded-xl shadow opacity-80 cursor-not-allowed flex items-center justify-center gap-1";
+              btnPairText.innerText = `Invalid (${evalRes.error})`;
             }
           } else if (selectedPairIndices.length === 1) {
             btnPair.disabled = true;
-            btnPair.className = "px-3.5 py-2 bg-emerald-600/30 text-emerald-300/50 text-xs font-bold rounded-xl shadow flex items-center gap-1.5 cursor-not-allowed";
-            btnPairText.innerText = "Select 2nd Card (1/2)";
+            btnPair.className = "col-span-2 h-9 sm:h-10 bg-emerald-950/40 text-emerald-400 border border-emerald-800/50 text-[11px] font-bold rounded-xl shadow flex items-center justify-center gap-1 cursor-not-allowed";
+            btnPairText.innerText = "Tap 2nd Card (1/2)";
           } else {
             btnPair.disabled = true;
-            btnPair.className = "px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-30 disabled:pointer-events-none text-white text-xs font-bold rounded-xl shadow-lg transition flex items-center gap-1.5";
-            btnPairText.innerText = "2. Click 2 Cards to Bank";
+            btnPair.className = "col-span-2 h-9 sm:h-10 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-30 disabled:pointer-events-none text-white text-[11px] font-bold rounded-xl shadow transition flex items-center justify-center gap-1";
+            btnPairText.innerText = "2. Tap 2 Cards to Bank";
           }
         } else {
           btnPair.disabled = true;
-          btnPair.className = "px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-30 disabled:pointer-events-none text-white text-xs font-bold rounded-xl shadow-lg transition flex items-center gap-1.5";
-          btnPairText.innerText = "2. Lay Selected Pair";
+          btnPair.className = "col-span-2 h-9 sm:h-10 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-30 disabled:pointer-events-none text-white text-[11px] font-bold rounded-xl shadow transition flex items-center justify-center gap-1";
+          btnPairText.innerText = "2. Lay Pair";
         }
 
         btnPass.disabled = (playerStep !== 'PASS' || selectedPassCardIndex === null);
@@ -808,58 +729,59 @@
             ? "border-2 border-amber-400 bg-rose-950/70 red-evidence" 
             : "border-2 border-rose-500 bg-rose-950/50 red-evidence";
         } else if (c.color === 'GREEN') {
-          borderStyle = "border-2 border-emerald-400 bg-emerald-950/50 green-wild";
+          borderStyle = "border-2 border-emerald-400 bg-emerald-950/60 green-wild";
         } else if (c.color === 'BLUE') {
           borderStyle = "border-2 border-blue-500/80 bg-blue-950/40";
         }
 
         // Selection Visual Styling
         if (isPassSelected) {
-          borderStyle += " ring-4 ring-rose-400 -translate-y-3.5 shadow-2xl scale-105";
+          borderStyle += " ring-4 ring-rose-400 -translate-y-3 shadow-2xl scale-105";
         } else if (isPairSelected) {
           if (selectedPairIndices.length === 2) {
             if (evalRes && evalRes.valid) {
-              borderStyle += " ring-4 ring-emerald-400 bg-emerald-950/80 -translate-y-3.5 shadow-2xl scale-105";
+              borderStyle += " ring-4 ring-emerald-400 bg-emerald-950/90 -translate-y-3.5 shadow-2xl scale-105";
             } else {
-              borderStyle += " ring-4 ring-rose-500 bg-rose-950/80 -translate-y-3 shadow-xl";
+              borderStyle += " ring-4 ring-rose-500 bg-rose-950/90 -translate-y-3 shadow-xl";
             }
           } else {
             borderStyle += " ring-4 ring-amber-400 bg-amber-950/70 -translate-y-3 shadow-xl scale-105";
           }
         }
 
-        cardEl.className = `w-24 h-36 rounded-xl p-2 flex flex-col justify-between items-center shadow-xl cursor-pointer transition transform hover:-translate-y-1.5 select-none relative ${borderStyle}`;
+        // Scaled mobile card size: 72px x 112px
+        cardEl.className = `w-[72px] h-[112px] sm:w-[84px] sm:h-[128px] shrink-0 rounded-xl p-1.5 flex flex-col justify-between items-center shadow-md cursor-pointer transition-all select-none relative ${borderStyle}`;
         
         let badgeText = '';
-        if (c.color === 'RED') badgeText = `<span class="${c.val === 15 ? 'text-amber-300' : 'text-rose-400'} font-black">+${c.val}pts</span>`;
-        else if (c.color === 'GREEN') badgeText = `<span class="text-emerald-400 font-black">WILD</span>`;
-        else if (c.color === 'BLUE') badgeText = `<span class="text-blue-400 font-black">+5pts</span>`;
+        if (c.color === 'RED') badgeText = `<span class="${c.val === 15 ? 'text-amber-300' : 'text-rose-400'} font-black text-[9px]">+${c.val}</span>`;
+        else if (c.color === 'GREEN') badgeText = `<span class="text-emerald-400 font-black text-[9px]">WILD</span>`;
+        else if (c.color === 'BLUE') badgeText = `<span class="text-blue-400 font-black text-[9px]">+5</span>`;
 
         let typeSubtitle = '';
-        if (c.color === 'RED') typeSubtitle = (c.val === 15) ? 'Grand (+15)' : 'Petty (+10)';
-        else if (c.color === 'GREEN') typeSubtitle = 'Pairs w/ Any Blue';
-        else if (c.color === 'BLUE') typeSubtitle = 'Clean (+5)';
+        if (c.color === 'RED') typeSubtitle = (c.val === 15) ? 'Grand' : 'Petty';
+        else if (c.color === 'GREEN') typeSubtitle = 'Wild 🔄';
+        else if (c.color === 'BLUE') typeSubtitle = 'Clean';
 
         // Badges for active selection
         let selectionPill = '';
         if (isPairSelected) {
           const pillColor = (selectedPairIndices.length === 2 && evalRes && !evalRes.valid) ? 'bg-rose-600' : 'bg-amber-500';
-          selectionPill = `<div class="absolute -top-2 px-2 py-0.5 ${pillColor} text-white font-black text-[9px] rounded-full shadow tracking-wider uppercase">Pair #${pairSelectionIndex + 1}</div>`;
+          selectionPill = `<div class="absolute -top-2 px-1.5 py-0.2 ${pillColor} text-white font-black text-[8px] rounded-full shadow tracking-wider uppercase">Pair #${pairSelectionIndex + 1}</div>`;
         } else if (isPassSelected) {
-          selectionPill = `<div class="absolute -top-2 px-2 py-0.5 bg-rose-600 text-white font-black text-[9px] rounded-full shadow tracking-wider uppercase">Pass 👉</div>`;
+          selectionPill = `<div class="absolute -top-2 px-1.5 py-0.2 bg-rose-600 text-white font-black text-[8px] rounded-full shadow tracking-wider uppercase">Pass 👉</div>`;
         }
 
         cardEl.innerHTML = `
           ${selectionPill}
-          <div class="w-full flex justify-between items-center text-[10px] font-black">
-            <span>${c.icon}</span>
+          <div class="w-full flex justify-between items-center leading-none">
+            <span class="text-xs">${c.icon}</span>
             ${badgeText}
           </div>
           <div class="flex flex-col items-center justify-center my-auto">
-            <span class="text-3xl">${c.icon}</span>
-            <span class="text-[10px] font-bold text-slate-200 mt-1 uppercase text-center">${c.item}</span>
+            <span class="text-2xl sm:text-3xl leading-none">${c.icon}</span>
+            <span class="text-[9px] sm:text-[10px] font-bold text-slate-200 mt-1 uppercase text-center leading-none truncate max-w-[64px]">${c.item}</span>
           </div>
-          <div class="w-full text-center text-[8px] font-semibold text-slate-400 border-t border-slate-700/50 pt-1">
+          <div class="w-full text-center text-[7.5px] font-semibold text-slate-400 border-t border-slate-700/50 pt-0.5 leading-none">
             ${typeSubtitle}
           </div>
         `;
@@ -870,28 +792,27 @@
           if (playerStep === 'PAIR') {
             const pos = selectedPairIndices.indexOf(idx);
             if (pos !== -1) {
-              selectedPairIndices.splice(pos, 1); // Deselect
+              selectedPairIndices.splice(pos, 1);
             } else {
               if (selectedPairIndices.length < 2) {
                 selectedPairIndices.push(idx);
               } else {
-                selectedPairIndices[1] = idx; // Replace second selection
+                selectedPairIndices[1] = idx;
               }
             }
 
-            // Real-time helpful banner feedback
             if (selectedPairIndices.length === 1) {
               const sel1 = hands[0][selectedPairIndices[0]];
-              logAnnouncement(`Selected ${sel1.item} (${sel1.color}). Click a second card to pair with it, or click 'Skip Pair'.`);
+              logAnnouncement(`Selected ${sel1.item}. Tap a second card to pair, or tap 'Skip'.`);
             } else if (selectedPairIndices.length === 2) {
               const res = evaluateSelectedPair(hands[0][selectedPairIndices[0]], hands[0][selectedPairIndices[1]]);
               if (res.valid) {
-                logAnnouncement(`Valid Pair: ${res.label} (+${res.points} pts${res.flipsCamera ? ' & 🔄FLIP' : ''})! Click 'Bank Pair' to lay it.`);
+                logAnnouncement(`Valid: ${res.label} (+${res.points} pts${res.flipsCamera ? ' & 🔄' : ''})! Tap Bank Pair.`);
               } else {
                 logAnnouncement(`⚠️ ${res.error}`);
               }
             } else {
-              logAnnouncement("Click 2 cards to bank a pair (remember: every pair needs a Blue card!), or click 'Skip Pair'.");
+              logAnnouncement("Tap 2 cards to bank a pair (needs a Blue card!), or tap 'Skip'.");
             }
 
             updateUI();
@@ -899,9 +820,9 @@
             selectedPassCardIndex = (selectedPassCardIndex === idx) ? null : idx;
             if (selectedPassCardIndex !== null) {
               const pCard = hands[0][selectedPassCardIndex];
-              logAnnouncement(`Selected ${pCard.item} (${pCard.color}) to pass. Click '3. Pass Card' to slide it to your neighbor.`);
+              logAnnouncement(`Selected ${pCard.item} to pass. Tap '3. Pass Card'.`);
             } else {
-              logAnnouncement("Click 1 card from your hand to select it for passing.");
+              logAnnouncement("Tap 1 card to select for passing.");
             }
             updateUI();
           }
@@ -923,7 +844,6 @@
       const scores = document.getElementById('modal-scores');
       const nextBtn = document.getElementById('modal-next-btn');
 
-      // Update match scores
       const roundPointsEarned = [0, 0, 0, 0];
 
       for (let p = 0; p < 4; p++) {
@@ -933,11 +853,11 @@
         const isCaught = !isWinner && hasRed;
 
         if (isWinner) {
-          roundPointsEarned[p] = bankedPoints + 15; // +15 Escape bonus!
+          roundPointsEarned[p] = bankedPoints + 15;
         } else if (isCaught) {
-          roundPointsEarned[p] = 0; // Busted!
+          roundPointsEarned[p] = 0;
         } else {
-          roundPointsEarned[p] = bankedPoints; // Escaped clean
+          roundPointsEarned[p] = bankedPoints;
         }
 
         matchScores[p] += roundPointsEarned[p];
@@ -949,16 +869,16 @@
       if (isMatchOver) {
         const grandChamp = Array.from(matchScores.entries()).reduce((max, curr) => curr[1] > max[1] ? curr : max)[0];
         icon.innerText = "👑";
-        title.innerText = `${getPlayerName(grandChamp)} WINS THE HEIST!`;
+        title.innerText = `${getPlayerName(grandChamp)} WINS!`;
         desc.innerText = `${getPlayerName(grandChamp)} crossed 200 points (${matchScores[grandChamp]} pts) and takes the crown!`;
         nextBtn.innerHTML = `<span>START NEW HEIST MATCH</span> 🔄`;
-        nextBtn.className = "mt-2 w-full py-3 bg-amber-600 hover:bg-amber-500 text-white font-black text-sm rounded-xl shadow-lg transition flex items-center justify-center gap-2";
+        nextBtn.className = "w-full py-2.5 bg-amber-600 hover:bg-amber-500 text-white font-black text-xs rounded-xl shadow-lg transition flex items-center justify-center gap-2";
       } else {
         icon.innerText = "🚗💨";
-        title.innerText = `${getPlayerName(winnerIdx)} SHOUTED "GETAWAY CAR!"`;
-        desc.innerText = `${getPlayerName(winnerIdx)} emptied their hand and escaped! Police sirens echo through the streets!`;
+        title.innerText = `${getPlayerName(winnerIdx)} ESCAPED!`;
+        desc.innerText = `${getPlayerName(winnerIdx)} shouted "GETAWAY CAR!" Siren alarms echo!`;
         nextBtn.innerHTML = `<span>PROCEED TO ROUND ${roundNumber + 1}</span> ➡️`;
-        nextBtn.className = "mt-2 w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-sm rounded-xl shadow-lg transition flex items-center justify-center gap-2";
+        nextBtn.className = "w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs rounded-xl shadow-lg transition flex items-center justify-center gap-2";
       }
 
       scores.innerHTML = '';
@@ -971,29 +891,29 @@
         const ptsEarned = roundPointsEarned[p];
 
         const row = document.createElement('div');
-        row.className = `flex justify-between items-center p-2.5 rounded-xl ${isWinner ? 'bg-amber-950/40 border border-amber-600' : (isCaught ? 'bg-rose-950/40 border border-rose-800' : 'bg-emerald-950/40 border border-emerald-800')}`;
+        row.className = `flex justify-between items-center p-2 rounded-lg ${isWinner ? 'bg-amber-950/40 border border-amber-600' : (isCaught ? 'bg-rose-950/40 border border-rose-800' : 'bg-emerald-950/40 border border-emerald-800')}`;
         
         let statusSub = '';
-        if (isWinner) statusSub = 'Escaped clean with the stash!';
-        else if (isCaught) statusSub = `Caught holding ${redCards} Red Contraband! Banked stash seized!`;
-        else statusSub = `Escaped clean${greenCards > 0 ? ` (held ${greenCards} Green Wilds)` : ''}!`;
+        if (isWinner) statusSub = 'Escaped clean!';
+        else if (isCaught) statusSub = `Busted! Held ${redCards} Red Contraband!`;
+        else statusSub = `Escaped clean${greenCards > 0 ? ` (held ${greenCards} Wilds)` : ''}!`;
 
         row.innerHTML = `
           <div>
-            <div class="font-bold text-slate-200 flex items-center gap-1.5">
+            <div class="font-bold text-slate-200 flex items-center gap-1 text-[11px]">
               <span>${getPlayerName(p)}</span>
-              ${isWinner ? '<span class="text-[10px] bg-amber-500/20 text-amber-300 px-1.5 py-0.2 rounded font-black">+15 GETAWAY BONUS</span>' : ''}
+              ${isWinner ? '<span class="text-[8px] bg-amber-500/20 text-amber-300 px-1 py-0.2 rounded font-black">+15 BONUS</span>' : ''}
             </div>
-            <div class="text-[11px] text-slate-400 mt-0.5">
+            <div class="text-[10px] text-slate-400">
               ${statusSub}
             </div>
           </div>
           <div class="text-right">
-            <div class="text-xs font-black ${isCaught ? 'text-rose-400 line-through' : 'text-emerald-400'}">
-              +${ptsEarned} pts this round
+            <div class="text-[11px] font-black ${isCaught ? 'text-rose-400 line-through' : 'text-emerald-400'}">
+              +${ptsEarned} pts
             </div>
-            <div class="text-sm font-black text-amber-400 mt-0.5">
-              Match Total: ${matchScores[p]} / 200
+            <div class="text-[10px] font-black text-amber-400">
+              Total: ${matchScores[p]}/200
             </div>
           </div>
         `;
@@ -1015,15 +935,18 @@
     }
 
     // Player Interaction Handlers
-    document.getElementById('btn-draw').onclick = () => {
+    function handleDrawAction() {
       if (currentPlayer !== 0 || playerStep !== 'DRAW') return;
       const card = drawFromDeck();
       if (card) hands[0].push(card);
-      logAnnouncement("You drew a card! Now click 2 cards to bank a pair (Every pair needs a Blue card!), or click 'Skip Pair'.");
+      logAnnouncement("You drew a card! Tap 2 cards to bank a pair (needs a Blue card!), or tap 'Skip'.");
       playerStep = 'PAIR';
       selectedPairIndices = [];
       updateUI();
-    };
+    }
+
+    document.getElementById('btn-draw').onclick = handleDrawAction;
+    document.getElementById('draw-deck').onclick = handleDrawAction;
 
     // User banks the chosen pair
     document.getElementById('btn-pair').onclick = () => {
@@ -1037,7 +960,6 @@
       const evalRes = evaluateSelectedPair(c1, c2);
       if (!evalRes.valid) return;
 
-      // Remove the 2 cards (highest index first to preserve index stability)
       const first = Math.max(idx1, idx2);
       const second = Math.min(idx1, idx2);
       hands[0].splice(first, 1);
@@ -1066,7 +988,7 @@
       if (checkWinCondition(0)) return;
 
       playerStep = 'PASS';
-      logAnnouncement("Pair banked! Now click 1 card in your hand to select it for passing.");
+      logAnnouncement("Pair banked! Now tap 1 card in your hand to pass to your neighbor.");
       updateUI();
     };
 
@@ -1075,7 +997,7 @@
       if (currentPlayer !== 0 || playerStep !== 'PAIR') return;
       selectedPairIndices = [];
       playerStep = 'PASS';
-      logAnnouncement("Skipped laying a pair. Now click 1 card in your hand to pass to your neighbor.");
+      logAnnouncement("Skipped pair. Now tap 1 card in your hand to pass to your neighbor.");
       updateUI();
     };
 
