@@ -1,7 +1,7 @@
 # 🚨 Caught Red-Handed: Counterfeit Wild Edition
 
 **A Fast-Paced Family Heist Game of Banking Loot & Getting Away Clean**  
-*Players*: 2–6 (Optimized for 4) | *Ages*: 7+ | *Match Length*: ~20–25 mins (First to 200 pts) | *Components*: 56 Cards
+*Players*: 2–6 (Optimized for 4) | *Ages*: 7+ | *Match Length*: ~25–30 mins (First to 300 pts) | *Components*: 56 Cards
 
 ---
 
@@ -93,8 +93,8 @@ The round ends immediately! **FREEZE!**
 
 ---
 
-## 6. Winning the Game (First to 200 Points)
+## 6. Winning the Game (First to 300 Points)
 
 Add each player's round score to their cumulative match total on the scorecard:
-* If at least one player reaches **200 points**, the heist series ends immediately! The player with the highest total score is crowned the **Master Thief**!
-* If no player has reached 200 points, gather all 54 cards, rotate the first player, deal 7 fresh cards, and start the next round! (Typically takes **~3–5 rounds**).
+* If at least one player reaches **300 points**, the heist series ends immediately! The player with the highest total score is crowned the **Master Thief**!
+* If no player has reached 300 points, gather all 54 cards, rotate the first player, deal 7 fresh cards, and start the next round! (Typically takes **~5 rounds**).

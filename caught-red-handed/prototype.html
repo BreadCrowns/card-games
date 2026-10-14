@@ -46,7 +46,7 @@
       <span class="text-slate-600">•</span>
       <span>T<span id="turn-counter" class="font-bold text-amber-400">1</span></span>
       <span class="text-slate-600">•</span>
-      <span class="text-amber-400 font-black">200 PTS WIN</span>
+      <span class="text-amber-400 font-black">300 PTS WIN</span>
     </div>
 
     <button id="restart-match-btn" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-semibold rounded border border-slate-700 transition">
@@ -69,7 +69,7 @@
         </div>
         <div class="flex items-center justify-between text-[9px] mt-0.5 font-mono">
           <span id="bot4-score-badge" class="text-emerald-400 font-semibold">Stash: 0</span>
-          <span id="bot4-match-total" class="text-amber-300/80 font-bold">0/200</span>
+          <span id="bot4-match-total" class="text-amber-300/80 font-bold">0/300</span>
         </div>
       </div>
 
@@ -84,7 +84,7 @@
         </div>
         <div class="flex items-center justify-between text-[9px] mt-0.5 font-mono">
           <span id="bot3-score-badge" class="text-emerald-400 font-semibold">Stash: 0</span>
-          <span id="bot3-match-total" class="text-amber-300/80 font-bold">0/200</span>
+          <span id="bot3-match-total" class="text-amber-300/80 font-bold">0/300</span>
         </div>
       </div>
 
@@ -99,7 +99,7 @@
         </div>
         <div class="flex items-center justify-between text-[9px] mt-0.5 font-mono">
           <span id="bot2-score-badge" class="text-emerald-400 font-semibold">Stash: 0</span>
-          <span id="bot2-match-total" class="text-amber-300/80 font-bold">0/200</span>
+          <span id="bot2-match-total" class="text-amber-300/80 font-bold">0/300</span>
         </div>
       </div>
 
@@ -152,7 +152,7 @@
         <div class="flex items-center gap-2 text-[11px] font-bold">
           <span id="player-status-tag" class="px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 text-[10px]">YOUR TURN</span>
           <span class="text-emerald-300">Bank: <span id="player-score-display" class="font-mono text-xs font-black">0</span> pts</span>
-          <span class="text-amber-400">Total: <span id="player-match-total" class="font-mono text-xs font-black">0</span>/200</span>
+          <span class="text-amber-400">Total: <span id="player-match-total" class="font-mono text-xs font-black">0</span>/300</span>
         </div>
       </div>
 
@@ -225,7 +225,7 @@
     ];
 
     // Match State
-    let matchScores = [0, 0, 0, 0]; // Cumulative points towards 200
+    let matchScores = [0, 0, 0, 0]; // Cumulative points towards 300
     let roundNumber = 1;
     let starterPlayer = 0; // Rotates each round
 
@@ -300,7 +300,7 @@
       }
 
       updateUI();
-      logAnnouncement(`Round ${roundNumber} begins! Dealing 7 cards to each crew member. Reach 200 pts to win!`);
+      logAnnouncement(`Round ${roundNumber} begins! Dealing 7 cards to each crew member. Reach 300 pts to win!`);
 
       if (currentPlayer !== 0) {
         setTimeout(() => playBotTurn(currentPlayer), 600);
@@ -586,13 +586,13 @@
       // Header match scoreboard
       const scoreHeader = document.getElementById('header-match-scores');
       scoreHeader.innerHTML = `
-        <span class="${matchScores[0] >= 150 ? 'text-amber-300 font-black' : 'text-slate-300'}">You:${matchScores[0]}</span>
+        <span class="${matchScores[0] >= 225 ? 'text-amber-300 font-black' : 'text-slate-300'}">You:${matchScores[0]}</span>
         <span class="text-slate-600">|</span>
-        <span class="${matchScores[1] >= 150 ? 'text-amber-300 font-black' : 'text-slate-400'}">B2:${matchScores[1]}</span>
+        <span class="${matchScores[1] >= 225 ? 'text-amber-300 font-black' : 'text-slate-400'}">B2:${matchScores[1]}</span>
         <span class="text-slate-600">|</span>
-        <span class="${matchScores[2] >= 150 ? 'text-amber-300 font-black' : 'text-slate-400'}">B3:${matchScores[2]}</span>
+        <span class="${matchScores[2] >= 225 ? 'text-amber-300 font-black' : 'text-slate-400'}">B3:${matchScores[2]}</span>
         <span class="text-slate-600">|</span>
-        <span class="${matchScores[3] >= 150 ? 'text-amber-300 font-black' : 'text-slate-400'}">B4:${matchScores[3]}</span>
+        <span class="${matchScores[3] >= 225 ? 'text-amber-300 font-black' : 'text-slate-400'}">B4:${matchScores[3]}</span>
       `;
 
       // Camera HUD
@@ -615,7 +615,7 @@
         const pts = calculateStashPoints(stashes[b]);
         document.getElementById(`bot${b+1}-count-badge`).innerText = `${count}🎴`;
         document.getElementById(`bot${b+1}-score-badge`).innerText = `Stash: ${pts}`;
-        document.getElementById(`bot${b+1}-match-total`).innerText = `${matchScores[b]}/200`;
+        document.getElementById(`bot${b+1}-match-total`).innerText = `${matchScores[b]}/300`;
 
         const botArea = document.getElementById(`bot${b+1}-area`);
         if (currentPlayer === b) {
@@ -863,14 +863,14 @@
         matchScores[p] += roundPointsEarned[p];
       }
 
-      const matchWinner = matchScores.findIndex(s => s >= 200);
+      const matchWinner = matchScores.findIndex(s => s >= 300);
       const isMatchOver = (matchWinner !== -1);
 
       if (isMatchOver) {
         const grandChamp = Array.from(matchScores.entries()).reduce((max, curr) => curr[1] > max[1] ? curr : max)[0];
         icon.innerText = "👑";
         title.innerText = `${getPlayerName(grandChamp)} WINS!`;
-        desc.innerText = `${getPlayerName(grandChamp)} crossed 200 points (${matchScores[grandChamp]} pts) and takes the crown!`;
+        desc.innerText = `${getPlayerName(grandChamp)} crossed 300 points (${matchScores[grandChamp]} pts) and takes the crown!`;
         nextBtn.innerHTML = `<span>START NEW HEIST MATCH</span> 🔄`;
         nextBtn.className = "w-full py-2.5 bg-amber-600 hover:bg-amber-500 text-white font-black text-xs rounded-xl shadow-lg transition flex items-center justify-center gap-2";
       } else {
@@ -913,7 +913,7 @@
               +${ptsEarned} pts
             </div>
             <div class="text-[10px] font-black text-amber-400">
-              Total: ${matchScores[p]}/200
+              Total: ${matchScores[p]}/300
             </div>
           </div>
         `;

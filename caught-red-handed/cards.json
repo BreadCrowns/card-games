@@ -23,6 +23,6 @@
     { "id": "loot_fake_wild", "name": "Counterfeit (Wild)", "item": "Wild", "type": "Counterfeit", "color": "GREEN", "value": 0, "copies": 10, "icon": "🎭🔄" },
 
     { "id": "ref_camera", "name": "Security Camera (Flippable Direction)", "item": "Tracker", "type": "Indicator", "color": "MARKER", "value": 0, "copies": 1, "icon": "📹" },
-    { "id": "ref_rules", "name": "Heist Rules & 200pt Score Tracker", "item": "Rules", "type": "Reference", "color": "MARKER", "value": 0, "copies": 1, "icon": "📋" }
+    { "id": "ref_rules", "name": "Heist Rules & 300pt Score Tracker", "item": "Rules", "type": "Reference", "color": "MARKER", "value": 0, "copies": 1, "icon": "📋" }
   ]
 }
