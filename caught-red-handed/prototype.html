@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Caught Red-Handed — Classic Hustle Edition</title>
+  <title>Caught Red-Handed — Counterfeit Wild Edition</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @keyframes pulse-red {
@@ -14,10 +14,10 @@
       animation: pulse-red 2s infinite;
     }
     @keyframes pulse-green {
-      0%, 100% { box-shadow: 0 0 12px rgba(16, 185, 129, 0.5); }
-      50% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.8); }
+      0%, 100% { box-shadow: 0 0 14px rgba(16, 185, 129, 0.6); }
+      50% { box-shadow: 0 0 24px rgba(16, 185, 129, 0.9); }
     }
-    .green-fake {
+    .green-wild {
       animation: pulse-green 2.5s infinite;
     }
   </style>
@@ -31,9 +31,9 @@
       <div>
         <div class="flex items-center gap-2">
           <h1 class="text-lg font-black tracking-wider text-rose-500 uppercase">Caught Red-Handed</h1>
-          <span class="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-2 py-0.5 rounded-full font-bold">CLASSIC HUSTLE</span>
+          <span class="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-2 py-0.5 rounded-full font-bold">COUNTERFEIT WILDS</span>
         </div>
-        <p class="text-[11px] text-slate-400">First crew member to <span class="text-amber-400 font-bold">200 Points</span> wins the heist match!</p>
+        <p class="text-[11px] text-slate-400">Every pair needs a <span class="text-blue-400 font-bold">Blue card</span>. First crew member to <span class="text-amber-400 font-bold">200 Points</span> wins!</p>
       </div>
     </div>
 
@@ -120,48 +120,41 @@
         </div>
       </div>
 
-      <!-- Center Tabletop: Evidence Locker & Security Camera -->
+      <!-- Center Tabletop: Evidence Locker & Security Camera (Zero Central Discard) -->
       <div class="col-span-6 bg-slate-900/40 border border-slate-800/80 rounded-3xl p-6 flex flex-col items-center justify-center gap-4 relative shadow-2xl backdrop-blur-sm">
         
         <div class="absolute -top-3 px-4 py-0.5 bg-slate-950 border border-slate-700 rounded-full text-[10px] font-bold text-slate-400 tracking-wider flex items-center gap-1.5 shadow">
-          <span>📹 SECURITY CAMERA</span>
+          <span>📹 SECURITY CAMERA SYSTEM</span>
         </div>
 
-        <div class="flex items-center justify-center gap-8 w-full">
+        <div class="flex items-center justify-center gap-12 w-full py-2">
           
           <!-- Evidence Locker (Draw Deck) -->
           <div class="flex flex-col items-center gap-2">
             <div id="draw-deck" class="w-24 h-36 bg-gradient-to-br from-slate-800 to-slate-900 border-2 border-slate-700 hover:border-amber-500 rounded-xl flex flex-col items-center justify-center shadow-xl cursor-pointer transition transform hover:-translate-y-1">
-              <span class="text-2xl mb-1">📦</span>
+              <span class="text-3xl mb-1">📦</span>
               <span class="text-[10px] font-black text-slate-400 tracking-wider">LOCKER</span>
               <span id="deck-count" class="text-sm font-black text-amber-400 mt-1">26</span>
             </div>
             <span class="text-[11px] font-bold text-slate-400">Draw Pile</span>
           </div>
 
-          <!-- Active Direction Graphic -->
-          <div class="flex flex-col items-center justify-center">
-            <div id="compass-arrow" class="w-14 h-14 rounded-full bg-slate-800/80 border border-slate-700 flex items-center justify-center text-2xl shadow-inner transition-transform duration-500">
+          <!-- Active Security Camera Indicator Card -->
+          <div class="flex flex-col items-center justify-center gap-2 bg-slate-950/80 border-2 border-slate-700 p-4 rounded-2xl shadow-xl w-48">
+            <div id="compass-arrow" class="w-14 h-14 rounded-full bg-slate-800/90 border-2 border-amber-500/70 flex items-center justify-center text-3xl shadow-inner transition-transform duration-500">
               ➡️
             </div>
-            <span id="compass-label" class="text-[10px] font-bold text-slate-400 mt-1">PASS LEFT</span>
-          </div>
-
-          <!-- Discard Vault (Reverses) -->
-          <div class="flex flex-col items-center gap-2">
-            <div id="vault-slot" class="w-24 h-36 bg-slate-900/80 border-2 border-dashed border-slate-700 rounded-xl flex flex-col items-center justify-center shadow-xl p-2 relative">
-              <span class="text-2xl mb-1 text-slate-600">🏛️</span>
-              <span class="text-[10px] font-bold text-slate-500 tracking-wider">VAULT</span>
-              <div id="last-discard-preview" class="absolute inset-0 flex items-center justify-center"></div>
+            <div class="text-center">
+              <div id="compass-label" class="text-xs font-black text-amber-400 uppercase tracking-wide">PASS LEFT</div>
+              <div class="text-[9px] text-slate-400 mt-0.5">Green Wild flips camera!</div>
             </div>
-            <span class="text-[11px] font-bold text-slate-400">Vault Discard (<span id="vault-count">0</span>)</span>
           </div>
 
         </div>
 
         <!-- Live Heist Banner -->
         <div id="announcement-banner" class="w-full text-center py-1.5 px-4 bg-slate-950/70 border border-slate-800 rounded-xl text-xs font-semibold text-slate-300 min-h-[32px] flex items-center justify-center shadow-inner">
-          Turn starts: Draw 1 card, lay up to 1 pair into your stash, and pass 1 card in direction of play.
+          Turn starts: Draw 1 card, bank 1 pair using a Blue card, then pass 1 card in direction of play.
         </div>
       </div>
 
@@ -236,11 +229,10 @@
 
       <!-- Helper Hint Footer -->
       <div class="text-center text-[11px] text-slate-400 font-medium flex items-center justify-center gap-4 flex-wrap">
-        <span>Clean Pair: <b class="text-emerald-400">5+5=10 pts</b></span>
-        <span>Petty Red: <b class="text-rose-400">5+10=15 pts</b></span>
-        <span>Grand Red: <b class="text-amber-300">5+15=20 pts</b></span>
-        <span>Counterfeit (Fake): <b class="text-teal-400">5+0=5 pts</b></span>
-        <span class="text-rose-400 font-bold">⚠️ Caught with Red at end = 0 pts!</span>
+        <span>Clean Pair: <b class="text-blue-400">Blue + Blue = 10 pts</b></span>
+        <span>Laundered: <b class="text-rose-400">Blue + Red = 15/20 pts</b></span>
+        <span>Counterfeit Wild: <b class="text-emerald-400">Blue + Green Wild = 5 pts + 🔄FLIP</b></span>
+        <span class="text-rose-400 font-bold">⚠️ Holding Red at round end = 0 pts!</span>
       </div>
     </div>
 
@@ -267,15 +259,15 @@
   </div>
 
   <script>
-    // Classic Hustle Definition: First to 200 pts, Green Fakes (0 pts), 5 / 10 / 15 Point Economy
+    // Counterfeit Wild Edition: Every pair requires at least one Blue card!
     const ITEMS = [
-      { name: 'Cash', icon: '💵', cleanVal: 5, pettyVal: 10, grandVal: 0, isGrand: false },
-      { name: 'Diamond', icon: '💎', cleanVal: 5, pettyVal: 10, grandVal: 0, isGrand: false },
-      { name: 'Watch', icon: '⌚', cleanVal: 5, pettyVal: 10, grandVal: 0, isGrand: false },
-      { name: 'Key', icon: '🗝️', cleanVal: 5, pettyVal: 10, grandVal: 0, isGrand: false },
-      { name: 'Painting', icon: '🖼️', cleanVal: 5, pettyVal: 0, grandVal: 15, isGrand: true },
-      { name: 'Gold', icon: '🧈', cleanVal: 5, pettyVal: 0, grandVal: 15, isGrand: true },
-      { name: 'Crown', icon: '👑', cleanVal: 5, pettyVal: 0, grandVal: 15, isGrand: true }
+      { name: 'Cash', icon: '💵', isGrand: false },
+      { name: 'Diamond', icon: '💎', isGrand: false },
+      { name: 'Watch', icon: '⌚', isGrand: false },
+      { name: 'Key', icon: '🗝️', isGrand: false },
+      { name: 'Painting', icon: '🖼️', isGrand: true },
+      { name: 'Gold', icon: '🧈', isGrand: true },
+      { name: 'Crown', icon: '👑', isGrand: true }
     ];
 
     // Match State
@@ -285,7 +277,6 @@
 
     // Round State
     let deck = [];
-    let vault = [];
     let hands = [[], [], [], []]; // P0=User, P1=Bot2, P2=Bot3, P3=Bot4
     let stashes = [[], [], [], []]; // Banked pairs for current round
     let currentPlayer = 0;
@@ -294,16 +285,14 @@
     let selectedPassCardIndex = null;
     let playerStep = 'DRAW'; // 'DRAW', 'PAIR', 'PASS'
 
-    // Build the 54-card playable Classic Hustle deck
+    // Build the 54-card playable deck (Zero central discard pile needed!)
     function buildDeck() {
       const cards = [];
 
-      // 1. 24 Clean Loot (Blue, 5 pts each)
-      // 4 Cash, 4 Diamond, 4 Watch, 3 Key, 3 Painting, 3 Gold, 3 Crown = 24
-      const blueCounts = { Cash: 4, Diamond: 4, Watch: 4, Key: 3, Painting: 3, Gold: 3, Crown: 3 };
+      // 1. 28 Clean Loot (Blue, 5 pts each, 4 of each of the 7 items)
       ITEMS.forEach(it => {
-        for (let i = 0; i < blueCounts[it.name]; i++) {
-          cards.push({ type: 'LOOT', color: 'BLUE', item: it.name, icon: it.icon, val: 5, isGrand: it.isGrand, isRed: false });
+        for (let i = 0; i < 4; i++) {
+          cards.push({ type: 'LOOT', color: 'BLUE', item: it.name, icon: it.icon, val: 5, isGrand: it.isGrand });
         }
       });
 
@@ -313,30 +302,20 @@
       Object.keys(pettyCounts).forEach(name => {
         const it = ITEMS.find(x => x.name === name);
         for (let i = 0; i < pettyCounts[name]; i++) {
-          cards.push({ type: 'LOOT', color: 'RED', item: it.name, icon: it.icon, val: 10, isGrand: false, isRed: true });
+          cards.push({ type: 'LOOT', color: 'RED', item: it.name, icon: it.icon, val: 10, isGrand: false });
         }
       });
       // 6 Grand (15 pts): 2 Paintings, 2 Gold, 2 Crowns
       ['Painting', 'Gold', 'Crown'].forEach(name => {
         const it = ITEMS.find(x => x.name === name);
         for (let i = 0; i < 2; i++) {
-          cards.push({ type: 'LOOT', color: 'RED', item: it.name, icon: it.icon, val: 15, isGrand: true, isRed: true });
+          cards.push({ type: 'LOOT', color: 'RED', item: it.name, icon: it.icon, val: 15, isGrand: true });
         }
       });
 
-      // 3. 8 Green Fakes (0 pts each, cannot pair together, needs matching Blue to bank)
-      // 2 Cash, 2 Diamond, 1 Watch, 1 Key, 1 Painting, 1 Gold
-      const fakeCounts = { Cash: 2, Diamond: 2, Watch: 1, Key: 1, Painting: 1, Gold: 1 };
-      Object.keys(fakeCounts).forEach(name => {
-        const it = ITEMS.find(x => x.name === name);
-        for (let i = 0; i < fakeCounts[name]; i++) {
-          cards.push({ type: 'LOOT', color: 'GREEN', item: it.name, icon: it.icon, val: 0, isGrand: false, isRed: false, isFake: true });
-        }
-      });
-
-      // 4. 6 Action Reverses
-      for (let i = 0; i < 6; i++) {
-        cards.push({ type: 'REVERSE', color: 'SPECIAL', item: 'Reverse', icon: '🔄', val: 0, isGrand: false, isRed: false });
+      // 3. 10 Green Counterfeit Wilds (0 pts, pairs with ANY Blue, flips direction)
+      for (let i = 0; i < 10; i++) {
+        cards.push({ type: 'LOOT', color: 'GREEN', item: 'Wild', icon: '🎭🔄', val: 0, isGrand: false, isWild: true });
       }
 
       // Shuffle Fisher-Yates
@@ -349,7 +328,6 @@
 
     function initRound() {
       deck = buildDeck();
-      vault = [];
       hands = [[], [], [], []];
       stashes = [[], [], [], []];
       currentPlayer = starterPlayer;
@@ -358,7 +336,7 @@
       selectedPassCardIndex = null;
       playerStep = (currentPlayer === 0) ? 'DRAW' : 'BOT';
 
-      // Deal 7 cards each (54 - 28 = 26 left in locker)
+      // Deal 7 cards each (54 - 28 = 26 in draw deck)
       for (let i = 0; i < 7; i++) {
         for (let p = 0; p < 4; p++) {
           hands[p].push(deck.pop());
@@ -366,7 +344,7 @@
       }
 
       updateUI();
-      logAnnouncement(`Round ${roundNumber} begins! Dealing 7 cards to each crew member. Reach 200 pts to win!`);
+      logAnnouncement(`Round ${roundNumber} begins! Dealing 7 cards to each player. First to 200 pts wins!`);
 
       if (currentPlayer !== 0) {
         setTimeout(() => playBotTurn(currentPlayer), 700);
@@ -381,15 +359,6 @@
     }
 
     function drawFromDeck() {
-      if (deck.length === 0 && vault.length > 0) {
-        logAnnouncement("Evidence Locker empty! Shuffled played Reverses back into fresh Locker.");
-        deck = [...vault];
-        vault = [];
-        for (let i = deck.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [deck[i], deck[j]] = [deck[j], deck[i]];
-        }
-      }
       return deck.pop() || null;
     }
 
@@ -397,89 +366,88 @@
       return stash.reduce((sum, pair) => sum + pair.points, 0);
     }
 
-    // Find candidate pairs in hand
+    // THE GOLDEN PAIRING LAW: Every single pair REQUIRES at least one Blue card!
     function getCandidatePairs(playerIdx) {
       const hand = hands[playerIdx];
       const candidates = [];
 
-      ITEMS.forEach(it => {
-        const blues = hand.filter(c => c.type === 'LOOT' && c.item === it.name && c.color === 'BLUE');
-        const reds = hand.filter(c => c.type === 'LOOT' && c.item === it.name && c.color === 'RED');
-        const greens = hand.filter(c => c.type === 'LOOT' && c.item === it.name && c.color === 'GREEN');
+      const blues = hand.filter(c => c.color === 'BLUE');
+      const reds = hand.filter(c => c.color === 'RED');
+      const greens = hand.filter(c => c.color === 'GREEN');
 
-        // 1. Laundered Contraband (Blue + Red): 15 or 20 pts
-        if (blues.length > 0 && reds.length > 0) {
-          const pts = blues[0].val + reds[0].val;
+      if (blues.length === 0) return candidates; // Cannot lay ANY pair without a Blue card!
+
+      // 1. Red + Blue (Laundered Contraband: 15 or 20 pts)
+      reds.forEach(r => {
+        const matchBlue = blues.find(b => b.item === r.item);
+        if (matchBlue) {
+          const pts = matchBlue.val + r.val;
           candidates.push({
-            item: it.name,
-            icon: it.icon,
+            item: r.item,
+            icon: r.icon,
             color: 'RED',
-            category: it.isGrand ? 'GRAND' : 'PETTY',
+            category: r.isGrand ? 'GRAND' : 'PETTY',
             points: pts,
-            c1: reds[0],
-            c2: blues[0],
-            label: `${it.name} Laundered (+${pts}pts)`
+            flipsCamera: false,
+            c1: r,
+            c2: matchBlue,
+            label: `${r.item} Laundered (+${pts}pts)`
           });
         }
+      });
 
-        // 2. Clean Pair (Blue + Blue): 10 pts
-        if (blues.length >= 2) {
-          const pts = blues[0].val + blues[1].val;
+      // 2. Blue + Blue (Clean Pair: 10 pts)
+      ITEMS.forEach(it => {
+        const itemBlues = blues.filter(b => b.item === it.name);
+        if (itemBlues.length >= 2) {
           candidates.push({
             item: it.name,
             icon: it.icon,
             color: 'BLUE',
             category: 'CLEAN',
-            points: pts,
-            c1: blues[0],
-            c2: blues[1],
-            label: `${it.name} Clean (+${pts}pts)`
-          });
-        }
-
-        // 3. Counterfeit Pair (Blue + Green Fake): 5 pts ($5 + 0$)
-        if (blues.length > 0 && greens.length > 0) {
-          const pts = blues[0].val + greens[0].val; // 5 + 0 = 5
-          candidates.push({
-            item: it.name,
-            icon: it.icon,
-            color: 'GREEN',
-            category: 'FAKE',
-            points: pts,
-            c1: greens[0],
-            c2: blues[0],
-            label: `${it.name} Counterfeit (+${pts}pts)`
+            points: 10,
+            flipsCamera: false,
+            c1: itemBlues[0],
+            c2: itemBlues[1],
+            label: `${it.name} Clean (+10pts)`
           });
         }
       });
 
+      // 3. ANY Green Wild + ANY Blue card (Counterfeit Wild: 5 pts + 🔄FLIP!)
+      if (greens.length > 0 && blues.length > 0) {
+        // Pair with any blue that doesn't break a better red match if possible
+        const bestBlueToBurn = blues[0];
+        candidates.push({
+          item: `Wild (${bestBlueToBurn.item})`,
+          icon: '🎭🔄',
+          color: 'GREEN',
+          category: 'WILD',
+          points: 5,
+          flipsCamera: true,
+          c1: greens[0],
+          c2: bestBlueToBurn,
+          label: `Counterfeit Wild (+5pts & 🔄FLIP)`
+        });
+      }
+
       return candidates;
     }
 
-    // RULE: On your turn, lay AT MOST 1 PAIR (not multiple)
+    // Lay at most 1 pair per turn
     function discardPlayerPairs(playerIdx) {
       const hand = hands[playerIdx];
+      const candidates = getCandidatePairs(playerIdx);
 
-      // 1. Reverses
-      const revIdx = hand.findIndex(c => c.type === 'REVERSE');
-      if (revIdx !== -1) {
-        const revCard = hand.splice(revIdx, 1)[0];
-        vault.push(revCard);
-        direction = -direction;
-        logAnnouncement(`${getPlayerName(playerIdx)} played "Look Out!" (Reverse)! Passing direction reversed!`);
-        return true;
-      }
-
-      // 2. Find candidate pairs
-      const possiblePairs = getCandidatePairs(playerIdx);
-
-      // Lay the single highest-scoring pair
-      if (possiblePairs.length > 0) {
-        possiblePairs.sort((a, b) => b.points - a.points);
-        const bestPair = possiblePairs[0];
+      if (candidates.length > 0) {
+        // Priority: Grand Laundered (20) > Petty Laundered (15) > Clean (10) > Counterfeit Wild (5 + FLIP)
+        // Unless rushing out or wanting to reverse
+        candidates.sort((a, b) => b.points - a.points);
+        const bestPair = candidates[0];
 
         hand.splice(hand.indexOf(bestPair.c1), 1);
         hand.splice(hand.indexOf(bestPair.c2), 1);
+
         stashes[playerIdx].push({
           item: bestPair.item,
           icon: bestPair.icon,
@@ -488,10 +456,11 @@
           category: bestPair.category
         });
 
-        if (bestPair.color === 'RED') {
+        if (bestPair.flipsCamera) {
+          direction = -direction;
+          logAnnouncement(`${getPlayerName(playerIdx)} banked a Counterfeit Wild with a Clean Blue card! Passing direction reversed! 🔄`);
+        } else if (bestPair.color === 'RED') {
           logAnnouncement(`${getPlayerName(playerIdx)} laundered a ${bestPair.item} pair! Massive +${bestPair.points} points banked!`);
-        } else if (bestPair.color === 'GREEN') {
-          logAnnouncement(`${getPlayerName(playerIdx)} dumped a Counterfeit ${bestPair.item} pair with a real Blue card (+${bestPair.points} pts).`);
         } else {
           logAnnouncement(`${getPlayerName(playerIdx)} banked a clean pair of ${bestPair.item}s (+${bestPair.points} pts).`);
         }
@@ -517,7 +486,7 @@
       return (p + direction + 4) % 4;
     }
 
-    // Bot AI Turn matching Classic Hustle Passing Strategy
+    // Bot AI Turn matching Counterfeit Wild Strategy
     function playBotTurn(b) {
       if (checkWinCondition(b)) return;
 
@@ -552,27 +521,18 @@
             if ((minOppHand <= 2 || myBanked >= 25) && reds.length > 0) {
               cardToPassIdx = reds.sort((a, b) => b.card.val - a.card.val)[0].idx;
             }
-            // Tactical Dump: Pass worthless Green Fakes to gum up neighbor's hand!
-            else if (greens.length > 0) {
-              const unmatchableGreens = greens.filter(g => !blues.some(bl => bl.card.item === g.card.item));
-              if (unmatchableGreens.length > 0) {
-                cardToPassIdx = unmatchableGreens[0].idx;
-              } else if (Math.random() < 0.65) {
-                cardToPassIdx = greens[0].idx;
-              }
+            // If bot has Green fakes and NO blues to pair them with, pass Green!
+            else if (greens.length > 0 && blues.length === 0) {
+              cardToPassIdx = greens[0].idx;
             }
-
-            // Fallback: Pass Petty Red
-            if (cardToPassIdx === -1 && reds.length > 0) {
-              const petty = reds.filter(r => r.card.val === 10);
-              if (petty.length > 0) cardToPassIdx = petty[0].idx;
-              else if (blues.length > 0 && Math.random() < 0.45) {
-                cardToPassIdx = blues[0].idx; // Hold onto 15-pt Grand Red greedily
-              } else {
-                cardToPassIdx = reds[0].idx;
-              }
+            // Pass Petty Red
+            else if (reds.some(r => r.card.val === 10)) {
+              cardToPassIdx = reds.find(r => r.card.val === 10).idx;
             }
-
+            // Pass duplicate Greens
+            else if (greens.length >= 2) {
+              cardToPassIdx = greens[0].idx;
+            }
             // Otherwise pass Green, then Blue, else random
             if (cardToPassIdx === -1) {
               if (greens.length > 0) cardToPassIdx = greens[0].idx;
@@ -602,7 +562,7 @@
 
       if (currentPlayer === 0) {
         playerStep = 'DRAW';
-        logAnnouncement("It's your turn! 1. Draw Card ──▶ 2. Lay 1 Pair (or skip) ──▶ 3. Pass 1 Card.");
+        logAnnouncement("It's your turn! 1. Draw Card ──▶ 2. Lay 1 Pair (needs a Blue card) ──▶ 3. Pass 1 Card.");
         updateUI();
       } else {
         setTimeout(() => playBotTurn(currentPlayer), 350);
@@ -614,7 +574,6 @@
       document.getElementById('round-counter').innerText = roundNumber;
       document.getElementById('turn-counter').innerText = turnCount;
       document.getElementById('deck-count').innerText = deck.length;
-      document.getElementById('vault-count').innerText = vault.length;
 
       // Header match scoreboard
       const scoreHeader = document.getElementById('header-match-scores');
@@ -709,12 +668,10 @@
 
       // Check available candidate pairs for player
       const pairsAvailable = getCandidatePairs(0);
-      const revInHand = hands[0].some(c => c.type === 'REVERSE');
-      const pairCount = pairsAvailable.length + (revInHand ? 1 : 0);
-      document.getElementById('pair-count-badge').innerText = pairCount;
+      document.getElementById('pair-count-badge').innerText = pairsAvailable.length;
 
       const btnPairText = document.getElementById('btn-pair-text');
-      btnPairText.innerText = (pairCount > 0) ? '2. Lay Pair' : '2. Skip Pair';
+      btnPairText.innerText = (pairsAvailable.length > 0) ? '2. Lay Pair' : '2. Skip Pair';
 
       // Render Player Cards
       renderPlayerHand();
@@ -733,20 +690,6 @@
         btnPair.disabled = true;
         btnPass.disabled = true;
       }
-
-      // Vault preview
-      const vaultPreview = document.getElementById('last-discard-preview');
-      if (vault.length > 0) {
-        const top = vault[vault.length - 1];
-        vaultPreview.innerHTML = `
-          <div class="w-20 h-28 border-slate-600 bg-slate-800 border rounded-lg flex flex-col items-center justify-center p-1 shadow">
-            <span class="text-xl">${top.icon}</span>
-            <span class="text-[9px] font-bold text-slate-300 mt-1">${top.item}</span>
-          </div>
-        `;
-      } else {
-        vaultPreview.innerHTML = '';
-      }
     }
 
     function renderPlayerHand() {
@@ -764,11 +707,9 @@
             ? "border-2 border-amber-400 bg-rose-950/70 red-evidence" 
             : "border-2 border-rose-500 bg-rose-950/50 red-evidence";
         } else if (c.color === 'GREEN') {
-          borderStyle = "border-2 border-emerald-500 bg-emerald-950/40 green-fake";
-        } else if (c.type === 'REVERSE') {
-          borderStyle = "border-2 border-amber-500 bg-amber-950/40";
+          borderStyle = "border-2 border-emerald-400 bg-emerald-950/50 green-wild";
         } else if (c.color === 'BLUE') {
-          borderStyle = "border-2 border-blue-500/70 bg-blue-950/40";
+          borderStyle = "border-2 border-blue-500/80 bg-blue-950/40";
         }
 
         if (isSelected) {
@@ -779,15 +720,13 @@
         
         let badgeText = '';
         if (c.color === 'RED') badgeText = `<span class="${c.val === 15 ? 'text-amber-300' : 'text-rose-400'} font-black">+${c.val}pts</span>`;
-        else if (c.color === 'GREEN') badgeText = `<span class="text-emerald-400 font-black">0pts</span>`;
+        else if (c.color === 'GREEN') badgeText = `<span class="text-emerald-400 font-black">WILD</span>`;
         else if (c.color === 'BLUE') badgeText = `<span class="text-blue-400 font-black">+5pts</span>`;
-        else if (c.type === 'REVERSE') badgeText = `<span class="text-amber-400 font-black">ACTION</span>`;
 
         let typeSubtitle = '';
         if (c.color === 'RED') typeSubtitle = (c.val === 15) ? 'Grand (+15)' : 'Petty (+10)';
-        else if (c.color === 'GREEN') typeSubtitle = 'Fake (Needs Blue)';
+        else if (c.color === 'GREEN') typeSubtitle = 'Pairs w/ Any Blue';
         else if (c.color === 'BLUE') typeSubtitle = 'Clean (+5)';
-        else if (c.type === 'REVERSE') typeSubtitle = 'Reverse';
 
         cardEl.innerHTML = `
           <div class="w-full flex justify-between items-center text-[10px] font-black">
@@ -879,7 +818,7 @@
         let statusSub = '';
         if (isWinner) statusSub = 'Escaped clean with the stash!';
         else if (isCaught) statusSub = `Caught holding ${redCards} Red Contraband! Banked stash seized!`;
-        else statusSub = `Escaped clean${greenCards > 0 ? ` (held ${greenCards} worthless Fakes)` : ''}!`;
+        else statusSub = `Escaped clean${greenCards > 0 ? ` (held ${greenCards} Green Wilds)` : ''}!`;
 
         row.innerHTML = `
           <div>
@@ -922,7 +861,7 @@
       if (currentPlayer !== 0 || playerStep !== 'DRAW') return;
       const card = drawFromDeck();
       if (card) hands[0].push(card);
-      logAnnouncement("You drew a card! Now lay 1 pair into your Stash (or click Skip), then pass 1 card.");
+      logAnnouncement("You drew a card! Now lay 1 pair (needs a Blue card, or click Skip), then pass 1 card.");
       playerStep = 'PAIR';
       updateUI();
     };

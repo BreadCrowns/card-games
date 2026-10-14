@@ -1,15 +1,15 @@
 {
   "game": "Caught Red-Handed",
   "deckSize": 56,
-  "description": "56-card poker deck for 'Classic Hustle' edition (First to 200 pts, Green Fakes, 5 / 10 / 15 point economy)",
+  "description": "56-card poker deck featuring Counterfeit Wilds (Every pair requires a Blue card; Green + any Blue flips direction)",
   "cards": [
     { "id": "loot_cash_clean", "name": "Cash Stack", "item": "Cash", "type": "Clean", "color": "BLUE", "value": 5, "copies": 4, "icon": "💵" },
     { "id": "loot_diamond_clean", "name": "Diamond", "item": "Diamond", "type": "Clean", "color": "BLUE", "value": 5, "copies": 4, "icon": "💎" },
     { "id": "loot_watch_clean", "name": "Gold Watch", "item": "Watch", "type": "Clean", "color": "BLUE", "value": 5, "copies": 4, "icon": "⌚" },
-    { "id": "loot_key_clean", "name": "Vault Key", "item": "Key", "type": "Clean", "color": "BLUE", "value": 5, "copies": 3, "icon": "🗝️" },
-    { "id": "loot_painting_clean", "name": "Masterpiece", "item": "Painting", "type": "Clean", "color": "BLUE", "value": 5, "copies": 3, "icon": "🖼️" },
-    { "id": "loot_gold_clean", "name": "Gold Ingot", "item": "Gold", "type": "Clean", "color": "BLUE", "value": 5, "copies": 3, "icon": "🧈" },
-    { "id": "loot_crown_clean", "name": "Royal Crown", "item": "Crown", "type": "Clean", "color": "BLUE", "value": 5, "copies": 3, "icon": "👑" },
+    { "id": "loot_key_clean", "name": "Vault Key", "item": "Key", "type": "Clean", "color": "BLUE", "value": 5, "copies": 4, "icon": "🗝️" },
+    { "id": "loot_painting_clean", "name": "Masterpiece", "item": "Painting", "type": "Clean", "color": "BLUE", "value": 5, "copies": 4, "icon": "🖼️" },
+    { "id": "loot_gold_clean", "name": "Gold Ingot", "item": "Gold", "type": "Clean", "color": "BLUE", "value": 5, "copies": 4, "icon": "🧈" },
+    { "id": "loot_crown_clean", "name": "Royal Crown", "item": "Crown", "type": "Clean", "color": "BLUE", "value": 5, "copies": 4, "icon": "👑" },
 
     { "id": "loot_cash_red", "name": "Marked Cash", "item": "Cash", "type": "Contraband", "color": "RED", "value": 10, "copies": 3, "icon": "🚨💵" },
     { "id": "loot_diamond_red", "name": "Blood Diamond", "item": "Diamond", "type": "Contraband", "color": "RED", "value": 10, "copies": 3, "icon": "🚨💎" },
@@ -20,14 +20,8 @@
     { "id": "loot_gold_red", "name": "Hot Gold Bar", "item": "Gold", "type": "Contraband", "color": "RED", "value": 15, "copies": 2, "icon": "🚨🧈" },
     { "id": "loot_crown_red", "name": "Cursed Crown", "item": "Crown", "type": "Contraband", "color": "RED", "value": 15, "copies": 2, "icon": "🚨👑" },
 
-    { "id": "loot_cash_fake", "name": "Prop Money", "item": "Cash", "type": "Fake", "color": "GREEN", "value": 0, "copies": 2, "icon": "🎭💵" },
-    { "id": "loot_diamond_fake", "name": "Cubic Zirconia", "item": "Diamond", "type": "Fake", "color": "GREEN", "value": 0, "copies": 2, "icon": "🎭💎" },
-    { "id": "loot_watch_fake", "name": "Knockoff Watch", "item": "Watch", "type": "Fake", "color": "GREEN", "value": 0, "copies": 1, "icon": "🎭⌚" },
-    { "id": "loot_key_fake", "name": "Dummy Key", "item": "Key", "type": "Fake", "color": "GREEN", "value": 0, "copies": 1, "icon": "🎭🗝️" },
-    { "id": "loot_painting_fake", "name": "Forged Canvas", "item": "Painting", "type": "Fake", "color": "GREEN", "value": 0, "copies": 1, "icon": "🎭🖼️" },
-    { "id": "loot_gold_fake", "name": "Fool's Gold", "item": "Gold", "type": "Fake", "color": "GREEN", "value": 0, "copies": 1, "icon": "🎭🧈" },
+    { "id": "loot_fake_wild", "name": "Counterfeit (Wild)", "item": "Wild", "type": "Counterfeit", "color": "GREEN", "value": 0, "copies": 10, "icon": "🎭🔄" },
 
-    { "id": "action_reverse", "name": "Look Out!", "item": "Action", "type": "Reverse", "color": "SPECIAL", "value": 0, "copies": 6, "icon": "🔄" },
     { "id": "ref_camera", "name": "Security Camera (Flippable Direction)", "item": "Tracker", "type": "Indicator", "color": "MARKER", "value": 0, "copies": 1, "icon": "📹" },
     { "id": "ref_rules", "name": "Heist Rules & 200pt Score Tracker", "item": "Rules", "type": "Reference", "color": "MARKER", "value": 0, "copies": 1, "icon": "📋" }
   ]
