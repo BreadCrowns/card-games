@@ -192,7 +192,7 @@ namespace PnpDeckGenerator
                     }
                     else
                     {
-                        ruleText = "+5 Pts & Flips Camera 🔄 • Illegal w/ Red Contraband 🚫";
+                        ruleText = "Can only pair with any blue card and flips camera card";
                     }
 
                     string artTier = (card.Color == "BLUE") ? (card.IsGrand ? "👑 Grand Heist" : "⭐ Petty Loot")
