@@ -1,1536 +1,2002 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Caught Red-Handed - Print-and-Play Poker Deck (8.5x11)</title>
+  <title>Caught Red-Handed - Two-Way Symmetrical PnP Poker Deck (8.5x11)</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,700;0,800;0,900;1,800&display=swap');
-
-    @page {
-      size: letter portrait;
-      margin: 0.25in 0.5in 0.25in 0.5in; /* 8.5in wide - 7.5in cards = 1.0in / 2 = 0.5in margin. 11.0in high - 10.5in cards = 0.5in / 2 = 0.25in margin */
-    }
-
-    * {
-      box-sizing: border-box;
-      -webkit-print-color-adjust: exact !important;
-      print-color-adjust: exact !important;
-    }
-
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
-      background: #e2e8f0;
-      color: #0f172a;
-    }
-
-    .no-print-bar {
-      background: #0f172a;
-      color: #f8fafc;
-      padding: 12px 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-    }
-
-    .no-print-bar button {
-      background: #e11d48;
-      color: white;
-      border: none;
-      padding: 8px 20px;
-      border-radius: 8px;
-      font-weight: 800;
-      font-size: 14px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: background 0.2s;
-    }
-
-    .no-print-bar button:hover {
-      background: #be123c;
-    }
-
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap');
+    @page { size: letter portrait; margin: 0.25in 0.5in 0.25in 0.5in; }
+    * { box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    body { margin: 0; padding: 0; font-family: 'Montserrat', system-ui, sans-serif; background: #e2e8f0; color: #0f172a; }
+    .no-print-bar { background: #0f172a; color: #f8fafc; padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.25); }
+    .no-print-bar button { background: #e11d48; color: white; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 800; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background 0.2s; }
+    .no-print-bar button:hover { background: #be123c; }
     @media print {
-      .no-print-bar, .sheet-header-label {
-        display: none !important;
-      }
-      body {
-        background: #fff !important;
-        margin: 0 !important;
-        padding: 0 !important;
-      }
-      .sheet-wrapper {
-        padding: 0 !important;
-        margin: 0 !important;
-      }
-      .sheet {
-        margin: 0 auto !important;
-        box-shadow: none !important;
-        page-break-after: always !important;
-        page-break-inside: avoid !important;
-      }
+      .no-print-bar, .sheet-header-label { display: none !important; }
+      body { background: #fff !important; margin: 0 !important; padding: 0 !important; }
+      .sheet-wrapper { padding: 0 !important; margin: 0 !important; }
+      .sheet { margin: 0 auto !important; box-shadow: none !important; page-break-after: always !important; page-break-inside: avoid !important; }
     }
-
-    /* 9-Card 3x3 Sheet Layout (Exact 7.5in x 10.5in on 8.5in x 11in Letter) */
-    .sheet-wrapper {
-      padding: 20px 0;
-    }
-
-    .sheet-header-label {
-      text-align: center;
-      font-size: 11px;
-      font-weight: 700;
-      color: #64748b;
-      margin-bottom: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-    }
-
-    .sheet {
-      width: 7.5in;
-      height: 10.5in;
-      display: grid;
-      grid-template-columns: repeat(3, 2.5in);
-      grid-template-rows: repeat(3, 3.5in);
-      gap: 0;
-      margin: 0 auto 30px auto;
-      background: #ffffff;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-      position: relative;
-    }
-
-    /* Standard 2.5in x 3.5in Poker Card */
-    .card {
-      width: 2.5in;
-      height: 3.5in;
-      border: 1px dashed #94a3b8; /* Cut line guide */
-      padding: 0.14in;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      overflow: hidden;
-      background: #ffffff;
-      user-select: none;
-    }
-
-    /* Inner Card Frame with Rounded Corners */
-    .card-inner {
-      width: 100%;
-      height: 100%;
-      border-radius: 10px;
-      border: 2px solid;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 0.1in;
-      position: relative;
-      overflow: hidden;
-    }
-
-    /* Header & Indices */
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      z-index: 2;
-    }
-
-    .index-group-left {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      line-height: 1;
-    }
-
-    .index-val {
-      font-size: 15px;
-      font-weight: 900;
-      letter-spacing: -0.5px;
-    }
-
-    .index-type {
-      font-size: 7.5px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-top: 1px;
-    }
-
-    /* The Requested Top-Right Indicators */
-    .contraband-indicator {
-      display: inline-flex;
-      align-items: center;
-      gap: 2px;
-      padding: 2px 6px;
-      border-radius: 6px;
-      font-size: 8px;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-      border: 1.5px solid;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-
-    /* Center Artwork Area */
-    .card-art {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      margin: auto 0;
-      text-align: center;
-      z-index: 2;
-    }
-
-    .item-icon {
-      font-size: 38px;
-      line-height: 1;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
-    }
-
-    .item-name {
-      font-size: 13px;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-top: 4px;
-      line-height: 1.1;
-    }
-
-    .item-tier-subtitle {
-      font-size: 8px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      margin-top: 2px;
-    }
-
-    /* Footer & Rules Help */
-    .card-footer {
-      border-top: 1px solid;
-      padding-top: 4px;
-      display: flex;
-      flex-direction: column;
-      gap: 1px;
-      z-index: 2;
-    }
-
-    .footer-rule {
-      font-size: 7px;
-      font-weight: 700;
-      line-height: 1.2;
-      text-align: center;
-    }
-
-    .footer-score {
-      font-size: 6.5px;
-      font-weight: 600;
-      text-align: center;
-      opacity: 0.85;
-    }
-
-    /* -------------------------------------------------------------
-       THEME STYLES: BLUE (CLEAN LOOT)
-       ------------------------------------------------------------- */
-    .card.blue .card-inner {
-      background: linear-gradient(145deg, #f0f7ff 0%, #e0f2fe 100%);
-      border-color: #0284c7;
-      color: #0369a1;
-    }
-    .card.blue .index-val {
-      color: #0284c7;
-    }
-    .card.blue .index-type {
-      color: #0369a1;
-    }
-    .card.blue .item-name {
-      color: #0c4a6e;
-    }
-    .card.blue .card-footer {
-      border-color: #bae6fd;
-      color: #0369a1;
-    }
-
-    /* Petty Blue: Silver Accent + 10pt Indicator */
-    .card.blue.petty .contraband-indicator {
-      background: #fff1f2;
-      border-color: #e11d48;
-      color: #be123c;
-    }
-    .card.blue.petty .item-tier-subtitle {
-      color: #64748b;
-    }
-
-    /* Grand Blue: Gold Filigree Accent + 15pt Indicator */
-    .card.blue.grand .card-inner {
-      background: linear-gradient(145deg, #f0f9ff 0%, #e0f2fe 70%, #fef3c7 100%);
-      border-color: #0284c7;
-    }
-    .card.blue.grand .contraband-indicator {
-      background: #fffbeb;
-      border-color: #f59e0b;
-      color: #b45309;
-    }
-    .card.blue.grand .item-tier-subtitle {
-      color: #b45309;
-      font-weight: 800;
-    }
-
-    /* -------------------------------------------------------------
-       THEME STYLES: RED (HOT CONTRABAND)
-       ------------------------------------------------------------- */
-    .card.red .card-inner {
-      background: linear-gradient(145deg, #fff1f2 0%, #ffe4e6 100%);
-      border-color: #e11d48;
-      color: #be123c;
-    }
-    .card.red .index-val {
-      color: #e11d48;
-    }
-    .card.red .index-type {
-      color: #be123c;
-    }
-    .card.red .contraband-indicator {
-      background: #e11d48;
-      border-color: #be123c;
-      color: #ffffff;
-    }
-    .card.red .item-name {
-      color: #881337;
-    }
-    .card.red .card-footer {
-      border-color: #fecdd3;
-      color: #9f1239;
-    }
-    .card.red.grand .card-inner {
-      background: linear-gradient(145deg, #fff1f2 0%, #fef2f2 60%, #fef3c7 100%);
-      border-color: #b91c1c;
-    }
-    .card.red.grand .contraband-indicator {
-      background: #b91c1c;
-      border-color: #7f1d1d;
-    }
-
-    /* -------------------------------------------------------------
-       THEME STYLES: GREEN (COUNTERFEIT WILD)
-       ------------------------------------------------------------- */
-    .card.green .card-inner {
-      background: linear-gradient(145deg, #ecfdf5 0%, #d1fae5 100%);
-      border-color: #059669;
-      color: #047857;
-    }
-    .card.green .index-val {
-      color: #059669;
-    }
-    .card.green .index-type {
-      color: #047857;
-    }
-    /* The Requested Blue-Only Connector Badge */
-    .card.green .contraband-indicator {
-      background: #eff6ff;
-      border-color: #0284c7;
-      color: #0369a1;
-      box-shadow: 0 1px 4px rgba(2, 132, 199, 0.25);
-    }
-    .card.green .item-name {
-      color: #064e3b;
-    }
-    .card.green .card-footer {
-      border-color: #a7f3d0;
-      color: #047857;
-    }
-
-    /* -------------------------------------------------------------
-       THEME STYLES: REFERENCE & MARKER CARDS
-       ------------------------------------------------------------- */
-    .card.marker .card-inner {
-      background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
-      border-color: #f59e0b;
-      color: #f8fafc;
-    }
-    .card.marker .item-name {
-      color: #f59e0b;
-    }
-    .card.marker .card-footer {
-      border-color: #334155;
-      color: #cbd5e1;
-    }
-
-    /* Card Back Design */
-    .card.card-back .card-inner {
-      background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
-      border: 3px double #f59e0b;
-      color: #f59e0b;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 0.2in;
-    }
-
-    .card-back-pattern {
-      position: absolute;
-      inset: 6px;
-      border: 1px dashed rgba(245, 158, 11, 0.3);
-      border-radius: 6px;
-      pointer-events: none;
-    }
-
-    /* Subtle Background Watermark on Face Cards */
-    .bg-watermark {
-      position: absolute;
-      right: -8px;
-      bottom: -12px;
-      font-size: 72px;
-      opacity: 0.08;
-      pointer-events: none;
-      line-height: 1;
-      z-index: 1;
-    }
+    .sheet-wrapper { padding: 20px 0; }
+    .sheet-header-label { text-align: center; font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.1em; }
+    .sheet { width: 7.5in; height: 10.5in; display: grid; grid-template-columns: repeat(3, 2.5in); grid-template-rows: repeat(3, 3.5in); gap: 0; margin: 0 auto 30px auto; background: #ffffff; box-shadow: 0 8px 24px rgba(0,0,0,0.15); position: relative; }
+    .card { width: 2.5in; height: 3.5in; border: 1px dashed #94a3b8; padding: 0.1in; position: relative; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; background: #ffffff; user-select: none; }
+    .card-inner { width: 100%; height: 100%; border-radius: 10px; border: 2px solid; display: flex; flex-direction: column; justify-content: space-between; padding: 0.08in; position: relative; overflow: hidden; }
+    .header-block { display: flex; flex-direction: column; width: 100%; z-index: 2; }
+    .header-row { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; }
+    .index-group { display: flex; flex-direction: column; line-height: 1; }
+    .corner-top { display: flex; align-items: center; gap: 3px; }
+    .corner-icon { font-size: 15px; line-height: 1; }
+    .index-val { font-size: 14px; font-weight: 900; letter-spacing: -0.5px; }
+    .index-type { font-size: 7px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px; margin-top: 1.5px; opacity: 0.85; }
+    .pill { font-size: 7.5px; font-weight: 900; padding: 2px 5px; border-radius: 4px; border: 1.2px solid; text-transform: uppercase; letter-spacing: 0.2px; display: inline-flex; align-items: center; gap: 2px; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+    .sub-rule-bar { font-size: 6.8px; font-weight: 700; text-align: center; border-radius: 3px; padding: 1.5px 3px; margin-top: 2px; background: rgba(0,0,0,0.035); border: 1px solid rgba(0,0,0,0.06); line-height: 1.15; }
+    .center-art { display: flex; flex-direction: column; align-items: center; justify-content: center; margin: auto 0; text-align: center; z-index: 2; }
+    .art-icon { font-size: 34px; line-height: 1; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.12)); }
+    .art-name { font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.4px; margin-top: 2px; line-height: 1.1; }
+    .art-tier { font-size: 7.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; margin-top: 1px; opacity: 0.85; }
+    .inverted { transform: rotate(180deg); }
+    .card.blue .card-inner { background: linear-gradient(180deg, #f0f9ff 0%, #ffffff 50%, #f0f9ff 100%); border-color: #0284c7; color: #0369a1; }
+    .card.blue .index-val { color: #0284c7; }
+    .card.blue .index-type { color: #0369a1; }
+    .card.blue .art-name { color: #0c4a6e; }
+    .card.blue .pill { background: #fff1f2; border-color: #e11d48; color: #be123c; }
+    .card.blue.grand .card-inner { background: linear-gradient(180deg, #f0f9ff 0%, #fffbeb 50%, #f0f9ff 100%); border-color: #0284c7; }
+    .card.blue.grand .pill { background: #fffbeb; border-color: #f59e0b; color: #b45309; }
+    .card.blue.grand .art-tier { color: #b45309; font-weight: 900; }
+    .card.red .card-inner { background: linear-gradient(180deg, #fff1f2 0%, #ffffff 50%, #fff1f2 100%); border-color: #e11d48; color: #be123c; }
+    .card.red .index-val { color: #e11d48; }
+    .card.red .index-type { color: #be123c; }
+    .card.red .art-name { color: #881337; }
+    .card.red .pill { background: #e11d48; border-color: #9f1239; color: #ffffff; }
+    .card.red.grand .card-inner { background: linear-gradient(180deg, #fff1f2 0%, #fef3c7 50%, #fff1f2 100%); border-color: #b91c1c; }
+    .card.red.grand .pill { background: #b91c1c; border-color: #7f1d1d; color: #ffffff; }
+    .card.green .card-inner { background: linear-gradient(180deg, #ecfdf5 0%, #ffffff 50%, #ecfdf5 100%); border-color: #059669; color: #047857; }
+    .card.green .index-val { color: #059669; }
+    .card.green .index-type { color: #047857; }
+    .card.green .art-name { color: #064e3b; }
+    .card.green .pill { background: #eff6ff; border-color: #0284c7; color: #0369a1; }
+    .card.marker .card-inner { background: linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); border-color: #f59e0b; color: #f8fafc; }
+    .card.card-back .card-inner { background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%); border: 3px double #f59e0b; color: #f59e0b; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0.2in; }
+    .card-back-pattern { position: absolute; inset: 6px; border: 1px dashed rgba(245, 158, 11, 0.3); border-radius: 6px; pointer-events: none; }
   </style>
 </head>
 <body>
-
-  <!-- Screen-Only Action Header -->
   <div class="no-print-bar">
-    <div>
-      <span style="font-weight: 900; font-size: 16px; color: #f43f5e;">CAUGHT RED-HANDED</span>
-      <span style="color: #94a3b8; font-size: 13px; margin-left: 8px;">• 56-Card Print-and-Play Poker Deck (8.5" x 11" US Letter)</span>
-    </div>
-    <button onclick="window.print()">
-      🖨️ PRINT DECK TO PDF / PRINTER
-    </button>
+    <div><span style="font-weight: 900; font-size: 16px; color: #f43f5e;">CAUGHT RED-HANDED</span><span style="color: #94a3b8; font-size: 13px; margin-left: 8px;">• 56-Card Two-Way Symmetrical PnP Poker Deck (8.5" x 11")</span></div>
+    <button onclick="window.print()">🖨️ PRINT DECK TO PDF / PRINTER</button>
   </div>
-
   <div class="sheet-wrapper">
-
-    <!-- ===================================================================
-         SHEET 1: 9 BLUE CLEAN PETTY CARDS (Cash x4, Diamond x4, Watch x1)
-         =================================================================== -->
-    <div class="sheet-header-label">Sheet 1 of 8: Clean Loot (Cash & Diamonds)</div>
+    <div class="sheet-header-label">Sheet 1 of 8: Clean Petty Loot (Cash & Diamonds)</div>
     <div class="sheet">
-      <!-- 4x Cash Blue -->
       <div class="card blue petty">
         <div class="card-inner">
-          <div class="bg-watermark">💵</div>
-          <div class="card-header">
-            <div class="index-group-left">
-              <span class="index-val">+5</span>
-              <span class="index-type">Clean</span>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">💵</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +10 Target</div>
             </div>
-            <div class="contraband-indicator">🔴 +10 Target</div>
+            <div class="sub-rule-bar">Pairs w/ Blue Cash (10pts) • Red Cash (15pts)</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">💵</span>
-            <span class="item-name">Cash Stack</span>
-            <span class="item-tier-subtitle">⭐ Petty Loot</span>
+          <div class="center-art">
+            <span class="art-icon">💵</span>
+            <span class="art-name">Cash Stack</span>
+            <span class="art-tier">⭐ Petty Loot</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs w/ Blue Cash (10pts) or Red Cash (15pts)</div>
-            <div class="footer-score">Base Value: 5 pts • Target Red: 10 pts</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="card blue petty">
-        <div class="card-inner">
-          <div class="bg-watermark">💵</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+5</span><span class="index-type">Clean</span></div>
-            <div class="contraband-indicator">🔴 +10 Target</div>
-          </div>
-          <div class="card-art">
-            <span class="item-icon">💵</span>
-            <span class="item-name">Cash Stack</span>
-            <span class="item-tier-subtitle">⭐ Petty Loot</span>
-          </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs w/ Blue Cash (10pts) or Red Cash (15pts)</div>
-            <div class="footer-score">Base Value: 5 pts • Target Red: 10 pts</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">💵</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +10 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Cash (10pts) • Red Cash (15pts)</div>
           </div>
         </div>
       </div>
-
       <div class="card blue petty">
         <div class="card-inner">
-          <div class="bg-watermark">💵</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+5</span><span class="index-type">Clean</span></div>
-            <div class="contraband-indicator">🔴 +10 Target</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">💵</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +10 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Cash (10pts) • Red Cash (15pts)</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">💵</span>
-            <span class="item-name">Cash Stack</span>
-            <span class="item-tier-subtitle">⭐ Petty Loot</span>
+          <div class="center-art">
+            <span class="art-icon">💵</span>
+            <span class="art-name">Cash Stack</span>
+            <span class="art-tier">⭐ Petty Loot</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs w/ Blue Cash (10pts) or Red Cash (15pts)</div>
-            <div class="footer-score">Base Value: 5 pts • Target Red: 10 pts</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">💵</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +10 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Cash (10pts) • Red Cash (15pts)</div>
           </div>
         </div>
       </div>
-
       <div class="card blue petty">
         <div class="card-inner">
-          <div class="bg-watermark">💵</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+5</span><span class="index-type">Clean</span></div>
-            <div class="contraband-indicator">🔴 +10 Target</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">💵</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +10 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Cash (10pts) • Red Cash (15pts)</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">💵</span>
-            <span class="item-name">Cash Stack</span>
-            <span class="item-tier-subtitle">⭐ Petty Loot</span>
+          <div class="center-art">
+            <span class="art-icon">💵</span>
+            <span class="art-name">Cash Stack</span>
+            <span class="art-tier">⭐ Petty Loot</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs w/ Blue Cash (10pts) or Red Cash (15pts)</div>
-            <div class="footer-score">Base Value: 5 pts • Target Red: 10 pts</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">💵</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +10 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Cash (10pts) • Red Cash (15pts)</div>
           </div>
         </div>
       </div>
-
-      <!-- 4x Diamond Blue -->
       <div class="card blue petty">
         <div class="card-inner">
-          <div class="bg-watermark">💎</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+5</span><span class="index-type">Clean</span></div>
-            <div class="contraband-indicator">🔴 +10 Target</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">💵</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +10 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Cash (10pts) • Red Cash (15pts)</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">💎</span>
-            <span class="item-name">Cut Diamond</span>
-            <span class="item-tier-subtitle">⭐ Petty Loot</span>
+          <div class="center-art">
+            <span class="art-icon">💵</span>
+            <span class="art-name">Cash Stack</span>
+            <span class="art-tier">⭐ Petty Loot</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs w/ Blue Diamond (10pts) or Red Diamond (15pts)</div>
-            <div class="footer-score">Base Value: 5 pts • Target Red: 10 pts</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">💵</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +10 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Cash (10pts) • Red Cash (15pts)</div>
           </div>
         </div>
       </div>
-
       <div class="card blue petty">
         <div class="card-inner">
-          <div class="bg-watermark">💎</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+5</span><span class="index-type">Clean</span></div>
-            <div class="contraband-indicator">🔴 +10 Target</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">💎</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +10 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Diamond (10pts) • Red Diamond (15pts)</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">💎</span>
-            <span class="item-name">Cut Diamond</span>
-            <span class="item-tier-subtitle">⭐ Petty Loot</span>
+          <div class="center-art">
+            <span class="art-icon">💎</span>
+            <span class="art-name">Cut Diamond</span>
+            <span class="art-tier">⭐ Petty Loot</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs w/ Blue Diamond (10pts) or Red Diamond (15pts)</div>
-            <div class="footer-score">Base Value: 5 pts • Target Red: 10 pts</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">💎</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +10 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Diamond (10pts) • Red Diamond (15pts)</div>
           </div>
         </div>
       </div>
-
       <div class="card blue petty">
         <div class="card-inner">
-          <div class="bg-watermark">💎</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+5</span><span class="index-type">Clean</span></div>
-            <div class="contraband-indicator">🔴 +10 Target</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">💎</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +10 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Diamond (10pts) • Red Diamond (15pts)</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">💎</span>
-            <span class="item-name">Cut Diamond</span>
-            <span class="item-tier-subtitle">⭐ Petty Loot</span>
+          <div class="center-art">
+            <span class="art-icon">💎</span>
+            <span class="art-name">Cut Diamond</span>
+            <span class="art-tier">⭐ Petty Loot</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs w/ Blue Diamond (10pts) or Red Diamond (15pts)</div>
-            <div class="footer-score">Base Value: 5 pts • Target Red: 10 pts</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">💎</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +10 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Diamond (10pts) • Red Diamond (15pts)</div>
           </div>
         </div>
       </div>
-
       <div class="card blue petty">
         <div class="card-inner">
-          <div class="bg-watermark">💎</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+5</span><span class="index-type">Clean</span></div>
-            <div class="contraband-indicator">🔴 +10 Target</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">💎</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +10 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Diamond (10pts) • Red Diamond (15pts)</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">💎</span>
-            <span class="item-name">Cut Diamond</span>
-            <span class="item-tier-subtitle">⭐ Petty Loot</span>
+          <div class="center-art">
+            <span class="art-icon">💎</span>
+            <span class="art-name">Cut Diamond</span>
+            <span class="art-tier">⭐ Petty Loot</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs w/ Blue Diamond (10pts) or Red Diamond (15pts)</div>
-            <div class="footer-score">Base Value: 5 pts • Target Red: 10 pts</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">💎</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +10 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Diamond (10pts) • Red Diamond (15pts)</div>
           </div>
         </div>
       </div>
-
-      <!-- 1x Watch Blue -->
       <div class="card blue petty">
         <div class="card-inner">
-          <div class="bg-watermark">⌚</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+5</span><span class="index-type">Clean</span></div>
-            <div class="contraband-indicator">🔴 +10 Target</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">💎</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +10 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Diamond (10pts) • Red Diamond (15pts)</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">⌚</span>
-            <span class="item-name">Gold Watch</span>
-            <span class="item-tier-subtitle">⭐ Petty Loot</span>
+          <div class="center-art">
+            <span class="art-icon">💎</span>
+            <span class="art-name">Cut Diamond</span>
+            <span class="art-tier">⭐ Petty Loot</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs w/ Blue Watch (10pts) or Red Watch (15pts)</div>
-            <div class="footer-score">Base Value: 5 pts • Target Red: 10 pts</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">💎</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +10 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Diamond (10pts) • Red Diamond (15pts)</div>
+          </div>
+        </div>
+      </div>
+      <div class="card blue petty">
+        <div class="card-inner">
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">⌚</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +10 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Watch (10pts) • Red Watch (15pts)</div>
+          </div>
+          <div class="center-art">
+            <span class="art-icon">⌚</span>
+            <span class="art-name">Gold Watch</span>
+            <span class="art-tier">⭐ Petty Loot</span>
+          </div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">⌚</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +10 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Watch (10pts) • Red Watch (15pts)</div>
           </div>
         </div>
       </div>
     </div>
-
-
-    <!-- ===================================================================
-         SHEET 2: 9 BLUE CLEAN PETTY/GRAND (Watch x3, Key x4, Painting x2)
-         =================================================================== -->
-    <div class="sheet-header-label">Sheet 2 of 8: Clean Loot (Watches, Keys & Paintings)</div>
+    <div class="sheet-header-label">Sheet 2 of 8: Clean Petty & Grand Loot (Watches, Keys & Paintings)</div>
     <div class="sheet">
-      <!-- 3x Watch Blue -->
       <div class="card blue petty">
         <div class="card-inner">
-          <div class="bg-watermark">⌚</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+5</span><span class="index-type">Clean</span></div>
-            <div class="contraband-indicator">🔴 +10 Target</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">⌚</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +10 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Watch (10pts) • Red Watch (15pts)</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">⌚</span>
-            <span class="item-name">Gold Watch</span>
-            <span class="item-tier-subtitle">⭐ Petty Loot</span>
+          <div class="center-art">
+            <span class="art-icon">⌚</span>
+            <span class="art-name">Gold Watch</span>
+            <span class="art-tier">⭐ Petty Loot</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs w/ Blue Watch (10pts) or Red Watch (15pts)</div>
-            <div class="footer-score">Base Value: 5 pts • Target Red: 10 pts</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">⌚</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +10 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Watch (10pts) • Red Watch (15pts)</div>
           </div>
         </div>
       </div>
-
       <div class="card blue petty">
         <div class="card-inner">
-          <div class="bg-watermark">⌚</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+5</span><span class="index-type">Clean</span></div>
-            <div class="contraband-indicator">🔴 +10 Target</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">⌚</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +10 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Watch (10pts) • Red Watch (15pts)</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">⌚</span>
-            <span class="item-name">Gold Watch</span>
-            <span class="item-tier-subtitle">⭐ Petty Loot</span>
+          <div class="center-art">
+            <span class="art-icon">⌚</span>
+            <span class="art-name">Gold Watch</span>
+            <span class="art-tier">⭐ Petty Loot</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs w/ Blue Watch (10pts) or Red Watch (15pts)</div>
-            <div class="footer-score">Base Value: 5 pts • Target Red: 10 pts</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">⌚</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +10 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Watch (10pts) • Red Watch (15pts)</div>
           </div>
         </div>
       </div>
-
       <div class="card blue petty">
         <div class="card-inner">
-          <div class="bg-watermark">⌚</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+5</span><span class="index-type">Clean</span></div>
-            <div class="contraband-indicator">🔴 +10 Target</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">⌚</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +10 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Watch (10pts) • Red Watch (15pts)</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">⌚</span>
-            <span class="item-name">Gold Watch</span>
-            <span class="item-tier-subtitle">⭐ Petty Loot</span>
+          <div class="center-art">
+            <span class="art-icon">⌚</span>
+            <span class="art-name">Gold Watch</span>
+            <span class="art-tier">⭐ Petty Loot</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs w/ Blue Watch (10pts) or Red Watch (15pts)</div>
-            <div class="footer-score">Base Value: 5 pts • Target Red: 10 pts</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">⌚</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +10 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Watch (10pts) • Red Watch (15pts)</div>
           </div>
         </div>
       </div>
-
-      <!-- 4x Key Blue -->
       <div class="card blue petty">
         <div class="card-inner">
-          <div class="bg-watermark">🗝️</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+5</span><span class="index-type">Clean</span></div>
-            <div class="contraband-indicator">🔴 +10 Target</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🗝️</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +10 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Key (10pts) • Red Key (15pts)</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">🗝️</span>
-            <span class="item-name">Vault Key</span>
-            <span class="item-tier-subtitle">⭐ Petty Loot</span>
+          <div class="center-art">
+            <span class="art-icon">🗝️</span>
+            <span class="art-name">Vault Key</span>
+            <span class="art-tier">⭐ Petty Loot</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs w/ Blue Key (10pts) or Red Key (15pts)</div>
-            <div class="footer-score">Base Value: 5 pts • Target Red: 10 pts</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🗝️</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +10 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Key (10pts) • Red Key (15pts)</div>
           </div>
         </div>
       </div>
-
       <div class="card blue petty">
         <div class="card-inner">
-          <div class="bg-watermark">🗝️</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+5</span><span class="index-type">Clean</span></div>
-            <div class="contraband-indicator">🔴 +10 Target</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🗝️</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +10 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Key (10pts) • Red Key (15pts)</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">🗝️</span>
-            <span class="item-name">Vault Key</span>
-            <span class="item-tier-subtitle">⭐ Petty Loot</span>
+          <div class="center-art">
+            <span class="art-icon">🗝️</span>
+            <span class="art-name">Vault Key</span>
+            <span class="art-tier">⭐ Petty Loot</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs w/ Blue Key (10pts) or Red Key (15pts)</div>
-            <div class="footer-score">Base Value: 5 pts • Target Red: 10 pts</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🗝️</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +10 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Key (10pts) • Red Key (15pts)</div>
           </div>
         </div>
       </div>
-
       <div class="card blue petty">
         <div class="card-inner">
-          <div class="bg-watermark">🗝️</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+5</span><span class="index-type">Clean</span></div>
-            <div class="contraband-indicator">🔴 +10 Target</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🗝️</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +10 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Key (10pts) • Red Key (15pts)</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">🗝️</span>
-            <span class="item-name">Vault Key</span>
-            <span class="item-tier-subtitle">⭐ Petty Loot</span>
+          <div class="center-art">
+            <span class="art-icon">🗝️</span>
+            <span class="art-name">Vault Key</span>
+            <span class="art-tier">⭐ Petty Loot</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs w/ Blue Key (10pts) or Red Key (15pts)</div>
-            <div class="footer-score">Base Value: 5 pts • Target Red: 10 pts</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🗝️</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +10 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Key (10pts) • Red Key (15pts)</div>
           </div>
         </div>
       </div>
-
       <div class="card blue petty">
         <div class="card-inner">
-          <div class="bg-watermark">🗝️</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+5</span><span class="index-type">Clean</span></div>
-            <div class="contraband-indicator">🔴 +10 Target</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🗝️</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +10 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Key (10pts) • Red Key (15pts)</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">🗝️</span>
-            <span class="item-name">Vault Key</span>
-            <span class="item-tier-subtitle">⭐ Petty Loot</span>
+          <div class="center-art">
+            <span class="art-icon">🗝️</span>
+            <span class="art-name">Vault Key</span>
+            <span class="art-tier">⭐ Petty Loot</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs w/ Blue Key (10pts) or Red Key (15pts)</div>
-            <div class="footer-score">Base Value: 5 pts • Target Red: 10 pts</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🗝️</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +10 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Key (10pts) • Red Key (15pts)</div>
           </div>
         </div>
       </div>
-
-      <!-- 2x Painting Blue (Grand) -->
       <div class="card blue grand">
         <div class="card-inner">
-          <div class="bg-watermark">🖼️</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+5</span><span class="index-type">Clean</span></div>
-            <div class="contraband-indicator">🔴 +15 Target</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🖼️</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +15 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Painting (10pts) • Red Painting (20pts)</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">🖼️</span>
-            <span class="item-name">Masterpiece</span>
-            <span class="item-tier-subtitle">👑 Grand Heist</span>
+          <div class="center-art">
+            <span class="art-icon">🖼️</span>
+            <span class="art-name">Masterpiece</span>
+            <span class="art-tier">👑 Grand Heist</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs w/ Blue Canvas (10pts) or Red Canvas (20pts!)</div>
-            <div class="footer-score">Base Value: 5 pts • Target Red: 15 pts</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🖼️</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +15 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Painting (10pts) • Red Painting (20pts)</div>
           </div>
         </div>
       </div>
-
       <div class="card blue grand">
         <div class="card-inner">
-          <div class="bg-watermark">🖼️</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+5</span><span class="index-type">Clean</span></div>
-            <div class="contraband-indicator">🔴 +15 Target</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🖼️</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +15 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Painting (10pts) • Red Painting (20pts)</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">🖼️</span>
-            <span class="item-name">Masterpiece</span>
-            <span class="item-tier-subtitle">👑 Grand Heist</span>
+          <div class="center-art">
+            <span class="art-icon">🖼️</span>
+            <span class="art-name">Masterpiece</span>
+            <span class="art-tier">👑 Grand Heist</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs w/ Blue Canvas (10pts) or Red Canvas (20pts!)</div>
-            <div class="footer-score">Base Value: 5 pts • Target Red: 15 pts</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🖼️</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +15 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Painting (10pts) • Red Painting (20pts)</div>
           </div>
         </div>
       </div>
     </div>
-
-
-    <!-- ===================================================================
-         SHEET 3: 9 BLUE CLEAN GRAND (Painting x2, Gold x4, Crown x3)
-         =================================================================== -->
-    <div class="sheet-header-label">Sheet 3 of 8: Grand Clean Loot (Paintings, Gold & Crowns)</div>
+    <div class="sheet-header-label">Sheet 3 of 8: Clean Grand Loot (Paintings, Gold & Crowns)</div>
     <div class="sheet">
-      <!-- 2x Painting Blue -->
       <div class="card blue grand">
         <div class="card-inner">
-          <div class="bg-watermark">🖼️</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+5</span><span class="index-type">Clean</span></div>
-            <div class="contraband-indicator">🔴 +15 Target</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🖼️</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +15 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Painting (10pts) • Red Painting (20pts)</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">🖼️</span>
-            <span class="item-name">Masterpiece</span>
-            <span class="item-tier-subtitle">👑 Grand Heist</span>
+          <div class="center-art">
+            <span class="art-icon">🖼️</span>
+            <span class="art-name">Masterpiece</span>
+            <span class="art-tier">👑 Grand Heist</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs w/ Blue Canvas (10pts) or Red Canvas (20pts!)</div>
-            <div class="footer-score">Base Value: 5 pts • Target Red: 15 pts</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🖼️</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +15 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Painting (10pts) • Red Painting (20pts)</div>
           </div>
         </div>
       </div>
-
       <div class="card blue grand">
         <div class="card-inner">
-          <div class="bg-watermark">🖼️</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+5</span><span class="index-type">Clean</span></div>
-            <div class="contraband-indicator">🔴 +15 Target</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🖼️</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +15 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Painting (10pts) • Red Painting (20pts)</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">🖼️</span>
-            <span class="item-name">Masterpiece</span>
-            <span class="item-tier-subtitle">👑 Grand Heist</span>
+          <div class="center-art">
+            <span class="art-icon">🖼️</span>
+            <span class="art-name">Masterpiece</span>
+            <span class="art-tier">👑 Grand Heist</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs w/ Blue Canvas (10pts) or Red Canvas (20pts!)</div>
-            <div class="footer-score">Base Value: 5 pts • Target Red: 15 pts</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🖼️</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +15 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Painting (10pts) • Red Painting (20pts)</div>
           </div>
         </div>
       </div>
-
-      <!-- 4x Gold Bar Blue -->
       <div class="card blue grand">
         <div class="card-inner">
-          <div class="bg-watermark">🧈</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+5</span><span class="index-type">Clean</span></div>
-            <div class="contraband-indicator">🔴 +15 Target</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🧈</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +15 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Gold (10pts) • Red Gold (20pts)</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">🧈</span>
-            <span class="item-name">Gold Ingot</span>
-            <span class="item-tier-subtitle">👑 Grand Heist</span>
+          <div class="center-art">
+            <span class="art-icon">🧈</span>
+            <span class="art-name">Gold Ingot</span>
+            <span class="art-tier">👑 Grand Heist</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs w/ Blue Gold (10pts) or Red Gold (20pts!)</div>
-            <div class="footer-score">Base Value: 5 pts • Target Red: 15 pts</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🧈</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +15 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Gold (10pts) • Red Gold (20pts)</div>
           </div>
         </div>
       </div>
-
       <div class="card blue grand">
         <div class="card-inner">
-          <div class="bg-watermark">🧈</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+5</span><span class="index-type">Clean</span></div>
-            <div class="contraband-indicator">🔴 +15 Target</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🧈</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +15 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Gold (10pts) • Red Gold (20pts)</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">🧈</span>
-            <span class="item-name">Gold Ingot</span>
-            <span class="item-tier-subtitle">👑 Grand Heist</span>
+          <div class="center-art">
+            <span class="art-icon">🧈</span>
+            <span class="art-name">Gold Ingot</span>
+            <span class="art-tier">👑 Grand Heist</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs w/ Blue Gold (10pts) or Red Gold (20pts!)</div>
-            <div class="footer-score">Base Value: 5 pts • Target Red: 15 pts</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🧈</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +15 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Gold (10pts) • Red Gold (20pts)</div>
           </div>
         </div>
       </div>
-
       <div class="card blue grand">
         <div class="card-inner">
-          <div class="bg-watermark">🧈</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+5</span><span class="index-type">Clean</span></div>
-            <div class="contraband-indicator">🔴 +15 Target</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🧈</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +15 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Gold (10pts) • Red Gold (20pts)</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">🧈</span>
-            <span class="item-name">Gold Ingot</span>
-            <span class="item-tier-subtitle">👑 Grand Heist</span>
+          <div class="center-art">
+            <span class="art-icon">🧈</span>
+            <span class="art-name">Gold Ingot</span>
+            <span class="art-tier">👑 Grand Heist</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs w/ Blue Gold (10pts) or Red Gold (20pts!)</div>
-            <div class="footer-score">Base Value: 5 pts • Target Red: 15 pts</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🧈</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +15 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Gold (10pts) • Red Gold (20pts)</div>
           </div>
         </div>
       </div>
-
       <div class="card blue grand">
         <div class="card-inner">
-          <div class="bg-watermark">🧈</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+5</span><span class="index-type">Clean</span></div>
-            <div class="contraband-indicator">🔴 +15 Target</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🧈</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +15 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Gold (10pts) • Red Gold (20pts)</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">🧈</span>
-            <span class="item-name">Gold Ingot</span>
-            <span class="item-tier-subtitle">👑 Grand Heist</span>
+          <div class="center-art">
+            <span class="art-icon">🧈</span>
+            <span class="art-name">Gold Ingot</span>
+            <span class="art-tier">👑 Grand Heist</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs w/ Blue Gold (10pts) or Red Gold (20pts!)</div>
-            <div class="footer-score">Base Value: 5 pts • Target Red: 15 pts</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🧈</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +15 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Gold (10pts) • Red Gold (20pts)</div>
           </div>
         </div>
       </div>
-
-      <!-- 3x Crown Blue -->
       <div class="card blue grand">
         <div class="card-inner">
-          <div class="bg-watermark">👑</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+5</span><span class="index-type">Clean</span></div>
-            <div class="contraband-indicator">🔴 +15 Target</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">👑</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +15 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Crown (10pts) • Red Crown (20pts)</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">👑</span>
-            <span class="item-name">Royal Crown</span>
-            <span class="item-tier-subtitle">👑 Grand Heist</span>
+          <div class="center-art">
+            <span class="art-icon">👑</span>
+            <span class="art-name">Royal Crown</span>
+            <span class="art-tier">👑 Grand Heist</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs w/ Blue Crown (10pts) or Red Crown (20pts!)</div>
-            <div class="footer-score">Base Value: 5 pts • Target Red: 15 pts</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">👑</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +15 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Crown (10pts) • Red Crown (20pts)</div>
           </div>
         </div>
       </div>
-
       <div class="card blue grand">
         <div class="card-inner">
-          <div class="bg-watermark">👑</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+5</span><span class="index-type">Clean</span></div>
-            <div class="contraband-indicator">🔴 +15 Target</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">👑</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +15 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Crown (10pts) • Red Crown (20pts)</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">👑</span>
-            <span class="item-name">Royal Crown</span>
-            <span class="item-tier-subtitle">👑 Grand Heist</span>
+          <div class="center-art">
+            <span class="art-icon">👑</span>
+            <span class="art-name">Royal Crown</span>
+            <span class="art-tier">👑 Grand Heist</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs w/ Blue Crown (10pts) or Red Crown (20pts!)</div>
-            <div class="footer-score">Base Value: 5 pts • Target Red: 15 pts</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">👑</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +15 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Crown (10pts) • Red Crown (20pts)</div>
           </div>
         </div>
       </div>
-
       <div class="card blue grand">
         <div class="card-inner">
-          <div class="bg-watermark">👑</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+5</span><span class="index-type">Clean</span></div>
-            <div class="contraband-indicator">🔴 +15 Target</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">👑</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +15 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Crown (10pts) • Red Crown (20pts)</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">👑</span>
-            <span class="item-name">Royal Crown</span>
-            <span class="item-tier-subtitle">👑 Grand Heist</span>
+          <div class="center-art">
+            <span class="art-icon">👑</span>
+            <span class="art-name">Royal Crown</span>
+            <span class="art-tier">👑 Grand Heist</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs w/ Blue Crown (10pts) or Red Crown (20pts!)</div>
-            <div class="footer-score">Base Value: 5 pts • Target Red: 15 pts</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">👑</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +15 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Crown (10pts) • Red Crown (20pts)</div>
           </div>
         </div>
       </div>
     </div>
-
-
-    <!-- ===================================================================
-         SHEET 4: 3 BLUE GRAND (Relic x3) + 6 RED PETTY (Cash x2, Diamond x2, Watch x2)
-         =================================================================== -->
     <div class="sheet-header-label">Sheet 4 of 8: Relics & Red Contraband (Cash, Diamonds, Watches)</div>
     <div class="sheet">
-      <!-- 3x Relic Blue -->
       <div class="card blue grand">
         <div class="card-inner">
-          <div class="bg-watermark">🏺</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+5</span><span class="index-type">Clean</span></div>
-            <div class="contraband-indicator">🔴 +15 Target</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🏺</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +15 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Relic (10pts) • Red Relic (20pts)</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">🏺</span>
-            <span class="item-name">Ancient Relic</span>
-            <span class="item-tier-subtitle">👑 Grand Heist</span>
+          <div class="center-art">
+            <span class="art-icon">🏺</span>
+            <span class="art-name">Ancient Relic</span>
+            <span class="art-tier">👑 Grand Heist</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs w/ Blue Relic (10pts) or Red Relic (20pts!)</div>
-            <div class="footer-score">Base Value: 5 pts • Target Red: 15 pts</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🏺</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +15 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Relic (10pts) • Red Relic (20pts)</div>
           </div>
         </div>
       </div>
-
       <div class="card blue grand">
         <div class="card-inner">
-          <div class="bg-watermark">🏺</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+5</span><span class="index-type">Clean</span></div>
-            <div class="contraband-indicator">🔴 +15 Target</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🏺</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +15 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Relic (10pts) • Red Relic (20pts)</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">🏺</span>
-            <span class="item-name">Ancient Relic</span>
-            <span class="item-tier-subtitle">👑 Grand Heist</span>
+          <div class="center-art">
+            <span class="art-icon">🏺</span>
+            <span class="art-name">Ancient Relic</span>
+            <span class="art-tier">👑 Grand Heist</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs w/ Blue Relic (10pts) or Red Relic (20pts!)</div>
-            <div class="footer-score">Base Value: 5 pts • Target Red: 15 pts</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🏺</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +15 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Relic (10pts) • Red Relic (20pts)</div>
           </div>
         </div>
       </div>
-
       <div class="card blue grand">
         <div class="card-inner">
-          <div class="bg-watermark">🏺</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+5</span><span class="index-type">Clean</span></div>
-            <div class="contraband-indicator">🔴 +15 Target</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🏺</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +15 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Relic (10pts) • Red Relic (20pts)</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">🏺</span>
-            <span class="item-name">Ancient Relic</span>
-            <span class="item-tier-subtitle">👑 Grand Heist</span>
+          <div class="center-art">
+            <span class="art-icon">🏺</span>
+            <span class="art-name">Ancient Relic</span>
+            <span class="art-tier">👑 Grand Heist</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs w/ Blue Relic (10pts) or Red Relic (20pts!)</div>
-            <div class="footer-score">Base Value: 5 pts • Target Red: 15 pts</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 2x Cash Red -->
-      <div class="card red petty">
-        <div class="card-inner">
-          <div class="bg-watermark">🚨</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+10</span><span class="index-type">Contraband</span></div>
-            <div class="contraband-indicator">🚨 HOT</div>
-          </div>
-          <div class="card-art">
-            <span class="item-icon">💵</span>
-            <span class="item-name">Marked Cash</span>
-            <span class="item-tier-subtitle">⭐ Petty Hot</span>
-          </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs ONLY with Blue Cash (+15 pts total)</div>
-            <div class="footer-score">Most Red in hand at end = BUST (0 pts)!</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🏺</span>
+                  <span class="index-val">+5</span>
+                </div>
+                <span class="index-type">Clean</span>
+              </div>
+              <div class="pill">🔴 +15 Target</div>
+            </div>
+            <div class="sub-rule-bar">Pairs w/ Blue Relic (10pts) • Red Relic (20pts)</div>
           </div>
         </div>
       </div>
-
       <div class="card red petty">
         <div class="card-inner">
-          <div class="bg-watermark">🚨</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+10</span><span class="index-type">Contraband</span></div>
-            <div class="contraband-indicator">🚨 HOT</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">💵</span>
+                  <span class="index-val">+10</span>
+                </div>
+                <span class="index-type">Contraband</span>
+              </div>
+              <div class="pill">🚨 HOT</div>
+            </div>
+            <div class="sub-rule-bar">Pairs ONLY w/ Blue Cash (+15pts) • Most Red = 0pts!</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">💵</span>
-            <span class="item-name">Marked Cash</span>
-            <span class="item-tier-subtitle">⭐ Petty Hot</span>
+          <div class="center-art">
+            <span class="art-icon">💵</span>
+            <span class="art-name">Marked Cash</span>
+            <span class="art-tier">⭐ Petty Hot</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs ONLY with Blue Cash (+15 pts total)</div>
-            <div class="footer-score">Most Red in hand at end = BUST (0 pts)!</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">💵</span>
+                  <span class="index-val">+10</span>
+                </div>
+                <span class="index-type">Contraband</span>
+              </div>
+              <div class="pill">🚨 HOT</div>
+            </div>
+            <div class="sub-rule-bar">Pairs ONLY w/ Blue Cash (+15pts) • Most Red = 0pts!</div>
           </div>
         </div>
       </div>
-
-      <!-- 2x Diamond Red -->
       <div class="card red petty">
         <div class="card-inner">
-          <div class="bg-watermark">🚨</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+10</span><span class="index-type">Contraband</span></div>
-            <div class="contraband-indicator">🚨 HOT</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">💵</span>
+                  <span class="index-val">+10</span>
+                </div>
+                <span class="index-type">Contraband</span>
+              </div>
+              <div class="pill">🚨 HOT</div>
+            </div>
+            <div class="sub-rule-bar">Pairs ONLY w/ Blue Cash (+15pts) • Most Red = 0pts!</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">💎</span>
-            <span class="item-name">Blood Diamond</span>
-            <span class="item-tier-subtitle">⭐ Petty Hot</span>
+          <div class="center-art">
+            <span class="art-icon">💵</span>
+            <span class="art-name">Marked Cash</span>
+            <span class="art-tier">⭐ Petty Hot</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs ONLY with Blue Diamond (+15 pts total)</div>
-            <div class="footer-score">Most Red in hand at end = BUST (0 pts)!</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">💵</span>
+                  <span class="index-val">+10</span>
+                </div>
+                <span class="index-type">Contraband</span>
+              </div>
+              <div class="pill">🚨 HOT</div>
+            </div>
+            <div class="sub-rule-bar">Pairs ONLY w/ Blue Cash (+15pts) • Most Red = 0pts!</div>
           </div>
         </div>
       </div>
-
       <div class="card red petty">
         <div class="card-inner">
-          <div class="bg-watermark">🚨</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+10</span><span class="index-type">Contraband</span></div>
-            <div class="contraband-indicator">🚨 HOT</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">💎</span>
+                  <span class="index-val">+10</span>
+                </div>
+                <span class="index-type">Contraband</span>
+              </div>
+              <div class="pill">🚨 HOT</div>
+            </div>
+            <div class="sub-rule-bar">Pairs ONLY w/ Blue Diamond (+15pts) • Most Red = 0pts!</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">💎</span>
-            <span class="item-name">Blood Diamond</span>
-            <span class="item-tier-subtitle">⭐ Petty Hot</span>
+          <div class="center-art">
+            <span class="art-icon">💎</span>
+            <span class="art-name">Blood Diamond</span>
+            <span class="art-tier">⭐ Petty Hot</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs ONLY with Blue Diamond (+15 pts total)</div>
-            <div class="footer-score">Most Red in hand at end = BUST (0 pts)!</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">💎</span>
+                  <span class="index-val">+10</span>
+                </div>
+                <span class="index-type">Contraband</span>
+              </div>
+              <div class="pill">🚨 HOT</div>
+            </div>
+            <div class="sub-rule-bar">Pairs ONLY w/ Blue Diamond (+15pts) • Most Red = 0pts!</div>
           </div>
         </div>
       </div>
-
-      <!-- 2x Watch Red -->
       <div class="card red petty">
         <div class="card-inner">
-          <div class="bg-watermark">🚨</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+10</span><span class="index-type">Contraband</span></div>
-            <div class="contraband-indicator">🚨 HOT</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">💎</span>
+                  <span class="index-val">+10</span>
+                </div>
+                <span class="index-type">Contraband</span>
+              </div>
+              <div class="pill">🚨 HOT</div>
+            </div>
+            <div class="sub-rule-bar">Pairs ONLY w/ Blue Diamond (+15pts) • Most Red = 0pts!</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">⌚</span>
-            <span class="item-name">Tracked Watch</span>
-            <span class="item-tier-subtitle">⭐ Petty Hot</span>
+          <div class="center-art">
+            <span class="art-icon">💎</span>
+            <span class="art-name">Blood Diamond</span>
+            <span class="art-tier">⭐ Petty Hot</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs ONLY with Blue Watch (+15 pts total)</div>
-            <div class="footer-score">Most Red in hand at end = BUST (0 pts)!</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">💎</span>
+                  <span class="index-val">+10</span>
+                </div>
+                <span class="index-type">Contraband</span>
+              </div>
+              <div class="pill">🚨 HOT</div>
+            </div>
+            <div class="sub-rule-bar">Pairs ONLY w/ Blue Diamond (+15pts) • Most Red = 0pts!</div>
           </div>
         </div>
       </div>
-
       <div class="card red petty">
         <div class="card-inner">
-          <div class="bg-watermark">🚨</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+10</span><span class="index-type">Contraband</span></div>
-            <div class="contraband-indicator">🚨 HOT</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">⌚</span>
+                  <span class="index-val">+10</span>
+                </div>
+                <span class="index-type">Contraband</span>
+              </div>
+              <div class="pill">🚨 HOT</div>
+            </div>
+            <div class="sub-rule-bar">Pairs ONLY w/ Blue Watch (+15pts) • Most Red = 0pts!</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">⌚</span>
-            <span class="item-name">Tracked Watch</span>
-            <span class="item-tier-subtitle">⭐ Petty Hot</span>
+          <div class="center-art">
+            <span class="art-icon">⌚</span>
+            <span class="art-name">Tracked Watch</span>
+            <span class="art-tier">⭐ Petty Hot</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs ONLY with Blue Watch (+15 pts total)</div>
-            <div class="footer-score">Most Red in hand at end = BUST (0 pts)!</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">⌚</span>
+                  <span class="index-val">+10</span>
+                </div>
+                <span class="index-type">Contraband</span>
+              </div>
+              <div class="pill">🚨 HOT</div>
+            </div>
+            <div class="sub-rule-bar">Pairs ONLY w/ Blue Watch (+15pts) • Most Red = 0pts!</div>
+          </div>
+        </div>
+      </div>
+      <div class="card red petty">
+        <div class="card-inner">
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">⌚</span>
+                  <span class="index-val">+10</span>
+                </div>
+                <span class="index-type">Contraband</span>
+              </div>
+              <div class="pill">🚨 HOT</div>
+            </div>
+            <div class="sub-rule-bar">Pairs ONLY w/ Blue Watch (+15pts) • Most Red = 0pts!</div>
+          </div>
+          <div class="center-art">
+            <span class="art-icon">⌚</span>
+            <span class="art-name">Tracked Watch</span>
+            <span class="art-tier">⭐ Petty Hot</span>
+          </div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">⌚</span>
+                  <span class="index-val">+10</span>
+                </div>
+                <span class="index-type">Contraband</span>
+              </div>
+              <div class="pill">🚨 HOT</div>
+            </div>
+            <div class="sub-rule-bar">Pairs ONLY w/ Blue Watch (+15pts) • Most Red = 0pts!</div>
           </div>
         </div>
       </div>
     </div>
-
-
-    <!-- ===================================================================
-         SHEET 5: 2 RED PETTY (Keys x2) + 7 RED GRAND (Painting x2, Gold x2, Crown x2, Relic x1)
-         =================================================================== -->
-    <div class="sheet-header-label">Sheet 5 of 8: Red Contraband (Keys, Paintings, Gold & Crowns)</div>
+    <div class="sheet-header-label">Sheet 5 of 8: Red Contraband (Keys, Paintings, Gold, Crowns & Relic)</div>
     <div class="sheet">
-      <!-- 2x Key Red -->
       <div class="card red petty">
         <div class="card-inner">
-          <div class="bg-watermark">🚨</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+10</span><span class="index-type">Contraband</span></div>
-            <div class="contraband-indicator">🚨 HOT</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🗝️</span>
+                  <span class="index-val">+10</span>
+                </div>
+                <span class="index-type">Contraband</span>
+              </div>
+              <div class="pill">🚨 HOT</div>
+            </div>
+            <div class="sub-rule-bar">Pairs ONLY w/ Blue Key (+15pts) • Most Red = 0pts!</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">🗝️</span>
-            <span class="item-name">Evidence Key</span>
-            <span class="item-tier-subtitle">⭐ Petty Hot</span>
+          <div class="center-art">
+            <span class="art-icon">🗝️</span>
+            <span class="art-name">Evidence Key</span>
+            <span class="art-tier">⭐ Petty Hot</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs ONLY with Blue Key (+15 pts total)</div>
-            <div class="footer-score">Most Red in hand at end = BUST (0 pts)!</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🗝️</span>
+                  <span class="index-val">+10</span>
+                </div>
+                <span class="index-type">Contraband</span>
+              </div>
+              <div class="pill">🚨 HOT</div>
+            </div>
+            <div class="sub-rule-bar">Pairs ONLY w/ Blue Key (+15pts) • Most Red = 0pts!</div>
           </div>
         </div>
       </div>
-
       <div class="card red petty">
         <div class="card-inner">
-          <div class="bg-watermark">🚨</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+10</span><span class="index-type">Contraband</span></div>
-            <div class="contraband-indicator">🚨 HOT</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🗝️</span>
+                  <span class="index-val">+10</span>
+                </div>
+                <span class="index-type">Contraband</span>
+              </div>
+              <div class="pill">🚨 HOT</div>
+            </div>
+            <div class="sub-rule-bar">Pairs ONLY w/ Blue Key (+15pts) • Most Red = 0pts!</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">🗝️</span>
-            <span class="item-name">Evidence Key</span>
-            <span class="item-tier-subtitle">⭐ Petty Hot</span>
+          <div class="center-art">
+            <span class="art-icon">🗝️</span>
+            <span class="art-name">Evidence Key</span>
+            <span class="art-tier">⭐ Petty Hot</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs ONLY with Blue Key (+15 pts total)</div>
-            <div class="footer-score">Most Red in hand at end = BUST (0 pts)!</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 2x Painting Red (Grand) -->
-      <div class="card red grand">
-        <div class="card-inner">
-          <div class="bg-watermark">🚨</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+15</span><span class="index-type">Contraband</span></div>
-            <div class="contraband-indicator">🚨 GRAND</div>
-          </div>
-          <div class="card-art">
-            <span class="item-icon">🖼️</span>
-            <span class="item-name">Stolen Canvas</span>
-            <span class="item-tier-subtitle">👑 Grand Hot</span>
-          </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs ONLY with Blue Canvas (+20 pts total!)</div>
-            <div class="footer-score">Most Red in hand at end = BUST (0 pts)!</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🗝️</span>
+                  <span class="index-val">+10</span>
+                </div>
+                <span class="index-type">Contraband</span>
+              </div>
+              <div class="pill">🚨 HOT</div>
+            </div>
+            <div class="sub-rule-bar">Pairs ONLY w/ Blue Key (+15pts) • Most Red = 0pts!</div>
           </div>
         </div>
       </div>
-
       <div class="card red grand">
         <div class="card-inner">
-          <div class="bg-watermark">🚨</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+15</span><span class="index-type">Contraband</span></div>
-            <div class="contraband-indicator">🚨 GRAND</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🖼️</span>
+                  <span class="index-val">+15</span>
+                </div>
+                <span class="index-type">Contraband</span>
+              </div>
+              <div class="pill">🚨 GRAND</div>
+            </div>
+            <div class="sub-rule-bar">Pairs ONLY w/ Blue Painting (+20pts) • Most Red = 0pts!</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">🖼️</span>
-            <span class="item-name">Stolen Canvas</span>
-            <span class="item-tier-subtitle">👑 Grand Hot</span>
+          <div class="center-art">
+            <span class="art-icon">🖼️</span>
+            <span class="art-name">Stolen Canvas</span>
+            <span class="art-tier">👑 Grand Hot</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs ONLY with Blue Canvas (+20 pts total!)</div>
-            <div class="footer-score">Most Red in hand at end = BUST (0 pts)!</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🖼️</span>
+                  <span class="index-val">+15</span>
+                </div>
+                <span class="index-type">Contraband</span>
+              </div>
+              <div class="pill">🚨 GRAND</div>
+            </div>
+            <div class="sub-rule-bar">Pairs ONLY w/ Blue Painting (+20pts) • Most Red = 0pts!</div>
           </div>
         </div>
       </div>
-
-      <!-- 2x Gold Red (Grand) -->
       <div class="card red grand">
         <div class="card-inner">
-          <div class="bg-watermark">🚨</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+15</span><span class="index-type">Contraband</span></div>
-            <div class="contraband-indicator">🚨 GRAND</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🖼️</span>
+                  <span class="index-val">+15</span>
+                </div>
+                <span class="index-type">Contraband</span>
+              </div>
+              <div class="pill">🚨 GRAND</div>
+            </div>
+            <div class="sub-rule-bar">Pairs ONLY w/ Blue Painting (+20pts) • Most Red = 0pts!</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">🧈</span>
-            <span class="item-name">Hot Gold Bar</span>
-            <span class="item-tier-subtitle">👑 Grand Hot</span>
+          <div class="center-art">
+            <span class="art-icon">🖼️</span>
+            <span class="art-name">Stolen Canvas</span>
+            <span class="art-tier">👑 Grand Hot</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs ONLY with Blue Gold (+20 pts total!)</div>
-            <div class="footer-score">Most Red in hand at end = BUST (0 pts)!</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🖼️</span>
+                  <span class="index-val">+15</span>
+                </div>
+                <span class="index-type">Contraband</span>
+              </div>
+              <div class="pill">🚨 GRAND</div>
+            </div>
+            <div class="sub-rule-bar">Pairs ONLY w/ Blue Painting (+20pts) • Most Red = 0pts!</div>
           </div>
         </div>
       </div>
-
       <div class="card red grand">
         <div class="card-inner">
-          <div class="bg-watermark">🚨</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+15</span><span class="index-type">Contraband</span></div>
-            <div class="contraband-indicator">🚨 GRAND</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🧈</span>
+                  <span class="index-val">+15</span>
+                </div>
+                <span class="index-type">Contraband</span>
+              </div>
+              <div class="pill">🚨 GRAND</div>
+            </div>
+            <div class="sub-rule-bar">Pairs ONLY w/ Blue Gold (+20pts) • Most Red = 0pts!</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">🧈</span>
-            <span class="item-name">Hot Gold Bar</span>
-            <span class="item-tier-subtitle">👑 Grand Hot</span>
+          <div class="center-art">
+            <span class="art-icon">🧈</span>
+            <span class="art-name">Hot Gold Bar</span>
+            <span class="art-tier">👑 Grand Hot</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs ONLY with Blue Gold (+20 pts total!)</div>
-            <div class="footer-score">Most Red in hand at end = BUST (0 pts)!</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🧈</span>
+                  <span class="index-val">+15</span>
+                </div>
+                <span class="index-type">Contraband</span>
+              </div>
+              <div class="pill">🚨 GRAND</div>
+            </div>
+            <div class="sub-rule-bar">Pairs ONLY w/ Blue Gold (+20pts) • Most Red = 0pts!</div>
           </div>
         </div>
       </div>
-
-      <!-- 2x Crown Red (Grand) -->
       <div class="card red grand">
         <div class="card-inner">
-          <div class="bg-watermark">🚨</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+15</span><span class="index-type">Contraband</span></div>
-            <div class="contraband-indicator">🚨 GRAND</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🧈</span>
+                  <span class="index-val">+15</span>
+                </div>
+                <span class="index-type">Contraband</span>
+              </div>
+              <div class="pill">🚨 GRAND</div>
+            </div>
+            <div class="sub-rule-bar">Pairs ONLY w/ Blue Gold (+20pts) • Most Red = 0pts!</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">👑</span>
-            <span class="item-name">Cursed Crown</span>
-            <span class="item-tier-subtitle">👑 Grand Hot</span>
+          <div class="center-art">
+            <span class="art-icon">🧈</span>
+            <span class="art-name">Hot Gold Bar</span>
+            <span class="art-tier">👑 Grand Hot</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs ONLY with Blue Crown (+20 pts total!)</div>
-            <div class="footer-score">Most Red in hand at end = BUST (0 pts)!</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🧈</span>
+                  <span class="index-val">+15</span>
+                </div>
+                <span class="index-type">Contraband</span>
+              </div>
+              <div class="pill">🚨 GRAND</div>
+            </div>
+            <div class="sub-rule-bar">Pairs ONLY w/ Blue Gold (+20pts) • Most Red = 0pts!</div>
           </div>
         </div>
       </div>
-
       <div class="card red grand">
         <div class="card-inner">
-          <div class="bg-watermark">🚨</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+15</span><span class="index-type">Contraband</span></div>
-            <div class="contraband-indicator">🚨 GRAND</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">👑</span>
+                  <span class="index-val">+15</span>
+                </div>
+                <span class="index-type">Contraband</span>
+              </div>
+              <div class="pill">🚨 GRAND</div>
+            </div>
+            <div class="sub-rule-bar">Pairs ONLY w/ Blue Crown (+20pts) • Most Red = 0pts!</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">👑</span>
-            <span class="item-name">Cursed Crown</span>
-            <span class="item-tier-subtitle">👑 Grand Hot</span>
+          <div class="center-art">
+            <span class="art-icon">👑</span>
+            <span class="art-name">Cursed Crown</span>
+            <span class="art-tier">👑 Grand Hot</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs ONLY with Blue Crown (+20 pts total!)</div>
-            <div class="footer-score">Most Red in hand at end = BUST (0 pts)!</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">👑</span>
+                  <span class="index-val">+15</span>
+                </div>
+                <span class="index-type">Contraband</span>
+              </div>
+              <div class="pill">🚨 GRAND</div>
+            </div>
+            <div class="sub-rule-bar">Pairs ONLY w/ Blue Crown (+20pts) • Most Red = 0pts!</div>
           </div>
         </div>
       </div>
-
-      <!-- 1x Relic Red (Grand) -->
       <div class="card red grand">
         <div class="card-inner">
-          <div class="bg-watermark">🚨</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+15</span><span class="index-type">Contraband</span></div>
-            <div class="contraband-indicator">🚨 GRAND</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">👑</span>
+                  <span class="index-val">+15</span>
+                </div>
+                <span class="index-type">Contraband</span>
+              </div>
+              <div class="pill">🚨 GRAND</div>
+            </div>
+            <div class="sub-rule-bar">Pairs ONLY w/ Blue Crown (+20pts) • Most Red = 0pts!</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">🏺</span>
-            <span class="item-name">Smuggled Relic</span>
-            <span class="item-tier-subtitle">👑 Grand Hot</span>
+          <div class="center-art">
+            <span class="art-icon">👑</span>
+            <span class="art-name">Cursed Crown</span>
+            <span class="art-tier">👑 Grand Hot</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs ONLY with Blue Relic (+20 pts total!)</div>
-            <div class="footer-score">Most Red in hand at end = BUST (0 pts)!</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">👑</span>
+                  <span class="index-val">+15</span>
+                </div>
+                <span class="index-type">Contraband</span>
+              </div>
+              <div class="pill">🚨 GRAND</div>
+            </div>
+            <div class="sub-rule-bar">Pairs ONLY w/ Blue Crown (+20pts) • Most Red = 0pts!</div>
+          </div>
+        </div>
+      </div>
+      <div class="card red grand">
+        <div class="card-inner">
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🏺</span>
+                  <span class="index-val">+15</span>
+                </div>
+                <span class="index-type">Contraband</span>
+              </div>
+              <div class="pill">🚨 GRAND</div>
+            </div>
+            <div class="sub-rule-bar">Pairs ONLY w/ Blue Relic (+20pts) • Most Red = 0pts!</div>
+          </div>
+          <div class="center-art">
+            <span class="art-icon">🏺</span>
+            <span class="art-name">Smuggled Relic</span>
+            <span class="art-tier">👑 Grand Hot</span>
+          </div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🏺</span>
+                  <span class="index-val">+15</span>
+                </div>
+                <span class="index-type">Contraband</span>
+              </div>
+              <div class="pill">🚨 GRAND</div>
+            </div>
+            <div class="sub-rule-bar">Pairs ONLY w/ Blue Relic (+20pts) • Most Red = 0pts!</div>
           </div>
         </div>
       </div>
     </div>
-
-
-    <!-- ===================================================================
-         SHEET 6: 1 RED GRAND (Relic x1) + 8 GREEN COUNTERFEIT WILDS
-         =================================================================== -->
     <div class="sheet-header-label">Sheet 6 of 8: Relic Contraband & Counterfeit Wilds (Blue-Only Connector)</div>
     <div class="sheet">
-      <!-- 1x Relic Red -->
       <div class="card red grand">
         <div class="card-inner">
-          <div class="bg-watermark">🚨</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">+15</span><span class="index-type">Contraband</span></div>
-            <div class="contraband-indicator">🚨 GRAND</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🏺</span>
+                  <span class="index-val">+15</span>
+                </div>
+                <span class="index-type">Contraband</span>
+              </div>
+              <div class="pill">🚨 GRAND</div>
+            </div>
+            <div class="sub-rule-bar">Pairs ONLY w/ Blue Relic (+20pts) • Most Red = 0pts!</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">🏺</span>
-            <span class="item-name">Smuggled Relic</span>
-            <span class="item-tier-subtitle">👑 Grand Hot</span>
+          <div class="center-art">
+            <span class="art-icon">🏺</span>
+            <span class="art-name">Smuggled Relic</span>
+            <span class="art-tier">👑 Grand Hot</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">Pairs ONLY with Blue Relic (+20 pts total!)</div>
-            <div class="footer-score">Most Red in hand at end = BUST (0 pts)!</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 8x Counterfeit Wilds (Featuring the requested [🔵 ONLY] Indicator) -->
-      <div class="card green">
-        <div class="card-inner">
-          <div class="bg-watermark">🔄</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">WILD</span><span class="index-type">Counterfeit</span></div>
-            <div class="contraband-indicator">🔵 ONLY</div>
-          </div>
-          <div class="card-art">
-            <span class="item-icon">🎭🔄</span>
-            <span class="item-name">Fake Receipt</span>
-            <span class="item-tier-subtitle">Pairs w/ ANY Blue</span>
-          </div>
-          <div class="card-footer">
-            <div class="footer-rule">+5 PTS & REVERSES CAMERA 🔄</div>
-            <div class="footer-score">PAIRS WITH BLUE ONLY • ILLEGAL WITH RED 🚫</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🏺</span>
+                  <span class="index-val">+15</span>
+                </div>
+                <span class="index-type">Contraband</span>
+              </div>
+              <div class="pill">🚨 GRAND</div>
+            </div>
+            <div class="sub-rule-bar">Pairs ONLY w/ Blue Relic (+20pts) • Most Red = 0pts!</div>
           </div>
         </div>
       </div>
-
-      <div class="card green">
+      <div class="card green petty">
         <div class="card-inner">
-          <div class="bg-watermark">🔄</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">WILD</span><span class="index-type">Counterfeit</span></div>
-            <div class="contraband-indicator">🔵 ONLY</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🎭</span>
+                  <span class="index-val">WILD</span>
+                </div>
+                <span class="index-type">Counterfeit</span>
+              </div>
+              <div class="pill">🔵 ONLY</div>
+            </div>
+            <div class="sub-rule-bar">+5 Pts & Flips Camera 🔄 • Illegal w/ Red Contraband 🚫</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">🎭🔄</span>
-            <span class="item-name">Fake Receipt</span>
-            <span class="item-tier-subtitle">Pairs w/ ANY Blue</span>
+          <div class="center-art">
+            <span class="art-icon">🎭🔄</span>
+            <span class="art-name">Fake Receipt</span>
+            <span class="art-tier">Pairs w/ Any Blue</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">+5 PTS & REVERSES CAMERA 🔄</div>
-            <div class="footer-score">PAIRS WITH BLUE ONLY • ILLEGAL WITH RED 🚫</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🎭</span>
+                  <span class="index-val">WILD</span>
+                </div>
+                <span class="index-type">Counterfeit</span>
+              </div>
+              <div class="pill">🔵 ONLY</div>
+            </div>
+            <div class="sub-rule-bar">+5 Pts & Flips Camera 🔄 • Illegal w/ Red Contraband 🚫</div>
           </div>
         </div>
       </div>
-
-      <div class="card green">
+      <div class="card green petty">
         <div class="card-inner">
-          <div class="bg-watermark">🔄</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">WILD</span><span class="index-type">Counterfeit</span></div>
-            <div class="contraband-indicator">🔵 ONLY</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🎭</span>
+                  <span class="index-val">WILD</span>
+                </div>
+                <span class="index-type">Counterfeit</span>
+              </div>
+              <div class="pill">🔵 ONLY</div>
+            </div>
+            <div class="sub-rule-bar">+5 Pts & Flips Camera 🔄 • Illegal w/ Red Contraband 🚫</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">🎭🔄</span>
-            <span class="item-name">Fake Receipt</span>
-            <span class="item-tier-subtitle">Pairs w/ ANY Blue</span>
+          <div class="center-art">
+            <span class="art-icon">🎭🔄</span>
+            <span class="art-name">Fake Receipt</span>
+            <span class="art-tier">Pairs w/ Any Blue</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">+5 PTS & REVERSES CAMERA 🔄</div>
-            <div class="footer-score">PAIRS WITH BLUE ONLY • ILLEGAL WITH RED 🚫</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🎭</span>
+                  <span class="index-val">WILD</span>
+                </div>
+                <span class="index-type">Counterfeit</span>
+              </div>
+              <div class="pill">🔵 ONLY</div>
+            </div>
+            <div class="sub-rule-bar">+5 Pts & Flips Camera 🔄 • Illegal w/ Red Contraband 🚫</div>
           </div>
         </div>
       </div>
-
-      <div class="card green">
+      <div class="card green petty">
         <div class="card-inner">
-          <div class="bg-watermark">🔄</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">WILD</span><span class="index-type">Counterfeit</span></div>
-            <div class="contraband-indicator">🔵 ONLY</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🎭</span>
+                  <span class="index-val">WILD</span>
+                </div>
+                <span class="index-type">Counterfeit</span>
+              </div>
+              <div class="pill">🔵 ONLY</div>
+            </div>
+            <div class="sub-rule-bar">+5 Pts & Flips Camera 🔄 • Illegal w/ Red Contraband 🚫</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">🎭🔄</span>
-            <span class="item-name">Fake Receipt</span>
-            <span class="item-tier-subtitle">Pairs w/ ANY Blue</span>
+          <div class="center-art">
+            <span class="art-icon">🎭🔄</span>
+            <span class="art-name">Fake Receipt</span>
+            <span class="art-tier">Pairs w/ Any Blue</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">+5 PTS & REVERSES CAMERA 🔄</div>
-            <div class="footer-score">PAIRS WITH BLUE ONLY • ILLEGAL WITH RED 🚫</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🎭</span>
+                  <span class="index-val">WILD</span>
+                </div>
+                <span class="index-type">Counterfeit</span>
+              </div>
+              <div class="pill">🔵 ONLY</div>
+            </div>
+            <div class="sub-rule-bar">+5 Pts & Flips Camera 🔄 • Illegal w/ Red Contraband 🚫</div>
           </div>
         </div>
       </div>
-
-      <div class="card green">
+      <div class="card green petty">
         <div class="card-inner">
-          <div class="bg-watermark">🔄</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">WILD</span><span class="index-type">Counterfeit</span></div>
-            <div class="contraband-indicator">🔵 ONLY</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🎭</span>
+                  <span class="index-val">WILD</span>
+                </div>
+                <span class="index-type">Counterfeit</span>
+              </div>
+              <div class="pill">🔵 ONLY</div>
+            </div>
+            <div class="sub-rule-bar">+5 Pts & Flips Camera 🔄 • Illegal w/ Red Contraband 🚫</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">🎭🔄</span>
-            <span class="item-name">Fake Receipt</span>
-            <span class="item-tier-subtitle">Pairs w/ ANY Blue</span>
+          <div class="center-art">
+            <span class="art-icon">🎭🔄</span>
+            <span class="art-name">Fake Receipt</span>
+            <span class="art-tier">Pairs w/ Any Blue</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">+5 PTS & REVERSES CAMERA 🔄</div>
-            <div class="footer-score">PAIRS WITH BLUE ONLY • ILLEGAL WITH RED 🚫</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🎭</span>
+                  <span class="index-val">WILD</span>
+                </div>
+                <span class="index-type">Counterfeit</span>
+              </div>
+              <div class="pill">🔵 ONLY</div>
+            </div>
+            <div class="sub-rule-bar">+5 Pts & Flips Camera 🔄 • Illegal w/ Red Contraband 🚫</div>
           </div>
         </div>
       </div>
-
-      <div class="card green">
+      <div class="card green petty">
         <div class="card-inner">
-          <div class="bg-watermark">🔄</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">WILD</span><span class="index-type">Counterfeit</span></div>
-            <div class="contraband-indicator">🔵 ONLY</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🎭</span>
+                  <span class="index-val">WILD</span>
+                </div>
+                <span class="index-type">Counterfeit</span>
+              </div>
+              <div class="pill">🔵 ONLY</div>
+            </div>
+            <div class="sub-rule-bar">+5 Pts & Flips Camera 🔄 • Illegal w/ Red Contraband 🚫</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">🎭🔄</span>
-            <span class="item-name">Fake Receipt</span>
-            <span class="item-tier-subtitle">Pairs w/ ANY Blue</span>
+          <div class="center-art">
+            <span class="art-icon">🎭🔄</span>
+            <span class="art-name">Fake Receipt</span>
+            <span class="art-tier">Pairs w/ Any Blue</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">+5 PTS & REVERSES CAMERA 🔄</div>
-            <div class="footer-score">PAIRS WITH BLUE ONLY • ILLEGAL WITH RED 🚫</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🎭</span>
+                  <span class="index-val">WILD</span>
+                </div>
+                <span class="index-type">Counterfeit</span>
+              </div>
+              <div class="pill">🔵 ONLY</div>
+            </div>
+            <div class="sub-rule-bar">+5 Pts & Flips Camera 🔄 • Illegal w/ Red Contraband 🚫</div>
           </div>
         </div>
       </div>
-
-      <div class="card green">
+      <div class="card green petty">
         <div class="card-inner">
-          <div class="bg-watermark">🔄</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">WILD</span><span class="index-type">Counterfeit</span></div>
-            <div class="contraband-indicator">🔵 ONLY</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🎭</span>
+                  <span class="index-val">WILD</span>
+                </div>
+                <span class="index-type">Counterfeit</span>
+              </div>
+              <div class="pill">🔵 ONLY</div>
+            </div>
+            <div class="sub-rule-bar">+5 Pts & Flips Camera 🔄 • Illegal w/ Red Contraband 🚫</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">🎭🔄</span>
-            <span class="item-name">Fake Receipt</span>
-            <span class="item-tier-subtitle">Pairs w/ ANY Blue</span>
+          <div class="center-art">
+            <span class="art-icon">🎭🔄</span>
+            <span class="art-name">Fake Receipt</span>
+            <span class="art-tier">Pairs w/ Any Blue</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">+5 PTS & REVERSES CAMERA 🔄</div>
-            <div class="footer-score">PAIRS WITH BLUE ONLY • ILLEGAL WITH RED 🚫</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🎭</span>
+                  <span class="index-val">WILD</span>
+                </div>
+                <span class="index-type">Counterfeit</span>
+              </div>
+              <div class="pill">🔵 ONLY</div>
+            </div>
+            <div class="sub-rule-bar">+5 Pts & Flips Camera 🔄 • Illegal w/ Red Contraband 🚫</div>
           </div>
         </div>
       </div>
-
-      <div class="card green">
+      <div class="card green petty">
         <div class="card-inner">
-          <div class="bg-watermark">🔄</div>
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val">WILD</span><span class="index-type">Counterfeit</span></div>
-            <div class="contraband-indicator">🔵 ONLY</div>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🎭</span>
+                  <span class="index-val">WILD</span>
+                </div>
+                <span class="index-type">Counterfeit</span>
+              </div>
+              <div class="pill">🔵 ONLY</div>
+            </div>
+            <div class="sub-rule-bar">+5 Pts & Flips Camera 🔄 • Illegal w/ Red Contraband 🚫</div>
           </div>
-          <div class="card-art">
-            <span class="item-icon">🎭🔄</span>
-            <span class="item-name">Fake Receipt</span>
-            <span class="item-tier-subtitle">Pairs w/ ANY Blue</span>
+          <div class="center-art">
+            <span class="art-icon">🎭🔄</span>
+            <span class="art-name">Fake Receipt</span>
+            <span class="art-tier">Pairs w/ Any Blue</span>
           </div>
-          <div class="card-footer">
-            <div class="footer-rule">+5 PTS & REVERSES CAMERA 🔄</div>
-            <div class="footer-score">PAIRS WITH BLUE ONLY • ILLEGAL WITH RED 🚫</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🎭</span>
+                  <span class="index-val">WILD</span>
+                </div>
+                <span class="index-type">Counterfeit</span>
+              </div>
+              <div class="pill">🔵 ONLY</div>
+            </div>
+            <div class="sub-rule-bar">+5 Pts & Flips Camera 🔄 • Illegal w/ Red Contraband 🚫</div>
+          </div>
+        </div>
+      </div>
+      <div class="card green petty">
+        <div class="card-inner">
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🎭</span>
+                  <span class="index-val">WILD</span>
+                </div>
+                <span class="index-type">Counterfeit</span>
+              </div>
+              <div class="pill">🔵 ONLY</div>
+            </div>
+            <div class="sub-rule-bar">+5 Pts & Flips Camera 🔄 • Illegal w/ Red Contraband 🚫</div>
+          </div>
+          <div class="center-art">
+            <span class="art-icon">🎭🔄</span>
+            <span class="art-name">Fake Receipt</span>
+            <span class="art-tier">Pairs w/ Any Blue</span>
+          </div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top">
+                  <span class="corner-icon">🎭</span>
+                  <span class="index-val">WILD</span>
+                </div>
+                <span class="index-type">Counterfeit</span>
+              </div>
+              <div class="pill">🔵 ONLY</div>
+            </div>
+            <div class="sub-rule-bar">+5 Pts & Flips Camera 🔄 • Illegal w/ Red Contraband 🚫</div>
           </div>
         </div>
       </div>
     </div>
-
-
-    <!-- ===================================================================
-         SHEET 7: REFERENCE CARDS & TABLE MARKERS (56-Card Deck Completers)
-         =================================================================== -->
-    <div class="sheet-header-label">Sheet 7 of 8: Quick Reference Rules & Table Direction Markers</div>
+    <div class="sheet-header-label">Sheet 7 of 8: Quick Reference Rules & Circular Camera Direction Markers</div>
     <div class="sheet">
-      <!-- Camera Direction Marker (Clockwise) -->
       <div class="card marker">
         <div class="card-inner" style="border-color: #38bdf8;">
-          <div class="card-header">
-            <div class="index-group-left">
-              <span class="index-val" style="color: #38bdf8; font-size: 13px;">↻ CW</span>
-              <span class="index-type" style="color: #7dd3fc;">Pass Left</span>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top"><span class="corner-icon">📹</span><span class="index-val" style="color:#38bdf8; font-size:13px;">↻ CW</span></div>
+                <span class="index-type" style="color:#7dd3fc;">Pass Left</span>
+              </div>
+              <div class="pill" style="background:#0369a1; border-color:#38bdf8; color:#fff;">↻ CLOCKWISE</div>
             </div>
-            <div class="contraband-indicator" style="background:#0369a1; border-color:#38bdf8; color:#fff; font-size: 8.5px;">↻ CLOCKWISE</div>
+            <div class="sub-rule-bar" style="color:#7dd3fc;">Table Center • Default Play Direction (Pass to Left)</div>
           </div>
-          <div class="card-art">
-            <div style="width: 78px; height: 78px; display: flex; align-items: center; justify-content: center; margin: 2px auto;">
-              <svg viewBox="0 0 100 100" width="78" height="78">
-                <!-- Circular Track & Grid -->
+          <div class="center-art">
+            <div style="width:72px; height:72px; display:flex; align-items:center; justify-content:center; margin:0 auto;">
+              <svg viewBox="0 0 100 100" width="72" height="72">
                 <circle cx="50" cy="50" r="45" fill="none" stroke="#0284c7" stroke-width="1.2" stroke-dasharray="3,3" opacity="0.6"/>
-                <!-- Top-Right CW Sweeping Arrow -->
-                <path d="M 22 46 A 34 34 0 0 1 76 30" fill="none" stroke="#38bdf8" stroke-width="6.5" stroke-linecap="round"/>
+                <path d="M 22 46 A 34 34 0 0 1 76 30" fill="none" stroke="#38bdf8" stroke-width="7" stroke-linecap="round"/>
                 <polygon points="70,16 90,30 72,42" fill="#38bdf8"/>
-                <!-- Bottom-Left CW Sweeping Arrow -->
-                <path d="M 78 54 A 34 34 0 0 1 24 70" fill="none" stroke="#38bdf8" stroke-width="6.5" stroke-linecap="round"/>
+                <path d="M 78 54 A 34 34 0 0 1 24 70" fill="none" stroke="#38bdf8" stroke-width="7" stroke-linecap="round"/>
                 <polygon points="30,84 10,70 28,58" fill="#38bdf8"/>
-                <!-- Center Surveillance Camera -->
                 <path d="M 44 38 L 44 32 L 54 32" fill="none" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
                 <rect x="34" y="38" width="26" height="18" rx="4" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
                 <polygon points="60,43 72,37 72,51 60,45" fill="#38bdf8"/>
@@ -1538,38 +2004,41 @@
                 <circle cx="50" cy="47" r="3.5" fill="none" stroke="#38bdf8" stroke-width="1.8"/>
               </svg>
             </div>
-            <span class="item-name" style="color: #38bdf8;">SECURITY CAMERA</span>
-            <span class="item-tier-subtitle" style="color: #bae6fd; font-weight: 800;">PASS CLOCKWISE ↻</span>
+            <span class="art-name" style="color:#38bdf8;">SECURITY CAMERA</span>
+            <span class="art-tier" style="color:#bae6fd; font-weight:800;">PASS CLOCKWISE ↻</span>
           </div>
-          <div class="card-footer" style="border-color:#0369a1;">
-            <div class="footer-rule">Place in center of table (Default Direction).</div>
-            <div class="footer-score">Flip 180° when Green Wild is banked! 🔄</div>
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top"><span class="corner-icon">📹</span><span class="index-val" style="color:#38bdf8; font-size:13px;">↻ CW</span></div>
+                <span class="index-type" style="color:#7dd3fc;">Pass Left</span>
+              </div>
+              <div class="pill" style="background:#0369a1; border-color:#38bdf8; color:#fff;">↻ CLOCKWISE</div>
+            </div>
+            <div class="sub-rule-bar" style="color:#7dd3fc;">Flip 180° when Green Wild is banked! 🔄</div>
           </div>
         </div>
       </div>
-
-      <!-- Camera Direction Marker (Counter-Clockwise) -->
       <div class="card marker">
         <div class="card-inner" style="border-color: #f43f5e;">
-          <div class="card-header">
-            <div class="index-group-left">
-              <span class="index-val" style="color: #f43f5e; font-size: 13px;">↺ CCW</span>
-              <span class="index-type" style="color: #fda4af;">Pass Right</span>
+          <div class="header-block">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top"><span class="corner-icon">📹</span><span class="index-val" style="color:#f43f5e; font-size:13px;">↺ CCW</span></div>
+                <span class="index-type" style="color:#fda4af;">Pass Right</span>
+              </div>
+              <div class="pill" style="background:#be123c; border-color:#f43f5e; color:#fff;">↺ COUNTER-CW</div>
             </div>
-            <div class="contraband-indicator" style="background:#be123c; border-color:#f43f5e; color:#fff; font-size: 8.5px;">↺ COUNTER-CW</div>
+            <div class="sub-rule-bar" style="color:#fda4af;">Table Center • Reversed Play Direction (Pass to Right)</div>
           </div>
-          <div class="card-art">
-            <div style="width: 78px; height: 78px; display: flex; align-items: center; justify-content: center; margin: 2px auto;">
-              <svg viewBox="0 0 100 100" width="78" height="78">
-                <!-- Circular Track & Grid -->
+          <div class="center-art">
+            <div style="width:72px; height:72px; display:flex; align-items:center; justify-content:center; margin:0 auto;">
+              <svg viewBox="0 0 100 100" width="72" height="72">
                 <circle cx="50" cy="50" r="45" fill="none" stroke="#be123c" stroke-width="1.2" stroke-dasharray="3,3" opacity="0.6"/>
-                <!-- Top-Left CCW Sweeping Arrow -->
-                <path d="M 78 46 A 34 34 0 0 0 24 30" fill="none" stroke="#f43f5e" stroke-width="6.5" stroke-linecap="round"/>
+                <path d="M 78 46 A 34 34 0 0 0 24 30" fill="none" stroke="#f43f5e" stroke-width="7" stroke-linecap="round"/>
                 <polygon points="30,16 10,30 28,42" fill="#f43f5e"/>
-                <!-- Bottom-Right CCW Sweeping Arrow -->
-                <path d="M 22 54 A 34 34 0 0 0 76 70" fill="none" stroke="#f43f5e" stroke-width="6.5" stroke-linecap="round"/>
+                <path d="M 22 54 A 34 34 0 0 0 76 70" fill="none" stroke="#f43f5e" stroke-width="7" stroke-linecap="round"/>
                 <polygon points="70,84 90,70 72,58" fill="#f43f5e"/>
-                <!-- Center Surveillance Camera (facing left) -->
                 <path d="M 56 38 L 56 32 L 46 32" fill="none" stroke="#f43f5e" stroke-width="3" stroke-linecap="round"/>
                 <rect x="40" y="38" width="26" height="18" rx="4" fill="#0f172a" stroke="#f43f5e" stroke-width="2.5"/>
                 <polygon points="40,43 28,37 28,51 40,45" fill="#f43f5e"/>
@@ -1577,253 +2046,69 @@
                 <circle cx="50" cy="47" r="3.5" fill="none" stroke="#f43f5e" stroke-width="1.8"/>
               </svg>
             </div>
-            <span class="item-name" style="color: #f43f5e;">REVERSE CAMERA</span>
-            <span class="item-tier-subtitle" style="color: #fecdd3; font-weight: 800;">COUNTER-CLOCKWISE ↺</span>
+            <span class="art-name" style="color:#f43f5e;">REVERSE CAMERA</span>
+            <span class="art-tier" style="color:#fecdd3; font-weight:800;">COUNTER-CLOCKWISE ↺</span>
           </div>
-          <div class="card-footer" style="border-color:#9f1239;">
-            <div class="footer-rule">Passing reverses across table (Right).</div>
-            <div class="footer-score">Flip back when another Wild is banked! 🔄</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Reference Card 1: Turn Structure & Golden Law -->
-      <div class="card marker">
-        <div class="card-inner">
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val" style="color: #f59e0b;">HEIST</span><span class="index-type">Turn Guide</span></div>
-            <div class="contraband-indicator" style="background:#b45309; border-color:#f59e0b; color:#fff;">RULES</div>
-          </div>
-          <div class="card-art" style="margin: 4px 0;">
-            <span style="font-size: 10px; font-weight: 800; color: #f59e0b; text-transform: uppercase;">1. DRAW • 2. MELD • 3. PASS</span>
-            <div style="font-size: 7px; text-align: left; margin-top: 4px; line-height: 1.35; color: #cbd5e1;">
-              • <b>1. Draw</b> 1 card from the Locker.<br>
-              • <b>2. Meld</b> exactly 1 pair (optional).<br>
-              &nbsp;&nbsp;<b>GOLDEN LAW</b>: Every pair needs Blue!<br>
-              &nbsp;&nbsp;🔵+🔵 = 10 pts (Clean)<br>
-              &nbsp;&nbsp;🔵+🔴 Petty = 15 pts | Grand = 20 pts<br>
-              &nbsp;&nbsp;🔵+🎭 Wild = 5 pts & Flips Camera 🔄<br>
-              • <b>3. Pass</b> 1 card face-down to neighbor.
+          <div class="header-block inverted">
+            <div class="header-row">
+              <div class="index-group">
+                <div class="corner-top"><span class="corner-icon">📹</span><span class="index-val" style="color:#f43f5e; font-size:13px;">↺ CCW</span></div>
+                <span class="index-type" style="color:#fda4af;">Pass Right</span>
+              </div>
+              <div class="pill" style="background:#be123c; border-color:#f43f5e; color:#fff;">↺ COUNTER-CW</div>
             </div>
-          </div>
-          <div class="card-footer">
-            <div class="footer-rule" style="color: #f59e0b;">RED+RED & RED+GREEN ARE STRICTLY ILLEGAL</div>
+            <div class="sub-rule-bar" style="color:#fda4af;">Flip back when another Wild is banked! 🔄</div>
           </div>
         </div>
       </div>
-
-      <!-- Reference Card 2: Scoring & The Fall Guy Penalty -->
-      <div class="card marker">
-        <div class="card-inner">
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val" style="color: #f59e0b;">SCORING</span><span class="index-type">End Round</span></div>
-            <div class="contraband-indicator" style="background:#b45309; border-color:#f59e0b; color:#fff;">FALL GUY</div>
-          </div>
-          <div class="card-art" style="margin: 4px 0;">
-            <span style="font-size: 10px; font-weight: 800; color: #f43f5e; text-transform: uppercase;">THE ESCAPE CHECK</span>
-            <div style="font-size: 7px; text-align: left; margin-top: 4px; line-height: 1.35; color: #cbd5e1;">
-              • <b>Getaway Driver</b> (First empty hand) triggers the alarm! Keeps full stash.<br>
-              • <b>Caught Red-Handed</b>: Player(s) holding the <b>MOST Red Contraband</b> take the fall = <b>0 POINTS</b>!<br>
-              • <b>Evaded Arrest</b>: Anyone holding fewer Red cards than the leader slips away and banks full stash!<br>
-              • <b>Target</b>: First to 300 pts (200 in 2P Duel).
-            </div>
-          </div>
-          <div class="card-footer">
-            <div class="footer-rule" style="color: #f43f5e;">Avoid holding the most Red contraband!</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Reference Card 3: 2-Player Quickdraw Setup C1 -->
-      <div class="card marker">
-        <div class="card-inner">
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val" style="color: #f59e0b;">2-PLAYER</span><span class="index-type">Duel Setup</span></div>
-            <div class="contraband-indicator" style="background:#b45309; border-color:#f59e0b; color:#fff;">28 CARDS</div>
-          </div>
-          <div class="card-art" style="margin: 4px 0;">
-            <span style="font-size: 10px; font-weight: 800; color: #38bdf8; text-transform: uppercase;">QUICKDRAW DUEL (28c)</span>
-            <div style="font-size: 7px; text-align: left; margin-top: 4px; line-height: 1.35; color: #cbd5e1;">
-              For high-voltage 2-player matches:<br>
-              • Remove all 4 Grand items & 4 Wilds.<br>
-              • Play with Petty items only:<br>
-              &nbsp;&nbsp;Cash, Diamond, Watch, Key + 4 Wilds.<br>
-              • Deal 7 cards each (14 in Locker).<br>
-              • Target Score: <b>200 Points</b>.<br>
-              • Fast 12-turn rounds with 93% escapes!
-            </div>
-          </div>
-          <div class="card-footer">
-            <div class="footer-rule" style="color: #38bdf8;">Use full 54 cards for 3–4 players</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Reference Card 4: Double Deck Setup (5-6 Players) -->
-      <div class="card marker">
-        <div class="card-inner">
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val" style="color: #f59e0b;">5-6 PLAYERS</span><span class="index-type">Syndicate</span></div>
-            <div class="contraband-indicator" style="background:#b45309; border-color:#f59e0b; color:#fff;">108 CARDS</div>
-          </div>
-          <div class="card-art" style="margin: 4px 0;">
-            <span style="font-size: 10px; font-weight: 800; color: #a855f7; text-transform: uppercase;">GRAND SYNDICATE</span>
-            <div style="font-size: 7px; text-align: left; margin-top: 4px; line-height: 1.35; color: #cbd5e1;">
-              For 5 or 6 players at the table:<br>
-              • Shuffle <b>2 full 54-card decks</b> together.<br>
-              • Total: 60 Blue, 32 Red, 16 Wilds.<br>
-              • Deal 7 cards each.<br>
-              • Target Score: <b>300 Points</b>.<br>
-              • Direction flips trigger frequently!<br>
-              • Close match rate exceeds 55%!
-            </div>
-          </div>
-          <div class="card-footer">
-            <div class="footer-rule" style="color: #a855f7;">The ultimate chaotic heist party game!</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 3x Blank / Spare Cards -->
-      <div class="card marker">
-        <div class="card-inner" style="border-style: dashed; border-color: #64748b;">
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val" style="color: #64748b;">SPARE</span><span class="index-type">Blank Card</span></div>
-          </div>
-          <div class="card-art">
-            <span class="item-icon" style="opacity: 0.3;">🃏</span>
-            <span class="item-name" style="color: #64748b;">REPLACEMENT</span>
-            <span class="item-tier-subtitle">Create custom item</span>
-          </div>
-          <div class="card-footer" style="border-color: #334155;">
-            <div class="footer-rule" style="color: #64748b;">Use for lost card or homebrew item!</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="card marker">
-        <div class="card-inner" style="border-style: dashed; border-color: #64748b;">
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val" style="color: #64748b;">SPARE</span><span class="index-type">Blank Card</span></div>
-          </div>
-          <div class="card-art">
-            <span class="item-icon" style="opacity: 0.3;">🃏</span>
-            <span class="item-name" style="color: #64748b;">REPLACEMENT</span>
-            <span class="item-tier-subtitle">Create custom item</span>
-          </div>
-          <div class="card-footer" style="border-color: #334155;">
-            <div class="footer-rule" style="color: #64748b;">Use for lost card or homebrew item!</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="card marker">
-        <div class="card-inner" style="border-style: dashed; border-color: #64748b;">
-          <div class="card-header">
-            <div class="index-group-left"><span class="index-val" style="color: #64748b;">SPARE</span><span class="index-type">Blank Card</span></div>
-          </div>
-          <div class="card-art">
-            <span class="item-icon" style="opacity: 0.3;">🃏</span>
-            <span class="item-name" style="color: #64748b;">REPLACEMENT</span>
-            <span class="item-tier-subtitle">Create custom item</span>
-          </div>
-          <div class="card-footer" style="border-color: #334155;">
-            <div class="footer-rule" style="color: #64748b;">Use for lost card or homebrew item!</div>
-          </div>
-        </div>
-      </div>
+      <div class="card marker"><div class="card-inner">
+        <div class="header-block"><div class="header-row"><div class="index-group"><div class="corner-top"><span class="corner-icon">📋</span><span class="index-val" style="color:#f59e0b;">HEIST</span></div><span class="index-type" style="color:#cbd5e1;">Turn Guide</span></div><div class="pill" style="background:#b45309; border-color:#f59e0b; color:#fff;">RULES</div></div></div>
+        <div class="center-art" style="margin:2px 0;"><span style="font-size:9.5px; font-weight:900; color:#f59e0b; text-transform:uppercase;">1. DRAW • 2. MELD • 3. PASS</span><div style="font-size:6.8px; text-align:left; margin-top:3px; line-height:1.35; color:#cbd5e1;">• <b>1. Draw</b> 1 card from Locker.<br>• <b>2. Meld</b> 1 pair (optional):<br>&nbsp;&nbsp;<b>GOLDEN LAW: Needs Blue!</b><br>&nbsp;&nbsp;🔵+🔵 = 10 pts (Clean)<br>&nbsp;&nbsp;🔵+🔴 Petty = 15 pts | Grand = 20 pts<br>&nbsp;&nbsp;🔵+🎭 Wild = 5 pts & Flips Camera 🔄<br>• <b>3. Pass</b> 1 card face-down to neighbor.<br><span style="color:#f43f5e; font-weight:bold;">Red+Red & Red+Green are strictly illegal!</span></div></div>
+        <div class="header-block inverted"><div class="header-row"><div class="index-group"><div class="corner-top"><span class="corner-icon">📋</span><span class="index-val" style="color:#f59e0b;">HEIST</span></div><span class="index-type" style="color:#cbd5e1;">Turn Guide</span></div><div class="pill" style="background:#b45309; border-color:#f59e0b; color:#fff;">RULES</div></div></div>
+      </div></div>
+      <div class="card marker"><div class="card-inner">
+        <div class="header-block"><div class="header-row"><div class="index-group"><div class="corner-top"><span class="corner-icon">🚨</span><span class="index-val" style="color:#f43f5e;">SCORING</span></div><span class="index-type" style="color:#cbd5e1;">End Round</span></div><div class="pill" style="background:#b45309; border-color:#f59e0b; color:#fff;">FALL GUY</div></div></div>
+        <div class="center-art" style="margin:2px 0;"><span style="font-size:9.5px; font-weight:900; color:#f43f5e; text-transform:uppercase;">THE ESCAPE CHECK</span><div style="font-size:6.8px; text-align:left; margin-top:3px; line-height:1.35; color:#cbd5e1;">• <b>Getaway Driver</b> (First empty hand) triggers alarm & banks full haul!<br>• <b>Caught Red-Handed</b>: Only player(s) holding the <b>MOST Red Contraband</b> take the fall = <b>0 POINTS</b>!<br>• <b>Evaded Arrest</b>: Anyone holding fewer Red cards than the leader banks full stash!<br>• <b>Win Goal</b>: First to 300 pts (200 in 2P Duel).</div></div>
+        <div class="header-block inverted"><div class="header-row"><div class="index-group"><div class="corner-top"><span class="corner-icon">🚨</span><span class="index-val" style="color:#f43f5e;">SCORING</span></div><span class="index-type" style="color:#cbd5e1;">End Round</span></div><div class="pill" style="background:#b45309; border-color:#f59e0b; color:#fff;">FALL GUY</div></div></div>
+      </div></div>
+      <div class="card marker"><div class="card-inner">
+        <div class="header-block"><div class="header-row"><div class="index-group"><div class="corner-top"><span class="corner-icon">⚔️</span><span class="index-val" style="color:#38bdf8;">2-PLAYER</span></div><span class="index-type" style="color:#cbd5e1;">Duel Setup</span></div><div class="pill" style="background:#0369a1; border-color:#38bdf8; color:#fff;">28 CARDS</div></div></div>
+        <div class="center-art" style="margin:2px 0;"><span style="font-size:9.5px; font-weight:900; color:#38bdf8; text-transform:uppercase;">QUICKDRAW DUEL (28c)</span><div style="font-size:6.8px; text-align:left; margin-top:3px; line-height:1.35; color:#cbd5e1;">For high-voltage 2-player matches:<br>• Remove all 4 Grand items & 4 Wilds.<br>• Play with Petty items only:<br>&nbsp;&nbsp;Cash, Diamond, Watch, Key + 4 Wilds.<br>• Deal 7 cards each (14 in Locker).<br>• Target Score: <b>200 Points</b>.<br>• Rapid 12-turn rounds with 93% escapes!</div></div>
+        <div class="header-block inverted"><div class="header-row"><div class="index-group"><div class="corner-top"><span class="corner-icon">⚔️</span><span class="index-val" style="color:#38bdf8;">2-PLAYER</span></div><span class="index-type" style="color:#cbd5e1;">Duel Setup</span></div><div class="pill" style="background:#0369a1; border-color:#38bdf8; color:#fff;">28 CARDS</div></div></div>
+      </div></div>
+      <div class="card marker"><div class="card-inner">
+        <div class="header-block"><div class="header-row"><div class="index-group"><div class="corner-top"><span class="corner-icon">👑</span><span class="index-val" style="color:#a855f7;">5-6 PLAYERS</span></div><span class="index-type" style="color:#cbd5e1;">Syndicate</span></div><div class="pill" style="background:#6b21a8; border-color:#a855f7; color:#fff;">108 CARDS</div></div></div>
+        <div class="center-art" style="margin:2px 0;"><span style="font-size:9.5px; font-weight:900; color:#a855f7; text-transform:uppercase;">GRAND SYNDICATE</span><div style="font-size:6.8px; text-align:left; margin-top:3px; line-height:1.35; color:#cbd5e1;">For 5 or 6 players at the table:<br>• Shuffle <b>2 full 54-card decks</b> together.<br>• Total: 60 Blue, 32 Red, 16 Wilds.<br>• Deal 7 cards each.<br>• Target Score: <b>300 Points</b>.<br>• Close match rate exceeds 55%!</div></div>
+        <div class="header-block inverted"><div class="header-row"><div class="index-group"><div class="corner-top"><span class="corner-icon">👑</span><span class="index-val" style="color:#a855f7;">5-6 PLAYERS</span></div><span class="index-type" style="color:#cbd5e1;">Syndicate</span></div><div class="pill" style="background:#6b21a8; border-color:#a855f7; color:#fff;">108 CARDS</div></div></div>
+      </div></div>
+      <div class="card marker"><div class="card-inner" style="border-style:dashed; border-color:#64748b;">
+        <div class="header-block"><div class="header-row"><div class="index-group"><div class="corner-top"><span class="corner-icon">🃏</span><span class="index-val" style="color:#64748b;">SPARE</span></div><span class="index-type" style="color:#94a3b8;">Blank</span></div></div></div>
+        <div class="center-art"><span class="art-icon" style="opacity:0.3;">🃏</span><span class="art-name" style="color:#64748b;">REPLACEMENT</span><span class="art-tier" style="color:#94a3b8;">Create custom item</span></div>
+        <div class="header-block inverted"><div class="header-row"><div class="index-group"><div class="corner-top"><span class="corner-icon">🃏</span><span class="index-val" style="color:#64748b;">SPARE</span></div><span class="index-type" style="color:#94a3b8;">Blank</span></div></div></div>
+      </div></div>
+      <div class="card marker"><div class="card-inner" style="border-style:dashed; border-color:#64748b;">
+        <div class="header-block"><div class="header-row"><div class="index-group"><div class="corner-top"><span class="corner-icon">🃏</span><span class="index-val" style="color:#64748b;">SPARE</span></div><span class="index-type" style="color:#94a3b8;">Blank</span></div></div></div>
+        <div class="center-art"><span class="art-icon" style="opacity:0.3;">🃏</span><span class="art-name" style="color:#64748b;">REPLACEMENT</span><span class="art-tier" style="color:#94a3b8;">Create custom item</span></div>
+        <div class="header-block inverted"><div class="header-row"><div class="index-group"><div class="corner-top"><span class="corner-icon">🃏</span><span class="index-val" style="color:#64748b;">SPARE</span></div><span class="index-type" style="color:#94a3b8;">Blank</span></div></div></div>
+      </div></div>
+      <div class="card marker"><div class="card-inner" style="border-style:dashed; border-color:#64748b;">
+        <div class="header-block"><div class="header-row"><div class="index-group"><div class="corner-top"><span class="corner-icon">🃏</span><span class="index-val" style="color:#64748b;">SPARE</span></div><span class="index-type" style="color:#94a3b8;">Blank</span></div></div></div>
+        <div class="center-art"><span class="art-icon" style="opacity:0.3;">🃏</span><span class="art-name" style="color:#64748b;">REPLACEMENT</span><span class="art-tier" style="color:#94a3b8;">Create custom item</span></div>
+        <div class="header-block inverted"><div class="header-row"><div class="index-group"><div class="corner-top"><span class="corner-icon">🃏</span><span class="index-val" style="color:#64748b;">SPARE</span></div><span class="index-type" style="color:#94a3b8;">Blank</span></div></div></div>
+      </div></div>
     </div>
-
-
-    <!-- ===================================================================
-         SHEET 8: CARD BACKS (9x Matching Backs for Double-Sided Printing)
-         =================================================================== -->
     <div class="sheet-header-label">Sheet 8 of 8: Card Backs (Print on reverse of Sheets 1–7)</div>
     <div class="sheet">
-      <!-- 9x Card Backs -->
-      <div class="card card-back">
-        <div class="card-inner">
-          <div class="card-back-pattern"></div>
-          <span style="font-size: 32px; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));">🔒🚨</span>
-          <div style="font-size: 13px; font-weight: 900; letter-spacing: 1px; margin-top: 8px; text-transform: uppercase;">CAUGHT</div>
-          <div style="font-size: 10px; font-weight: 800; color: #f43f5e; letter-spacing: 1.5px; text-transform: uppercase;">RED-HANDED</div>
-        </div>
-      </div>
-
-      <div class="card card-back">
-        <div class="card-inner">
-          <div class="card-back-pattern"></div>
-          <span style="font-size: 32px; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));">🔒🚨</span>
-          <div style="font-size: 13px; font-weight: 900; letter-spacing: 1px; margin-top: 8px; text-transform: uppercase;">CAUGHT</div>
-          <div style="font-size: 10px; font-weight: 800; color: #f43f5e; letter-spacing: 1.5px; text-transform: uppercase;">RED-HANDED</div>
-        </div>
-      </div>
-
-      <div class="card card-back">
-        <div class="card-inner">
-          <div class="card-back-pattern"></div>
-          <span style="font-size: 32px; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));">🔒🚨</span>
-          <div style="font-size: 13px; font-weight: 900; letter-spacing: 1px; margin-top: 8px; text-transform: uppercase;">CAUGHT</div>
-          <div style="font-size: 10px; font-weight: 800; color: #f43f5e; letter-spacing: 1.5px; text-transform: uppercase;">RED-HANDED</div>
-        </div>
-      </div>
-
-      <div class="card card-back">
-        <div class="card-inner">
-          <div class="card-back-pattern"></div>
-          <span style="font-size: 32px; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));">🔒🚨</span>
-          <div style="font-size: 13px; font-weight: 900; letter-spacing: 1px; margin-top: 8px; text-transform: uppercase;">CAUGHT</div>
-          <div style="font-size: 10px; font-weight: 800; color: #f43f5e; letter-spacing: 1.5px; text-transform: uppercase;">RED-HANDED</div>
-        </div>
-      </div>
-
-      <div class="card card-back">
-        <div class="card-inner">
-          <div class="card-back-pattern"></div>
-          <span style="font-size: 32px; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));">🔒🚨</span>
-          <div style="font-size: 13px; font-weight: 900; letter-spacing: 1px; margin-top: 8px; text-transform: uppercase;">CAUGHT</div>
-          <div style="font-size: 10px; font-weight: 800; color: #f43f5e; letter-spacing: 1.5px; text-transform: uppercase;">RED-HANDED</div>
-        </div>
-      </div>
-
-      <div class="card card-back">
-        <div class="card-inner">
-          <div class="card-back-pattern"></div>
-          <span style="font-size: 32px; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));">🔒🚨</span>
-          <div style="font-size: 13px; font-weight: 900; letter-spacing: 1px; margin-top: 8px; text-transform: uppercase;">CAUGHT</div>
-          <div style="font-size: 10px; font-weight: 800; color: #f43f5e; letter-spacing: 1.5px; text-transform: uppercase;">RED-HANDED</div>
-        </div>
-      </div>
-
-      <div class="card card-back">
-        <div class="card-inner">
-          <div class="card-back-pattern"></div>
-          <span style="font-size: 32px; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));">🔒🚨</span>
-          <div style="font-size: 13px; font-weight: 900; letter-spacing: 1px; margin-top: 8px; text-transform: uppercase;">CAUGHT</div>
-          <div style="font-size: 10px; font-weight: 800; color: #f43f5e; letter-spacing: 1.5px; text-transform: uppercase;">RED-HANDED</div>
-        </div>
-      </div>
-
-      <div class="card card-back">
-        <div class="card-inner">
-          <div class="card-back-pattern"></div>
-          <span style="font-size: 32px; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));">🔒🚨</span>
-          <div style="font-size: 13px; font-weight: 900; letter-spacing: 1px; margin-top: 8px; text-transform: uppercase;">CAUGHT</div>
-          <div style="font-size: 10px; font-weight: 800; color: #f43f5e; letter-spacing: 1.5px; text-transform: uppercase;">RED-HANDED</div>
-        </div>
-      </div>
-
-      <div class="card card-back">
-        <div class="card-inner">
-          <div class="card-back-pattern"></div>
-          <span style="font-size: 32px; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));">🔒🚨</span>
-          <div style="font-size: 13px; font-weight: 900; letter-spacing: 1px; margin-top: 8px; text-transform: uppercase;">CAUGHT</div>
-          <div style="font-size: 10px; font-weight: 800; color: #f43f5e; letter-spacing: 1.5px; text-transform: uppercase;">RED-HANDED</div>
-        </div>
-      </div>
+      <div class="card card-back"><div class="card-inner"><div class="card-back-pattern"></div><span style="font-size:32px; filter:drop-shadow(0 2px 6px rgba(0,0,0,0.4));">🔒🚨</span><div style="font-size:13px; font-weight:900; letter-spacing:1px; margin-top:8px; text-transform:uppercase;">CAUGHT</div><div style="font-size:10px; font-weight:800; color:#f43f5e; letter-spacing:1.5px; text-transform:uppercase;">RED-HANDED</div></div></div>
+      <div class="card card-back"><div class="card-inner"><div class="card-back-pattern"></div><span style="font-size:32px; filter:drop-shadow(0 2px 6px rgba(0,0,0,0.4));">🔒🚨</span><div style="font-size:13px; font-weight:900; letter-spacing:1px; margin-top:8px; text-transform:uppercase;">CAUGHT</div><div style="font-size:10px; font-weight:800; color:#f43f5e; letter-spacing:1.5px; text-transform:uppercase;">RED-HANDED</div></div></div>
+      <div class="card card-back"><div class="card-inner"><div class="card-back-pattern"></div><span style="font-size:32px; filter:drop-shadow(0 2px 6px rgba(0,0,0,0.4));">🔒🚨</span><div style="font-size:13px; font-weight:900; letter-spacing:1px; margin-top:8px; text-transform:uppercase;">CAUGHT</div><div style="font-size:10px; font-weight:800; color:#f43f5e; letter-spacing:1.5px; text-transform:uppercase;">RED-HANDED</div></div></div>
+      <div class="card card-back"><div class="card-inner"><div class="card-back-pattern"></div><span style="font-size:32px; filter:drop-shadow(0 2px 6px rgba(0,0,0,0.4));">🔒🚨</span><div style="font-size:13px; font-weight:900; letter-spacing:1px; margin-top:8px; text-transform:uppercase;">CAUGHT</div><div style="font-size:10px; font-weight:800; color:#f43f5e; letter-spacing:1.5px; text-transform:uppercase;">RED-HANDED</div></div></div>
+      <div class="card card-back"><div class="card-inner"><div class="card-back-pattern"></div><span style="font-size:32px; filter:drop-shadow(0 2px 6px rgba(0,0,0,0.4));">🔒🚨</span><div style="font-size:13px; font-weight:900; letter-spacing:1px; margin-top:8px; text-transform:uppercase;">CAUGHT</div><div style="font-size:10px; font-weight:800; color:#f43f5e; letter-spacing:1.5px; text-transform:uppercase;">RED-HANDED</div></div></div>
+      <div class="card card-back"><div class="card-inner"><div class="card-back-pattern"></div><span style="font-size:32px; filter:drop-shadow(0 2px 6px rgba(0,0,0,0.4));">🔒🚨</span><div style="font-size:13px; font-weight:900; letter-spacing:1px; margin-top:8px; text-transform:uppercase;">CAUGHT</div><div style="font-size:10px; font-weight:800; color:#f43f5e; letter-spacing:1.5px; text-transform:uppercase;">RED-HANDED</div></div></div>
+      <div class="card card-back"><div class="card-inner"><div class="card-back-pattern"></div><span style="font-size:32px; filter:drop-shadow(0 2px 6px rgba(0,0,0,0.4));">🔒🚨</span><div style="font-size:13px; font-weight:900; letter-spacing:1px; margin-top:8px; text-transform:uppercase;">CAUGHT</div><div style="font-size:10px; font-weight:800; color:#f43f5e; letter-spacing:1.5px; text-transform:uppercase;">RED-HANDED</div></div></div>
+      <div class="card card-back"><div class="card-inner"><div class="card-back-pattern"></div><span style="font-size:32px; filter:drop-shadow(0 2px 6px rgba(0,0,0,0.4));">🔒🚨</span><div style="font-size:13px; font-weight:900; letter-spacing:1px; margin-top:8px; text-transform:uppercase;">CAUGHT</div><div style="font-size:10px; font-weight:800; color:#f43f5e; letter-spacing:1.5px; text-transform:uppercase;">RED-HANDED</div></div></div>
+      <div class="card card-back"><div class="card-inner"><div class="card-back-pattern"></div><span style="font-size:32px; filter:drop-shadow(0 2px 6px rgba(0,0,0,0.4));">🔒🚨</span><div style="font-size:13px; font-weight:900; letter-spacing:1px; margin-top:8px; text-transform:uppercase;">CAUGHT</div><div style="font-size:10px; font-weight:800; color:#f43f5e; letter-spacing:1.5px; text-transform:uppercase;">RED-HANDED</div></div></div>
     </div>
-
   </div>
-
 </body>
 </html>
