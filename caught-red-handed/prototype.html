@@ -317,7 +317,7 @@
       // 1. Clean Loot (Blue, 5 pts each)
       activeItems.forEach(it => {
         for (let i = 0; i < it.blueCopies; i++) {
-          cards.push({ type: 'LOOT', color: 'BLUE', item: it.name, icon: it.icon, val: 5, isGrand: it.isGrand });
+          cards.push({ type: 'LOOT', color: 'BLUE', item: it.name, icon: it.icon, val: 5, isGrand: it.isGrand, redVal: it.redVal });
         }
       });
 
@@ -982,14 +982,26 @@
         cardEl.className = `w-[72px] h-[112px] sm:w-[84px] sm:h-[128px] shrink-0 rounded-xl p-1.5 flex flex-col justify-between items-center shadow-md cursor-pointer transition-all select-none relative ${borderStyle}`;
         
         let badgeText = '';
-        if (c.color === 'RED') badgeText = `<span class="${c.val === 15 ? 'text-amber-300' : 'text-rose-400'} font-black text-[9px]">+${c.val}</span>`;
-        else if (c.color === 'GREEN') badgeText = `<span class="text-emerald-400 font-black text-[9px]">WILD</span>`;
-        else if (c.color === 'BLUE') badgeText = `<span class="text-blue-400 font-black text-[9px]">+5</span>`;
+        let targetPill = '';
+
+        if (c.color === 'RED') {
+          badgeText = `<span class="${c.val === 15 ? 'text-amber-300' : 'text-rose-400'} font-black text-[9px]">+${c.val}</span>`;
+          targetPill = `<span class="${c.val === 15 ? 'bg-amber-950/90 text-amber-300 border-amber-600/80' : 'bg-rose-950/90 text-rose-400 border-rose-700/80'} border px-1 py-0.2 rounded text-[7px] font-black uppercase tracking-wider">HOT</span>`;
+        } else if (c.color === 'GREEN') {
+          badgeText = `<span class="text-emerald-400 font-black text-[9px]">WILD</span>`;
+          targetPill = `<span class="bg-blue-950/95 text-blue-300 border border-blue-400/90 px-1 py-0.2 rounded text-[7px] font-black uppercase tracking-wider shadow">🔵 ONLY</span>`;
+        } else if (c.color === 'BLUE') {
+          badgeText = `<span class="text-blue-400 font-black text-[9px]">+5</span>`;
+          const targetVal = c.redVal || (c.isGrand ? 15 : 10);
+          targetPill = (c.isGrand)
+            ? `<span class="bg-amber-950/95 text-amber-300 border border-amber-500/90 px-1 py-0.2 rounded text-[7px] font-black flex items-center gap-0.5 shadow">🔴 15</span>`
+            : `<span class="bg-rose-950/90 text-rose-300 border border-rose-600/80 px-1 py-0.2 rounded text-[7px] font-black flex items-center gap-0.5 shadow">🔴 10</span>`;
+        }
 
         let typeSubtitle = '';
-        if (c.color === 'RED') typeSubtitle = (c.val === 15) ? 'Grand' : 'Petty';
-        else if (c.color === 'GREEN') typeSubtitle = 'Wild 🔄';
-        else if (c.color === 'BLUE') typeSubtitle = 'Clean';
+        if (c.color === 'RED') typeSubtitle = (c.val === 15) ? '👑 Grand Hot' : '⭐ Petty Hot';
+        else if (c.color === 'GREEN') typeSubtitle = '🔵 Pairs w/ Blue 🔄';
+        else if (c.color === 'BLUE') typeSubtitle = (c.isGrand) ? '👑 Grand (🔴+15)' : '⭐ Petty (🔴+10)';
 
         // Badges for active selection
         let selectionPill = '';
@@ -1003,8 +1015,11 @@
         cardEl.innerHTML = `
           ${selectionPill}
           <div class="w-full flex justify-between items-center leading-none">
-            <span class="text-xs">${c.icon}</span>
-            ${badgeText}
+            <div class="flex items-center gap-1">
+              <span class="text-xs">${c.icon}</span>
+              ${badgeText}
+            </div>
+            ${targetPill}
           </div>
           <div class="flex flex-col items-center justify-center my-auto">
             <span class="text-2xl sm:text-3xl leading-none">${c.icon}</span>
