@@ -158,13 +158,16 @@
       </div>
 
       <!-- Center Security Camera Indicator -->
-      <div class="flex flex-col items-center justify-center gap-1 bg-slate-900/90 border border-slate-700/80 px-3 py-1.5 rounded-2xl shadow w-40">
-        <div id="compass-arrow" class="w-10 h-10 rounded-full bg-slate-800 border-2 border-amber-500 flex items-center justify-center text-xl shadow-inner transition-transform duration-500">
-          ➡️
+      <div class="flex flex-col items-center justify-center gap-1 bg-slate-900/90 border border-slate-700/80 px-3 py-1.5 rounded-2xl shadow w-44">
+        <div id="compass-arrow" class="w-11 h-11 rounded-full bg-slate-800 border-2 border-amber-500 flex items-center justify-center shadow-inner transition-transform duration-500">
+          <svg viewBox="0 0 24 24" class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+          </svg>
         </div>
         <div class="text-center">
-          <div id="compass-label" class="text-[10px] font-black text-amber-400 uppercase tracking-wide">PASS LEFT</div>
-          <div class="text-[8px] text-slate-400 leading-none">Green Wild flips 🔄</div>
+          <div id="compass-label" class="text-[10px] font-black text-amber-400 uppercase tracking-wide">CLOCKWISE ↻</div>
+          <div id="compass-sub" class="text-[8px] text-slate-400 leading-none">Pass Left (Green flips 🔄)</div>
         </div>
       </div>
 
@@ -775,19 +778,36 @@
       // Camera HUD
       const compassArrow = document.getElementById('compass-arrow');
       const compassLabel = document.getElementById('compass-label');
+      const compassSub = document.getElementById('compass-sub');
 
       if (numPlayers === 2) {
-        compassArrow.innerText = "⚔️";
-        compassLabel.innerText = "DUEL (PASS OVER)";
-        compassArrow.style.transform = "rotate(0deg)";
+        compassArrow.innerHTML = `<span class="text-xl">⚔️</span>`;
+        compassArrow.className = "w-11 h-11 rounded-full bg-slate-800 border-2 border-amber-500 flex items-center justify-center shadow-inner";
+        compassLabel.innerText = "DUEL (ACROSS)";
+        compassLabel.className = "text-[10px] font-black text-amber-400 uppercase tracking-wide";
+        if (compassSub) compassSub.innerText = "Direct Head-to-Head";
       } else if (direction === 1) {
-        compassArrow.innerText = "➡️";
-        compassLabel.innerText = "PASS LEFT";
-        compassArrow.style.transform = "rotate(0deg)";
+        compassArrow.innerHTML = `
+          <svg viewBox="0 0 24 24" class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+          </svg>
+        `;
+        compassArrow.className = "w-11 h-11 rounded-full bg-slate-800 border-2 border-amber-500 flex items-center justify-center shadow-inner ring-2 ring-amber-500/30";
+        compassLabel.innerText = "CLOCKWISE ↻";
+        compassLabel.className = "text-[10px] font-black text-amber-400 uppercase tracking-wide";
+        if (compassSub) compassSub.innerText = "Pass Left (Green flips 🔄)";
       } else {
-        compassArrow.innerText = "⬅️";
-        compassLabel.innerText = "PASS RIGHT";
-        compassArrow.style.transform = "rotate(180deg)";
+        compassArrow.innerHTML = `
+          <svg viewBox="0 0 24 24" class="w-6 h-6 text-rose-400" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="1 4 1 10 7 10"></polyline>
+            <path d="M3.51 15a9 9 0 1 0 2.12-9.36L1 10"></path>
+          </svg>
+        `;
+        compassArrow.className = "w-11 h-11 rounded-full bg-slate-800 border-2 border-rose-500 flex items-center justify-center shadow-inner ring-2 ring-rose-500/30";
+        compassLabel.innerText = "COUNTER-CLOCKWISE ↺";
+        compassLabel.className = "text-[10px] font-black text-rose-400 uppercase tracking-wide";
+        if (compassSub) compassSub.innerText = "Pass Right (Green flips 🔄)";
       }
 
       // Update Active Bots
