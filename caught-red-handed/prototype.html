@@ -159,10 +159,18 @@
 
       <!-- Center Security Camera Indicator -->
       <div class="flex flex-col items-center justify-center gap-1 bg-slate-900/90 border border-slate-700/80 px-3 py-1.5 rounded-2xl shadow w-44">
-        <div id="compass-arrow" class="w-11 h-11 rounded-full bg-slate-800 border-2 border-amber-500 flex items-center justify-center shadow-inner transition-transform duration-500">
-          <svg viewBox="0 0 24 24" class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="23 4 23 10 17 10"></polyline>
-            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+        <div id="compass-arrow" class="w-12 h-12 rounded-full bg-slate-800 border-2 border-amber-500 flex items-center justify-center shadow-inner transition-transform duration-500">
+          <svg viewBox="0 0 100 100" class="w-10 h-10">
+            <circle cx="50" cy="50" r="45" fill="none" stroke="#0284c7" stroke-width="1.2" stroke-dasharray="3,3" opacity="0.6"/>
+            <path d="M 22 46 A 34 34 0 0 1 76 30" fill="none" stroke="#38bdf8" stroke-width="7" stroke-linecap="round"/>
+            <polygon points="70,16 90,30 72,42" fill="#38bdf8"/>
+            <path d="M 78 54 A 34 34 0 0 1 24 70" fill="none" stroke="#38bdf8" stroke-width="7" stroke-linecap="round"/>
+            <polygon points="30,84 10,70 28,58" fill="#38bdf8"/>
+            <path d="M 44 38 L 44 32 L 54 32" fill="none" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
+            <rect x="34" y="38" width="26" height="18" rx="4" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
+            <polygon points="60,43 72,37 72,51 60,45" fill="#38bdf8"/>
+            <circle cx="41" cy="47" r="2.8" fill="#ef4444"/>
+            <circle cx="50" cy="47" r="3.5" fill="none" stroke="#38bdf8" stroke-width="1.8"/>
           </svg>
         </div>
         <div class="text-center">
@@ -782,29 +790,45 @@
 
       if (numPlayers === 2) {
         compassArrow.innerHTML = `<span class="text-xl">⚔️</span>`;
-        compassArrow.className = "w-11 h-11 rounded-full bg-slate-800 border-2 border-amber-500 flex items-center justify-center shadow-inner";
+        compassArrow.className = "w-12 h-12 rounded-full bg-slate-800 border-2 border-amber-500 flex items-center justify-center shadow-inner";
         compassLabel.innerText = "DUEL (ACROSS)";
         compassLabel.className = "text-[10px] font-black text-amber-400 uppercase tracking-wide";
         if (compassSub) compassSub.innerText = "Direct Head-to-Head";
       } else if (direction === 1) {
         compassArrow.innerHTML = `
-          <svg viewBox="0 0 24 24" class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="23 4 23 10 17 10"></polyline>
-            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+          <svg viewBox="0 0 100 100" class="w-10 h-10">
+            <circle cx="50" cy="50" r="45" fill="none" stroke="#0284c7" stroke-width="1.2" stroke-dasharray="3,3" opacity="0.6"/>
+            <path d="M 22 46 A 34 34 0 0 1 76 30" fill="none" stroke="#38bdf8" stroke-width="7" stroke-linecap="round"/>
+            <polygon points="70,16 90,30 72,42" fill="#38bdf8"/>
+            <path d="M 78 54 A 34 34 0 0 1 24 70" fill="none" stroke="#38bdf8" stroke-width="7" stroke-linecap="round"/>
+            <polygon points="30,84 10,70 28,58" fill="#38bdf8"/>
+            <path d="M 44 38 L 44 32 L 54 32" fill="none" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
+            <rect x="34" y="38" width="26" height="18" rx="4" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
+            <polygon points="60,43 72,37 72,51 60,45" fill="#38bdf8"/>
+            <circle cx="41" cy="47" r="2.8" fill="#ef4444"/>
+            <circle cx="50" cy="47" r="3.5" fill="none" stroke="#38bdf8" stroke-width="1.8"/>
           </svg>
         `;
-        compassArrow.className = "w-11 h-11 rounded-full bg-slate-800 border-2 border-amber-500 flex items-center justify-center shadow-inner ring-2 ring-amber-500/30";
+        compassArrow.className = "w-12 h-12 rounded-full bg-slate-800 border-2 border-amber-500 flex items-center justify-center shadow-inner ring-2 ring-amber-500/30";
         compassLabel.innerText = "CLOCKWISE ↻";
         compassLabel.className = "text-[10px] font-black text-amber-400 uppercase tracking-wide";
         if (compassSub) compassSub.innerText = "Pass Left (Green flips 🔄)";
       } else {
         compassArrow.innerHTML = `
-          <svg viewBox="0 0 24 24" class="w-6 h-6 text-rose-400" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="1 4 1 10 7 10"></polyline>
-            <path d="M3.51 15a9 9 0 1 0 2.12-9.36L1 10"></path>
+          <svg viewBox="0 0 100 100" class="w-10 h-10">
+            <circle cx="50" cy="50" r="45" fill="none" stroke="#be123c" stroke-width="1.2" stroke-dasharray="3,3" opacity="0.6"/>
+            <path d="M 78 46 A 34 34 0 0 0 24 30" fill="none" stroke="#f43f5e" stroke-width="7" stroke-linecap="round"/>
+            <polygon points="30,16 10,30 28,42" fill="#f43f5e"/>
+            <path d="M 22 54 A 34 34 0 0 0 76 70" fill="none" stroke="#f43f5e" stroke-width="7" stroke-linecap="round"/>
+            <polygon points="70,84 90,70 72,58" fill="#f43f5e"/>
+            <path d="M 56 38 L 56 32 L 46 32" fill="none" stroke="#f43f5e" stroke-width="3" stroke-linecap="round"/>
+            <rect x="40" y="38" width="26" height="18" rx="4" fill="#0f172a" stroke="#f43f5e" stroke-width="2.5"/>
+            <polygon points="40,43 28,37 28,51 40,45" fill="#f43f5e"/>
+            <circle cx="59" cy="47" r="2.8" fill="#ef4444"/>
+            <circle cx="50" cy="47" r="3.5" fill="none" stroke="#f43f5e" stroke-width="1.8"/>
           </svg>
         `;
-        compassArrow.className = "w-11 h-11 rounded-full bg-slate-800 border-2 border-rose-500 flex items-center justify-center shadow-inner ring-2 ring-rose-500/30";
+        compassArrow.className = "w-12 h-12 rounded-full bg-slate-800 border-2 border-rose-500 flex items-center justify-center shadow-inner ring-2 ring-rose-500/30";
         compassLabel.innerText = "COUNTER-CLOCKWISE ↺";
         compassLabel.className = "text-[10px] font-black text-rose-400 uppercase tracking-wide";
         if (compassSub) compassSub.innerText = "Pass Right (Green flips 🔄)";

@@ -1513,22 +1513,36 @@
       <div class="card marker">
         <div class="card-inner" style="border-color: #38bdf8;">
           <div class="card-header">
-            <div class="index-group-left"><span class="index-val" style="color: #38bdf8;">TABLE</span><span class="index-type">Marker</span></div>
-            <div class="contraband-indicator" style="background:#0369a1; border-color:#38bdf8; color:#fff;">↻ CLOCKWISE</div>
+            <div class="index-group-left">
+              <span class="index-val" style="color: #38bdf8; font-size: 13px;">↻ CW</span>
+              <span class="index-type" style="color: #7dd3fc;">Pass Left</span>
+            </div>
+            <div class="contraband-indicator" style="background:#0369a1; border-color:#38bdf8; color:#fff; font-size: 8.5px;">↻ CLOCKWISE</div>
           </div>
           <div class="card-art">
-            <div style="position: relative; width: 62px; height: 62px; display: flex; align-items: center; justify-content: center; margin: 2px auto;">
-              <svg viewBox="0 0 24 24" style="width: 62px; height: 62px; color: #38bdf8; position: absolute;" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="23 4 23 10 17 10"></polyline>
-                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+            <div style="width: 78px; height: 78px; display: flex; align-items: center; justify-content: center; margin: 2px auto;">
+              <svg viewBox="0 0 100 100" width="78" height="78">
+                <!-- Circular Track & Grid -->
+                <circle cx="50" cy="50" r="45" fill="none" stroke="#0284c7" stroke-width="1.2" stroke-dasharray="3,3" opacity="0.6"/>
+                <!-- Top-Right CW Sweeping Arrow -->
+                <path d="M 22 46 A 34 34 0 0 1 76 30" fill="none" stroke="#38bdf8" stroke-width="6.5" stroke-linecap="round"/>
+                <polygon points="70,16 90,30 72,42" fill="#38bdf8"/>
+                <!-- Bottom-Left CW Sweeping Arrow -->
+                <path d="M 78 54 A 34 34 0 0 1 24 70" fill="none" stroke="#38bdf8" stroke-width="6.5" stroke-linecap="round"/>
+                <polygon points="30,84 10,70 28,58" fill="#38bdf8"/>
+                <!-- Center Surveillance Camera -->
+                <path d="M 44 38 L 44 32 L 54 32" fill="none" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
+                <rect x="34" y="38" width="26" height="18" rx="4" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
+                <polygon points="60,43 72,37 72,51 60,45" fill="#38bdf8"/>
+                <circle cx="41" cy="47" r="2.8" fill="#ef4444"/>
+                <circle cx="50" cy="47" r="3.5" fill="none" stroke="#38bdf8" stroke-width="1.8"/>
               </svg>
-              <span style="font-size: 24px; z-index: 2;">📹</span>
             </div>
             <span class="item-name" style="color: #38bdf8;">SECURITY CAMERA</span>
             <span class="item-tier-subtitle" style="color: #bae6fd; font-weight: 800;">PASS CLOCKWISE ↻</span>
           </div>
           <div class="card-footer" style="border-color:#0369a1;">
-            <div class="footer-rule">Place in center of table.</div>
+            <div class="footer-rule">Place in center of table (Default Direction).</div>
             <div class="footer-score">Flip 180° when Green Wild is banked! 🔄</div>
           </div>
         </div>
@@ -1538,22 +1552,36 @@
       <div class="card marker">
         <div class="card-inner" style="border-color: #f43f5e;">
           <div class="card-header">
-            <div class="index-group-left"><span class="index-val" style="color: #f43f5e;">TABLE</span><span class="index-type">Marker</span></div>
-            <div class="contraband-indicator" style="background:#be123c; border-color:#f43f5e; color:#fff;">↺ COUNTER-CW</div>
+            <div class="index-group-left">
+              <span class="index-val" style="color: #f43f5e; font-size: 13px;">↺ CCW</span>
+              <span class="index-type" style="color: #fda4af;">Pass Right</span>
+            </div>
+            <div class="contraband-indicator" style="background:#be123c; border-color:#f43f5e; color:#fff; font-size: 8.5px;">↺ COUNTER-CW</div>
           </div>
           <div class="card-art">
-            <div style="position: relative; width: 62px; height: 62px; display: flex; align-items: center; justify-content: center; margin: 2px auto;">
-              <svg viewBox="0 0 24 24" style="width: 62px; height: 62px; color: #f43f5e; position: absolute;" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="1 4 1 10 7 10"></polyline>
-                <path d="M3.51 15a9 9 0 1 0 2.12-9.36L1 10"></path>
+            <div style="width: 78px; height: 78px; display: flex; align-items: center; justify-content: center; margin: 2px auto;">
+              <svg viewBox="0 0 100 100" width="78" height="78">
+                <!-- Circular Track & Grid -->
+                <circle cx="50" cy="50" r="45" fill="none" stroke="#be123c" stroke-width="1.2" stroke-dasharray="3,3" opacity="0.6"/>
+                <!-- Top-Left CCW Sweeping Arrow -->
+                <path d="M 78 46 A 34 34 0 0 0 24 30" fill="none" stroke="#f43f5e" stroke-width="6.5" stroke-linecap="round"/>
+                <polygon points="30,16 10,30 28,42" fill="#f43f5e"/>
+                <!-- Bottom-Right CCW Sweeping Arrow -->
+                <path d="M 22 54 A 34 34 0 0 0 76 70" fill="none" stroke="#f43f5e" stroke-width="6.5" stroke-linecap="round"/>
+                <polygon points="70,84 90,70 72,58" fill="#f43f5e"/>
+                <!-- Center Surveillance Camera (facing left) -->
+                <path d="M 56 38 L 56 32 L 46 32" fill="none" stroke="#f43f5e" stroke-width="3" stroke-linecap="round"/>
+                <rect x="40" y="38" width="26" height="18" rx="4" fill="#0f172a" stroke="#f43f5e" stroke-width="2.5"/>
+                <polygon points="40,43 28,37 28,51 40,45" fill="#f43f5e"/>
+                <circle cx="59" cy="47" r="2.8" fill="#ef4444"/>
+                <circle cx="50" cy="47" r="3.5" fill="none" stroke="#f43f5e" stroke-width="1.8"/>
               </svg>
-              <span style="font-size: 24px; z-index: 2;">📹</span>
             </div>
             <span class="item-name" style="color: #f43f5e;">REVERSE CAMERA</span>
             <span class="item-tier-subtitle" style="color: #fecdd3; font-weight: 800;">COUNTER-CLOCKWISE ↺</span>
           </div>
           <div class="card-footer" style="border-color:#9f1239;">
-            <div class="footer-rule">Passing reverses across the table!</div>
+            <div class="footer-rule">Passing reverses across table (Right).</div>
             <div class="footer-score">Flip back when another Wild is banked! 🔄</div>
           </div>
         </div>
