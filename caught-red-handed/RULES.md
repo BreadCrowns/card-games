@@ -86,14 +86,14 @@ A round ends immediately in one of two ways:
 In either case, **FREEZE!** End of round scoring applies immediately:
 
 1. **The Escape Check**: All players score what they successfully banked in their personal Stash:
-   * **The Getaway Driver (First Out)**:  
+   * **The Getaway Driver (Emptied Hand First)**:  
      You trigger the alarm and get away scot-free! You keep 100% of your banked Stash points.
-   * **Clean Hand (Zero Red Cards)**:  
-     You slip away clean! Count up all the points on your banked pairs in front of you and add them to your match score! *(Green cards in hand are worth 0 pts, but they do NOT cause a bust).*
-   * **Caught Red-Handed (Holding 1+ Red Cards)**:  
-     🚨 **BUSTED!** The sirens wail, the cops swarm, and **your entire banked haul for that round is seized (0 Points)!**
+   * **Caught Red-Handed (Holding the MOST Red Cards)**:  
+     🚨 **BUSTED!** Only the player(s) holding the **MOST Red Contraband cards** (or tied for the most) are Caught Red-Handed! The sirens wail, the cops swarm the primary suspects, and **their entire banked haul for that round is seized (0 Points)!** *(Note: A player must hold at least 1 Red card to be caught. If no one holds Red cards, everyone is safe).*
+   * **Evaded Arrest / Clean Hand (Fewer Red Cards than the Leader)**:  
+     🛡️ **You escape!** As long as you hold fewer Red Contraband cards than the fall guy, you slip away into the shadows! Count up all the points on your banked pairs in front of you and add them to your match score! *(Green cards in hand are worth 0 pts, but they do NOT cause a bust).*
 
-> **Pure Loot Scoring**: There is no artificial point bonus for going out first. Ending the round is your ultimate offensive weapon: it guarantees your own safety while catching your opponents with Red Contraband to wipe their stashes to 0!
+> **The Fall Guy Dynamic**: You don't always need to get down to 0 Red cards to survive—you just need to avoid holding the *most* Red cards! This keeps endgame tension razor-sharp: even when the draw pile runs dry, passing a single Red card to make an opponent hold more contraband than you will save your entire haul!
 
 ---
 

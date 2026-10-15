@@ -227,7 +227,7 @@
 
     <!-- Micro Rule Hint -->
     <div class="text-center text-[9px] text-slate-400 font-medium leading-none">
-      Every pair needs a <span class="text-blue-400 font-bold">Blue</span> • <span class="text-emerald-400 font-bold">Green Wild</span> flips camera • <span class="text-rose-400 font-bold">Red in hand at end busts!</span>
+      Every pair needs a <span class="text-blue-400 font-bold">Blue</span> • <span class="text-emerald-400 font-bold">Green Wild</span> flips camera • <span class="text-rose-400 font-bold">Most Red in hand busts (0 pts)!</span>
     </div>
 
   </div>
@@ -1073,21 +1073,31 @@
       const scores = document.getElementById('modal-scores');
       const nextBtn = document.getElementById('modal-next-btn');
 
-      const roundPointsEarned = new Array(numPlayers).fill(0);
       const isStandoff = (endReason === 'STANDOFF' || winnerIdx === -1);
+      
+      // Calculate Red Contraband held by each player
+      const redCounts = [];
+      for (let p = 0; p < numPlayers; p++) {
+        redCounts.push(hands[p].filter(c => c.color === 'RED').length);
+      }
+      const maxRed = Math.max(...redCounts);
+
+      const roundPointsEarned = new Array(numPlayers).fill(0);
+      const caughtPlayers = [];
 
       for (let p = 0; p < numPlayers; p++) {
-        const hasRed = hands[p].some(c => c.color === 'RED');
+        const redCards = redCounts[p];
         const bankedPoints = calculateStashPoints(stashes[p]);
-        const isWinner = (p === winnerIdx && !isStandoff);
-        const isCaught = hasRed;
 
-        if (isWinner) {
-          roundPointsEarned[p] = bankedPoints; // 0 Escape Bonus (pure stash scoring)
-        } else if (isCaught) {
-          roundPointsEarned[p] = 0; // Caught Red-Handed!
+        // Penalty Rule: Only player(s) holding the MOST (or tied for most) Red cards bust!
+        // Must hold at least 1 Red card (if maxRed === 0, nobody busts).
+        const isCaught = (redCards === maxRed && maxRed > 0);
+
+        if (isCaught) {
+          roundPointsEarned[p] = 0; // Caught Red-Handed! 0 points for this round!
+          caughtPlayers.push(p);
         } else {
-          roundPointsEarned[p] = bankedPoints; // Escaped Clean
+          roundPointsEarned[p] = bankedPoints; // Escaped or evaded arrest! Bank stash!
         }
 
         matchScores[p] += roundPointsEarned[p];
@@ -1106,42 +1116,59 @@
       } else if (isStandoff) {
         icon.innerText = "🚨";
         title.innerText = "STANDOFF! POLICE RAID!";
-        desc.innerText = (numPlayers === 2) 
-          ? "Both players took a turn without any melds! Sirens wail as cops raid the hideout!" 
-          : "All 4 players took a turn without any melds! Sirens wail as cops raid the hideout!";
+        if (maxRed === 0) {
+          desc.innerText = "Empty Locker standoff! No contraband held—all players escaped clean and banked their stashes!";
+        } else {
+          const caughtNames = caughtPlayers.map(p => getPlayerName(p)).join(" & ");
+          desc.innerText = `Empty Locker standoff! ${caughtNames} held the most Red Contraband (${maxRed} red) and took the fall (0 pts)! Others banked their stashes!`;
+        }
         nextBtn.innerHTML = `<span>PROCEED TO ROUND ${roundNumber + 1}</span> ➡️`;
         nextBtn.className = "w-full py-2.5 bg-rose-600 hover:bg-rose-500 text-white font-black text-xs rounded-xl shadow-lg transition flex items-center justify-center gap-2";
       } else {
         icon.innerText = "🚗💨";
         title.innerText = `${getPlayerName(winnerIdx)} ESCAPED!`;
-        desc.innerText = `${getPlayerName(winnerIdx)} shouted "GETAWAY CAR!" Siren alarms echo!`;
+        if (maxRed === 0) {
+          desc.innerText = `${getPlayerName(winnerIdx)} emptied their hand! No one held Red Contraband—clean escape for all!`;
+        } else {
+          const caughtNames = caughtPlayers.map(p => getPlayerName(p)).join(" & ");
+          desc.innerText = `${getPlayerName(winnerIdx)} emptied their hand! ${caughtNames} caught with the most Red Contraband (${maxRed} red) and busted!`;
+        }
         nextBtn.innerHTML = `<span>PROCEED TO ROUND ${roundNumber + 1}</span> ➡️`;
         nextBtn.className = "w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs rounded-xl shadow-lg transition flex items-center justify-center gap-2";
       }
 
       scores.innerHTML = '';
       for (let p = 0; p < numPlayers; p++) {
-        const redCards = hands[p].filter(c => c.color === 'RED').length;
+        const redCards = redCounts[p];
         const greenCards = hands[p].filter(c => c.color === 'GREEN').length;
-        const bankedPoints = calculateStashPoints(stashes[p]);
-        const isWinner = (p === winnerIdx);
-        const isCaught = !isWinner && (redCards > 0);
+        const isWinner = (p === winnerIdx && !isStandoff);
+        const isCaught = (redCards === maxRed && maxRed > 0);
         const ptsEarned = roundPointsEarned[p];
 
         const row = document.createElement('div');
         row.className = `flex justify-between items-center p-2 rounded-lg ${isWinner ? 'bg-amber-950/40 border border-amber-600' : (isCaught ? 'bg-rose-950/40 border border-rose-800' : 'bg-emerald-950/40 border border-emerald-800')}`;
         
         let statusSub = '';
-        if (isWinner) statusSub = 'Getaway driver! Kept full stash safe.';
-        else if (isCaught) statusSub = isStandoff ? `Busted in standoff! Held ${redCards} Contraband!` : `Busted! Held ${redCards} Red Contraband!`;
-        else statusSub = isStandoff ? `Safe! Kept stash clean during standoff${greenCards > 0 ? ` (+${greenCards} Wilds)` : ''}.` : `Escaped clean${greenCards > 0 ? ` (held ${greenCards} Wilds)` : ''}!`;
+        if (isWinner) {
+          statusSub = '🚗 Getaway Driver! Emptied hand first & banked full stash.';
+        } else if (isCaught) {
+          statusSub = (caughtPlayers.length > 1)
+            ? `🚨 CAUGHT! Tied for most Contraband (${redCards} Red)! Took the fall (0 pts).`
+            : `🚨 CAUGHT! Held the most Contraband (${redCards} Red)! Primary suspect (0 pts).`;
+        } else if (redCards > 0) {
+          statusSub = `🛡️ EVADED ARREST! Held ${redCards} Red, but avoided having the most (Leader had ${maxRed})! Banked stash (+${ptsEarned} pts).`;
+        } else {
+          statusSub = `✨ CLEAN! 0 Red Contraband${greenCards > 0 ? ` (${greenCards} Wilds)` : ''}! Banked stash (+${ptsEarned} pts).`;
+        }
 
         row.innerHTML = `
           <div>
             <div class="font-bold text-slate-200 flex items-center gap-1 text-[11px]">
               <span>${getPlayerName(p)}</span>
-              ${isWinner ? '<span class="text-[8px] bg-amber-500/20 text-amber-300 px-1 py-0.2 rounded font-black">GETAWAY DRIVER 🚗</span>' : ''}
-              ${isStandoff && !isCaught ? '<span class="text-[8px] bg-emerald-500/20 text-emerald-300 px-1 py-0.2 rounded font-black">CLEAN 🛡️</span>' : ''}
+              ${isWinner ? '<span class="text-[8px] bg-amber-500/20 text-amber-300 px-1 py-0.2 rounded font-black">GETAWAY 🚗</span>' : ''}
+              ${isCaught ? '<span class="text-[8px] bg-rose-500/20 text-rose-300 px-1 py-0.2 rounded font-black">CAUGHT RED-HANDED 🚨</span>' : ''}
+              ${!isWinner && !isCaught && redCards > 0 ? '<span class="text-[8px] bg-emerald-500/20 text-emerald-300 px-1 py-0.2 rounded font-black">EVADED ARREST 🛡️</span>' : ''}
+              ${!isWinner && !isCaught && redCards === 0 ? '<span class="text-[8px] bg-blue-500/20 text-blue-300 px-1 py-0.2 rounded font-black">CLEAN ✨</span>' : ''}
             </div>
             <div class="text-[10px] text-slate-400">
               ${statusSub}
