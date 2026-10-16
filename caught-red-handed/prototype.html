@@ -238,7 +238,7 @@
 
     <!-- Micro Rule Hint -->
     <div class="text-center text-[9px] text-slate-400 font-medium leading-none">
-      Every pair needs a <span class="text-blue-400 font-bold">Blue</span> • <span class="text-emerald-400 font-bold">Green Wild</span> flips camera • <span class="text-rose-400 font-bold">Most Red in hand busts (0 pts)!</span>
+      Needs <span class="text-blue-400 font-bold">Blue</span> to pair • 🗿 <span class="text-amber-300 font-bold">Artifact can't pair (Pass it!)</span> • <span class="text-rose-400 font-bold">Most Red in hand busts (0 pts)!</span>
     </div>
 
   </div>
@@ -339,7 +339,11 @@
         }
       });
 
-      // 3. Green Counterfeit Wilds (0 pts, pairs with ANY Blue, flips direction)
+      // 3. Unpairable Red Contraband (Priceless Artifact: 0 pts, no matching Blue, hot potato!)
+      cards.push({ type: 'LOOT', color: 'RED', item: 'Artifact', name: 'Priceless Artifact', icon: '🗿', val: 0, isGrand: true, isArtifact: true, unpairable: true });
+
+      // 4. Green Counterfeit Wilds (0 pts, pairs with ANY Blue, flips direction)
+      const wildsCount = (gameMode === '2P') ? 3 : 7;
       for (let i = 0; i < wildsCount; i++) {
         cards.push({ type: 'LOOT', color: 'GREEN', item: 'Wild', icon: '🎭🔄', val: 0, isGrand: false, isWild: true });
       }
@@ -407,6 +411,9 @@
     // Evaluates any 2 cards selected by the player against the Golden Pairing Law
     function evaluateSelectedPair(c1, c2) {
       if (!c1 || !c2) return { valid: false, error: "Select 2 cards." };
+      if (c1.isArtifact || c2.isArtifact) {
+        return { valid: false, error: "🗿 Priceless Artifact cannot be paired! Pass it!" };
+      }
 
       let blue = null;
       let other = null;
@@ -476,7 +483,7 @@
       const candidates = [];
 
       const blues = hand.filter(c => c.color === 'BLUE');
-      const reds = hand.filter(c => c.color === 'RED');
+      const reds = hand.filter(c => c.color === 'RED' && !c.isArtifact);
       const greens = hand.filter(c => c.color === 'GREEN');
 
       if (blues.length === 0) return candidates;
@@ -671,12 +678,17 @@
               let score = 0;
 
               if (card.color === 'RED') {
-                score += (1.0 - mindset.val) * 60;
-                if (minOppHand <= 3) score += (4 - minOppHand) * 35;
-                if (myBanked >= 20) score += 30;
-                score += (card.val === 15 ? 15 : 5) * (1.2 - mindset.val);
-                if (passingToLeader) score += 55;
-                if (mindset.val > 0.7 && minOppHand > 3) score -= 35;
+                if (card.isArtifact) {
+                  score += 160; // Highest urgency to pass unpairable artifact!
+                  if (passingToLeader) score += 60;
+                } else {
+                  score += (1.0 - mindset.val) * 60;
+                  if (minOppHand <= 3) score += (4 - minOppHand) * 35;
+                  if (myBanked >= 20) score += 30;
+                  score += (card.val === 15 ? 15 : 5) * (1.2 - mindset.val);
+                  if (passingToLeader) score += 55;
+                  if (mindset.val > 0.7 && minOppHand > 3) score -= 35;
+                }
               } else if (card.color === 'GREEN') {
                 score += mindset.val * 30;
                 const bluesCount = hand.filter(c => c.color === 'BLUE').length;
@@ -697,7 +709,9 @@
             const passed = hands[b].splice(bestCardIdx, 1)[0];
             hands[targetP].push(passed);
 
-            if (passingToLeader && passed.color === 'RED') {
+            if (passed.isArtifact) {
+              logAnnouncement(`🗿 ${getPlayerName(b)} (${mindset.label}) dumped the PRICELESS ARTIFACT onto ${getPlayerName(targetP)}! 🔥`);
+            } else if (passingToLeader && passed.color === 'RED') {
               logAnnouncement(`🎯 ${getPlayerName(b)} (${mindset.label}) dumped RED Contraband directly onto leader ${getPlayerName(targetP)}!`);
             } else {
               logAnnouncement(`${getPlayerName(b)} (${mindset.label}) passed a card to ${getPlayerName(targetP)}.`);
@@ -997,7 +1011,9 @@
 
         let borderStyle = "border border-slate-700 bg-slate-800/90";
 
-        if (c.color === 'RED') {
+        if (c.isArtifact) {
+          borderStyle = "border-2 border-red-500 bg-gradient-to-b from-rose-950 via-purple-950 to-rose-950 ring-2 ring-red-500/80 red-evidence shadow-lg animate-pulse";
+        } else if (c.color === 'RED') {
           borderStyle = (c.val === 15)
             ? "border-2 border-amber-400 bg-rose-950/70 red-evidence" 
             : "border-2 border-rose-500 bg-rose-950/50 red-evidence";
@@ -1028,7 +1044,10 @@
         let badgeText = '';
         let targetPill = '';
 
-        if (c.color === 'RED') {
+        if (c.isArtifact) {
+          badgeText = `<span class="text-rose-400 font-black text-[9px]">HOT</span>`;
+          targetPill = `<span class="bg-rose-950/90 text-rose-300 border border-rose-500 px-1 py-0.2 rounded text-[7px] font-black uppercase tracking-wider shadow">🚨 UNPAIRABLE</span>`;
+        } else if (c.color === 'RED') {
           badgeText = `<span class="${c.val === 15 ? 'text-amber-300' : 'text-rose-400'} font-black text-[9px]">+${c.val}</span>`;
           targetPill = `<span class="${c.val === 15 ? 'bg-amber-950/90 text-amber-300 border-amber-600/80' : 'bg-rose-950/90 text-rose-400 border-rose-700/80'} border px-1 py-0.2 rounded text-[7px] font-black uppercase tracking-wider">HOT</span>`;
         } else if (c.color === 'GREEN') {
@@ -1043,7 +1062,8 @@
         }
 
         let typeSubtitle = '';
-        if (c.color === 'RED') typeSubtitle = (c.val === 15) ? '👑 Grand Hot' : '⭐ Petty Hot';
+        if (c.isArtifact) typeSubtitle = 'Cannot pair • Must pass!';
+        else if (c.color === 'RED') typeSubtitle = (c.val === 15) ? '👑 Grand Hot' : '⭐ Petty Hot';
         else if (c.color === 'GREEN') typeSubtitle = 'Pairs w/ Blue • Flips Camera 🔄';
         else if (c.color === 'BLUE') typeSubtitle = (c.isGrand) ? '👑 Grand (🔴+15)' : '⭐ Petty (🔴+10)';
 
@@ -1213,6 +1233,7 @@
         const isWinner = (p === winnerIdx && !isStandoff);
         const isCaught = (redCards === maxRed && maxRed > 0);
         const ptsEarned = roundPointsEarned[p];
+        const holdsArtifact = hands[p].some(c => c.isArtifact);
 
         const row = document.createElement('div');
         row.className = `flex justify-between items-center p-2 rounded-lg ${isWinner ? 'bg-amber-950/40 border border-amber-600' : (isCaught ? 'bg-rose-950/40 border border-rose-800' : 'bg-emerald-950/40 border border-emerald-800')}`;
@@ -1222,10 +1243,10 @@
           statusSub = '🚗 Getaway Driver! Emptied hand first & banked full stash.';
         } else if (isCaught) {
           statusSub = (caughtPlayers.length > 1)
-            ? `🚨 CAUGHT! Tied for most Contraband (${redCards} Red)! Took the fall (0 pts).`
-            : `🚨 CAUGHT! Held the most Contraband (${redCards} Red)! Primary suspect (0 pts).`;
+            ? `🚨 CAUGHT! Tied for most Contraband (${redCards} Red${holdsArtifact ? ', stuck with 🗿 Artifact' : ''})! Took the fall (0 pts).`
+            : `🚨 CAUGHT! Held the most Contraband (${redCards} Red${holdsArtifact ? ', stuck with 🗿 Artifact' : ''})! Primary suspect (0 pts).`;
         } else if (redCards > 0) {
-          statusSub = `🛡️ EVADED ARREST! Held ${redCards} Red, but avoided having the most (Leader had ${maxRed})! Banked stash (+${ptsEarned} pts).`;
+          statusSub = `🛡️ EVADED ARREST! Held ${redCards} Red${holdsArtifact ? ' (🗿 Artifact)' : ''}, but avoided having the most (Leader had ${maxRed})! Banked stash (+${ptsEarned} pts).`;
         } else {
           statusSub = `✨ CLEAN! 0 Red Contraband${greenCards > 0 ? ` (${greenCards} Wilds)` : ''}! Banked stash (+${ptsEarned} pts).`;
         }
@@ -1236,6 +1257,7 @@
               <span>${getPlayerName(p)}</span>
               ${isWinner ? '<span class="text-[8px] bg-amber-500/20 text-amber-300 px-1 py-0.2 rounded font-black">GETAWAY 🚗</span>' : ''}
               ${isCaught ? '<span class="text-[8px] bg-rose-500/20 text-rose-300 px-1 py-0.2 rounded font-black">CAUGHT RED-HANDED 🚨</span>' : ''}
+              ${holdsArtifact ? '<span class="text-[8px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-1 py-0.2 rounded font-black">🗿 ARTIFACT</span>' : ''}
               ${!isWinner && !isCaught && redCards > 0 ? '<span class="text-[8px] bg-emerald-500/20 text-emerald-300 px-1 py-0.2 rounded font-black">EVADED ARREST 🛡️</span>' : ''}
               ${!isWinner && !isCaught && redCards === 0 ? '<span class="text-[8px] bg-blue-500/20 text-blue-300 px-1 py-0.2 rounded font-black">CLEAN ✨</span>' : ''}
             </div>
@@ -1352,7 +1374,11 @@
       }
 
       selectedPassCardIndex = null;
-      logAnnouncement(`You passed a card to ${getPlayerName(targetP)}!`);
+      if (passedCard.isArtifact) {
+        logAnnouncement(`🔥 You passed the PRICELESS ARTIFACT to ${getPlayerName(targetP)}! Hot potato passed!`);
+      } else {
+        logAnnouncement(`You passed a card to ${getPlayerName(targetP)}!`);
+      }
       updateUI();
 
       if (checkWinCondition(0)) return;

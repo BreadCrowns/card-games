@@ -51,6 +51,12 @@
     .card.red .pill { background: #e11d48; border-color: #9f1239; color: #ffffff; }
     .card.red.grand .card-inner { background: linear-gradient(180deg, #fff1f2 0%, #fef3c7 50%, #fff1f2 100%); border-color: #b91c1c; }
     .card.red.grand .pill { background: #b91c1c; border-color: #7f1d1d; color: #ffffff; }
+    .card.red.artifact .card-inner { background: linear-gradient(180deg, #fff1f2 0%, #fee2e2 50%, #fff1f2 100%); border: 2.5px double #991b1b; color: #991b1b; }
+    .card.red.artifact .index-val { color: #991b1b; }
+    .card.red.artifact .index-type { color: #b91c1c; font-weight: 900; }
+    .card.red.artifact .art-name { color: #7f1d1d; }
+    .card.red.artifact .pill { background: #991b1b; border-color: #ef4444; color: #ffffff; }
+    .card.red.artifact .sub-rule-bar { background: #fee2e2; border-color: #fca5a5; color: #991b1b; font-weight: 800; }
     .card.green .card-inner { background: linear-gradient(180deg, #ecfdf5 0%, #ffffff 50%, #ecfdf5 100%); border-color: #059669; color: #047857; }
     .card.green .index-val { color: #059669; }
     .card.green .index-type { color: #047857; }
@@ -1657,7 +1663,7 @@
         </div>
       </div>
     </div>
-    <div class="sheet-header-label">Sheet 6 of 8: Relic Contraband & Counterfeit Wilds (Blue-Only Connector)</div>
+    <div class="sheet-header-label">Sheet 6 of 8: Relic Contraband, Priceless Artifact & Counterfeit Wilds</div>
     <div class="sheet">
       <div class="card red grand">
         <div class="card-inner">
@@ -1694,38 +1700,38 @@
           </div>
         </div>
       </div>
-      <div class="card green petty">
+      <div class="card red artifact">
         <div class="card-inner">
           <div class="header-block">
             <div class="header-row">
               <div class="index-group">
                 <div class="corner-top">
-                  <span class="corner-icon">🎭</span>
-                  <span class="index-val">WILD</span>
+                  <span class="corner-icon">🗿</span>
+                  <span class="index-val">HOT</span>
                 </div>
-                <span class="index-type">Counterfeit</span>
+                <span class="index-type">Artifact</span>
               </div>
-              <div class="pill">🔵 ONLY</div>
+              <div class="pill">🚨 UNPAIRABLE</div>
             </div>
-            <div class="sub-rule-bar">Can only pair with any blue card and flips camera card</div>
+            <div class="sub-rule-bar">Cannot pair or discard • No Blue match • Must pass!</div>
           </div>
           <div class="center-art">
-            <span class="art-icon">🎭🔄</span>
-            <span class="art-name">Fake Receipt</span>
-            <span class="art-tier">Pairs w/ Any Blue</span>
+            <span class="art-icon">🗿</span>
+            <span class="art-name">Priceless Artifact</span>
+            <span class="art-tier">🚨 CANNOT BE DISCARDED</span>
           </div>
           <div class="header-block inverted">
             <div class="header-row">
               <div class="index-group">
                 <div class="corner-top">
-                  <span class="corner-icon">🎭</span>
-                  <span class="index-val">WILD</span>
+                  <span class="corner-icon">🗿</span>
+                  <span class="index-val">HOT</span>
                 </div>
-                <span class="index-type">Counterfeit</span>
+                <span class="index-type">Artifact</span>
               </div>
-              <div class="pill">🔵 ONLY</div>
+              <div class="pill">🚨 UNPAIRABLE</div>
             </div>
-            <div class="sub-rule-bar">Can only pair with any blue card and flips camera card</div>
+            <div class="sub-rule-bar">Cannot pair or discard • No Blue match • Must pass!</div>
           </div>
         </div>
       </div>
@@ -2063,12 +2069,12 @@
       </div>
       <div class="card marker"><div class="card-inner">
         <div class="header-block"><div class="header-row"><div class="index-group"><div class="corner-top"><span class="corner-icon">📋</span><span class="index-val" style="color:#f59e0b;">HEIST</span></div><span class="index-type" style="color:#cbd5e1;">Turn Guide</span></div><div class="pill" style="background:#b45309; border-color:#f59e0b; color:#fff;">RULES</div></div></div>
-        <div class="center-art" style="margin:2px 0;"><span style="font-size:9.5px; font-weight:900; color:#f59e0b; text-transform:uppercase;">1. DRAW • 2. MELD • 3. PASS</span><div style="font-size:6.8px; text-align:left; margin-top:3px; line-height:1.35; color:#cbd5e1;">• <b>1. Draw</b> 1 card from Locker.<br>• <b>2. Meld</b> 1 pair (optional):<br>&nbsp;&nbsp;<b>GOLDEN LAW: Needs Blue!</b><br>&nbsp;&nbsp;🔵+🔵 = 10 pts (Clean)<br>&nbsp;&nbsp;🔵+🔴 Petty = 15 pts | Grand = 20 pts<br>&nbsp;&nbsp;🔵+🎭 Wild = 5 pts & Flips Camera 🔄<br>• <b>3. Pass</b> 1 card face-down to neighbor.<br><span style="color:#f43f5e; font-weight:bold;">Red+Red & Red+Green are strictly illegal!</span></div></div>
+        <div class="center-art" style="margin:2px 0;"><span style="font-size:9.5px; font-weight:900; color:#f59e0b; text-transform:uppercase;">1. DRAW • 2. MELD • 3. PASS</span><div style="font-size:6.8px; text-align:left; margin-top:3px; line-height:1.35; color:#cbd5e1;">• <b>1. Draw</b> 1 card from Locker.<br>• <b>2. Meld</b> 1 pair (optional):<br>&nbsp;&nbsp;<b>GOLDEN LAW: Needs Blue!</b><br>&nbsp;&nbsp;🔵+🔵 = 10 pts (Clean)<br>&nbsp;&nbsp;🔵+🔴 Petty = 15 pts | Grand = 20 pts<br>&nbsp;&nbsp;🔵+🎭 Wild = 5 pts & Flips Camera 🔄<br>• <b>3. Pass</b> 1 card face-down to neighbor.<br><span style="color:#f43f5e; font-weight:bold;">🗿 Priceless Artifact cannot be melded! Pass it!</span></div></div>
         <div class="header-block inverted"><div class="header-row"><div class="index-group"><div class="corner-top"><span class="corner-icon">📋</span><span class="index-val" style="color:#f59e0b;">HEIST</span></div><span class="index-type" style="color:#cbd5e1;">Turn Guide</span></div><div class="pill" style="background:#b45309; border-color:#f59e0b; color:#fff;">RULES</div></div></div>
       </div></div>
       <div class="card marker"><div class="card-inner">
         <div class="header-block"><div class="header-row"><div class="index-group"><div class="corner-top"><span class="corner-icon">🚨</span><span class="index-val" style="color:#f43f5e;">SCORING</span></div><span class="index-type" style="color:#cbd5e1;">End Round</span></div><div class="pill" style="background:#b45309; border-color:#f59e0b; color:#fff;">FALL GUY</div></div></div>
-        <div class="center-art" style="margin:2px 0;"><span style="font-size:9.5px; font-weight:900; color:#f43f5e; text-transform:uppercase;">THE ESCAPE CHECK</span><div style="font-size:6.8px; text-align:left; margin-top:3px; line-height:1.35; color:#cbd5e1;">• <b>Getaway Driver</b> (First empty hand) triggers alarm & banks full haul!<br>• <b>Caught Red-Handed</b>: Only player(s) holding the <b>MOST Red Contraband</b> take the fall = <b>0 POINTS</b>!<br>• <b>Evaded Arrest</b>: Anyone holding fewer Red cards than the leader banks full stash!<br>• <b>Win Goal</b>: First to 300 pts (200 in 2P Duel).</div></div>
+        <div class="center-art" style="margin:2px 0;"><span style="font-size:9.5px; font-weight:900; color:#f43f5e; text-transform:uppercase;">THE ESCAPE CHECK</span><div style="font-size:6.8px; text-align:left; margin-top:3px; line-height:1.35; color:#cbd5e1;">• <b>Getaway Driver</b> (First empty hand) triggers alarm & banks full haul!<br>• <b>Caught Red-Handed</b>: Only player(s) holding the <b>MOST Red Contraband</b> take the fall = <b>0 POINTS</b>!<br>• 🗿 <b>Priceless Artifact</b>: 1 Red card with NO Blue match. Cannot be melded—pass it or get caught!<br>• <b>Evaded Arrest</b>: Fewer Red than the leader banks full stash!<br>• <b>Win Goal</b>: First to 300 pts (200 in 2P Duel).</div></div>
         <div class="header-block inverted"><div class="header-row"><div class="index-group"><div class="corner-top"><span class="corner-icon">🚨</span><span class="index-val" style="color:#f43f5e;">SCORING</span></div><span class="index-type" style="color:#cbd5e1;">End Round</span></div><div class="pill" style="background:#b45309; border-color:#f59e0b; color:#fff;">FALL GUY</div></div></div>
       </div></div>
       <div class="card marker"><div class="card-inner">
