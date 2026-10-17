@@ -49,12 +49,12 @@ namespace PnpDeckGenerator
                 new CardDef { Item = "Crown", Name = "Cursed Crown", Color = "RED", Val = 15, Copies = 2, Icon = "👑", IsGrand = true },
                 new CardDef { Item = "Relic", Name = "Smuggled Relic", Color = "RED", Val = 15, Copies = 2, Icon = "🏺", IsGrand = true },
 
-                // Unpairable Contraband (Priceless Artifact)
-                new CardDef { Item = "Artifact", Name = "Priceless Artifact", Color = "RED", Val = 0, Copies = 1, Icon = "🗿", IsGrand = true, IsArtifact = true },
-
-                // Counterfeit Wilds (Green)
-                new CardDef { Item = "Wild", Name = "Fake Receipt", Color = "GREEN", Val = 0, Copies = 7, Icon = "🎭", IsGrand = false }
+                // Counterfeit Wilds (Green) - All 8 Wilds preserved!
+                new CardDef { Item = "Wild", Name = "Fake Receipt", Color = "GREEN", Val = 0, Copies = 8, Icon = "🎭", IsGrand = false }
             };
+
+            // Play Card #55: Priceless Artifact (Red Contraband, unpairable hot potato)
+            var artifactCard = new CardDef { Item = "Artifact", Name = "Priceless Artifact", Color = "RED", Val = 0, Copies = 1, Icon = "🗿", IsGrand = true, IsArtifact = true };
 
             var deck = new List<CardDef>();
             foreach (var def in cardDefs)
@@ -155,7 +155,7 @@ namespace PnpDeckGenerator
                 "Sheet 3 of 8: Clean Grand Loot (Paintings, Gold & Crowns)",
                 "Sheet 4 of 8: Relics & Red Contraband (Cash, Diamonds, Watches)",
                 "Sheet 5 of 8: Red Contraband (Keys, Paintings, Gold, Crowns & Relic)",
-                "Sheet 6 of 8: Relic Contraband, Priceless Artifact & Counterfeit Wilds"
+                "Sheet 6 of 8: Relic Contraband & 8 Counterfeit Wilds (Blue-Only Connector)"
             };
 
             for (int s = 0; s < 6; s++)
@@ -166,110 +166,18 @@ namespace PnpDeckGenerator
                 for (int c = 0; c < 9; c++)
                 {
                     int idx = s * 9 + c;
-                    var card = deck[idx];
-                    string colorClass = card.Color.ToLower();
-                    string tierClass = card.IsArtifact ? "artifact" : (card.IsGrand ? "grand" : "petty");
-
-                    string valDisplay = card.IsArtifact ? "HOT" : ((card.Color == "GREEN") ? "WILD" : ("+" + card.Val));
-                    string typeDisplay = card.IsArtifact ? "Artifact" : ((card.Color == "BLUE") ? "Clean" : ((card.Color == "RED") ? "Contraband" : "Counterfeit"));
-
-                    string pillHtml = "";
-                    if (card.IsArtifact)
-                    {
-                        pillHtml = "<div class=\"pill\">🚨 UNPAIRABLE</div>";
-                    }
-                    else if (card.Color == "BLUE")
-                    {
-                        int targetVal = card.IsGrand ? 15 : 10;
-                        pillHtml = string.Format("<div class=\"pill\">🔴 +{0} Target</div>", targetVal);
-                    }
-                    else if (card.Color == "RED")
-                    {
-                        string tag = card.IsGrand ? "🚨 GRAND" : "🚨 HOT";
-                        pillHtml = string.Format("<div class=\"pill\">{0}</div>", tag);
-                    }
-                    else
-                    {
-                        pillHtml = "<div class=\"pill\">🔵 ONLY</div>";
-                    }
-
-                    string ruleText = "";
-                    if (card.IsArtifact)
-                    {
-                        ruleText = "Cannot pair or discard • No Blue match • Must pass!";
-                    }
-                    else if (card.Color == "BLUE")
-                    {
-                        int redMeld = card.IsGrand ? 20 : 15;
-                        ruleText = string.Format("Pairs w/ Blue {0} (10pts) • Red {0} ({1}pts)", card.Item, redMeld);
-                    }
-                    else if (card.Color == "RED")
-                    {
-                        int redMeld = card.IsGrand ? 20 : 15;
-                        ruleText = string.Format("Pairs ONLY w/ Blue {0} (+{1}pts) • Most Red = 0pts!", card.Item, redMeld);
-                    }
-                    else
-                    {
-                        ruleText = "Can only pair with any blue card and flips camera card";
-                    }
-
-                    string artTier = card.IsArtifact ? "🚨 CANNOT BE DISCARDED"
-                                   : (card.Color == "BLUE") ? (card.IsGrand ? "👑 Grand Heist" : "⭐ Petty Loot")
-                                   : (card.Color == "RED") ? (card.IsGrand ? "👑 Grand Hot" : "⭐ Petty Hot")
-                                   : "Pairs w/ Any Blue";
-
-                    string artIcon = (card.Color == "GREEN") ? "🎭🔄" : card.Icon;
-
-                    sb.AppendLine(string.Format("      <div class=\"card {0} {1}\">", colorClass, tierClass));
-                    sb.AppendLine("        <div class=\"card-inner\">");
-
-                    // Top Header & Rule
-                    sb.AppendLine("          <div class=\"header-block\">");
-                    sb.AppendLine("            <div class=\"header-row\">");
-                    sb.AppendLine("              <div class=\"index-group\">");
-                    sb.AppendLine("                <div class=\"corner-top\">");
-                    sb.AppendLine(string.Format("                  <span class=\"corner-icon\">{0}</span>", card.Icon));
-                    sb.AppendLine(string.Format("                  <span class=\"index-val\">{0}</span>", valDisplay));
-                    sb.AppendLine("                </div>");
-                    sb.AppendLine(string.Format("                <span class=\"index-type\">{0}</span>", typeDisplay));
-                    sb.AppendLine("              </div>");
-                    sb.AppendLine("              " + pillHtml);
-                    sb.AppendLine("            </div>");
-                    sb.AppendLine(string.Format("            <div class=\"sub-rule-bar\">{0}</div>", ruleText));
-                    sb.AppendLine("          </div>");
-
-                    // Center Art
-                    sb.AppendLine("          <div class=\"center-art\">");
-                    sb.AppendLine(string.Format("            <span class=\"art-icon\">{0}</span>", artIcon));
-                    sb.AppendLine(string.Format("            <span class=\"art-name\">{0}</span>", card.Name));
-                    sb.AppendLine(string.Format("            <span class=\"art-tier\">{0}</span>", artTier));
-                    sb.AppendLine("          </div>");
-
-                    // Bottom Inverted Header & Rule (Rotated 180deg)
-                    sb.AppendLine("          <div class=\"header-block inverted\">");
-                    sb.AppendLine("            <div class=\"header-row\">");
-                    sb.AppendLine("              <div class=\"index-group\">");
-                    sb.AppendLine("                <div class=\"corner-top\">");
-                    sb.AppendLine(string.Format("                  <span class=\"corner-icon\">{0}</span>", card.Icon));
-                    sb.AppendLine(string.Format("                  <span class=\"index-val\">{0}</span>", valDisplay));
-                    sb.AppendLine("                </div>");
-                    sb.AppendLine(string.Format("                <span class=\"index-type\">{0}</span>", typeDisplay));
-                    sb.AppendLine("              </div>");
-                    sb.AppendLine("              " + pillHtml);
-                    sb.AppendLine("            </div>");
-                    sb.AppendLine(string.Format("            <div class=\"sub-rule-bar\">{0}</div>", ruleText));
-                    sb.AppendLine("          </div>");
-
-                    sb.AppendLine("        </div>");
-                    sb.AppendLine("      </div>");
+                    sb.Append(RenderCardHtml(deck[idx]));
                 }
 
                 sb.AppendLine("    </div>");
             }
 
-            // Sheet 7: Reference & Camera Markers
-            sb.AppendLine("    <div class=\"sheet-header-label\">Sheet 7 of 8: Quick Reference Rules & Circular Camera Direction Markers</div>");
+            // Sheet 7: Play Card #55 (Priceless Artifact), Double-Sided Camera Marker & Reference Rules
+            sb.AppendLine("    <div class=\"sheet-header-label\">Sheet 7 of 8: Play Card #55 (Priceless Artifact), Double-Sided Camera Marker & Reference Rules</div>");
             sb.AppendLine("    <div class=\"sheet\">");
+
+            // Card 1 on Sheet 7: Play Card #55 - 🗿 Priceless Artifact
+            sb.Append(RenderCardHtml(artifactCard));
 
             // Clockwise Camera Marker
             sb.AppendLine("      <div class=\"card marker\">");
@@ -282,7 +190,7 @@ namespace PnpDeckGenerator
             sb.AppendLine("              </div>");
             sb.AppendLine("              <div class=\"pill\" style=\"background:#0369a1; border-color:#38bdf8; color:#fff;\">↻ CLOCKWISE</div>");
             sb.AppendLine("            </div>");
-            sb.AppendLine("            <div class=\"sub-rule-bar\" style=\"color:#7dd3fc;\">Table Center • Default Play Direction (Pass to Left)</div>");
+            sb.AppendLine("            <div class=\"sub-rule-bar\" style=\"color:#7dd3fc;\">Double-Sided Marker (Front) • Default Direction: Pass Left</div>");
             sb.AppendLine("          </div>");
             sb.AppendLine("          <div class=\"center-art\">");
             sb.AppendLine("            <div style=\"width:72px; height:72px; display:flex; align-items:center; justify-content:center; margin:0 auto;\">");
@@ -310,7 +218,7 @@ namespace PnpDeckGenerator
             sb.AppendLine("              </div>");
             sb.AppendLine("              <div class=\"pill\" style=\"background:#0369a1; border-color:#38bdf8; color:#fff;\">↻ CLOCKWISE</div>");
             sb.AppendLine("            </div>");
-            sb.AppendLine("            <div class=\"sub-rule-bar\" style=\"color:#7dd3fc;\">Flip 180° when Green Wild is banked! 🔄</div>");
+            sb.AppendLine("            <div class=\"sub-rule-bar\" style=\"color:#7dd3fc;\">Flip card over to Reverse (↺) when Green Wild is banked!</div>");
             sb.AppendLine("          </div>");
             sb.AppendLine("        </div>");
             sb.AppendLine("      </div>");
@@ -326,7 +234,7 @@ namespace PnpDeckGenerator
             sb.AppendLine("              </div>");
             sb.AppendLine("              <div class=\"pill\" style=\"background:#be123c; border-color:#f43f5e; color:#fff;\">↺ COUNTER-CW</div>");
             sb.AppendLine("            </div>");
-            sb.AppendLine("            <div class=\"sub-rule-bar\" style=\"color:#fda4af;\">Table Center • Reversed Play Direction (Pass to Right)</div>");
+            sb.AppendLine("            <div class=\"sub-rule-bar\" style=\"color:#fda4af;\">Double-Sided Marker (Back) • Reversed Direction: Pass Right</div>");
             sb.AppendLine("          </div>");
             sb.AppendLine("          <div class=\"center-art\">");
             sb.AppendLine("            <div style=\"width:72px; height:72px; display:flex; align-items:center; justify-content:center; margin:0 auto;\">");
@@ -354,7 +262,7 @@ namespace PnpDeckGenerator
             sb.AppendLine("              </div>");
             sb.AppendLine("              <div class=\"pill\" style=\"background:#be123c; border-color:#f43f5e; color:#fff;\">↺ COUNTER-CW</div>");
             sb.AppendLine("            </div>");
-            sb.AppendLine("            <div class=\"sub-rule-bar\" style=\"color:#fda4af;\">Flip back when another Wild is banked! 🔄</div>");
+            sb.AppendLine("            <div class=\"sub-rule-bar\" style=\"color:#fda4af;\">Flip card back to Front (↻) when Green Wild is banked!</div>");
             sb.AppendLine("          </div>");
             sb.AppendLine("        </div>");
             sb.AppendLine("      </div>");
@@ -375,20 +283,20 @@ namespace PnpDeckGenerator
 
             // Card 5: 2-Player Quickdraw Setup C1
             sb.AppendLine("      <div class=\"card marker\"><div class=\"card-inner\">");
-            sb.AppendLine("        <div class=\"header-block\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">⚔️</span><span class=\"index-val\" style=\"color:#38bdf8;\">2-PLAYER</span></div><span class=\"index-type\" style=\"color:#cbd5e1;\">Duel Setup</span></div><div class=\"pill\" style=\"background:#0369a1; border-color:#38bdf8; color:#fff;\">28 CARDS</div></div></div>");
-            sb.AppendLine("        <div class=\"center-art\" style=\"margin:2px 0;\"><span style=\"font-size:9.5px; font-weight:900; color:#38bdf8; text-transform:uppercase;\">QUICKDRAW DUEL (28c)</span><div style=\"font-size:6.8px; text-align:left; margin-top:3px; line-height:1.35; color:#cbd5e1;\">For high-voltage 2-player matches:<br>• Remove all 4 Grand items & 4 Wilds.<br>• Play with Petty items only:<br>&nbsp;&nbsp;Cash, Diamond, Watch, Key + 4 Wilds.<br>• Deal 7 cards each (14 in Locker).<br>• Target Score: <b>200 Points</b>.<br>• Rapid 12-turn rounds with 93% escapes!</div></div>");
-            sb.AppendLine("        <div class=\"header-block inverted\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">⚔️</span><span class=\"index-val\" style=\"color:#38bdf8;\">2-PLAYER</span></div><span class=\"index-type\" style=\"color:#cbd5e1;\">Duel Setup</span></div><div class=\"pill\" style=\"background:#0369a1; border-color:#38bdf8; color:#fff;\">28 CARDS</div></div></div>");
+            sb.AppendLine("        <div class=\"header-block\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">⚔️</span><span class=\"index-val\" style=\"color:#38bdf8;\">2-PLAYER</span></div><span class=\"index-type\" style=\"color:#cbd5e1;\">Duel Setup</span></div><div class=\"pill\" style=\"background:#0369a1; border-color:#38bdf8; color:#fff;\">29 CARDS</div></div></div>");
+            sb.AppendLine("        <div class=\"center-art\" style=\"margin:2px 0;\"><span style=\"font-size:9.5px; font-weight:900; color:#38bdf8; text-transform:uppercase;\">QUICKDRAW DUEL (29c)</span><div style=\"font-size:6.8px; text-align:left; margin-top:3px; line-height:1.35; color:#cbd5e1;\">For high-voltage 2-player matches:<br>• Remove all 4 Grand items.<br>• Play with Petty items (16 Blue, 8 Red)<br>&nbsp;&nbsp;+ 4 Wilds + 1 Priceless Artifact = 29c.<br>• Deal 7 cards each (15 in Locker).<br>• Target Score: <b>200 Points</b>.<br>• Rapid turns with intense artifact passing!</div></div>");
+            sb.AppendLine("        <div class=\"header-block inverted\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">⚔️</span><span class=\"index-val\" style=\"color:#38bdf8;\">2-PLAYER</span></div><span class=\"index-type\" style=\"color:#cbd5e1;\">Duel Setup</span></div><div class=\"pill\" style=\"background:#0369a1; border-color:#38bdf8; color:#fff;\">29 CARDS</div></div></div>");
             sb.AppendLine("      </div></div>");
 
             // Card 6: Double Deck 5-6 Players
             sb.AppendLine("      <div class=\"card marker\"><div class=\"card-inner\">");
-            sb.AppendLine("        <div class=\"header-block\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">👑</span><span class=\"index-val\" style=\"color:#a855f7;\">5-6 PLAYERS</span></div><span class=\"index-type\" style=\"color:#cbd5e1;\">Syndicate</span></div><div class=\"pill\" style=\"background:#6b21a8; border-color:#a855f7; color:#fff;\">108 CARDS</div></div></div>");
-            sb.AppendLine("        <div class=\"center-art\" style=\"margin:2px 0;\"><span style=\"font-size:9.5px; font-weight:900; color:#a855f7; text-transform:uppercase;\">GRAND SYNDICATE</span><div style=\"font-size:6.8px; text-align:left; margin-top:3px; line-height:1.35; color:#cbd5e1;\">For 5 or 6 players at the table:<br>• Shuffle <b>2 full 54-card decks</b> together.<br>• Total: 60 Blue, 32 Red, 16 Wilds.<br>• Deal 7 cards each.<br>• Target Score: <b>300 Points</b>.<br>• Close match rate exceeds 55%!</div></div>");
-            sb.AppendLine("        <div class=\"header-block inverted\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">👑</span><span class=\"index-val\" style=\"color:#a855f7;\">5-6 PLAYERS</span></div><span class=\"index-type\" style=\"color:#cbd5e1;\">Syndicate</span></div><div class=\"pill\" style=\"background:#6b21a8; border-color:#a855f7; color:#fff;\">108 CARDS</div></div></div>");
+            sb.AppendLine("        <div class=\"header-block\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">👑</span><span class=\"index-val\" style=\"color:#a855f7;\">5-6 PLAYERS</span></div><span class=\"index-type\" style=\"color:#cbd5e1;\">Syndicate</span></div><div class=\"pill\" style=\"background:#6b21a8; border-color:#a855f7; color:#fff;\">110 CARDS</div></div></div>");
+            sb.AppendLine("        <div class=\"center-art\" style=\"margin:2px 0;\"><span style=\"font-size:9.5px; font-weight:900; color:#a855f7; text-transform:uppercase;\">GRAND SYNDICATE</span><div style=\"font-size:6.8px; text-align:left; margin-top:3px; line-height:1.35; color:#cbd5e1;\">For 5 or 6 players at the table:<br>• Shuffle <b>2 full 55-card decks</b> together.<br>• Total: 60 Blue, 32 Red, 16 Wilds, 2 Artifacts.<br>• Deal 7 cards each.<br>• Target Score: <b>300 Points</b>.<br>• Double the heat and tension!</div></div>");
+            sb.AppendLine("        <div class=\"header-block inverted\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">👑</span><span class=\"index-val\" style=\"color:#a855f7;\">5-6 PLAYERS</span></div><span class=\"index-type\" style=\"color:#cbd5e1;\">Syndicate</span></div><div class=\"pill\" style=\"background:#6b21a8; border-color:#a855f7; color:#fff;\">110 CARDS</div></div></div>");
             sb.AppendLine("      </div></div>");
 
-            // 3 Blank Spare Cards
-            for (int k = 0; k < 3; k++)
+            // 2 Blank Spare Cards (completes 9-card Sheet 7)
+            for (int k = 0; k < 2; k++)
             {
                 sb.AppendLine("      <div class=\"card marker\"><div class=\"card-inner\" style=\"border-style:dashed; border-color:#64748b;\">");
                 sb.AppendLine("        <div class=\"header-block\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">🃏</span><span class=\"index-val\" style=\"color:#64748b;\">SPARE</span></div><span class=\"index-type\" style=\"color:#94a3b8;\">Blank</span></div></div></div>");
@@ -414,6 +322,107 @@ namespace PnpDeckGenerator
 
             File.WriteAllText(outHtmlPath, sb.ToString(), Encoding.UTF8);
             Console.WriteLine("SUCCESS: Generated " + outHtmlPath);
+        }
+
+        public static string RenderCardHtml(CardDef card)
+        {
+            var sb = new StringBuilder();
+            string colorClass = card.Color.ToLower();
+            string tierClass = card.IsArtifact ? "artifact" : (card.IsGrand ? "grand" : "petty");
+
+            string valDisplay = card.IsArtifact ? "HOT" : ((card.Color == "GREEN") ? "WILD" : ("+" + card.Val));
+            string typeDisplay = card.IsArtifact ? "Artifact" : ((card.Color == "BLUE") ? "Clean" : ((card.Color == "RED") ? "Contraband" : "Counterfeit"));
+
+            string pillHtml = "";
+            if (card.IsArtifact)
+            {
+                pillHtml = "<div class=\"pill\">🚨 UNPAIRABLE</div>";
+            }
+            else if (card.Color == "BLUE")
+            {
+                int targetVal = card.IsGrand ? 15 : 10;
+                pillHtml = string.Format("<div class=\"pill\">🔴 +{0} Target</div>", targetVal);
+            }
+            else if (card.Color == "RED")
+            {
+                string tag = card.IsGrand ? "🚨 GRAND" : "🚨 HOT";
+                pillHtml = string.Format("<div class=\"pill\">{0}</div>", tag);
+            }
+            else
+            {
+                pillHtml = "<div class=\"pill\">🔵 ONLY</div>";
+            }
+
+            string ruleText = "";
+            if (card.IsArtifact)
+            {
+                ruleText = "Cannot pair or discard • No Blue match • Must pass!";
+            }
+            else if (card.Color == "BLUE")
+            {
+                int redMeld = card.IsGrand ? 20 : 15;
+                ruleText = string.Format("Pairs w/ Blue {0} (10pts) • Red {0} ({1}pts)", card.Item, redMeld);
+            }
+            else if (card.Color == "RED")
+            {
+                int redMeld = card.IsGrand ? 20 : 15;
+                ruleText = string.Format("Pairs ONLY w/ Blue {0} (+{1}pts) • Most Red = 0pts!", card.Item, redMeld);
+            }
+            else
+            {
+                ruleText = "Can only pair with any blue card and flips camera card";
+            }
+
+            string artTier = card.IsArtifact ? "🚨 CANNOT BE DISCARDED"
+                           : (card.Color == "BLUE") ? (card.IsGrand ? "👑 Grand Heist" : "⭐ Petty Loot")
+                           : (card.Color == "RED") ? (card.IsGrand ? "👑 Grand Hot" : "⭐ Petty Hot")
+                           : "Pairs w/ Any Blue";
+
+            string artIcon = (card.Color == "GREEN") ? "🎭🔄" : card.Icon;
+
+            sb.AppendLine(string.Format("      <div class=\"card {0} {1}\">", colorClass, tierClass));
+            sb.AppendLine("        <div class=\"card-inner\">");
+
+            // Top Header & Rule
+            sb.AppendLine("          <div class=\"header-block\">");
+            sb.AppendLine("            <div class=\"header-row\">");
+            sb.AppendLine("              <div class=\"index-group\">");
+            sb.AppendLine("                <div class=\"corner-top\">");
+            sb.AppendLine(string.Format("                  <span class=\"corner-icon\">{0}</span>", card.Icon));
+            sb.AppendLine(string.Format("                  <span class=\"index-val\">{0}</span>", valDisplay));
+            sb.AppendLine("                </div>");
+            sb.AppendLine(string.Format("                <span class=\"index-type\">{0}</span>", typeDisplay));
+            sb.AppendLine("              </div>");
+            sb.AppendLine("              " + pillHtml);
+            sb.AppendLine("            </div>");
+            sb.AppendLine(string.Format("            <div class=\"sub-rule-bar\">{0}</div>", ruleText));
+            sb.AppendLine("          </div>");
+
+            // Center Art
+            sb.AppendLine("          <div class=\"center-art\">");
+            sb.AppendLine(string.Format("            <span class=\"art-icon\">{0}</span>", artIcon));
+            sb.AppendLine(string.Format("            <span class=\"art-name\">{0}</span>", card.Name));
+            sb.AppendLine(string.Format("            <span class=\"art-tier\">{0}</span>", artTier));
+            sb.AppendLine("          </div>");
+
+            // Bottom Inverted Header & Rule (Rotated 180deg)
+            sb.AppendLine("          <div class=\"header-block inverted\">");
+            sb.AppendLine("            <div class=\"header-row\">");
+            sb.AppendLine("              <div class=\"index-group\">");
+            sb.AppendLine("                <div class=\"corner-top\">");
+            sb.AppendLine(string.Format("                  <span class=\"corner-icon\">{0}</span>", card.Icon));
+            sb.AppendLine(string.Format("                  <span class=\"index-val\">{0}</span>", valDisplay));
+            sb.AppendLine("                </div>");
+            sb.AppendLine(string.Format("                <span class=\"index-type\">{0}</span>", typeDisplay));
+            sb.AppendLine("              </div>");
+            sb.AppendLine("              " + pillHtml);
+            sb.AppendLine("            </div>");
+            sb.AppendLine(string.Format("            <div class=\"sub-rule-bar\">{0}</div>", ruleText));
+            sb.AppendLine("          </div>");
+
+            sb.AppendLine("        </div>");
+            sb.AppendLine("      </div>");
+            return sb.ToString();
         }
     }
 }

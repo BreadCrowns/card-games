@@ -58,10 +58,10 @@
   <div class="bg-slate-900/90 border-b border-slate-800 px-3 py-1 flex justify-center items-center shrink-0">
     <div class="inline-flex rounded-lg p-0.5 bg-slate-950 border border-slate-800 text-[10px] font-bold">
       <button id="mode-4p-btn" class="px-2.5 py-0.5 rounded-md bg-rose-600 text-white shadow transition">
-        👥 4P Heist (54c)
+        👥 4P Heist (55c)
       </button>
       <button id="mode-2p-btn" class="px-2.5 py-0.5 rounded-md text-slate-400 hover:text-slate-200 transition">
-        ⚔️ 2P Duel C1 (28c Petty)
+        ⚔️ 2P Duel C1 (29c Petty)
       </button>
     </div>
   </div>
@@ -343,7 +343,6 @@
       cards.push({ type: 'LOOT', color: 'RED', item: 'Artifact', name: 'Priceless Artifact', icon: '🗿', val: 0, isGrand: true, isArtifact: true, unpairable: true });
 
       // 4. Green Counterfeit Wilds (0 pts, pairs with ANY Blue, flips direction)
-      const wildsCount = (gameMode === '2P') ? 3 : 7;
       for (let i = 0; i < wildsCount; i++) {
         cards.push({ type: 'LOOT', color: 'GREEN', item: 'Wild', icon: '🎭🔄', val: 0, isGrand: false, isWild: true });
       }
@@ -384,8 +383,8 @@
 
       updateUI();
       const modeAnnouncement = (gameMode === '2P')
-        ? `⚔️ 2-Player Duel C1! 28 cards (4 Petty Items + 4 Wilds). First to 200 pts!`
-        : `👥 Round ${roundNumber} begins! Dealing 7 cards to each crew member. Reach 300 pts to win!`;
+        ? `⚔️ 2-Player Duel C1! 29 cards (4 Petty Items, 4 Wilds + 1 Artifact). First to 200 pts!`
+        : `👥 Round ${roundNumber} begins! 55 cards (8 Items, 8 Wilds + 1 Artifact). Dealing 7 cards each. First to 300 pts!`;
       logAnnouncement(modeAnnouncement);
 
       if (currentPlayer !== 0) {
