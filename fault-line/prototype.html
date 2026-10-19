@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fault Line - Standalone Playable Prototype</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800;900&family=Inter:wght@400;600;700&display=swap');
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at 50% 20%, #1e1e2d 0%, #0c0d14 100%);
+      color: #e2e8f0;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    
+    .font-cinzel {
+      font-family: 'Cinzel', serif;
+    }
+
+    /* Card styling */
+    .card-shadow {
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+    
+    .card-crimson { background: linear-gradient(135deg, #b91c1c, #7f1d1d); border-color: #ef4444; }
+    .card-amber   { background: linear-gradient(135deg, #d97706, #92400e); border-color: #f59e0b; }
+    .card-emerald { background: linear-gradient(135deg, #059669, #065f46); border-color: #10b981; }
+    .card-cobalt  { background: linear-gradient(135deg, #2563eb, #1e40af); border-color: #3b82f6; }
+    .card-amethyst{ background: linear-gradient(135deg, #7c3aed, #5b21b6); border-color: #8b5cf6; }
+    .card-anchor  { background: linear-gradient(135deg, #18181b, #09090b); border-color: #eab308; box-shadow: 0 0 25px rgba(234, 179, 8, 0.35); }
+
+    .glow-hover:hover {
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.6);
+      transform: translateY(-6px) scale(1.03);
+    }
+
+    .pulse-target {
+      animation: pulseBorder 1.5s infinite;
+    }
+
+    @keyframes pulseBorder {
+      0%, 100% { border-color: #38bdf8; box-shadow: 0 0 15px rgba(56, 189, 248, 0.5); }
+      50% { border-color: #f43f5e; box-shadow: 0 0 25px rgba(244, 63, 94, 0.8); }
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+  </style>
+</head>
+<body class="p-3 md:p-6 flex flex-col justify-between select-none">
+
+  <!-- Header -->
+  <header class="flex flex-wrap items-center justify-between pb-4 border-b border-slate-800 gap-3">
+    <div>
+      <h1 class="text-2xl md:text-3xl font-extrabold tracking-wider text-amber-400 font-cinzel flex items-center gap-2">
+        <span>⚡ FAULT LINE</span>
+        <span class="text-xs px-2.5 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-400 font-sans tracking-normal font-semibold">56-Card Edition</span>
+      </h1>
+      <p class="text-xs text-slate-400 mt-0.5">Survive the escalating tectonic squeeze across 3 rounds. Fewest strikes wins!</p>
+    </div>
+
+    <!-- Game Status Bar -->
+    <div class="flex items-center gap-3 bg-slate-900/90 border border-slate-800 px-4 py-2 rounded-xl text-sm">
+      <div class="text-center">
+        <div class="text-[10px] uppercase text-slate-500 font-bold">Round</div>
+        <div id="round-indicator" class="font-bold text-amber-400 text-base">1 / 3</div>
+      </div>
+      <div class="h-6 w-px bg-slate-800"></div>
+      <div class="text-center">
+        <div class="text-[10px] uppercase text-slate-500 font-bold">Cards / Player</div>
+        <div id="cards-per-player-indicator" class="font-bold text-slate-200 text-base">3</div>
+      </div>
+      <div class="h-6 w-px bg-slate-800"></div>
+      <div class="text-center">
+        <div class="text-[10px] uppercase text-slate-500 font-bold">Turn</div>
+        <div id="turn-indicator" class="font-bold text-emerald-400 text-base">Player (You)</div>
+      </div>
+      <div class="h-6 w-px bg-slate-800"></div>
+      <button id="btn-restart" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 transition">
+        New Game
+      </button>
+    </div>
+  </header>
+
+  <!-- Bot Players Dashboard (Top Row) -->
+  <section class="grid grid-cols-3 gap-3 my-4">
+    <!-- Bot 1 -->
+    <div id="bot1-card" class="bg-slate-900/70 border border-slate-800 rounded-xl p-3 flex flex-col justify-between transition-all">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+          <span class="font-bold text-sm text-slate-200">Bot Atlas</span>
+        </div>
+        <span id="bot1-strikes" class="text-xs font-bold px-2 py-0.5 rounded-md bg-rose-950/80 text-rose-300 border border-rose-800">0 ★ Strikes</span>
+      </div>
+      <div class="flex items-center justify-between mt-2 text-xs text-slate-400">
+        <span>Hand: <strong id="bot1-hand-count" class="text-slate-200">3</strong> cards</span>
+        <span id="bot1-status" class="italic text-[11px] text-slate-500">Waiting</span>
+      </div>
+      <div id="bot1-strike-pile" class="flex flex-wrap gap-1 mt-2 min-h-[28px] max-h-[56px] overflow-y-auto"></div>
+    </div>
+
+    <!-- Bot 2 -->
+    <div id="bot2-card" class="bg-slate-900/70 border border-slate-800 rounded-xl p-3 flex flex-col justify-between transition-all">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span>
+          <span class="font-bold text-sm text-slate-200">Bot Vesper</span>
+        </div>
+        <span id="bot2-strikes" class="text-xs font-bold px-2 py-0.5 rounded-md bg-rose-950/80 text-rose-300 border border-rose-800">0 ★ Strikes</span>
+      </div>
+      <div class="flex items-center justify-between mt-2 text-xs text-slate-400">
+        <span>Hand: <strong id="bot2-hand-count" class="text-slate-200">3</strong> cards</span>
+        <span id="bot2-status" class="italic text-[11px] text-slate-500">Waiting</span>
+      </div>
+      <div id="bot2-strike-pile" class="flex flex-wrap gap-1 mt-2 min-h-[28px] max-h-[56px] overflow-y-auto"></div>
+    </div>
+
+    <!-- Bot 3 -->
+    <div id="bot3-card" class="bg-slate-900/70 border border-slate-800 rounded-xl p-3 flex flex-col justify-between transition-all">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+          <span class="font-bold text-sm text-slate-200">Bot Gaia</span>
+        </div>
+        <span id="bot3-strikes" class="text-xs font-bold px-2 py-0.5 rounded-md bg-rose-950/80 text-rose-300 border border-rose-800">0 ★ Strikes</span>
+      </div>
+      <div class="flex items-center justify-between mt-2 text-xs text-slate-400">
+        <span>Hand: <strong id="bot3-hand-count" class="text-slate-200">3</strong> cards</span>
+        <span id="bot3-status" class="italic text-[11px] text-slate-500">Waiting</span>
+      </div>
+      <div id="bot3-strike-pile" class="flex flex-wrap gap-1 mt-2 min-h-[28px] max-h-[56px] overflow-y-auto"></div>
+    </div>
+  </section>
+
+  <!-- CENTER AREA: THE FAULT LINE -->
+  <main class="my-4 bg-slate-950/80 border border-slate-800 rounded-2xl p-4 shadow-2xl relative">
+    <div class="flex items-center justify-between mb-2">
+      <div class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+        <span>The Fault Line Table</span>
+      </div>
+      <div class="text-[11px] text-slate-400">
+        <span class="text-sky-400 font-semibold">Left Wing (&lt; 28)</span> &bull; 
+        <span class="text-amber-400 font-semibold">Epicenter (28)</span> &bull; 
+        <span class="text-purple-400 font-semibold">Right Wing (&gt; 28)</span>
+      </div>
+    </div>
+
+    <!-- Fault Line Horizontal Scrollable Container -->
+    <div class="overflow-x-auto py-4 px-2 min-h-[175px] flex items-center justify-center">
+      <div id="fault-line-board" class="flex items-center gap-2.5 min-w-max">
+        <!-- Dynamic cards will be rendered here -->
+      </div>
+    </div>
+
+    <!-- Action Prompt / Target Selector Feedback -->
+    <div id="action-hint" class="text-center text-xs text-slate-400 mt-2 italic min-h-[18px]">
+      Select a card from your hand below to see legal placement targets.
+    </div>
+  </main>
+
+  <!-- BOTTOM: Player Hand & Strike Pile -->
+  <footer class="mt-2 grid grid-cols-1 md:grid-cols-4 gap-4">
+    <!-- Player Strike Pile -->
+    <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3 flex flex-col justify-between">
+      <div class="flex items-center justify-between">
+        <span class="text-xs font-bold text-slate-300">Your Strike Pile</span>
+        <span id="player-strikes" class="text-xs font-extrabold px-2 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800">
+          0 ★ Strikes
+        </span>
+      </div>
+      <div id="player-strike-pile" class="flex flex-wrap gap-1 mt-2 min-h-[38px] max-h-[76px] overflow-y-auto">
+        <span class="text-[11px] text-slate-500 italic">No strikes yet. Clean run!</span>
+      </div>
+      <div class="text-[10px] text-slate-500 mt-1">Lowest strikes at Round 3 wins!</div>
+    </div>
+
+    <!-- Player Hand (Takes 3 columns) -->
+    <div class="md:col-span-3 bg-slate-900/90 border border-slate-800 rounded-xl p-3 flex flex-col justify-between">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Your Hand (Click a card to play)</span>
+        <span class="text-xs text-slate-400" id="hand-count-label">Cards: 3</span>
+      </div>
+
+      <div id="player-hand" class="flex flex-wrap items-center gap-3 min-h-[110px] py-1">
+        <!-- Player hand cards -->
+      </div>
+    </div>
+  </footer>
+
+  <!-- Activity & Rules Log Drawer (Collapsible bottom / floating) -->
+  <div class="mt-4 bg-slate-950/60 border border-slate-900 rounded-xl p-3">
+    <div class="flex items-center justify-between text-xs font-semibold text-slate-400 mb-1">
+      <span>Tectonic Activity Log</span>
+      <button onclick="clearLog()" class="hover:text-slate-200">Clear</button>
+    </div>
+    <div id="game-log" class="text-xs font-mono text-slate-300 space-y-1 max-h-24 overflow-y-auto pr-2">
+      <div class="text-slate-500">Game initialized. Round 1 has begun. Deal: 3 cards each.</div>
+    </div>
+  </div>
+
+  <!-- End of Round / Game Modal -->
+  <div id="game-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-md w-full p-6 text-center shadow-2xl">
+      <h2 id="modal-title" class="text-2xl font-black text-amber-400 font-cinzel mb-2">Round 1 Completed!</h2>
+      <p id="modal-desc" class="text-sm text-slate-300 mb-6 leading-relaxed">
+        The Fault Line has fractured. Tectonic pressure carries over!
+      </p>
+      
+      <!-- Standings Table -->
+      <div class="bg-slate-950 rounded-xl p-3 border border-slate-800 mb-6">
+        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Current Strike Standings</div>
+        <div id="modal-standings" class="space-y-1.5 text-xs text-left">
+          <!-- Standings rows -->
+        </div>
+      </div>
+
+      <button id="modal-btn" class="w-full py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold rounded-xl shadow-lg transition">
+        Proceed to Round 2
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // --- 56-CARD DATASET DEFINITION ---
+    const COLORS = {
+      crimson: { name: 'Crimson', bg: 'card-crimson', text: 'text-red-400', hex: '#ef4444' },
+      amber:   { name: 'Amber', bg: 'card-amber', text: 'text-amber-400', hex: '#f59e0b' },
+      emerald: { name: 'Emerald', bg: 'card-emerald', text: 'text-emerald-400', hex: '#10b981' },
+      cobalt:  { name: 'Cobalt', bg: 'card-cobalt', text: 'text-blue-400', hex: '#3b82f6' },
+      amethyst:{ name: 'Amethyst', bg: 'card-amethyst', text: 'text-purple-400', hex: '#8b5cf6' },
+      anchor:  { name: 'Epicenter', bg: 'card-anchor', text: 'text-amber-300', hex: '#eab308' }
+    };
+
+    function calculateStrikes(num) {
+      if (num === 28) return 0;
+      if (num <= 5 || num >= 51) return 1;
+      if (num <= 12 || num >= 44) return 2;
+      if (num <= 19 || num >= 37) return 3;
+      return 5; // 20-27 and 29-36
+    }
+
+    const ALL_CARDS = [];
+    // Anchor
+    ALL_CARDS.push({
+      id: 'anchor',
+      number: 28,
+      color: 'anchor',
+      colorName: 'Epicenter',
+      strikes: 0,
+      isAnchor: true
+    });
+
+    const COLOR_KEYS = ['crimson', 'amber', 'emerald', 'cobalt', 'amethyst'];
+    let cIdx = 0;
+    // 1 to 27
+    for (let i = 1; i <= 27; i++) {
+      const color = COLOR_KEYS[cIdx % 5];
+      ALL_CARDS.push({
+        id: 'c' + i,
+        number: i,
+        color: color,
+        colorName: COLORS[color].name,
+        strikes: calculateStrikes(i)
+      });
+      cIdx++;
+    }
+    // 29 to 56
+    for (let i = 29; i <= 56; i++) {
+      const color = COLOR_KEYS[cIdx % 5];
+      ALL_CARDS.push({
+        id: 'c' + i,
+        number: i,
+        color: color,
+        colorName: COLORS[color].name,
+        strikes: calculateStrikes(i)
+      });
+      cIdx++;
+    }
+
+    // --- GAME STATE ---
+    let state = {
+      round: 1,
+      cardsPerPlayer: 3,
+      deck: [],
+      faultLine: {
+        left: [], // Array of stacks: each stack is [card1, card2, ...] (cardN is top)
+        anchor: { cards: [ALL_CARDS[0]] },
+        right: [] // Array of stacks: each stack is [card1, card2, ...]
+      },
+      players: [
+        { id: 0, name: 'You', isBot: false, hand: [], strikes: 0, strikeCards: [] },
+        { id: 1, name: 'Bot Atlas', isBot: true, hand: [], strikes: 0, strikeCards: [] },
+        { id: 2, name: 'Bot Vesper', isBot: true, hand: [], strikes: 0, strikeCards: [] },
+        { id: 3, name: 'Bot Gaia', isBot: true, hand: [], strikes: 0, strikeCards: [] }
+      ],
+      currentTurnIndex: 0,
+      selectedCardId: null,
+      gameOver: false
+    };
+
+    function log(msg, color = 'text-slate-300') {
+      const logEl = document.getElementById('game-log');
+      const div = document.createElement('div');
+      div.className = color;
+      div.innerHTML = msg;
+      logEl.appendChild(div);
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    function clearLog() {
+      document.getElementById('game-log').innerHTML = '';
+    }
+
+    // --- SETUP & ROUND CONTROL ---
+    function initGame() {
+      state.round = 1;
+      state.cardsPerPlayer = 3;
+      state.gameOver = false;
+      state.players.forEach(p => {
+        p.hand = [];
+        p.strikes = 0;
+        p.strikeCards = [];
+      });
+      state.currentTurnIndex = 0;
+      startRound();
+    }
+
+    function startRound() {
+      // Clean table fault line (keep only Anchor)
+      state.faultLine = {
+        left: [],
+        anchor: { cards: [ALL_CARDS[0]] },
+        right: []
+      };
+
+      // Gather non-strike cards for reshuffle
+      const usedStrikeIds = new Set();
+      state.players.forEach(p => p.strikeCards.forEach(c => usedStrikeIds.add(c.id)));
+
+      const playablePool = ALL_CARDS.filter(c => !c.isAnchor && !usedStrikeIds.has(c.id));
+      // Shuffle
+      state.deck = [...playablePool].sort(() => Math.random() - 0.5);
+
+      log(`<strong>--- STARTING ROUND ${state.round} ---</strong>`, 'text-amber-400 font-bold');
+      log(`Dealing ${state.cardsPerPlayer} cards to each player. Active deck pool: ${state.deck.length} cards.`, 'text-slate-400');
+
+      // Deal cards
+      for (let i = 0; i < state.cardsPerPlayer; i++) {
+        state.players.forEach(p => {
+          if (state.deck.length > 0) {
+            p.hand.push(state.deck.pop());
+          }
+        });
+      }
+
+      // Sort hands numerically
+      state.players.forEach(p => p.hand.sort((a, b) => a.number - b.number));
+
+      state.selectedCardId = null;
+      renderUI();
+      checkTurn();
+    }
+
+    // --- CHECK LEGAL MOVES & PREVIEW DISRUPTIONS ---
+    // Returns array of legal targets for a given card
+    // Target types: { type: 'outer_end', wing: 'left'|'right', sweptStacks: [...] },
+    //               { type: 'cover', wing: 'left'|'right', stackIndex: number, sweptStacks: [...] }
+    function evaluateCardPlacements(card) {
+      const targets = [];
+      const isLeft = card.number < 28;
+      const wingKey = isLeft ? 'left' : 'right';
+      const wingStacks = state.faultLine[wingKey];
+
+      // 1. OUTER END PLAY
+      // Outermost edge:
+      // On Left Wing: outer edge is index 0. Order towards Anchor must be ascending.
+      // So if new card is placed at far left:
+      // Sequence towards anchor becomes: [newCard, stack_0, stack_1, ... stack_N-1, Anchor 28]
+      // Any stack with top.number <= newCard.number violates strict ascending order towards 28!
+      const sweptOnEnd = [];
+      if (isLeft) {
+        for (let i = 0; i < wingStacks.length; i++) {
+          const topCard = wingStacks[i].cards[wingStacks[i].cards.length - 1];
+          if (topCard.number <= card.number) {
+            sweptOnEnd.push(i);
+          }
+        }
+      } else {
+        // Right Wing: outer edge is at the end (index wingStacks.length).
+        // Order away from Anchor must be ascending: [Anchor 28, stack_0, stack_1, ... newCard]
+        // Any stack with top.number >= card.number violates strict ascending order away from 28!
+        for (let i = 0; i < wingStacks.length; i++) {
+          const topCard = wingStacks[i].cards[wingStacks[i].cards.length - 1];
+          if (topCard.number >= card.number) {
+            sweptOnEnd.push(i);
+          }
+        }
+      }
+
+      // Total strikes if outer end chosen:
+      let endTotalStrikes = 0;
+      let endTotalCards = 0;
+      sweptOnEnd.forEach(idx => {
+        wingStacks[idx].cards.forEach(c => {
+          endTotalStrikes += c.strikes;
+          endTotalCards++;
+        });
+      });
+
+      targets.push({
+        type: 'outer_end',
+        wing: wingKey,
+        sweptIndices: sweptOnEnd,
+        strikeCost: endTotalStrikes,
+        cardsCount: endTotalCards
+      });
+
+      // 2. COLOR COVER PLAYS
+      // Find any stack on that wing whose top card matches color
+      for (let i = 0; i < wingStacks.length; i++) {
+        const topCard = wingStacks[i].cards[wingStacks[i].cards.length - 1];
+        if (topCard.color === card.color) {
+          // Check disruption if covered
+          // Left Wing: stacks 0..N-1 towards Anchor 28.
+          // Top cards at indices:
+          // Left neighbor (if i > 0): top card at i-1 must be < card.number
+          // Right neighbor (if i < N-1): top card at i+1 must be > card.number
+          // Also card.number must be < 28 (guaranteed by isLeft).
+          const sweptOnCover = [];
+
+          if (isLeft) {
+            // Check cards to the left of i: must be < card.number
+            for (let l = 0; l < i; l++) {
+              const neighborTop = wingStacks[l].cards[wingStacks[l].cards.length - 1];
+              if (neighborTop.number >= card.number) {
+                sweptOnCover.push(l);
+              }
+            }
+            // Check cards to the right of i (towards anchor): must be > card.number
+            for (let r = i + 1; r < wingStacks.length; r++) {
+              const neighborTop = wingStacks[r].cards[wingStacks[r].cards.length - 1];
+              if (neighborTop.number <= card.number) {
+                sweptOnCover.push(r);
+              }
+            }
+          } else {
+            // Right wing: stacks 0..N-1 away from Anchor 28
+            // Left neighbor (closer to anchor): must be < card.number
+            for (let l = 0; l < i; l++) {
+              const neighborTop = wingStacks[l].cards[wingStacks[l].cards.length - 1];
+              if (neighborTop.number >= card.number) {
+                sweptOnCover.push(l);
+              }
+            }
+            // Right neighbor (further away from anchor): must be > card.number
+            for (let r = i + 1; r < wingStacks.length; r++) {
+              const neighborTop = wingStacks[r].cards[wingStacks[r].cards.length - 1];
+              if (neighborTop.number <= card.number) {
+                sweptOnCover.push(r);
+              }
+            }
+          }
+
+          let coverStrikes = 0;
+          let coverCards = 0;
+          sweptOnCover.forEach(idx => {
+            wingStacks[idx].cards.forEach(c => {
+              coverStrikes += c.strikes;
+              coverCards++;
+            });
+          });
+
+          targets.push({
+            type: 'cover',
+            wing: wingKey,
+            stackIndex: i,
+            sweptIndices: sweptOnCover,
+            strikeCost: coverStrikes,
+            cardsCount: coverCards
+          });
+        }
+      }
+
+      return targets;
+    }
+
+    // --- EXECUTE PLAY ---
+    function executePlay(player, card, target) {
+      // 1. Remove card from player hand
+      player.hand = player.hand.filter(c => c.id !== card.id);
+
+      const wingKey = target.wing;
+      const wingStacks = state.faultLine[wingKey];
+      const sweptCards = [];
+
+      if (target.type === 'outer_end') {
+        // Collect swept cards
+        // Sort indices descending so we can splice safely
+        const sortedIndices = [...target.sweptIndices].sort((a, b) => b - a);
+        sortedIndices.forEach(idx => {
+          const removedStack = wingStacks.splice(idx, 1)[0];
+          sweptCards.push(...removedStack.cards);
+        });
+
+        // Place new card at outer end
+        const newStack = { cards: [card] };
+        if (wingKey === 'left') {
+          wingStacks.unshift(newStack); // Left outer edge is index 0
+        } else {
+          wingStacks.push(newStack); // Right outer edge is at the end
+        }
+
+        const costDesc = target.strikeCost > 0
+          ? `<span class="text-rose-400 font-bold">${target.strikeCost} ★ Strikes</span> (${target.cardsCount} cards)`
+          : `<span class="text-emerald-400 font-bold">0 Strikes (Clean!)</span>`;
+
+        log(`${player.name} played <strong>${card.colorName} ${card.number}</strong> to the <em>${wingKey.toUpperCase()} OUTER END</em>. Sweep: ${costDesc}`);
+      } else if (target.type === 'cover') {
+        // Target index in wingStacks
+        const targetStack = wingStacks[target.stackIndex];
+        // Add card on top of this stack
+        targetStack.cards.push(card);
+
+        // Swept adjacent stacks
+        // Adjust indices since we're removing items
+        const sortedIndices = [...target.sweptIndices].sort((a, b) => b - a);
+        sortedIndices.forEach(idx => {
+          const removedStack = wingStacks.splice(idx, 1)[0];
+          sweptCards.push(...removedStack.cards);
+        });
+
+        const costDesc = target.strikeCost > 0
+          ? `<span class="text-rose-400 font-bold">${target.strikeCost} ★ Strikes</span> (${target.cardsCount} cards)`
+          : `<span class="text-emerald-400 font-bold">0 Strikes (Clean Stack!)</span>`;
+
+        log(`${player.name} covered <strong>${card.colorName}</strong> on the <em>${wingKey.toUpperCase()}</em> with <strong>${card.number}</strong> (Stack depth: ${targetStack.cards.length}). Sweep: ${costDesc}`);
+      }
+
+      // 2. Award strikes to player
+      if (sweptCards.length > 0) {
+        sweptCards.forEach(c => {
+          player.strikes += c.strikes;
+          player.strikeCards.push(c);
+        });
+      }
+
+      state.selectedCardId = null;
+      renderUI();
+
+      // Check if round is over
+      const allHandsEmpty = state.players.every(p => p.hand.length === 0);
+      if (allHandsEmpty) {
+        setTimeout(endRound, 800);
+      } else {
+        advanceTurn();
+      }
+    }
+
+    // --- TURN CYCLE ---
+    function advanceTurn() {
+      state.currentTurnIndex = (state.currentTurnIndex + 1) % state.players.length;
+      renderUI();
+      checkTurn();
+    }
+
+    function checkTurn() {
+      const currentPlayer = state.players[state.currentTurnIndex];
+      // If this player is out of cards (shouldn't happen before others, but in case):
+      if (currentPlayer.hand.length === 0) {
+        const allHandsEmpty = state.players.every(p => p.hand.length === 0);
+        if (allHandsEmpty) {
+          endRound();
+        } else {
+          advanceTurn();
+        }
+        return;
+      }
+
+      if (currentPlayer.isBot) {
+        // Run Bot Turn with slight delay for readability
+        document.getElementById(`bot${currentPlayer.id}-status`).textContent = 'Thinking...';
+        setTimeout(() => {
+          botPlayTurn(currentPlayer);
+        }, 1100);
+      } else {
+        log(`<strong>It's your turn!</strong> Select a card from your hand.`, 'text-sky-300');
+      }
+    }
+
+    // --- BOT AI LOGIC ---
+    function botPlayTurn(bot) {
+      document.getElementById(`bot${bot.id}-status`).textContent = 'Playing...';
+      
+      // Evaluate all cards in hand and all legal targets
+      const allOptions = [];
+
+      bot.hand.forEach(card => {
+        const targets = evaluateCardPlacements(card);
+        targets.forEach(tgt => {
+          allOptions.push({ card, target: tgt });
+        });
+      });
+
+      if (allOptions.length === 0) return;
+
+      // Bot Strategy:
+      // 1. Strongly prefer options with 0 strikes.
+      // 2. Among 0-strike plays, prefer covering a matching color to stack (or extending safely).
+      // 3. If must take strikes, choose the option that minimizes strike cost.
+      allOptions.sort((a, b) => {
+        if (a.target.strikeCost !== b.target.strikeCost) {
+          return a.target.strikeCost - b.target.strikeCost; // Lowest strikes first
+        }
+        // If equal strikes: prefer cover over end if clean
+        if (a.target.type === 'cover' && b.target.type !== 'cover') return -1;
+        if (b.target.type === 'cover' && a.target.type !== 'cover') return 1;
+        return 0;
+      });
+
+      const chosen = allOptions[0];
+      executePlay(bot, chosen.card, chosen.target);
+    }
+
+    // --- ROUND END & STANDINGS ---
+    function endRound() {
+      log(`<strong>=== ROUND ${state.round} ENDED ===</strong>`, 'text-amber-400 font-bold');
+
+      // Show Modal
+      const modal = document.getElementById('game-modal');
+      const title = document.getElementById('modal-title');
+      const desc = document.getElementById('modal-desc');
+      const standingsEl = document.getElementById('modal-standings');
+      const btn = document.getElementById('modal-btn');
+
+      // Rank players by accumulated strikes (ascending)
+      const ranked = [...state.players].sort((a, b) => a.strikes - b.strikes);
+
+      standingsEl.innerHTML = ranked.map((p, rank) => `
+        <div class="flex items-center justify-between p-1.5 rounded ${rank === 0 ? 'bg-amber-950/40 text-amber-300 font-bold' : 'text-slate-300'}">
+          <span>#${rank + 1} ${p.name}</span>
+          <span>${p.strikes} ★ Strikes (${p.strikeCards.length} cards)</span>
+        </div>
+      `).join('');
+
+      if (state.round < 3) {
+        title.textContent = `Round ${state.round} Complete!`;
+        
+        // Find player with the MOST strikes (to go first in next round)
+        // Highest position tie-breaker (clockwise closest to current starter)
+        const maxStrikes = Math.max(...state.players.map(p => p.strikes));
+        const tiedPlayers = state.players.filter(p => p.strikes === maxStrikes);
+        let nextStarter = tiedPlayers[0]; // Simplified tie-break
+        
+        desc.innerHTML = `
+          The Fault Line resets. Strike cards remain with players.<br>
+          <strong>${nextStarter.name}</strong> has the most strikes (${maxStrikes} ★) and will play first in Round ${state.round + 1}!
+        `;
+
+        btn.textContent = `Start Round ${state.round + 1} (${state.cardsPerPlayer + 1} Cards)`;
+        btn.onclick = () => {
+          modal.classList.add('hidden');
+          state.round++;
+          state.cardsPerPlayer++;
+          state.currentTurnIndex = nextStarter.id;
+          startRound();
+        };
+      } else {
+        // GAME OVER!
+        state.gameOver = true;
+        title.textContent = `🏆 Fault Line Champion!`;
+        const winner = ranked[0];
+        desc.innerHTML = `
+          After 3 escalating rounds, <strong class="text-amber-400 text-lg">${winner.name}</strong> wins with only <strong>${winner.strikes} Total Strikes!</strong>
+        `;
+        btn.textContent = `Play Again`;
+        btn.onclick = () => {
+          modal.classList.add('hidden');
+          initGame();
+        };
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    // --- UI RENDERING ---
+    function renderUI() {
+      // 1. Indicators
+      document.getElementById('round-indicator').textContent = `${state.round} / 3`;
+      document.getElementById('cards-per-player-indicator').textContent = `${state.cardsPerPlayer}`;
+      const activeP = state.players[state.currentTurnIndex];
+      const turnEl = document.getElementById('turn-indicator');
+      turnEl.textContent = activeP.name;
+      turnEl.className = activeP.id === 0 ? 'font-bold text-emerald-400 text-base' : 'font-bold text-amber-400 text-base';
+
+      // 2. Bot Dashboards
+      for (let b = 1; b <= 3; b++) {
+        const bot = state.players[b];
+        document.getElementById(`bot${b}-strikes`).textContent = `${bot.strikes} ★ Strikes`;
+        document.getElementById(`bot${b}-hand-count`).textContent = `${bot.hand.length}`;
+        const cardBox = document.getElementById(`bot${b}-card`);
+        if (state.currentTurnIndex === b) {
+          cardBox.classList.add('ring-2', 'ring-amber-400', 'bg-slate-900');
+        } else {
+          cardBox.classList.remove('ring-2', 'ring-amber-400', 'bg-slate-900');
+          document.getElementById(`bot${b}-status`).textContent = 'Waiting';
+        }
+
+        // Render strike cards mini-pills
+        const pile = document.getElementById(`bot${b}-strike-pile`);
+        pile.innerHTML = bot.strikeCards.map(c => `
+          <span class="text-[9px] px-1.5 py-0.5 rounded font-bold ${COLORS[c.color].bg} text-white border border-white/20">
+            ${c.number} (${c.strikes}★)
+          </span>
+        `).join('');
+      }
+
+      // 3. Player Dashboard
+      const p = state.players[0];
+      document.getElementById('player-strikes').textContent = `${p.strikes} ★ Strikes`;
+      const pPile = document.getElementById('player-strike-pile');
+      if (p.strikeCards.length === 0) {
+        pPile.innerHTML = `<span class="text-[11px] text-slate-500 italic">No strikes yet. Clean run!</span>`;
+      } else {
+        pPile.innerHTML = p.strikeCards.map(c => `
+          <span class="text-[10px] px-2 py-0.5 rounded font-bold ${COLORS[c.color].bg} text-white border border-white/20">
+            ${c.number} (${c.strikes}★)
+          </span>
+        `).join('');
+      }
+
+      // 4. Player Hand
+      const handEl = document.getElementById('player-hand');
+      document.getElementById('hand-count-label').textContent = `Cards: ${p.hand.length}`;
+      handEl.innerHTML = '';
+
+      p.hand.forEach(c => {
+        const isSelected = state.selectedCardId === c.id;
+        const cardDiv = document.createElement('div');
+        cardDiv.className = `cursor-pointer w-20 h-28 rounded-xl p-2 flex flex-col justify-between border-2 transition-all card-shadow ${COLORS[c.color].bg} ${isSelected ? 'ring-4 ring-sky-400 -translate-y-3 scale-105 shadow-sky-500/50' : 'glow-hover border-white/20'}`;
+        cardDiv.onclick = () => selectPlayerCard(c.id);
+
+        cardDiv.innerHTML = `
+          <div class="flex items-center justify-between text-xs font-black text-white/90">
+            <span>${c.number}</span>
+            <span class="text-[10px] text-amber-300 font-mono">${'★'.repeat(c.strikes)}</span>
+          </div>
+          <div class="text-center font-black text-2xl text-white tracking-tight drop-shadow font-cinzel">
+            ${c.number}
+          </div>
+          <div class="text-[9px] font-semibold text-white/80 uppercase tracking-wider text-center">
+            ${c.colorName}
+          </div>
+        `;
+        handEl.appendChild(cardDiv);
+      });
+
+      // 5. Fault Line Board
+      renderFaultLine();
+    }
+
+    function renderFaultLine() {
+      const board = document.getElementById('fault-line-board');
+      board.innerHTML = '';
+
+      const isHumanTurn = state.currentTurnIndex === 0 && !state.gameOver;
+      const selectedHandCard = isHumanTurn && state.selectedCardId
+        ? state.players[0].hand.find(c => c.id === state.selectedCardId)
+        : null;
+
+      let legalPlacements = [];
+      if (selectedHandCard) {
+        legalPlacements = evaluateCardPlacements(selectedHandCard);
+      }
+
+      // Helper to render outer drop zone button
+      function createOuterDropZone(wing) {
+        const zone = document.createElement('div');
+        const target = legalPlacements.find(t => t.type === 'outer_end' && t.wing === wing);
+        const isActive = !!target;
+
+        zone.className = `w-20 h-32 rounded-xl border-2 border-dashed flex flex-col items-center justify-center p-2 text-center transition-all ${isActive ? 'cursor-pointer pulse-target bg-sky-950/40 border-sky-400 hover:scale-105' : 'border-slate-800 text-slate-700 opacity-40'}`;
+        
+        if (isActive) {
+          const costText = target.strikeCost > 0
+            ? `<span class="text-rose-400 font-extrabold text-[11px] mt-1">+${target.strikeCost} ★ Strikes</span><span class="text-[9px] text-rose-300">Sweeps ${target.cardsCount} cards</span>`
+            : `<span class="text-emerald-400 font-extrabold text-[11px] mt-1">0 Strikes</span><span class="text-[9px] text-emerald-300">Clean Play!</span>`;
+
+          zone.innerHTML = `
+            <div class="text-xs font-bold text-sky-300">Play to Outer End</div>
+            ${costText}
+          `;
+          zone.onclick = () => executePlay(state.players[0], selectedHandCard, target);
+        } else {
+          zone.innerHTML = `<span class="text-[10px] font-medium text-slate-600">${wing === 'left' ? '&lt; 28 Left Edge' : '&gt; 28 Right Edge'}</span>`;
+        }
+        return zone;
+      }
+
+      // LEFT WING: Outer End Zone
+      board.appendChild(createOuterDropZone('left'));
+
+      // LEFT WING: Stacks (indices 0..N-1 towards center)
+      state.faultLine.left.forEach((stack, idx) => {
+        board.appendChild(renderStackElement('left', idx, stack, legalPlacements, selectedHandCard));
+      });
+
+      // CENTER ANCHOR (#28)
+      const anchorDiv = document.createElement('div');
+      anchorDiv.className = `w-24 h-36 rounded-2xl p-2.5 flex flex-col justify-between border-2 border-amber-400 card-anchor card-shadow relative`;
+      anchorDiv.innerHTML = `
+        <div class="flex items-center justify-between text-[11px] font-black text-amber-400">
+          <span>#28</span>
+          <span class="text-[9px] uppercase px-1.5 py-0.2 rounded bg-amber-950 text-amber-300 border border-amber-700">Anchor</span>
+        </div>
+        <div class="text-center font-black text-3xl text-amber-300 tracking-tight font-cinzel">
+          28
+        </div>
+        <div class="text-[9px] font-extrabold text-amber-400 uppercase tracking-widest text-center">
+          The Epicenter
+        </div>
+      `;
+      board.appendChild(anchorDiv);
+
+      // RIGHT WING: Stacks (indices 0..N-1 away from center)
+      state.faultLine.right.forEach((stack, idx) => {
+        board.appendChild(renderStackElement('right', idx, stack, legalPlacements, selectedHandCard));
+      });
+
+      // RIGHT WING: Outer End Zone
+      board.appendChild(createOuterDropZone('right'));
+    }
+
+    function renderStackElement(wing, stackIndex, stack, legalPlacements, selectedHandCard) {
+      const topCard = stack.cards[stack.cards.length - 1];
+      const stackDiv = document.createElement('div');
+      const depth = stack.cards.length;
+
+      // Check if this stack is a legal COVER target
+      const coverTarget = legalPlacements.find(t => t.type === 'cover' && t.wing === wing && t.stackIndex === stackIndex);
+      const isTarget = !!coverTarget;
+
+      // Check if this stack would be SWEPT by the currently hovered/selected target (for visual warning)
+      stackDiv.className = `relative cursor-pointer w-22 h-34 min-w-[5.5rem] rounded-xl p-2 flex flex-col justify-between border-2 transition-all card-shadow ${COLORS[topCard.color].bg} ${isTarget ? 'pulse-target ring-4 ring-sky-400 scale-105' : 'border-white/20'}`;
+
+      // Stack Depth Badge
+      const depthBadge = depth > 1
+        ? `<span class="absolute -top-2 -right-2 px-1.5 py-0.5 rounded-full bg-rose-600 border border-white text-white text-[10px] font-black shadow-lg">x${depth}</span>`
+        : '';
+
+      const targetPrompt = isTarget
+        ? `<div class="absolute inset-0 bg-slate-950/80 backdrop-blur-xs rounded-xl flex flex-col items-center justify-center p-1 text-center">
+            <span class="text-[10px] font-bold text-sky-300">Cover ${topCard.colorName}</span>
+            ${coverTarget.strikeCost > 0
+              ? `<span class="text-[10px] text-rose-400 font-extrabold">+${coverTarget.strikeCost} ★</span><span class="text-[8px] text-rose-300">Sweeps ${coverTarget.cardsCount} cards</span>`
+              : `<span class="text-[10px] text-emerald-400 font-extrabold">0 Strikes!</span><span class="text-[8px] text-emerald-300">Clean Stack</span>`}
+           </div>`
+        : '';
+
+      stackDiv.innerHTML = `
+        ${depthBadge}
+        <div class="flex items-center justify-between text-xs font-black text-white/90">
+          <span>${topCard.number}</span>
+          <span class="text-[9px] text-amber-300 font-mono">${'★'.repeat(topCard.strikes)}</span>
+        </div>
+        <div class="text-center font-black text-2xl text-white tracking-tight drop-shadow font-cinzel">
+          ${topCard.number}
+        </div>
+        <div class="text-[9px] font-semibold text-white/80 uppercase tracking-wider text-center">
+          ${topCard.colorName}
+        </div>
+        ${targetPrompt}
+      `;
+
+      if (isTarget) {
+        stackDiv.onclick = () => executePlay(state.players[0], selectedHandCard, coverTarget);
+      }
+
+      return stackDiv;
+    }
+
+    function selectPlayerCard(cardId) {
+      if (state.currentTurnIndex !== 0 || state.gameOver) return;
+
+      if (state.selectedCardId === cardId) {
+        state.selectedCardId = null; // Toggle off
+        document.getElementById('action-hint').textContent = 'Select a card from your hand below to see legal placement targets.';
+      } else {
+        state.selectedCardId = cardId;
+        const card = state.players[0].hand.find(c => c.id === cardId);
+        const wing = card.number < 28 ? 'LEFT wing (< 28)' : 'RIGHT wing (> 28)';
+        document.getElementById('action-hint').innerHTML = `Selected <strong class="${COLORS[card.color].text}">${card.colorName} ${card.number}</strong>. Place it on the <strong>${wing}</strong>: play to outer edge or cover matching color!`;
+      }
+      renderUI();
+    }
+
+    document.getElementById('btn-restart').onclick = initGame;
+
+    // Start on load
+    window.onload = initGame;
+  </script>
+</body>
+</html>

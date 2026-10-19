@@ -4,17 +4,64 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Card Games Lab</title>
-  <meta http-equiv="refresh" content="0; url=caught-red-handed/prototype.html">
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;600;800&display=swap');
+    .font-cinzel { font-family: 'Cinzel', serif; }
+  </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center p-4">
-  <div class="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl p-8 text-center shadow-2xl flex flex-col items-center gap-4">
-    <div class="text-5xl">🚨</div>
-    <h1 class="text-2xl font-black text-rose-500 tracking-wider uppercase">Caught Red-Handed</h1>
-    <p class="text-sm text-slate-400">Loading playable prototype...</p>
-    <a href="caught-red-handed/prototype.html" class="px-6 py-3 bg-rose-600 hover:bg-rose-500 text-white font-bold text-sm rounded-xl transition shadow-lg mt-2">
-      Play Immediately &rarr;
-    </a>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center justify-center p-4">
+  <div class="max-w-2xl w-full text-center space-y-6">
+    <div>
+      <h1 class="text-4xl font-black text-amber-400 font-cinzel tracking-wider">CARD GAMES LAB</h1>
+      <p class="text-sm text-slate-400 mt-1">Playable web prototypes & print-and-play card games</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+      <!-- Fault Line -->
+      <div class="bg-slate-900 border-2 border-amber-500/40 hover:border-amber-400 rounded-2xl p-6 transition flex flex-col justify-between shadow-xl group">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-3xl">⚡</span>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-950 text-amber-300 border border-amber-800 uppercase">NEW</span>
+          </div>
+          <h2 class="text-xl font-black text-amber-300 font-cinzel mb-1 group-hover:text-amber-200">Fault Line</h2>
+          <p class="text-xs text-slate-400 leading-relaxed mb-4">
+            A cutthroat 56-card number line survival game. Play cards to the wings, stack matching colors, and sweep out-of-order stacks to avoid strikes!
+          </p>
+        </div>
+        <div class="flex flex-col gap-2 pt-2 border-t border-slate-800">
+          <a href="fault-line/prototype.html" class="w-full text-center py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold text-xs rounded-xl transition shadow">
+            Play Fault Line Prototype &rarr;
+          </a>
+          <a href="fault-line/print_deck.html" class="text-center text-xs text-slate-400 hover:text-slate-200 py-1">
+            Print-and-Play Sheet (PDF/PnP)
+          </a>
+        </div>
+      </div>
+
+      <!-- Caught Red-Handed -->
+      <div class="bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-2xl p-6 transition flex flex-col justify-between shadow-xl group">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-3xl">🚨</span>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 uppercase">Prototype</span>
+          </div>
+          <h2 class="text-xl font-black text-rose-400 font-cinzel mb-1 group-hover:text-rose-300">Caught Red-Handed</h2>
+          <p class="text-xs text-slate-400 leading-relaxed mb-4">
+            Push-your-luck card game of heists, loot drafting, and high-tension police raids.
+          </p>
+        </div>
+        <div class="flex flex-col gap-2 pt-2 border-t border-slate-800">
+          <a href="caught-red-handed/prototype.html" class="w-full text-center py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl transition">
+            Play Caught Red-Handed &rarr;
+          </a>
+          <a href="caught-red-handed/print_deck.html" class="text-center text-xs text-slate-400 hover:text-slate-200 py-1">
+            Print-and-Play Sheet (PDF/PnP)
+          </a>
+        </div>
+      </div>
+    </div>
   </div>
 </body>
 </html>
