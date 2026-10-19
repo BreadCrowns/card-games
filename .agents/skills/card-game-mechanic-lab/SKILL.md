@@ -78,3 +78,13 @@ When the user asks for new game concepts, use this rapid formulation matrix:
 3. **Core Loop**: Deal $H$ cards $\rightarrow$ simultaneous selection $\rightarrow$ reveal $\rightarrow$ resolve lane dominance.
 4. **The Friction Point**: The agonizing decision each turn (e.g., "Playing a card for high attack gives your opponent mana equal to its cost").
 5. **Win Condition**: First to 3 round wins, or highest score after deck empties twice.
+
+---
+
+## 5. The Card Designer's Playbook: Core Principles
+
+1. **Simplicity is Sacred (The "Uno Standard")**: Never patch edge cases with secondary rules or exceptions that violate the core mental model. Solve edge cases with component or count adjustments first. Avoid 100% liability cards that play on autopilot.
+2. **The "Holy Trinity" Synchronization Law**: Any rule, count, or scoring change must be updated simultaneously across **`RULES.md`**, the **interactive prototype (`prototype.html`)**, and the **print layout (`print_deck.html` / PDF)**.
+3. **Explicit Trade-Offs (No Hidden Cuts)**: Never silently alter deck math or prune cards to fit sheet constraints without explicit designer consent.
+4. **Table-First Ergonomics**: Corner pips in top-left for natural fanning, 2-way rotational symmetry, dedicated physical state markers, and ink-friendly print layouts.
+5. **Simulation-Backed Validation**: Test balance, standoff frequency, and win distribution with 10,000+ Monte Carlo simulation runs before locking in mechanics.
