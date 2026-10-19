@@ -9,7 +9,7 @@
 You and your crew just pulled off a daring robbery. You want to walk away with the biggest haul of loot banked in front of you across multiple heist rounds.
 
 * Laundering **Red Contraband** scores massive points—up to **20 points in a single pair**!
-* But beware: if any player empties their hand and shouts **"GETAWAY CAR!"**, anyone caught holding **even a single Red card** is **CAUGHT RED-HANDED**—and their **entire banked haul for that round is seized (0 points)!**
+* But beware: when a round ends, only the player(s) holding the **MOST Red Contraband cards** take the fall and are **CAUGHT RED-HANDED**—scoring **0 points** for the round! Anyone holding fewer Red cards slips away clean and banks their entire haul!
 * **Green Counterfeit Wilds** are circulating through the crew: they are worth **0 points**, but pairing one with **ANY Blue card** flips the Security Camera direction of play and dumps 2 cards from your hand!
 
 ---
