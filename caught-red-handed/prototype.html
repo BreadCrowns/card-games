@@ -238,9 +238,31 @@
 
     <!-- Micro Rule Hint -->
     <div class="text-center text-[9px] text-slate-400 font-medium leading-none">
-      Needs <span class="text-blue-400 font-bold">Blue</span> to pair • 🗿 <span class="text-amber-300 font-bold">Artifact can't pair (Pass it!)</span> • <span class="text-rose-400 font-bold">Most Red in hand busts (0 pts)!</span>
+      Needs <span class="text-blue-400 font-bold">Blue</span> to pair • ⚡ <span class="text-sky-300 font-bold">Passes Face Up (Recipient can Intercept!)</span> • <span class="text-rose-400 font-bold">Most Red in hand busts (0 pts)!</span>
     </div>
 
+  </div>
+
+  <!-- Intercept Modal (Recipient's Advantage) -->
+  <div id="intercept-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border-2 border-sky-500 rounded-3xl max-w-sm w-full p-4 text-center shadow-2xl animate-bounce-short">
+      <div class="text-3xl mb-1">⚡🚨</div>
+      <h3 class="text-sm font-black text-sky-400 uppercase tracking-wider">RECIPIENT'S ADVANTAGE!</h3>
+      <p id="intercept-desc" class="text-xs text-slate-300 mt-2 leading-relaxed">
+        You were passed a <b>Red Contraband</b> face up, and you hold the matching <b>Blue Card</b>!
+      </p>
+      <div id="intercept-cards-preview" class="flex justify-center items-center gap-2 my-3">
+        <!-- Rendered dynamically -->
+      </div>
+      <div class="flex gap-2 mt-3">
+        <button id="btn-intercept-meld" class="flex-1 py-2.5 bg-sky-600 hover:bg-sky-500 text-white font-black text-xs rounded-xl shadow-lg transition flex items-center justify-center gap-1.5">
+          <span>⚡ SNAP MELD (+PTS)</span>
+        </button>
+        <button id="btn-intercept-accept" class="px-3 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs rounded-xl border border-slate-700 transition">
+          Accept to Hand
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- Round End / Heist Result Modal -->
@@ -339,10 +361,7 @@
         }
       });
 
-      // 3. Unpairable Red Contraband (Priceless Artifact: 0 pts, no matching Blue, hot potato!)
-      cards.push({ type: 'LOOT', color: 'RED', item: 'Artifact', name: 'Priceless Artifact', icon: '🗿', val: 0, isGrand: true, isArtifact: true, unpairable: true });
-
-      // 4. Green Counterfeit Wilds (0 pts, pairs with ANY Blue, flips direction)
+      // 3. Green Counterfeit Wilds (0 pts, pairs with ANY Blue, flips direction)
       for (let i = 0; i < wildsCount; i++) {
         cards.push({ type: 'LOOT', color: 'GREEN', item: 'Wild', icon: '🎭🔄', val: 0, isGrand: false, isWild: true });
       }
@@ -383,8 +402,8 @@
 
       updateUI();
       const modeAnnouncement = (gameMode === '2P')
-        ? `⚔️ 2-Player Duel C1! 29 cards (4 Petty Items, 4 Wilds + 1 Artifact). First to 200 pts!`
-        : `👥 Round ${roundNumber} begins! 55 cards (8 Items, 8 Wilds + 1 Artifact). Dealing 7 cards each. First to 300 pts!`;
+        ? `⚔️ 2-Player Duel C1! 28 cards (4 Petty Items + 4 Wilds). Pass face-up & Intercept! First to 200 pts!`
+        : `👥 Round ${roundNumber} begins! 54 cards (8 Items + 8 Wilds). Dealing 7 cards each. First to 300 pts!`;
       logAnnouncement(modeAnnouncement);
 
       if (currentPlayer !== 0) {
@@ -410,9 +429,6 @@
     // Evaluates any 2 cards selected by the player against the Golden Pairing Law
     function evaluateSelectedPair(c1, c2) {
       if (!c1 || !c2) return { valid: false, error: "Select 2 cards." };
-      if (c1.isArtifact || c2.isArtifact) {
-        return { valid: false, error: "🗿 Priceless Artifact cannot be paired! Pass it!" };
-      }
 
       let blue = null;
       let other = null;
@@ -482,7 +498,7 @@
       const candidates = [];
 
       const blues = hand.filter(c => c.color === 'BLUE');
-      const reds = hand.filter(c => c.color === 'RED' && !c.isArtifact);
+      const reds = hand.filter(c => c.color === 'RED');
       const greens = hand.filter(c => c.color === 'GREEN');
 
       if (blues.length === 0) return candidates;
@@ -637,6 +653,130 @@
       return (p + direction + 4) % 4;
     }
 
+    function showInterceptModal(senderIdx, passedCard, matchingBlueIdx, onMeld, onAccept) {
+      const modal = document.getElementById('intercept-modal');
+      const desc = document.getElementById('intercept-desc');
+      const preview = document.getElementById('intercept-cards-preview');
+      const meldBtn = document.getElementById('btn-intercept-meld');
+      const acceptBtn = document.getElementById('btn-intercept-accept');
+
+      const blueCard = hands[0][matchingBlueIdx];
+      const pts = blueCard.val + passedCard.val;
+
+      desc.innerHTML = `<b>${getPlayerName(senderIdx)}</b> passed you <b>${passedCard.item} (${passedCard.icon})</b> face up!<br>You hold matching <b>Blue ${blueCard.item}</b> in your hand!`;
+
+      preview.innerHTML = `
+        <div class="px-2.5 py-1.5 rounded-lg border-2 border-rose-500 bg-rose-950/70 text-center text-xs">
+          <div class="text-xl">${passedCard.icon}</div>
+          <div class="text-[9px] font-black text-rose-400 uppercase">Passed Red</div>
+          <div class="text-[8px] text-slate-300 font-bold">+${passedCard.val} pts</div>
+        </div>
+        <div class="text-lg font-black text-sky-400">+</div>
+        <div class="px-2.5 py-1.5 rounded-lg border-2 border-blue-500 bg-blue-950/70 text-center text-xs">
+          <div class="text-xl">${blueCard.icon}</div>
+          <div class="text-[9px] font-black text-blue-400 uppercase">Your Blue</div>
+          <div class="text-[8px] text-slate-300 font-bold">+5 pts</div>
+        </div>
+        <div class="text-lg font-black text-emerald-400">=</div>
+        <div class="px-2.5 py-1.5 rounded-lg border-2 border-emerald-500 bg-emerald-950/70 text-center text-xs font-black text-emerald-300">
+          <div class="text-xl">💰</div>
+          <div class="text-[9px] uppercase">Laundered</div>
+          <div class="text-[10px] font-black text-emerald-300">+${pts} PTS</div>
+        </div>
+      `;
+
+      meldBtn.onclick = () => {
+        modal.classList.add('hidden');
+        hands[0].splice(matchingBlueIdx, 1);
+        stashes[0].push({
+          item: passedCard.item,
+          icon: passedCard.icon,
+          color: 'RED',
+          points: pts,
+          category: passedCard.isGrand ? 'GRAND' : 'PETTY'
+        });
+        consecutiveTurnsWithoutMeld = 0;
+        logAnnouncement(`⚡ INTERCEPT! You snap-matched incoming ${passedCard.item} with your Blue ${passedCard.item} (+${pts} pts)! Contraband never touched your hand!`);
+        onMeld();
+      };
+
+      acceptBtn.onclick = () => {
+        modal.classList.add('hidden');
+        onAccept();
+      };
+
+      modal.classList.remove('hidden');
+    }
+
+    function executePassCard(senderIdx, targetIdx, passedCard, onComplete) {
+      if (checkWinCondition(senderIdx)) return;
+
+      const cardDesc = (passedCard.color === 'RED')
+        ? `RED Contraband (${passedCard.item})`
+        : ((passedCard.color === 'GREEN') ? 'Counterfeit Wild 🎭' : `Clean ${passedCard.item}`);
+
+      // Recipient Advantage: Check if target holds matching BLUE card for incoming RED card
+      const matchingBlueIdx = (passedCard.color === 'RED')
+        ? hands[targetIdx].findIndex(c => c.color === 'BLUE' && c.item === passedCard.item)
+        : -1;
+
+      if (matchingBlueIdx !== -1) {
+        if (targetIdx === 0) {
+          // Player 0 (Human) gets the option to snap meld or accept!
+          showInterceptModal(senderIdx, passedCard, matchingBlueIdx, () => {
+            updateUI();
+            if (checkWinCondition(0)) return;
+            if (deck.length === 0 && consecutiveTurnsWithoutMeld >= numPlayers) {
+              showRoundModal(-1, 'STANDOFF');
+              return;
+            }
+            if (onComplete) onComplete();
+          }, () => {
+            hands[0].push(passedCard);
+            logAnnouncement(`You accepted the passed ${cardDesc} into your hand.`);
+            updateUI();
+            if (deck.length === 0 && consecutiveTurnsWithoutMeld >= numPlayers) {
+              showRoundModal(-1, 'STANDOFF');
+              return;
+            }
+            if (onComplete) onComplete();
+          });
+          return;
+        } else {
+          // Bot always seizes the intercept opportunity!
+          const matchingBlue = hands[targetIdx].splice(matchingBlueIdx, 1)[0];
+          const pts = matchingBlue.val + passedCard.val;
+          stashes[targetIdx].push({
+            item: passedCard.item,
+            icon: passedCard.icon,
+            color: 'RED',
+            points: pts,
+            category: passedCard.isGrand ? 'GRAND' : 'PETTY'
+          });
+          consecutiveTurnsWithoutMeld = 0;
+          logAnnouncement(`⚡ INTERCEPT! ${getPlayerName(targetIdx)} snap-matched passed RED ${passedCard.item} with their Blue ${passedCard.item} (+${pts} pts)! Contraband neutralized!`);
+          updateUI();
+          if (checkWinCondition(targetIdx)) return;
+          if (deck.length === 0 && consecutiveTurnsWithoutMeld >= numPlayers) {
+            showRoundModal(-1, 'STANDOFF');
+            return;
+          }
+          setTimeout(() => { if (onComplete) onComplete(); }, 750);
+          return;
+        }
+      }
+
+      // Normal acceptance
+      hands[targetIdx].push(passedCard);
+      logAnnouncement(`${getPlayerName(senderIdx)} passed ${cardDesc} face up to ${getPlayerName(targetIdx)}.`);
+      updateUI();
+      if (deck.length === 0 && consecutiveTurnsWithoutMeld >= numPlayers) {
+        showRoundModal(-1, 'STANDOFF');
+        return;
+      }
+      if (onComplete) onComplete();
+    }
+
     // Bot AI Turn
     function playBotTurn(b) {
       if (checkWinCondition(b)) return;
@@ -677,17 +817,12 @@
               let score = 0;
 
               if (card.color === 'RED') {
-                if (card.isArtifact) {
-                  score += 160; // Highest urgency to pass unpairable artifact!
-                  if (passingToLeader) score += 60;
-                } else {
-                  score += (1.0 - mindset.val) * 60;
-                  if (minOppHand <= 3) score += (4 - minOppHand) * 35;
-                  if (myBanked >= 20) score += 30;
-                  score += (card.val === 15 ? 15 : 5) * (1.2 - mindset.val);
-                  if (passingToLeader) score += 55;
-                  if (mindset.val > 0.7 && minOppHand > 3) score -= 35;
-                }
+                score += (1.0 - mindset.val) * 60;
+                if (minOppHand <= 3) score += (4 - minOppHand) * 35;
+                if (myBanked >= 20) score += 30;
+                score += (card.val === 15 ? 15 : 5) * (1.2 - mindset.val);
+                if (passingToLeader) score += 55;
+                if (mindset.val > 0.7 && minOppHand > 3) score -= 35;
               } else if (card.color === 'GREEN') {
                 score += mindset.val * 30;
                 const bluesCount = hand.filter(c => c.color === 'BLUE').length;
@@ -706,26 +841,12 @@
             });
 
             const passed = hands[b].splice(bestCardIdx, 1)[0];
-            hands[targetP].push(passed);
-
-            if (passed.isArtifact) {
-              logAnnouncement(`🗿 ${getPlayerName(b)} (${mindset.label}) dumped the PRICELESS ARTIFACT onto ${getPlayerName(targetP)}! 🔥`);
-            } else if (passingToLeader && passed.color === 'RED') {
-              logAnnouncement(`🎯 ${getPlayerName(b)} (${mindset.label}) dumped RED Contraband directly onto leader ${getPlayerName(targetP)}!`);
-            } else {
-              logAnnouncement(`${getPlayerName(b)} (${mindset.label}) passed a card to ${getPlayerName(targetP)}.`);
-            }
+            executePassCard(b, targetP, passed, () => {
+              advanceTurn();
+            });
+          } else {
+            advanceTurn();
           }
-
-          updateUI();
-
-          if (checkWinCondition(b)) return;
-          if (deck.length === 0 && consecutiveTurnsWithoutMeld >= numPlayers) {
-            showRoundModal(-1, 'STANDOFF');
-            return;
-          }
-
-          advanceTurn();
         }, 500);
 
       }, 400);
@@ -1010,9 +1131,7 @@
 
         let borderStyle = "border border-slate-700 bg-slate-800/90";
 
-        if (c.isArtifact) {
-          borderStyle = "border-2 border-red-500 bg-gradient-to-b from-rose-950 via-purple-950 to-rose-950 ring-2 ring-red-500/80 red-evidence shadow-lg animate-pulse";
-        } else if (c.color === 'RED') {
+        if (c.color === 'RED') {
           borderStyle = (c.val === 15)
             ? "border-2 border-amber-400 bg-rose-950/70 red-evidence" 
             : "border-2 border-rose-500 bg-rose-950/50 red-evidence";
@@ -1043,12 +1162,9 @@
         let badgeText = '';
         let targetPill = '';
 
-        if (c.isArtifact) {
-          badgeText = `<span class="text-rose-400 font-black text-[9px]">HOT</span>`;
-          targetPill = `<span class="bg-rose-950/90 text-rose-300 border border-rose-500 px-1 py-0.2 rounded text-[7px] font-black uppercase tracking-wider shadow">🚨 UNPAIRABLE</span>`;
-        } else if (c.color === 'RED') {
+        if (c.color === 'RED') {
           badgeText = `<span class="${c.val === 15 ? 'text-amber-300' : 'text-rose-400'} font-black text-[9px]">+${c.val}</span>`;
-          targetPill = `<span class="${c.val === 15 ? 'bg-amber-950/90 text-amber-300 border-amber-600/80' : 'bg-rose-950/90 text-rose-400 border-rose-700/80'} border px-1 py-0.2 rounded text-[7px] font-black uppercase tracking-wider">HOT</span>`;
+          targetPill = `<span class="${c.val === 15 ? 'bg-amber-950/90 text-amber-300 border-amber-600/80' : 'bg-rose-950/90 text-rose-400 border-rose-700/80'} border px-1 py-0.2 rounded text-[7px] font-black uppercase tracking-wider">NEEDS 🔵</span>`;
         } else if (c.color === 'GREEN') {
           badgeText = `<span class="text-emerald-400 font-black text-[9px]">WILD</span>`;
           targetPill = `<span class="bg-blue-950/95 text-blue-300 border border-blue-400/90 px-1 py-0.2 rounded text-[7px] font-black uppercase tracking-wider shadow">🔵 ONLY</span>`;
@@ -1061,10 +1177,9 @@
         }
 
         let typeSubtitle = '';
-        if (c.isArtifact) typeSubtitle = 'Cannot pair • Must pass!';
-        else if (c.color === 'RED') typeSubtitle = (c.val === 15) ? '👑 Grand Hot' : '⭐ Petty Hot';
+        if (c.color === 'RED') typeSubtitle = (c.val === 15) ? '👑 Grand Hot (+15)' : '⭐ Petty Hot (+10)';
         else if (c.color === 'GREEN') typeSubtitle = 'Pairs w/ Blue • Flips Camera 🔄';
-        else if (c.color === 'BLUE') typeSubtitle = (c.isGrand) ? '👑 Grand (🔴+15)' : '⭐ Petty (🔴+10)';
+        else if (c.color === 'BLUE') typeSubtitle = (c.isGrand) ? '👑 Grand (+15/20)' : '⭐ Petty (+10/15)';
 
         // Badges for active selection
         let selectionPill = '';
@@ -1232,7 +1347,6 @@
         const isWinner = (p === winnerIdx && !isStandoff);
         const isCaught = (redCards === maxRed && maxRed > 0);
         const ptsEarned = roundPointsEarned[p];
-        const holdsArtifact = hands[p].some(c => c.isArtifact);
 
         const row = document.createElement('div');
         row.className = `flex justify-between items-center p-2 rounded-lg ${isWinner ? 'bg-amber-950/40 border border-amber-600' : (isCaught ? 'bg-rose-950/40 border border-rose-800' : 'bg-emerald-950/40 border border-emerald-800')}`;
@@ -1242,10 +1356,10 @@
           statusSub = '🚗 Getaway Driver! Emptied hand first & banked full stash.';
         } else if (isCaught) {
           statusSub = (caughtPlayers.length > 1)
-            ? `🚨 CAUGHT! Tied for most Contraband (${redCards} Red${holdsArtifact ? ', stuck with 🗿 Artifact' : ''})! Took the fall (0 pts).`
-            : `🚨 CAUGHT! Held the most Contraband (${redCards} Red${holdsArtifact ? ', stuck with 🗿 Artifact' : ''})! Primary suspect (0 pts).`;
+            ? `🚨 CAUGHT! Tied for most Contraband (${redCards} Red)! Took the fall (0 pts).`
+            : `🚨 CAUGHT! Held the most Contraband (${redCards} Red)! Primary suspect (0 pts).`;
         } else if (redCards > 0) {
-          statusSub = `🛡️ EVADED ARREST! Held ${redCards} Red${holdsArtifact ? ' (🗿 Artifact)' : ''}, but avoided having the most (Leader had ${maxRed})! Banked stash (+${ptsEarned} pts).`;
+          statusSub = `🛡️ EVADED ARREST! Held ${redCards} Red, but avoided having the most (Leader had ${maxRed})! Banked stash (+${ptsEarned} pts).`;
         } else {
           statusSub = `✨ CLEAN! 0 Red Contraband${greenCards > 0 ? ` (${greenCards} Wilds)` : ''}! Banked stash (+${ptsEarned} pts).`;
         }
@@ -1256,7 +1370,6 @@
               <span>${getPlayerName(p)}</span>
               ${isWinner ? '<span class="text-[8px] bg-amber-500/20 text-amber-300 px-1 py-0.2 rounded font-black">GETAWAY 🚗</span>' : ''}
               ${isCaught ? '<span class="text-[8px] bg-rose-500/20 text-rose-300 px-1 py-0.2 rounded font-black">CAUGHT RED-HANDED 🚨</span>' : ''}
-              ${holdsArtifact ? '<span class="text-[8px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-1 py-0.2 rounded font-black">🗿 ARTIFACT</span>' : ''}
               ${!isWinner && !isCaught && redCards > 0 ? '<span class="text-[8px] bg-emerald-500/20 text-emerald-300 px-1 py-0.2 rounded font-black">EVADED ARREST 🛡️</span>' : ''}
               ${!isWinner && !isCaught && redCards === 0 ? '<span class="text-[8px] bg-blue-500/20 text-blue-300 px-1 py-0.2 rounded font-black">CLEAN ✨</span>' : ''}
             </div>
@@ -1366,27 +1479,17 @@
       if (currentPlayer !== 0 || playerStep !== 'PASS' || selectedPassCardIndex === null) return;
       const targetP = getTargetNeighbor(0);
       const passedCard = hands[0].splice(selectedPassCardIndex, 1)[0];
-      hands[targetP].push(passedCard);
 
       if (!playerMadeMeldThisTurn) {
         consecutiveTurnsWithoutMeld++;
       }
 
       selectedPassCardIndex = null;
-      if (passedCard.isArtifact) {
-        logAnnouncement(`🔥 You passed the PRICELESS ARTIFACT to ${getPlayerName(targetP)}! Hot potato passed!`);
-      } else {
-        logAnnouncement(`You passed a card to ${getPlayerName(targetP)}!`);
-      }
       updateUI();
 
-      if (checkWinCondition(0)) return;
-      if (deck.length === 0 && consecutiveTurnsWithoutMeld >= numPlayers) {
-        showRoundModal(-1, 'STANDOFF');
-        return;
-      }
-
-      advanceTurn();
+      executePassCard(0, targetP, passedCard, () => {
+        advanceTurn();
+      });
     };
 
     document.getElementById('mode-4p-btn').onclick = () => setGameMode('4P');

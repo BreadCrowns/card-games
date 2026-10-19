@@ -10,16 +10,14 @@ namespace CaughtRedHandedSimulation
         public string Color; // BLUE, RED, GREEN
         public int Val;
         public bool IsGrand;
-        public bool IsArtifact;
         public bool IsWild;
 
-        public Card(string item, string color, int val, bool isGrand, bool isArtifact, bool isWild)
+        public Card(string item, string color, int val, bool isGrand, bool isWild)
         {
             Item = item;
             Color = color;
             Val = val;
             IsGrand = isGrand;
-            IsArtifact = isArtifact;
             IsWild = isWild;
         }
     }
@@ -38,8 +36,7 @@ namespace CaughtRedHandedSimulation
         public bool Standoff;
         public int Turns;
         public int CameraFlips;
-        public int ArtifactPasses;
-        public bool ArtifactHolderBusted;
+        public int InterceptCount;
         public int CardsLeftInDeck;
         public int BustedPlayerCount;
         public int EvadedPlayerCount;
@@ -64,40 +61,37 @@ namespace CaughtRedHandedSimulation
             foreach (var item in pettyItems)
             {
                 for (int i = 0; i < 4; i++)
-                    deck.Add(new Card(item, "BLUE", 5, false, false, false));
+                    deck.Add(new Card(item, "BLUE", 5, false, false));
             }
 
             // Petty Red (2 copies each = 8)
             foreach (var item in pettyItems)
             {
                 for (int i = 0; i < 2; i++)
-                    deck.Add(new Card(item, "RED", 10, false, false, false));
+                    deck.Add(new Card(item, "RED", 10, false, false));
             }
 
             if (!is2P)
             {
                 // Grand Blue: Painting 4, Gold 4, Crown 3, Relic 3 = 14
-                for (int i = 0; i < 4; i++) deck.Add(new Card("Painting", "BLUE", 5, true, false, false));
-                for (int i = 0; i < 4; i++) deck.Add(new Card("Gold", "BLUE", 5, true, false, false));
-                for (int i = 0; i < 3; i++) deck.Add(new Card("Crown", "BLUE", 5, true, false, false));
-                for (int i = 0; i < 3; i++) deck.Add(new Card("Relic", "BLUE", 5, true, false, false));
+                for (int i = 0; i < 4; i++) deck.Add(new Card("Painting", "BLUE", 5, true, false));
+                for (int i = 0; i < 4; i++) deck.Add(new Card("Gold", "BLUE", 5, true, false));
+                for (int i = 0; i < 3; i++) deck.Add(new Card("Crown", "BLUE", 5, true, false));
+                for (int i = 0; i < 3; i++) deck.Add(new Card("Relic", "BLUE", 5, true, false));
 
                 // Grand Red (2 copies each = 8)
                 foreach (var item in grandItems)
                 {
                     for (int i = 0; i < 2; i++)
-                        deck.Add(new Card(item, "RED", 15, true, false, false));
+                        deck.Add(new Card(item, "RED", 15, true, false));
                 }
             }
 
-            // Priceless Artifact (Red Contraband, unpairable)
-            deck.Add(new Card("Artifact", "RED", 0, true, true, false));
-
-            // Green Wilds: 8 in 4P, 4 in 2P
+            // Green Wilds: 8 in 4P (54 total), 4 in 2P (28 total)
             int wildCount = is2P ? 4 : 8;
             for (int i = 0; i < wildCount; i++)
             {
-                deck.Add(new Card("Wild", "GREEN", 0, false, false, true));
+                deck.Add(new Card("Wild", "GREEN", 0, false, true));
             }
 
             // Shuffle Fisher-Yates
@@ -117,98 +111,94 @@ namespace CaughtRedHandedSimulation
             var blues = hand.Where(c => c.Color == "BLUE").ToList();
             if (blues.Count == 0) return null;
 
-            var reds = hand.Where(c => c.Color == "RED" && !c.IsArtifact).ToList();
+            var reds = hand.Where(c => c.Color == "RED").ToList();
             var greens = hand.Where(c => c.Color == "GREEN").ToList();
 
-            // 1. Red + Matching Blue (highest points: 20 or 15)
-            // Prioritize Grand Red (20 pts) then Petty Red (15 pts)
-            var redPairs = new List<PairResult>();
+            var candidates = new List<PairResult>();
+
+            // 1. Red + Blue
             foreach (var r in reds)
             {
-                var matchingBlue = blues.FirstOrDefault(b => b.Item == r.Item);
-                if (matchingBlue != null)
+                var matchBlue = blues.FirstOrDefault(b => b.Item == r.Item);
+                if (matchBlue != null)
                 {
-                    redPairs.Add(new PairResult
+                    candidates.Add(new PairResult
                     {
                         C1 = r,
-                        C2 = matchingBlue,
-                        Points = r.Val + matchingBlue.Val,
+                        C2 = matchBlue,
+                        Points = matchBlue.Val + r.Val,
                         FlipsCamera = false
                     });
                 }
             }
-            if (redPairs.Count > 0)
-            {
-                return redPairs.OrderByDescending(p => p.Points).First();
-            }
 
-            // 2. Blue + Blue (10 pts)
-            var blueGroups = blues.GroupBy(b => b.Item).Where(g => g.Count() >= 2).ToList();
-            if (blueGroups.Count > 0)
+            // 2. Blue + Blue
+            var blueGroups = blues.GroupBy(b => b.Item);
+            foreach (var grp in blueGroups)
             {
-                var grp = blueGroups.First().ToList();
-                return new PairResult
+                var list = grp.ToList();
+                if (list.Count >= 2)
                 {
-                    C1 = grp[0],
-                    C2 = grp[1],
-                    Points = 10,
-                    FlipsCamera = false
-                };
+                    candidates.Add(new PairResult
+                    {
+                        C1 = list[0],
+                        C2 = list[1],
+                        Points = 10,
+                        FlipsCamera = false
+                    });
+                }
             }
 
-            // 3. Green Wild + Any Blue (5 pts & flips camera)
+            // 3. Green Wild + Blue
             if (greens.Count > 0 && blues.Count > 0)
             {
-                return new PairResult
+                candidates.Add(new PairResult
                 {
                     C1 = greens[0],
                     C2 = blues[0],
                     Points = 5,
                     FlipsCamera = true
-                };
+                });
             }
 
-            return null;
+            if (candidates.Count == 0) return null;
+
+            // Prioritize highest points (Red 20/15 > Blue 10 > Wild 5)
+            return candidates.OrderByDescending(c => c.Points).First();
         }
 
-        static int ChooseCardToPass(List<Card> hand, int minOppHand)
+        static int ChooseCardToPass(List<Card> hand, int minOpponentHand)
         {
             int bestIdx = 0;
-            double maxUrgency = -9999;
+            double maxScore = -9999;
 
             for (int i = 0; i < hand.Count; i++)
             {
                 var c = hand[i];
                 double score = 0;
 
-                if (c.IsArtifact)
+                if (c.Color == "RED")
                 {
-                    // Priceless Artifact cannot be melded and adds to Red bust count
-                    score = 200; // Top pass urgency!
-                }
-                else if (c.Color == "RED")
-                {
-                    score = 70;
-                    if (minOppHand <= 3) score += (4 - minOppHand) * 35;
+                    score += 50;
+                    if (minOpponentHand <= 3) score += (4 - minOpponentHand) * 30;
                     score += (c.Val == 15 ? 15 : 5);
                 }
                 else if (c.Color == "GREEN")
                 {
-                    score = 25;
-                    int bCount = hand.Count(x => x.Color == "BLUE");
-                    int gCount = hand.Count(x => x.Color == "GREEN");
-                    if (bCount == 0 && gCount >= 2) score += 20;
+                    score += 25;
+                    int blues = hand.Count(x => x.Color == "BLUE");
+                    if (blues == 0) score += 20;
                 }
                 else if (c.Color == "BLUE")
                 {
-                    score = 15;
-                    int sameItem = hand.Count(x => x.Color == "BLUE" && x.Item == c.Item);
-                    if (sameItem >= 2) score -= 40; // Protect pairs
+                    score += 15;
+                    int sameItemBlues = hand.Count(x => x.Color == "BLUE" && x.Item == c.Item);
+                    if (sameItemBlues >= 2) score -= 35;
                 }
 
-                if (score > maxUrgency)
+                if (score > maxScore)
                 {
-                    maxUrgency = score;
+                    maxScore = score;
                     bestIdx = i;
                 }
             }
@@ -216,14 +206,13 @@ namespace CaughtRedHandedSimulation
             return bestIdx;
         }
 
-        static RoundStats SimulateRound(int numPlayers, int starter)
+        static RoundStats SimulateRound(bool is2P, int starter)
         {
-            bool is2P = (numPlayers == 2);
+            int numPlayers = is2P ? 2 : 4;
             var deck = BuildDeck(is2P);
 
             var hands = new List<List<Card>>();
             var stashes = new List<List<int>>();
-
             for (int p = 0; p < numPlayers; p++)
             {
                 hands.Add(new List<Card>());
@@ -235,8 +224,9 @@ namespace CaughtRedHandedSimulation
             {
                 for (int p = 0; p < numPlayers; p++)
                 {
-                    hands[p].Add(deck[deck.Count - 1]);
+                    var card = deck[deck.Count - 1];
                     deck.RemoveAt(deck.Count - 1);
+                    hands[p].Add(card);
                 }
             }
 
@@ -245,7 +235,7 @@ namespace CaughtRedHandedSimulation
             int turns = 0;
             int consecutiveNoMeld = 0;
             int cameraFlips = 0;
-            int artifactPasses = 0;
+            int interceptCount = 0;
             int winner = -1;
             bool getaway = false;
             bool standoff = false;
@@ -317,11 +307,34 @@ namespace CaughtRedHandedSimulation
 
                     var passed = hands[currPlayer][passIdx];
                     hands[currPlayer].RemoveAt(passIdx);
-                    hands[targetP].Add(passed);
 
-                    if (passed.IsArtifact)
+                    // RECIPIENT ADVANTAGE (THE INTERCEPT):
+                    // If passed card is RED, check if targetP holds matching BLUE card:
+                    Card matchBlue = null;
+                    if (passed.Color == "RED")
                     {
-                        artifactPasses++;
+                        matchBlue = hands[targetP].FirstOrDefault(c => c.Color == "BLUE" && c.Item == passed.Item);
+                    }
+
+                    if (matchBlue != null)
+                    {
+                        // Target intercepts!
+                        hands[targetP].Remove(matchBlue);
+                        stashes[targetP].Add(matchBlue.Val + passed.Val);
+                        interceptCount++;
+                        consecutiveNoMeld = 0;
+
+                        // Check if target emptied hand by intercepting!
+                        if (hands[targetP].Count == 0)
+                        {
+                            winner = targetP;
+                            getaway = true;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        hands[targetP].Add(passed);
                     }
                 }
 
@@ -350,7 +363,6 @@ namespace CaughtRedHandedSimulation
                     currPlayer = (currPlayer + direction + 4) % 4;
                 }
 
-                // Safety circuit breaker
                 if (turns > 300)
                 {
                     standoff = true;
@@ -358,63 +370,52 @@ namespace CaughtRedHandedSimulation
                 }
             }
 
-            // End of round: The Escape Check / Most Red Bust
             var stats = new RoundStats();
             stats.GetawayEscape = getaway;
             stats.Standoff = standoff;
             stats.Turns = turns;
             stats.CameraFlips = cameraFlips;
-            stats.ArtifactPasses = artifactPasses;
+            stats.InterceptCount = interceptCount;
             stats.CardsLeftInDeck = deck.Count;
             stats.WinnerSeat = winner;
 
+            // Fall Guy Scoring check
             int[] redCounts = new int[numPlayers];
-            int artifactHolder = -1;
-
             for (int p = 0; p < numPlayers; p++)
             {
                 redCounts[p] = hands[p].Count(c => c.Color == "RED");
-                if (hands[p].Any(c => c.IsArtifact))
-                {
-                    artifactHolder = p;
-                }
                 stats.RedCounts[p] = redCounts[p];
             }
 
             int maxRed = redCounts.Max();
 
-            int bustedCount = 0;
-            int evadedCount = 0;
-            int cleanCount = 0;
+            int busted = 0;
+            int evaded = 0;
+            int clean = 0;
 
             for (int p = 0; p < numPlayers; p++)
             {
-                int red = redCounts[p];
-                int stash = stashes[p].Sum();
+                int rCount = redCounts[p];
+                int stashPts = stashes[p].Sum();
 
-                if (red == maxRed && maxRed > 0)
+                bool isCaught = (rCount == maxRed && maxRed > 0);
+
+                if (isCaught)
                 {
-                    // Bust!
                     stats.FinalScores[p] = 0;
-                    bustedCount++;
+                    busted++;
                 }
                 else
                 {
-                    // Evaded arrest or Clean
-                    stats.FinalScores[p] = stash;
-                    if (red > 0) evadedCount++;
-                    else cleanCount++;
+                    stats.FinalScores[p] = stashPts;
+                    if (rCount > 0) evaded++;
+                    else clean++;
                 }
             }
 
-            stats.BustedPlayerCount = bustedCount;
-            stats.EvadedPlayerCount = evadedCount;
-            stats.CleanPlayerCount = cleanCount;
-
-            if (artifactHolder != -1)
-            {
-                stats.ArtifactHolderBusted = (redCounts[artifactHolder] == maxRed && maxRed > 0);
-            }
+            stats.BustedPlayerCount = busted;
+            stats.EvadedPlayerCount = evaded;
+            stats.CleanPlayerCount = clean;
 
             return stats;
         }
@@ -423,86 +424,119 @@ namespace CaughtRedHandedSimulation
         {
             Console.WriteLine("======================================================================");
             Console.WriteLine("    CAUGHT RED-HANDED: MONTE CARLO SIMULATION (5,000 ROUNDS)");
-            Console.WriteLine("    Deck: 55 Play Cards (30 Blue, 16 Red, 8 Wilds, 1 Priceless Artifact)");
+            Console.WriteLine("    Deck: 54 Play Cards (30 Blue, 16 Red, 8 Wilds)");
+            Console.WriteLine("    Mechanic: Face-Up Passing & Recipient Advantage (The Intercept)");
             Console.WriteLine("    Penalty Rule: Only player(s) with MOST Red Contraband bust (0 pts)");
             Console.WriteLine("======================================================================\n");
 
             int numRounds = 5000;
-            var rounds4P = new List<RoundStats>();
 
-            for (int r = 0; r < numRounds; r++)
+            // --- 4-PLAYER HEIST ---
+            int escapes4P = 0;
+            int standoffs4P = 0;
+            long totalTurns4P = 0;
+            long totalFlips4P = 0;
+            long totalIntercepts4P = 0;
+            long totalCardsLeft4P = 0;
+            long totalBusted4P = 0;
+            long totalEvaded4P = 0;
+            long totalClean4P = 0;
+            long totalScoreSurvivor4P = 0;
+            long totalSurvivors4P = 0;
+            int[] seatEscapes4P = new int[4];
+
+            for (int i = 0; i < numRounds; i++)
             {
-                rounds4P.Add(SimulateRound(4, r % 4));
+                int starter = i % 4;
+                var res = SimulateRound(false, starter);
+
+                if (res.GetawayEscape) escapes4P++;
+                if (res.Standoff) standoffs4P++;
+                totalTurns4P += res.Turns;
+                totalFlips4P += res.CameraFlips;
+                totalIntercepts4P += res.InterceptCount;
+                totalCardsLeft4P += res.CardsLeftInDeck;
+                totalBusted4P += res.BustedPlayerCount;
+                totalEvaded4P += res.EvadedPlayerCount;
+                totalClean4P += res.CleanPlayerCount;
+
+                if (res.WinnerSeat >= 0 && res.WinnerSeat < 4)
+                {
+                    seatEscapes4P[res.WinnerSeat]++;
+                }
+
+                for (int p = 0; p < 4; p++)
+                {
+                    if (res.FinalScores[p] > 0)
+                    {
+                        totalScoreSurvivor4P += res.FinalScores[p];
+                        totalSurvivors4P++;
+                    }
+                }
             }
 
-            double getawayPct = rounds4P.Count(r => r.GetawayEscape) * 100.0 / numRounds;
-            double standoffPct = rounds4P.Count(r => r.Standoff) * 100.0 / numRounds;
-            double avgTurns = rounds4P.Average(r => r.Turns);
-            double avgDeckLeft = rounds4P.Average(r => r.CardsLeftInDeck);
-            double avgFlips = rounds4P.Average(r => r.CameraFlips);
-            double avgArtifactPasses = rounds4P.Average(r => r.ArtifactPasses);
-            double artifactCurseRate = rounds4P.Count(r => r.ArtifactHolderBusted) * 100.0 / numRounds;
-            double avgBusted = rounds4P.Average(r => r.BustedPlayerCount);
-            double avgEvaded = rounds4P.Average(r => r.EvadedPlayerCount);
-            double avgClean = rounds4P.Average(r => r.CleanPlayerCount);
+            double avgTurns4P = (double)totalTurns4P / numRounds;
+            double avgFlips4P = (double)totalFlips4P / numRounds;
+            double avgIntercepts4P = (double)totalIntercepts4P / numRounds;
+            double escapePct4P = (double)escapes4P / numRounds * 100.0;
+            double standoffPct4P = (double)standoffs4P / numRounds * 100.0;
+            double avgCardsLeft4P = (double)totalCardsLeft4P / numRounds;
+            double avgBusted4P = (double)totalBusted4P / numRounds;
+            double avgEvaded4P = (double)totalEvaded4P / numRounds;
+            double avgClean4P = (double)totalClean4P / numRounds;
+            double avgScoreSurvivor4P = totalSurvivors4P > 0 ? (double)totalScoreSurvivor4P / totalSurvivors4P : 0;
 
-            double avgScoreBusted = 0;
-            double avgScoreEvaded = rounds4P.SelectMany(r => r.FinalScores).Where(s => s > 0).DefaultIfEmpty(0).Average();
-
-            Console.WriteLine(">>> 4-PLAYER HEIST (55 Cards, Target 300 pts) <<<");
+            Console.WriteLine(">>> 4-PLAYER HEIST (54 Cards, Target 300 pts) <<<");
             Console.WriteLine(string.Format("• Total Simulated Rounds:      {0:N0}", numRounds));
-            Console.WriteLine(string.Format("• Getaway Escapes (Empty Hand):{0:F2}% (Natural win)", getawayPct));
-            Console.WriteLine(string.Format("• Empty Locker Standoffs:      {0:F2}% (Dry deck resolution)", standoffPct));
-            Console.WriteLine(string.Format("• Average Turns per Round:     {0:F1} turns ({1:F1} turns/player)", avgTurns, avgTurns / 4.0));
-            Console.WriteLine(string.Format("• Average Cards Left in Deck:  {0:F1} cards remaining", avgDeckLeft));
-            Console.WriteLine(string.Format("• Camera Flips per Round:      {0:F2} flips (Active direction churn)", avgFlips));
-            Console.WriteLine();
+            Console.WriteLine(string.Format("• Getaway Escapes (Empty Hand):{0:F2}% (Natural win)", escapePct4P));
+            Console.WriteLine(string.Format("• Empty Locker Standoffs:      {0:F2}% (Dry deck resolution)", standoffPct4P));
+            Console.WriteLine(string.Format("• Average Turns per Round:     {0:F1} turns ({1:F1} turns/player)", avgTurns4P, avgTurns4P / 4.0));
+            Console.WriteLine(string.Format("• Average Cards Left in Deck:  {0:F1} cards remaining", avgCardsLeft4P));
+            Console.WriteLine(string.Format("• Camera Flips per Round:      {0:F2} flips (Active direction churn)", avgFlips4P));
+            Console.WriteLine(string.Format("• ⚡ INTERCEPTS PER ROUND:       {0:F2} intercepts (Snap matches on face-up pass!)", avgIntercepts4P));
 
-            Console.WriteLine(">>> 🗿 PRICELESS ARTIFACT DYNAMICS <<<");
-            Console.WriteLine(string.Format("• Average Artifact Passes:     {0:F2} passes / round (Circulates as hot potato!)", avgArtifactPasses));
-            Console.WriteLine(string.Format("• Artifact Curse Rate:         {0:F2}% of rounds, holder had MOST Red & BUSTED!", artifactCurseRate));
-            Console.WriteLine(string.Format("• Artifact Evade Rate:         {0:F2}% holder survived because opponent had MORE red!", 100.0 - artifactCurseRate));
-            Console.WriteLine();
+            Console.WriteLine("\n>>> 🚨 FALL GUY & ARREST OUTCOMES <<<");
+            Console.WriteLine(string.Format("• Average Busted Players:      {0:F2} players / round (Took the fall for most red)", avgBusted4P));
+            Console.WriteLine(string.Format("• Average Evaded Players:      {0:F2} players / round (Held red, but avoided bust!)", avgEvaded4P));
+            Console.WriteLine(string.Format("• Average Clean Players:       {0:F2} players / round (Zero contraband held)", avgClean4P));
+            Console.WriteLine(string.Format("• Avg Stash Points (Survivors):{0:F1} pts / round", avgScoreSurvivor4P));
 
-            Console.WriteLine(">>> 🚨 FALL GUY & ARREST OUTCOMES <<<");
-            Console.WriteLine(string.Format("• Average Busted Players:      {0:F2} players / round (Took the fall for most red)", avgBusted));
-            Console.WriteLine(string.Format("• Average Evaded Players:      {0:F2} players / round (Held red, but avoided bust!)", avgEvaded));
-            Console.WriteLine(string.Format("• Average Clean Players:       {0:F2} players / round (Zero contraband held)", avgClean));
-            Console.WriteLine(string.Format("• Avg Stash Points (Survivors):{0:F1} pts / round", avgScoreEvaded));
-            Console.WriteLine();
-
-            // Seat Position Balance Check
-            Console.WriteLine(">>> 🪑 SEAT POSITION BALANCE (First-Player Bias Check) <<<");
+            Console.WriteLine("\n>>> 🪑 SEAT POSITION BALANCE (First-Player Bias Check) <<<");
             for (int s = 0; s < 4; s++)
             {
-                int wins = rounds4P.Count(r => r.WinnerSeat == s);
-                double winPct = wins * 100.0 / rounds4P.Count(r => r.GetawayEscape);
-                Console.WriteLine(string.Format("• Seat {0} Escape Rate:         {1:F2}% of getaway escapes", s + 1, winPct));
+                double pct = escapes4P > 0 ? (double)seatEscapes4P[s] / escapes4P * 100.0 : 0;
+                Console.WriteLine(string.Format("• Seat {0} Escape Rate:         {1:F2}% of getaway escapes", s + 1, pct));
             }
-            Console.WriteLine();
 
-            // 2-Player Duel Simulation
-            Console.WriteLine(">>> ⚔️ 2-PLAYER DUEL C1 (29 Cards, Target 200 pts) <<<");
-            var rounds2P = new List<RoundStats>();
-            for (int r = 0; r < numRounds; r++)
+            // --- 2-PLAYER DUEL C1 ---
+            int escapes2P = 0;
+            int standoffs2P = 0;
+            long totalTurns2P = 0;
+            long totalIntercepts2P = 0;
+
+            for (int i = 0; i < numRounds; i++)
             {
-                rounds2P.Add(SimulateRound(2, r % 2));
+                int starter = i % 2;
+                var res = SimulateRound(true, starter);
+
+                if (res.GetawayEscape) escapes2P++;
+                if (res.Standoff) standoffs2P++;
+                totalTurns2P += res.Turns;
+                totalIntercepts2P += res.InterceptCount;
             }
 
-            double getaway2P = rounds2P.Count(r => r.GetawayEscape) * 100.0 / numRounds;
-            double standoff2P = rounds2P.Count(r => r.Standoff) * 100.0 / numRounds;
-            double avgTurns2P = rounds2P.Average(r => r.Turns);
-            double avgFlips2P = rounds2P.Average(r => r.CameraFlips);
-            double artifactPasses2P = rounds2P.Average(r => r.ArtifactPasses);
-            double artifactCurse2P = rounds2P.Count(r => r.ArtifactHolderBusted) * 100.0 / numRounds;
+            double avgTurns2P = (double)totalTurns2P / numRounds;
+            double escapePct2P = (double)escapes2P / numRounds * 100.0;
+            double standoffPct2P = (double)standoffs2P / numRounds * 100.0;
+            double avgIntercepts2P = (double)totalIntercepts2P / numRounds;
 
-            Console.WriteLine(string.Format("• Getaway Escapes:             {0:F2}%", getaway2P));
-            Console.WriteLine(string.Format("• Standoff Rate:               {0:F2}%", standoff2P));
+            Console.WriteLine("\n>>> ⚔️ 2-PLAYER DUEL C1 (28 Cards, Target 200 pts) <<<");
+            Console.WriteLine(string.Format("• Getaway Escapes:             {0:F2}%", escapePct2P));
+            Console.WriteLine(string.Format("• Standoff Rate:               {0:F2}%", standoffPct2P));
             Console.WriteLine(string.Format("• Average Turns per Round:     {0:F1} turns ({1:F1} turns/player)", avgTurns2P, avgTurns2P / 2.0));
-            Console.WriteLine(string.Format("• Artifact Hot-Potato Passes:  {0:F2} passes / duel round", artifactPasses2P));
-            Console.WriteLine(string.Format("• Artifact Curse Rate:         {0:F2}% bust rate when holding artifact", artifactCurse2P));
-            Console.WriteLine();
-            Console.WriteLine("Simulation complete.");
+            Console.WriteLine(string.Format("• ⚡ Intercepts per Duel Round:  {0:F2} intercepts", avgIntercepts2P));
+
+            Console.WriteLine("\nSimulation complete.\n");
         }
     }
 }

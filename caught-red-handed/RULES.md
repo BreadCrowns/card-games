@@ -70,9 +70,24 @@ You may lay at most **1 pair** per turn into your front-of-table Stash. A Blue c
 
 > *Illegal Pairs: Red + Red (cannot launder contraband with contraband), Green + Green (fakes need real items), and Red + Green (cannot counterfeit contraband).*
 
-### Step 3: Pass in Direction of Play
-Choose **1 card** from your hand and slide it face-down to your neighbor in the active direction (Left if Clockwise, Right if Counter-Clockwise).  
+### Step 3: Pass Face Up (Direction of Play)
+Choose **1 card** from your hand and pass it **FACE UP** to your neighbor in the active direction (Left if Clockwise, Right if Counter-Clockwise).  
+* **Full Transparency**: Passing face-up gives all players at the table a glimpse of what you are dumping!
 * **Passing your last card is 100% legal!** If passing leaves your hand empty, you just planted evidence on your neighbor and emptied your hand to trigger the getaway!
+
+---
+
+### ⚡ The Recipient's Advantage: "The Intercept"
+Passing hot contraband carries a huge tactical risk!
+
+If you are handed a **Red Contraband card face up**, and you **already have the matching Blue card in your hand**:
+1. **Before accepting that Red card into your hand**, you may declare an **INTERCEPT**!
+2. Reveal your matching Blue card from your hand and pair it immediately with the incoming Red card.
+3. Bank the pair into your Stash right away (+15 points for Petty, +20 points for Grand)!
+4. The dangerous Red card **never touches your hand**!
+5. **Then, take your normal turn** (Draw 1, optional Meld 1, Pass 1).
+
+*(If you do not have the matching Blue card, or choose not to reveal it, simply pick up the passed card into your hand as normal before starting your turn).*
 
 ---
 
