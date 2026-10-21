@@ -66,24 +66,28 @@ TYPE A: EDGE-SEAM (Inward Cut)           TYPE B: CENTER-SEAM (Franken-Card)
 
 On your turn, you must play **1 card** from your hand if you have a legal match.
 
-### The Golden Rule: Color-to-Color
-You can attach your card to **any exposed half of the matching background color** on the table. You may play it in one of two ways:
+### The Golden Rules of Placement
+
+To play a card legally, your card must satisfy **TWO strict conditions**:
+1. **Color MUST Match:** Red must touch Red, Blue must touch Blue, etc. (Wildcards match any color).
+2. **Front MUST Align with Rear:** A **FRONT** must always connect to a **REAR** (bumper-to-bumper)! You can **never** place Front-to-Front or Rear-to-Rear.
 
 ```
 ────────────────────────────────────────────────────────────────────────
-PLAY MOVE 1: ADJACENT (Expand the Street)
+MOVE OPTION 1: ADJACENT (Expand the Street)
 ────────────────────────────────────────────────────────────────────────
-Place your card side-by-side against an open matching color with an Edge-Seam.
-• Red meets Red at the edge.
-• The road spreads out across the table, creating intersections and turns.
+Place your card side-by-side in the street lane:
+• Snap your REAR onto the FRONT of a matching color car ahead of you.
+• OR snap your FRONT onto the REAR of a matching color car behind you.
+• Result: Extends the road line across the table!
 
 ────────────────────────────────────────────────────────────────────────
-PLAY MOVE 2: OVERLAP (Pile Up the Jam)
+MOVE OPTION 2: STACKING (Pile Up the Jam)
 ────────────────────────────────────────────────────────────────────────
-Drop your matching color half directly ON TOP of an exposed matching half.
-• Red covers Red.
-• The covered half is buried. Your other half extends out into a new space!
-• Keeps the traffic jam compact and builds funny multi-level Franken-cars!
+Drop your card directly ON TOP of an existing car in the street:
+• Your REAR stacks directly onto the matching FRONT of the car below it!
+• Stacks build physically 2, 3, or more cards high, transforming the car!
+• Result: Keeps the game compact and creates awesome physical 3D pileups!
 ────────────────────────────────────────────────────────────────────────
 ```
 

@@ -11,39 +11,51 @@
     .font-cartoon { font-family: 'Fredoka One', cursive; }
     .font-body { font-family: 'Nunito', sans-serif; }
     
-    .road-grid {
+    .street-board {
       background-color: #0b1120;
       background-image: 
         radial-gradient(ellipse at center, #1e293b 0%, #060911 100%),
-        linear-gradient(to right, rgba(234, 179, 8, 0.2) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-      background-size: 100% 100%, 120px 120px, 40px 40px;
+        linear-gradient(to right, rgba(234, 179, 8, 0.18) 2px, transparent 2px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      background-size: 100% 100%, 140px 140px, 40px 40px;
     }
 
-    .car-card-shadow {
-      box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.6), 0 4px 6px -2px rgba(0, 0, 0, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.35);
+    /* Stacking Elevation Shadows */
+    .stack-layer-0 {
+      box-shadow: 0 6px 14px rgba(0,0,0,0.6);
+      z-index: 10;
+    }
+    .stack-layer-1 {
+      box-shadow: 0 14px 26px rgba(0,0,0,0.7), 0 0 0 2px rgba(255,255,255,0.2);
+      transform: translateY(-6px);
+      z-index: 20;
+    }
+    .stack-layer-2 {
+      box-shadow: 0 20px 34px rgba(0,0,0,0.85), 0 0 0 3px rgba(250,204,21,0.5);
+      transform: translateY(-12px);
+      z-index: 30;
     }
 
-    .slot-glow {
-      animation: pulseSlot 1.2s infinite alternate ease-in-out;
+    .pulse-target {
+      animation: pulseTargetAnim 1.2s infinite alternate ease-in-out;
     }
-    @keyframes pulseSlot {
-      0% { transform: scale(0.97); box-shadow: 0 0 10px rgba(52, 211, 153, 0.4); border-color: rgba(52, 211, 153, 0.6); }
-      100% { transform: scale(1.02); box-shadow: 0 0 28px rgba(52, 211, 153, 0.95); border-color: rgba(52, 211, 153, 1); }
+    @keyframes pulseTargetAnim {
+      0% { transform: scale(0.97); box-shadow: 0 0 10px rgba(52, 211, 153, 0.5); }
+      100% { transform: scale(1.03); box-shadow: 0 0 30px rgba(52, 211, 153, 1); }
     }
 
-    .turbo-glow {
-      animation: turboFlash 0.7s infinite alternate;
+    .pulse-stack-target {
+      animation: pulseStackAnim 1.2s infinite alternate ease-in-out;
     }
-    @keyframes turboFlash {
-      0% { box-shadow: 0 0 12px #38bdf8; }
-      100% { box-shadow: 0 0 35px #0284c7, 0 0 50px #38bdf8; }
+    @keyframes pulseStackAnim {
+      0% { transform: translateY(-8px) scale(0.97); box-shadow: 0 0 12px rgba(234, 179, 8, 0.6); }
+      100% { transform: translateY(-14px) scale(1.03); box-shadow: 0 0 35px rgba(234, 179, 8, 1); }
     }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-body select-none">
 
-  <!-- TOP HEADER / STATUS -->
+  <!-- APP BAR -->
   <header class="bg-slate-900 border-b border-slate-800 px-4 py-2.5 flex items-center justify-between sticky top-0 z-40 shadow-lg">
     <div class="flex items-center gap-3">
       <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-red-600 via-amber-500 to-yellow-400 flex items-center justify-center text-2xl shadow-lg shadow-amber-500/20">
@@ -53,20 +65,20 @@
         <h1 class="text-xl font-cartoon tracking-wide text-amber-400 drop-shadow flex items-center gap-2">
           CAR DOMINOES <span class="text-xs bg-red-600 text-white font-body px-2.5 py-0.5 rounded-full uppercase tracking-wider font-black">Traffic Slam!</span>
         </h1>
-        <p class="text-[11px] text-slate-400 font-bold">1 Whole Car Per Card • Match Background Colors • Ages 5+</p>
+        <p class="text-[11px] text-slate-400 font-bold">Rule: Match Color + Front Must Align With Rear • Stack on top or place adjacent</p>
       </div>
     </div>
 
     <!-- Stats & Actions -->
     <div class="flex items-center gap-3">
       <button id="guide-toggle-btn" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-amber-300 rounded-xl text-xs font-bold border border-amber-500/30 flex items-center gap-1.5 transition">
-        <span>📖 How To Play</span>
+        <span>📖 Rules</span>
       </button>
 
       <div class="bg-slate-950/80 px-3.5 py-1.5 rounded-xl border border-slate-800 text-xs flex items-center gap-3">
         <span>Junkyard: <b id="deck-count" class="text-amber-400 text-sm">0</b></span>
         <span class="text-slate-700">|</span>
-        <span>Scrap: <b id="scrap-count" class="text-emerald-400 text-sm">0</b></span>
+        <span>Scrap Pile: <b id="scrap-count" class="text-emerald-400 text-sm">0</b></span>
         <span class="text-slate-700">|</span>
         <span>Turn: <b id="turn-indicator" class="text-cyan-400 text-sm font-cartoon uppercase">Player 1</b></span>
       </div>
@@ -77,73 +89,73 @@
     </div>
   </header>
 
-  <!-- COLLAPSIBLE HOW TO PLAY DRAWER -->
+  <!-- HOW TO PLAY RULES DRAWER -->
   <div id="guide-drawer" class="hidden bg-slate-900 border-b-2 border-amber-500/30 px-6 py-4 transition-all">
     <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-      <div class="bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800 flex gap-3 items-center">
+      <div class="bg-slate-950/90 p-3.5 rounded-2xl border border-slate-800 flex gap-3 items-center">
         <div class="text-3xl shrink-0">🎨</div>
         <div>
-          <div class="font-cartoon text-amber-400 text-sm mb-0.5">1. Match Colors!</div>
-          <p class="text-slate-400 leading-snug">Every card shows a large car with <b>two colored halves</b>. Place your card touching or covering the <b>same color</b> (Red to Red, Blue to Blue)!</p>
+          <div class="font-cartoon text-amber-400 text-sm mb-0.5">1. Match Color + Front/Rear!</div>
+          <p class="text-slate-400 leading-snug">To connect, the <b>color must match</b> AND a <b>FRONT must touch a REAR</b>! (You can never put Front-to-Front or Rear-to-Rear).</p>
         </div>
       </div>
 
-      <div class="bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800 flex gap-3 items-center">
-        <div class="text-3xl shrink-0">🔧</div>
+      <div class="bg-slate-950/90 p-3.5 rounded-2xl border border-slate-800 flex gap-3 items-center">
+        <div class="text-3xl shrink-0">🥞</div>
         <div>
-          <div class="font-cartoon text-amber-400 text-sm mb-0.5">2. Big Franken-Cars</div>
-          <p class="text-slate-400 leading-snug">Most cards are crazy hybrid cars (e.g. Fire Truck Rear + Police Front). They fill the street with funny cartoon vehicles!</p>
+          <div class="font-cartoon text-amber-400 text-sm mb-0.5">2. Stack On Top or Place Beside</div>
+          <p class="text-slate-400 leading-snug">You can <b>STACK</b> your card directly on top of a matching car, or place it <b>ADJACENT</b> in the street lane!</p>
         </div>
       </div>
 
-      <div class="bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800 flex gap-3 items-center">
+      <div class="bg-slate-950/90 p-3.5 rounded-2xl border border-slate-800 flex gap-3 items-center">
         <div class="text-3xl shrink-0">⚡</div>
         <div>
           <div class="font-cartoon text-emerald-400 text-sm mb-0.5">3. True Match = Turbo Boost!</div>
-          <p class="text-slate-400 leading-snug">When you connect two halves of the <b>same real car</b>, it revs into the Scrap Pile and gives you an immediate <b>Bonus Play</b>!</p>
+          <p class="text-slate-400 leading-snug">When you align the Front & Rear of the <b>same real car</b>, it drives off into the Scrap Pile and gives you an extra play!</p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- MAIN PLAY AREA: TABLETOP TRAFFIC JAM & RACING COMMENTARY -->
+  <!-- MAIN PLAY AREA: TABLETOP STREET & SIDEBAR -->
   <div class="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
 
-    <!-- THE ASPHALT HIGHWAY (TABLETOP) -->
-    <main class="flex-1 relative road-grid p-6 overflow-auto flex flex-col items-center justify-start min-h-[460px]">
+    <!-- THE ASPHALT STREET BOARD -->
+    <main class="flex-1 relative street-board p-6 overflow-auto flex flex-col items-center justify-start min-h-[460px]">
       
-      <!-- Big Celebration Sound Banner -->
-      <div id="alarm-banner" class="hidden absolute top-4 z-40 px-6 py-2.5 rounded-2xl bg-gradient-to-r from-red-600 via-amber-500 to-emerald-500 text-white font-cartoon text-xl shadow-2xl animate-bounce border-2 border-white flex items-center gap-3">
+      <!-- Announcement Banner -->
+      <div id="alarm-banner" class="hidden absolute top-4 z-50 px-6 py-2.5 rounded-2xl bg-gradient-to-r from-red-600 via-amber-500 to-emerald-500 text-white font-cartoon text-xl shadow-2xl animate-bounce border-2 border-white flex items-center gap-3">
         <span class="text-3xl" id="alarm-icon">🚨</span>
         <span id="alarm-text">WOOP-WOOP! TRUE MATCH!</span>
       </div>
 
       <!-- Turbo Boost Notification -->
-      <div id="turbo-badge" class="hidden absolute top-16 z-40 px-5 py-2 rounded-full bg-cyan-400 text-slate-950 font-black text-xs uppercase tracking-widest shadow-xl turbo-glow flex items-center gap-2">
+      <div id="turbo-badge" class="hidden absolute top-16 z-50 px-5 py-2 rounded-full bg-cyan-400 text-slate-950 font-black text-xs uppercase tracking-widest shadow-xl animate-pulse flex items-center gap-2">
         <span>⚡ TURBO BOOST ACTIVATED! PLAY A 2ND CARD NOW!</span>
       </div>
 
-      <!-- Street Subtitle -->
-      <div class="w-full max-w-4xl flex items-center justify-between mb-4 px-2">
+      <!-- Street Header -->
+      <div class="w-full max-w-5xl flex items-center justify-between mb-4 px-2">
         <div class="flex items-center gap-2 text-xs font-black uppercase text-amber-400 tracking-wider">
           <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-          <span>The Traffic Jam (Tabletop Street)</span>
+          <span>The Traffic Jam (Click any card below to see where to place or stack)</span>
         </div>
         <div class="text-[11px] font-bold text-slate-400 bg-slate-900/90 px-3 py-1 rounded-full border border-slate-800" id="prompt-msg">
-          👇 Click any card in your hand below to preview legal plays
+          👇 Select a card from your hand below
         </div>
       </div>
 
-      <!-- Placed Cards on Street -->
-      <div id="traffic-table" class="w-full max-w-4xl min-h-[360px] bg-slate-900/40 backdrop-blur rounded-3xl border-2 border-dashed border-slate-800 p-6 flex flex-wrap gap-5 items-center justify-center transition-all">
-        <!-- Injected dynamically -->
+      <!-- Dynamic Street Tabletop -->
+      <div id="traffic-table" class="w-full max-w-5xl min-h-[380px] bg-slate-900/50 backdrop-blur rounded-3xl border-2 border-dashed border-slate-800 p-8 flex flex-wrap gap-8 items-center justify-center transition-all">
+        <!-- Cars and stack layers rendered dynamically -->
       </div>
     </main>
 
-    <!-- RIGHT SIDEBAR: BOT STATUS & COMMENTARY -->
+    <!-- RIGHT SIDEBAR: COMMENTARY & BOT STATUS -->
     <aside class="w-full lg:w-80 bg-slate-900 border-t lg:border-t-0 lg:border-l border-slate-800 flex flex-col shrink-0">
       
-      <!-- Opponent Driver Status -->
+      <!-- Opponent Status -->
       <div class="p-3 bg-slate-950/70 border-b border-slate-800 flex items-center justify-between">
         <div class="flex items-center gap-2.5">
           <div class="w-10 h-10 rounded-2xl bg-blue-600/30 border border-blue-500/40 flex items-center justify-center text-xl" id="opp-avatar">
@@ -154,7 +166,6 @@
             <div class="text-[10px] font-bold text-slate-400">Cards Remaining: <span id="opp-card-count" class="font-black text-amber-400 text-xs">5</span></div>
           </div>
         </div>
-        <!-- Opponent Mini Cards -->
         <div class="flex gap-1" id="opp-mini-cards"></div>
       </div>
 
@@ -166,22 +177,24 @@
         </button>
       </div>
 
-      <!-- Commentary Feed -->
+      <!-- Commentary Log -->
       <div id="log-feed" class="flex-1 p-3 overflow-y-auto space-y-2 text-xs font-medium text-slate-300 max-h-56 lg:max-h-none"></div>
 
-      <!-- Tabletop Compactness Hint -->
-      <div class="p-3 bg-slate-950/90 border-t border-slate-800 text-[10px] text-slate-400 flex items-center gap-2">
-        <span class="text-amber-400 text-sm">💡</span>
-        <span><b>Table Control:</b> True Matches drive cars into the Scrap Pile so the street never overflows!</span>
+      <!-- Visual Rule Reminder -->
+      <div class="p-3 bg-slate-950/90 border-t border-slate-800 text-[10px] text-slate-400 flex flex-col gap-1">
+        <div class="text-amber-400 font-bold">Rule Checklist:</div>
+        <div>✓ Same background color</div>
+        <div>✓ Front meets Rear (bumper-to-bumper)</div>
+        <div>✓ Stack on top to bury old car, or place adjacent to expand road</div>
       </div>
     </aside>
   </div>
 
-  <!-- PLAYER HAND & DOCK (BOTTOM) -->
+  <!-- PLAYER HAND & CONTROLS (BOTTOM DOCK) -->
   <footer class="bg-slate-900 border-t-2 border-slate-800 px-4 py-3 z-30 shadow-2xl">
     <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
       
-      <!-- Player Badge & Horn -->
+      <!-- Player Badge -->
       <div class="flex items-center gap-3 shrink-0">
         <div class="w-11 h-11 rounded-2xl bg-amber-500 text-slate-950 flex items-center justify-center text-xl font-cartoon shadow-md">
           P1
@@ -197,10 +210,10 @@
 
       <!-- Cards Container -->
       <div id="hand-container" class="flex-1 flex gap-3 overflow-x-auto py-1 px-2 items-center justify-center">
-        <!-- Rendered Cards -->
+        <!-- Rendered Hand Cards -->
       </div>
 
-      <!-- Action Button -->
+      <!-- Draw Button -->
       <div class="flex items-center gap-2 shrink-0">
         <button id="draw-btn" class="px-4 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 active:scale-95 text-slate-950 font-cartoon text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-amber-500/20 transition flex items-center gap-1.5">
           <span>📦 Draw from Junkyard</span>
@@ -229,56 +242,52 @@
     </div>
   </div>
 
-  <!-- SCRIPT: INLINE DATA, COMPLETE CAR SVG RENDERING, AND GAME LOGIC -->
+  <!-- SCRIPT ENGINE -->
   <script>
-    // --- 1. FULL CARD SVG ENGINE: 1 WHOLE CAR ACROSS THE ENTIRE CARD ---
-    // The entire card displays a single cohesive cartoon car split down the center!
+    // --- 1. FULL CARD SVG ARTWORK ENGINE ---
     const CarArtEngine = {
-      // Returns the SVG markup for the entire card (240px wide by 120px tall)
       renderFullCardSvg(card) {
-        const h1 = card.half1; // Left half (Rear)
-        const h2 = card.half2; // Right half (Front)
-
+        const h1 = card.half1; // Left: REAR
+        const h2 = card.half2; // Right: FRONT
         const c1Hex = this.getColorHex(h1.color);
         const c2Hex = this.getColorHex(h2.color);
 
-        // Render Left Half Art (Rear Half, x: 0 to 120)
         const rearSvg = this.getRearHalfSvg(h1.vehicle);
-        // Render Right Half Art (Front Half, x: 120 to 240)
         const frontSvg = this.getFrontHalfSvg(h2.vehicle);
 
         return `
           <svg viewBox="0 0 240 120" class="w-full h-full" preserveAspectRatio="none">
-            <!-- Left Background Color -->
+            <!-- Left Background Color (REAR) -->
             <rect x="0" y="0" width="120" height="120" fill="${c1Hex}"/>
-            <!-- Right Background Color -->
+            <!-- Right Background Color (FRONT) -->
             <rect x="120" y="0" width="120" height="120" fill="${c2Hex}"/>
 
-            <!-- Center Cut-Off Seam Divider Line -->
-            <line x1="120" y1="0" x2="120" y2="120" stroke="#000000" stroke-width="2.5" stroke-dasharray="5,4" opacity="0.4"/>
+            <!-- Center Cut-Off Seam -->
+            <line x1="120" y1="0" x2="120" y2="120" stroke="#000000" stroke-width="2.5" stroke-dasharray="5,4" opacity="0.35"/>
 
-            <!-- Road Asphalt Strip across entire bottom -->
+            <!-- Road Asphalt Strip across bottom -->
             <rect x="0" y="96" width="240" height="24" fill="#0f172a"/>
             <!-- Yellow Road Dashes -->
             <line x1="10" y1="108" x2="230" y2="108" stroke="#facc15" stroke-dasharray="14,10" stroke-width="2.5"/>
 
-            <!-- Left Half (Rear) Vehicle Art -->
-            <g transform="translate(0, 0)">
-              ${rearSvg}
-            </g>
+            <!-- Left Half (REAR) -->
+            <g transform="translate(0, 0)">${rearSvg}</g>
+            <!-- Right Half (FRONT) -->
+            <g transform="translate(120, 0)">${frontSvg}</g>
 
-            <!-- Right Half (Front) Vehicle Art -->
-            <g transform="translate(120, 0)">
-              ${frontSvg}
+            <!-- Prominent Headings for kids -->
+            <g transform="translate(8, 16)">
+              <rect x="-2" y="-10" width="70" height="14" rx="3" fill="#000000" opacity="0.4"/>
+              <text x="33" y="0" font-family="'Fredoka One', cursive" font-size="9" fill="#ffffff" text-anchor="middle">
+                REAR • ${h1.color.toUpperCase()}
+              </text>
             </g>
-
-            <!-- Card Labels & Indicators -->
-            <text x="8" y="16" font-family="'Fredoka One', cursive" font-size="10" fill="#ffffff" opacity="0.9" filter="drop-shadow(0 1px 1px rgba(0,0,0,0.8))">
-              ${h1.vehicle.toUpperCase()}
-            </text>
-            <text x="232" y="16" font-family="'Fredoka One', cursive" font-size="10" fill="#ffffff" opacity="0.9" text-anchor="end" filter="drop-shadow(0 1px 1px rgba(0,0,0,0.8))">
-              ${h2.vehicle.toUpperCase()}
-            </text>
+            <g transform="translate(162, 16)">
+              <rect x="-2" y="-10" width="70" height="14" rx="3" fill="#000000" opacity="0.4"/>
+              <text x="33" y="0" font-family="'Fredoka One', cursive" font-size="9" fill="#ffffff" text-anchor="middle">
+                FRONT • ${h2.color.toUpperCase()}
+              </text>
+            </g>
           </svg>
         `;
       },
@@ -293,7 +302,6 @@
         return '#475569';
       },
 
-      // Shared Wheel Generator
       wheel(cx, cy, r = 17, isMonster = false) {
         if (isMonster) {
           return `
@@ -309,226 +317,156 @@
         `;
       },
 
-      // --- REAR HALF ILLUSTRATIONS (0 to 120 width) ---
       getRearHalfSvg(vehicle) {
         if (vehicle === 'Fire Truck') {
           return `
-            <!-- Red Fire Truck Utility Body -->
             <rect x="15" y="36" width="105" height="56" rx="4" fill="#991b1b" stroke="#7f1d1d" stroke-width="2"/>
-            <!-- Equipment Rollers -->
             <rect x="25" y="44" width="46" height="38" rx="2" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1.5"/>
             <line x1="25" y1="52" x2="71" y2="52" stroke="#64748b" stroke-width="2"/>
             <line x1="25" y1="62" x2="71" y2="62" stroke="#64748b" stroke-width="2"/>
             <line x1="25" y1="72" x2="71" y2="72" stroke="#64748b" stroke-width="2"/>
-            <!-- Big Extension Ladder on Roof -->
             <rect x="10" y="20" width="110" height="14" rx="3" fill="#f8fafc" stroke="#475569" stroke-width="2"/>
             <line x1="26" y1="20" x2="26" y2="34" stroke="#475569" stroke-width="2.5"/>
             <line x1="46" y1="20" x2="46" y2="34" stroke="#475569" stroke-width="2.5"/>
             <line x1="66" y1="20" x2="66" y2="34" stroke="#475569" stroke-width="2.5"/>
             <line x1="86" y1="20" x2="86" y2="34" stroke="#475569" stroke-width="2.5"/>
             <line x1="106" y1="20" x2="106" y2="34" stroke="#475569" stroke-width="2.5"/>
-            <!-- Yellow Water Hose -->
             <circle cx="94" cy="62" r="14" fill="none" stroke="#facc15" stroke-width="4.5"/>
-            <!-- Big Rear Wheel -->
             ${this.wheel(54, 94, 17)}
           `;
         }
-
         if (vehicle === 'Police Cruiser') {
           return `
-            <!-- Blue Police Trunk Body -->
             <path d="M0,48 L55,48 L95,60 L95,92 L0,92 Z" fill="#1d4ed8" stroke="#1e40af" stroke-width="2"/>
-            <!-- White Door & Police Shield -->
             <path d="M0,48 L28,48 L28,92 L0,92 Z" fill="#f8fafc"/>
             <polygon points="14,56 16.5,62 23,62 18,66 20,72 14,68 8,72 10,66 5,62 11.5,62" fill="#eab308"/>
-            <!-- Radio Antenna -->
             <line x1="75" y1="48" x2="85" y2="18" stroke="#94a3b8" stroke-width="2.5"/>
             <circle cx="85" cy="18" r="3" fill="#ef4444"/>
-            <!-- Red Taillight -->
             <rect x="90" y="62" width="6" height="12" rx="2" fill="#ef4444"/>
-            <!-- Rear Wheel -->
             ${this.wheel(52, 92, 16)}
           `;
         }
-
         if (vehicle === 'School Bus') {
           return `
-            <!-- Yellow Bus Cabin Body -->
             <rect x="10" y="32" width="110" height="60" rx="4" fill="#d97706" stroke="#92400e" stroke-width="2"/>
-            <!-- Black Warning Stripes -->
             <rect x="10" y="74" width="110" height="6" fill="#18181b"/>
             <rect x="10" y="44" width="110" height="5" fill="#18181b"/>
-            <!-- Passenger Windows -->
             <rect x="25" y="48" width="28" height="22" rx="3" fill="#bae6fd" stroke="#0284c7" stroke-width="2"/>
             <rect x="65" y="48" width="28" height="22" rx="3" fill="#bae6fd" stroke="#0284c7" stroke-width="2"/>
-            <!-- Bus Rear Wheel -->
             ${this.wheel(55, 92, 16)}
           `;
         }
-
         if (vehicle === 'Monster Truck') {
           return `
-            <!-- High Lift Pickup Bed -->
             <path d="M0,42 L70,42 L85,62 L85,80 L0,80 Z" fill="#15803d" stroke="#14532d" stroke-width="2.5"/>
-            <!-- Tubular Rollbar & Spotlights -->
             <path d="M30,42 L45,18 L60,18 L68,42" fill="none" stroke="#f8fafc" stroke-width="4"/>
             <circle cx="48" cy="16" r="4.5" fill="#fef08a" stroke="#ca8a04" stroke-width="1.5"/>
             <circle cx="58" cy="16" r="4.5" fill="#fef08a" stroke="#ca8a04" stroke-width="1.5"/>
-            <!-- Exhaust Pipe & Smoke -->
             <rect x="12" y="24" width="6" height="20" fill="#475569"/>
             <circle cx="15" cy="15" r="5" fill="#e2e8f0" opacity="0.8"/>
-            <circle cx="10" cy="8" r="7" fill="#e2e8f0" opacity="0.6"/>
-            <!-- Giant Mud Wheel -->
             ${this.wheel(54, 88, 22, true)}
           `;
         }
-
         if (vehicle === 'Race Car') {
           return `
-            <!-- Sleek GT Body -->
             <path d="M0,60 L55,60 L95,68 L95,90 L0,90 Z" fill="#c2410c" stroke="#7c2d12" stroke-width="2"/>
-            <!-- Huge Carbon GT Wing / Spoiler -->
             <rect x="65" y="38" width="35" height="7" rx="2" fill="#09090b"/>
             <line x1="72" y1="45" x2="72" y2="65" stroke="#09090b" stroke-width="3.5"/>
             <line x1="90" y1="45" x2="90" y2="68" stroke="#09090b" stroke-width="3.5"/>
-            <!-- Flame Exhaust -->
             <rect x="90" y="76" width="8" height="6" fill="#475569"/>
             <polygon points="98,78 116,75 106,79 118,82 98,81" fill="#facc15"/>
-            <!-- Low Profile Slick Racing Wheel -->
             ${this.wheel(50, 90, 15)}
           `;
         }
-
         if (vehicle === 'Tow Truck') {
           return `
-            <!-- Big Tow Crane Boom -->
             <path d="M10,88 L70,22 L85,22 L30,88 Z" fill="#ca8a04" stroke="#713f12" stroke-width="2.5"/>
             <line x1="78" y1="24" x2="96" y2="58" stroke="#334155" stroke-width="3"/>
             <path d="M96,58 C96,68 110,68 110,60 C110,54 102,54 102,58" fill="none" stroke="#eab308" stroke-width="4"/>
-            <!-- Wheel -->
             ${this.wheel(55, 92, 16)}
           `;
         }
-
-        // Red Light default
         return `
           <rect x="35" y="24" width="55" height="68" rx="8" fill="#1e293b" stroke="#0f172a" stroke-width="3"/>
           <circle cx="62" cy="48" r="15" fill="#ef4444" stroke="#f87171" stroke-width="2"/>
-          <circle cx="62" cy="48" r="7" fill="#fecaca"/>
           <text x="62" y="80" font-family="'Fredoka One', cursive" font-size="10" font-weight="900" fill="#ffffff" text-anchor="middle">STOP</text>
         `;
       },
 
-      // --- FRONT HALF ILLUSTRATIONS (0 to 120 width) ---
       getFrontHalfSvg(vehicle) {
         if (vehicle === 'Fire Truck') {
           return `
-            <!-- Red Fire Truck Cabin -->
             <path d="M0,36 L65,36 L88,56 L108,56 C112,56 114,60 114,64 L114,92 L0,92 Z" fill="#dc2626" stroke="#991b1b" stroke-width="2"/>
-            <!-- Slanted Windshield -->
             <polygon points="62,40 84,56 42,56 42,40" fill="#bae6fd" stroke="#0284c7" stroke-width="2"/>
-            <!-- Flashing Strobe Lightbar -->
             <rect x="44" y="24" width="16" height="12" rx="3" fill="#ef4444" stroke="#7f1d1d" stroke-width="2"/>
             <circle cx="52" cy="30" r="4" fill="#fecaca"/>
-            <!-- Heavy Chrome Bumper & Headlight -->
             <rect x="108" y="74" width="10" height="18" rx="2" fill="#cbd5e1" stroke="#64748b" stroke-width="2"/>
             <circle cx="102" cy="68" r="7" fill="#fef08a" stroke="#ca8a04" stroke-width="2"/>
-            <!-- Big Front Wheel -->
             ${this.wheel(64, 94, 17)}
           `;
         }
-
         if (vehicle === 'Police Cruiser') {
           return `
-            <!-- Blue Police Hood & Star Door -->
             <path d="M0,48 L45,48 L80,62 L108,64 C112,64 114,68 114,72 L114,92 L0,92 Z" fill="#2563eb" stroke="#1d4ed8" stroke-width="2"/>
-            <!-- White Door Front & Shield -->
             <path d="M0,48 L30,48 L30,92 L0,92 Z" fill="#f8fafc"/>
             <polygon points="15,56 17.5,62 24,62 19,66 21,72 15,68 9,72 11,66 6,62 12.5,62" fill="#eab308"/>
-            <!-- Windshield -->
             <polygon points="34,50 62,62 22,62" fill="#bae6fd" stroke="#0284c7" stroke-width="2"/>
-            <!-- Red & Blue Flashing Roof Lightbar -->
             <rect x="16" y="34" width="14" height="12" rx="3" fill="#ef4444"/>
             <rect x="30" y="34" width="14" height="12" rx="3" fill="#3b82f6"/>
-            <!-- Police Push Bumper & Headlight -->
             <rect x="108" y="70" width="10" height="18" rx="2" fill="#0f172a"/>
             <circle cx="100" cy="70" r="6" fill="#fef08a" stroke="#ca8a04" stroke-width="2"/>
-            <!-- Front Wheel -->
             ${this.wheel(68, 92, 16)}
           `;
         }
-
         if (vehicle === 'School Bus') {
           return `
-            <!-- Yellow Bus Nose & Hood -->
             <path d="M0,32 L50,32 L72,48 L106,54 C110,54 114,58 114,64 L114,92 L0,92 Z" fill="#fbbf24" stroke="#d97706" stroke-width="2"/>
-            <!-- Black Warning Stripe -->
             <path d="M0,74 L108,74 L108,80 L0,80 Z" fill="#18181b"/>
-            <!-- Big Windshield -->
             <polygon points="44,36 68,48 24,48" fill="#bae6fd" stroke="#0284c7" stroke-width="2"/>
-            <!-- Swing-Out Red STOP Sign -->
             <polygon points="14,54 24,54 30,60 30,70 24,76 14,76 8,70 8,60" fill="#ef4444" stroke="#ffffff" stroke-width="2"/>
             <text x="19" y="68" font-family="'Fredoka One', cursive" font-size="7" font-weight="900" fill="#ffffff" text-anchor="middle">STOP</text>
-            <!-- Black Grille & Headlight -->
             <rect x="108" y="68" width="6" height="20" fill="#18181b"/>
             <circle cx="100" cy="66" r="6" fill="#fef08a" stroke="#ca8a04" stroke-width="2"/>
-            <!-- Bus Front Wheel -->
             ${this.wheel(66, 92, 16)}
           `;
         }
-
         if (vehicle === 'Monster Truck') {
           return `
-            <!-- Lifted Green Pickup Hood -->
             <path d="M0,42 L45,42 L68,56 L108,58 C112,58 114,62 114,68 L114,80 L0,80 Z" fill="#22c55e" stroke="#15803d" stroke-width="2.5"/>
-            <!-- Yellow Flame Decal on Door -->
             <path d="M12,68 Q30,60 45,64 Q35,52 25,54 Z" fill="#facc15"/>
-            <!-- Chrome Engine Supercharger Blower with Red Butterflies -->
             <rect x="74" y="44" width="20" height="15" rx="3" fill="#f8fafc" stroke="#475569" stroke-width="2"/>
             <circle cx="80" cy="50" r="3" fill="#ef4444"/>
             <circle cx="88" cy="50" r="3" fill="#ef4444"/>
-            <!-- GIANT Mud Wheel -->
             ${this.wheel(68, 88, 22, true)}
           `;
         }
-
         if (vehicle === 'Race Car') {
           return `
-            <!-- Low Wedge Nose with Cockpit -->
             <path d="M0,60 L40,60 L75,70 L112,74 C116,74 118,76 118,80 L118,90 L0,90 Z" fill="#f97316" stroke="#c2410c" stroke-width="2"/>
-            <!-- Cockpit Canopy -->
             <polygon points="14,60 42,60 30,50" fill="#0284c7" stroke="#0369a1" stroke-width="2"/>
-            <!-- White Number 1 Roundel -->
             <circle cx="70" cy="74" r="8.5" fill="#ffffff" stroke="#c2410c" stroke-width="1.5"/>
             <text x="70" y="78.5" font-family="'Fredoka One', cursive" font-size="10" font-weight="900" fill="#0f172a" text-anchor="middle">1</text>
-            <!-- Black Front Splitter -->
             <rect x="108" y="86" width="12" height="5" fill="#09090b"/>
-            <!-- Front Slick Racing Wheel -->
             ${this.wheel(68, 90, 15)}
           `;
         }
-
         if (vehicle === 'Tow Truck') {
           return `
-            <!-- Front of Tow Truck -->
             <path d="M0,36 L60,36 L80,56 L110,58 L110,92 L0,92 Z" fill="#eab308" stroke="#a16207" stroke-width="2"/>
             <polygon points="56,40 76,56 36,56" fill="#bae6fd" stroke="#0284c7" stroke-width="2"/>
             <rect x="106" y="72" width="10" height="16" fill="#18181b"/>
             ${this.wheel(68, 92, 16)}
           `;
         }
-
-        // Red Light default
         return `
           <rect x="30" y="24" width="55" height="68" rx="8" fill="#1e293b" stroke="#0f172a" stroke-width="3"/>
           <circle cx="58" cy="48" r="15" fill="#ef4444" stroke="#f87171" stroke-width="2"/>
-          <circle cx="58" cy="48" r="7" fill="#fecaca"/>
           <text x="58" y="80" font-family="'Fredoka One', cursive" font-size="10" font-weight="900" fill="#ffffff" text-anchor="middle">STOP</text>
         `;
       }
     };
 
-    // --- 2. DECK DATA (36 CARDS) ---
+    // --- 2. DECK DATA (36 Cards) ---
     const VEHICLE_DEFS = {
       "Fire Truck": { color: "red", sound: "WEE-WOO!" },
       "Police Cruiser": { color: "blue", sound: "WOOP-WOOP!" },
@@ -544,19 +482,17 @@
       const deck = [];
       let id = 1;
 
-      // 1. Pure Factory Matching Cars (5 cards)
+      // 5 Pure Matching Cars
       for (let i = 0; i < vKeys.length; i++) {
         const v = vKeys[i];
         deck.push({
           id: id++,
-          type: "combo",
-          isPure: true,
           half1: { vehicle: v, part: "Rear", color: VEHICLE_DEFS[v].color },
           half2: { vehicle: v, part: "Front", color: VEHICLE_DEFS[v].color }
         });
       }
 
-      // 2. Franken-Cars across vehicle pairs (27 cards)
+      // 27 Franken-Cars (Left: Rear of v1, Right: Front of v2)
       for (let i = 0; i < vKeys.length; i++) {
         for (let j = 0; j < vKeys.length; j++) {
           if (i !== j && deck.length < 32) {
@@ -564,8 +500,6 @@
             const v2 = vKeys[j];
             deck.push({
               id: id++,
-              type: "combo",
-              isPure: false,
               half1: { vehicle: v1, part: "Rear", color: VEHICLE_DEFS[v1].color },
               half2: { vehicle: v2, part: "Front", color: VEHICLE_DEFS[v2].color }
             });
@@ -573,11 +507,9 @@
         }
       }
 
-      // 3. Special Action Cards (4 cards)
-      // 2 Tow Trucks (Wildcard)
+      // 4 Action Cards
       deck.push({
         id: id++,
-        type: "action",
         action: "tow_truck",
         name: "Tow Truck",
         half1: { vehicle: "Tow Truck", part: "Rear", color: "wild" },
@@ -585,17 +517,13 @@
       });
       deck.push({
         id: id++,
-        type: "action",
         action: "tow_truck",
         name: "Tow Truck",
         half1: { vehicle: "Tow Truck", part: "Rear", color: "wild" },
         half2: { vehicle: "Fire Truck", part: "Front", color: "red" }
       });
-
-      // 2 Red Lights (Stop & Skip)
       deck.push({
         id: id++,
-        type: "action",
         action: "red_light",
         name: "Red Light",
         half1: { vehicle: "Red Light", part: "Rear", color: "red" },
@@ -603,7 +531,6 @@
       });
       deck.push({
         id: id++,
-        type: "action",
         action: "red_light",
         name: "Red Light",
         half1: { vehicle: "Red Light", part: "Rear", color: "red" },
@@ -673,7 +600,8 @@
       }
     };
 
-    // --- 4. GAME STATE ---
+    // --- 4. GAME STATE: LANES & STACKS ---
+    // The table is made of Lanes/Spots. Each spot can have a STACK of cards (layer 0, 1, 2).
     let state = {
       mode: 'bot',
       deck: [],
@@ -681,8 +609,7 @@
       p2Hand: [],
       activePlayer: 0,
       turboBoost: false,
-      tableCards: [],
-      exposedSlots: [],
+      tableSlots: [], // Array of slots: { slotId, cardsStack: [card1, card2, ...] }
       scrapCount: 0,
       totalTurns: 0,
       trueMatchesScored: 0,
@@ -709,27 +636,16 @@
       state.turbosTriggered = 0;
       state.selectedHandCardIndex = null;
       state.gameOver = false;
-      state.tableCards = [];
-      state.exposedSlots = [];
 
-      // Starter card on street
+      // Start with 1 card in Slot 0
       const starter = state.deck.shift();
-      state.tableCards.push({
-        ...starter,
-        instanceId: 'starter-1'
-      });
-
-      // Exposed target connection points
-      state.exposedSlots = [
-        { slotId: 's-0', cardInstanceId: 'starter-1', halfIdx: 1, half: starter.half1, mode: 'adjacent' },
-        { slotId: 's-1', cardInstanceId: 'starter-1', halfIdx: 2, half: starter.half2, mode: 'adjacent' },
-        { slotId: 's-2', cardInstanceId: 'starter-1', halfIdx: 1, half: starter.half1, mode: 'overlap' },
-        { slotId: 's-3', cardInstanceId: 'starter-1', halfIdx: 2, half: starter.half2, mode: 'overlap' }
+      state.tableSlots = [
+        { slotId: 'slot-0', cardsStack: [starter] }
       ];
 
       document.getElementById('win-modal').classList.add('hidden');
       document.getElementById('log-feed').innerHTML = '';
-      addLog(`🚦 <b>Green Light!</b> Match colors to build crazy Franken-Cars.`);
+      addLog(`🚦 <b>Green Light!</b> Match color + Front must touch Rear.`);
       renderAll();
     }
 
@@ -772,21 +688,20 @@
         const isSelected = state.selectedHandCardIndex === idx;
 
         const cardEl = document.createElement('div');
-        cardEl.className = `cursor-pointer rounded-2xl overflow-hidden car-card-shadow border-2 transition-all shrink-0 ${
+        cardEl.className = `cursor-pointer rounded-2xl overflow-hidden border-2 transition-all shrink-0 ${
           isSelected 
-            ? 'border-amber-400 ring-4 ring-amber-400/60 scale-105 z-20' 
-            : 'border-slate-700 hover:border-slate-400 hover:-translate-y-1'
-        } w-60 h-28 bg-slate-900`;
+            ? 'border-amber-400 ring-4 ring-amber-400/70 scale-105 z-20 shadow-2xl' 
+            : 'border-slate-700 hover:border-slate-400 hover:-translate-y-1 shadow-md'
+        } w-64 h-28 bg-slate-900`;
 
-        // Render full card car
         cardEl.innerHTML = CarArtEngine.renderFullCardSvg(card);
 
         cardEl.onclick = () => {
           AudioEngine.playSnap();
           state.selectedHandCardIndex = (state.selectedHandCardIndex === idx) ? null : idx;
           document.getElementById('prompt-msg').textContent = state.selectedHandCardIndex !== null 
-            ? "👇 Click any glowing target slot on the road to place your card!"
-            : "👇 Click any card in your hand below to preview legal plays";
+            ? "👇 Choose a glowing spot: STACK on top or place ADJACENT!"
+            : "👇 Select a card from your hand below";
           renderHand();
           renderTable();
         };
@@ -795,77 +710,183 @@
       });
     }
 
+    // --- 6. RENDER TABLE WITH REAL STACKING & ADJACENT SLOTS ---
     function renderTable() {
       const table = document.getElementById('traffic-table');
       table.innerHTML = '';
 
-      // 1. Render all placed cars on the street
-      state.tableCards.forEach((c) => {
-        const cardEl = document.createElement('div');
-        cardEl.className = `rounded-2xl overflow-hidden car-card-shadow border-2 border-slate-700 w-60 h-28 shrink-0 relative bg-slate-900 transition-all hover:scale-102`;
-        cardEl.innerHTML = CarArtEngine.renderFullCardSvg(c);
-        table.appendChild(cardEl);
-      });
+      const currentHand = state.activePlayer === 0 ? state.p1Hand : state.p2Hand;
+      const selectedCard = (state.selectedHandCardIndex !== null) ? currentHand[state.selectedHandCardIndex] : null;
 
-      // 2. If a card is selected in hand, show glowing legal target slots!
-      if (state.selectedHandCardIndex !== null) {
-        const currentHand = state.activePlayer === 0 ? state.p1Hand : state.p2Hand;
-        const selectedCard = currentHand[state.selectedHandCardIndex];
+      // Render each slot on the street
+      state.tableSlots.forEach((slot, slotIdx) => {
+        const stack = slot.cardsStack;
+        const topCard = stack[stack.length - 1]; // The visible card on top of this pile
+        const stackHeight = stack.length;
 
-        state.exposedSlots.forEach((slot) => {
-          const matchHalf1 = (selectedCard.half1.color === slot.half.color || selectedCard.half1.color === 'wild' || slot.half.color === 'wild');
-          const matchHalf2 = (selectedCard.half2.color === slot.half.color || selectedCard.half2.color === 'wild' || slot.half.color === 'wild');
+        // Slot wrapper
+        const slotContainer = document.createElement('div');
+        slotContainer.className = "flex items-center gap-4 relative py-4";
 
-          if (matchHalf1 || matchHalf2) {
-            // Check for True Match
-            const isTrueMatch = (
-              (selectedCard.half1.vehicle === slot.half.vehicle && selectedCard.half1.part !== slot.half.part) ||
-              (selectedCard.half2.vehicle === slot.half.vehicle && selectedCard.half2.part !== slot.half.part)
-            );
-
-            const slotBtn = document.createElement('button');
-            slotBtn.className = `w-60 h-28 rounded-2xl border-2 border-dashed flex flex-col justify-between p-3 transition-all cursor-pointer slot-glow relative ${
-              isTrueMatch 
-                ? 'bg-emerald-950/80 border-emerald-400 text-emerald-200' 
-                : 'bg-amber-950/70 border-amber-400 text-amber-200'
+        // --- A. ADJACENT LEFT TARGET SPOT (Behind this car) ---
+        // Top card's Left Half is a REAR.
+        // To connect legally to this REAR:
+        // A card must attach its FRONT (half2) to this REAR!
+        // Color must match: selectedCard.half2.color === topCard.half1.color!
+        if (selectedCard) {
+          const matchColor = (selectedCard.half2.color === topCard.half1.color || selectedCard.half2.color === 'wild' || topCard.half1.color === 'wild');
+          if (matchColor) {
+            const isTrueMatch = (selectedCard.half2.vehicle === topCard.half1.vehicle);
+            const adjLeftBtn = document.createElement('button');
+            adjLeftBtn.className = `w-48 h-28 rounded-2xl border-2 border-dashed flex flex-col justify-between p-2.5 cursor-pointer pulse-target text-left transition-all ${
+              isTrueMatch ? 'bg-emerald-950/80 border-emerald-400 text-emerald-200' : 'bg-amber-950/70 border-amber-400 text-amber-200'
             }`;
 
-            slotBtn.innerHTML = `
-              <div class="flex items-center justify-between w-full">
-                <span class="font-cartoon text-xs flex items-center gap-1 ${isTrueMatch ? 'text-emerald-300' : 'text-amber-300'}">
-                  ${isTrueMatch ? '⭐ TRUE MATCH!' : (slot.mode === 'overlap' ? '🥞 OVERLAP STACK' : '➡️ ADJACENT SLAM')}
-                </span>
-                <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${isTrueMatch ? 'bg-emerald-500 text-slate-950' : 'bg-amber-400 text-slate-950'}">
-                  Matches ${slot.half.color.toUpperCase()}
-                </span>
+            adjLeftBtn.innerHTML = `
+              <div class="flex justify-between items-center text-[10px] font-black uppercase">
+                <span class="${isTrueMatch ? 'text-emerald-400' : 'text-amber-400'}">${isTrueMatch ? '⭐ TRUE MATCH!' : '➡️ ADJACENT BEHIND'}</span>
+                <span class="bg-black/40 px-1.5 py-0.5 rounded text-[8px]">${topCard.half1.color.toUpperCase()}</span>
               </div>
-
-              <div class="my-auto text-center">
-                <div class="text-xs font-bold text-slate-100">
-                  ${isTrueMatch ? `Assemble Real <b>${slot.half.vehicle}</b>!` : `Slam a Franken-Car!`}
-                </div>
-                <div class="text-[10px] text-slate-400">
-                  ${isTrueMatch ? '⚡ Triggers Turbo Boost (Play 2nd Card)!' : `Connects to ${slot.half.vehicle}`}
-                </div>
+              <div class="text-[11px] font-bold text-slate-100 my-auto">
+                Snap your <b>FRONT</b> into this <b>REAR</b>
               </div>
-
-              <div class="text-[9px] font-black uppercase text-center tracking-wider opacity-90">
-                Click to Slam Here &rarr;
+              <div class="text-[9px] font-black uppercase text-center opacity-80">
+                Click to Place Beside &larr;
               </div>
             `;
 
-            slotBtn.onclick = () => {
-              executePlay(selectedCard, state.selectedHandCardIndex, slot, isTrueMatch);
+            adjLeftBtn.onclick = () => {
+              executeAdjacentPlay(selectedCard, state.selectedHandCardIndex, slotIdx, 'before', isTrueMatch);
             };
 
-            table.appendChild(slotBtn);
+            slotContainer.appendChild(adjLeftBtn);
           }
-        });
-      }
+        }
+
+        // --- B. THE ACTUAL CAR STACK ON THE TABLE ---
+        const cardStackWrapper = document.createElement('div');
+        cardStackWrapper.className = "relative w-64 h-28 shrink-0";
+
+        // If stack has cards underneath, show physical stacked layer edges!
+        if (stackHeight > 1) {
+          const underCount = Math.min(stackHeight - 1, 3);
+          for (let u = 0; u < underCount; u++) {
+            const underLayer = document.createElement('div');
+            underLayer.className = `absolute inset-0 rounded-2xl bg-slate-800 border-2 border-slate-700 shadow-md pointer-events-none`;
+            underLayer.style.transform = `translate(${(u + 1) * 5}px, ${(u + 1) * -5}px)`;
+            underLayer.style.zIndex = u;
+            cardStackWrapper.appendChild(underLayer);
+          }
+        }
+
+        // The Topmost Visible Card
+        const topCardEl = document.createElement('div');
+        const layerClass = stackHeight === 1 ? 'stack-layer-0' : (stackHeight === 2 ? 'stack-layer-1' : 'stack-layer-2');
+        topCardEl.className = `relative rounded-2xl overflow-hidden border-2 border-slate-700 w-64 h-28 shrink-0 bg-slate-900 ${layerClass} transition-all`;
+        topCardEl.innerHTML = CarArtEngine.renderFullCardSvg(topCard);
+
+        // Stack Height Badge
+        if (stackHeight > 1) {
+          const badge = document.createElement('div');
+          badge.className = "absolute top-2 right-2 z-30 bg-black/80 text-amber-400 text-[10px] font-black px-2 py-0.5 rounded-full border border-amber-500/50 shadow";
+          badge.textContent = `STACK: ${stackHeight} CARS DEEP`;
+          topCardEl.appendChild(badge);
+        }
+
+        cardStackWrapper.appendChild(topCardEl);
+
+        // --- C. STACKING ON TOP ACTION BUTTON ---
+        // Stacking rule: Color must match AND Front must align with Rear!
+        // When you stack your card on top of this card:
+        // Either:
+        // 1) Your REAR matches topCard's FRONT color (aligning Rear onto Front):
+        //    selectedCard.half1.color === topCard.half2.color
+        // 2) Your FRONT matches topCard's REAR color (aligning Front onto Rear):
+        //    selectedCard.half2.color === topCard.half1.color
+        if (selectedCard) {
+          const canStackRearOnFront = (selectedCard.half1.color === topCard.half2.color || selectedCard.half1.color === 'wild' || topCard.half2.color === 'wild');
+          const canStackFrontOnRear = (selectedCard.half2.color === topCard.half1.color || selectedCard.half2.color === 'wild' || topCard.half1.color === 'wild');
+
+          if (canStackRearOnFront || canStackFrontOnRear) {
+            const isTrueMatch = (
+              (canStackRearOnFront && selectedCard.half1.vehicle === topCard.half2.vehicle) ||
+              (canStackFrontOnRear && selectedCard.half2.vehicle === topCard.half1.vehicle)
+            );
+
+            const stackOverlayBtn = document.createElement('button');
+            stackOverlayBtn.className = `absolute inset-0 z-40 rounded-2xl border-4 border-dashed cursor-pointer pulse-stack-target flex flex-col justify-between p-3 ${
+              isTrueMatch 
+                ? 'bg-emerald-950/85 border-emerald-400 text-emerald-200' 
+                : 'bg-amber-950/85 border-amber-400 text-amber-200'
+            }`;
+
+            const matchedColorName = canStackRearOnFront ? topCard.half2.color : topCard.half1.color;
+            stackOverlayBtn.innerHTML = `
+              <div class="flex justify-between items-center text-xs font-black uppercase">
+                <span class="${isTrueMatch ? 'text-emerald-300' : 'text-amber-300'} font-cartoon">
+                  ${isTrueMatch ? '⭐ TRUE MATCH STACK!' : '🥞 STACK DIRECTLY ON TOP!'}
+                </span>
+                <span class="bg-black/50 px-2 py-0.5 rounded text-[9px]">${matchedColorName.toUpperCase()}</span>
+              </div>
+              <div class="text-xs font-bold text-center text-white my-auto">
+                ${isTrueMatch ? `Assembles Real <b>${topCard.half1.vehicle}</b>!` : `Stack & Transform this Car!`}
+              </div>
+              <div class="text-[10px] font-black uppercase text-center tracking-wider">
+                Click to Stack Here &darr;
+              </div>
+            `;
+
+            stackOverlayBtn.onclick = () => {
+              executeStackPlay(selectedCard, state.selectedHandCardIndex, slotIdx, isTrueMatch);
+            };
+
+            cardStackWrapper.appendChild(stackOverlayBtn);
+          }
+        }
+
+        slotContainer.appendChild(cardStackWrapper);
+
+        // --- D. ADJACENT RIGHT TARGET SPOT (Ahead of this car) ---
+        // Top card's Right Half is a FRONT.
+        // To connect legally to this FRONT:
+        // A card must attach its REAR (half1) to this FRONT!
+        // Color must match: selectedCard.half1.color === topCard.half2.color!
+        if (selectedCard) {
+          const matchColor = (selectedCard.half1.color === topCard.half2.color || selectedCard.half1.color === 'wild' || topCard.half2.color === 'wild');
+          if (matchColor) {
+            const isTrueMatch = (selectedCard.half1.vehicle === topCard.half2.vehicle);
+            const adjRightBtn = document.createElement('button');
+            adjRightBtn.className = `w-48 h-28 rounded-2xl border-2 border-dashed flex flex-col justify-between p-2.5 cursor-pointer pulse-target text-left transition-all ${
+              isTrueMatch ? 'bg-emerald-950/80 border-emerald-400 text-emerald-200' : 'bg-amber-950/70 border-amber-400 text-amber-200'
+            }`;
+
+            adjRightBtn.innerHTML = `
+              <div class="flex justify-between items-center text-[10px] font-black uppercase">
+                <span class="${isTrueMatch ? 'text-emerald-400' : 'text-amber-400'}">${isTrueMatch ? '⭐ TRUE MATCH!' : '➡️ ADJACENT IN FRONT'}</span>
+                <span class="bg-black/40 px-1.5 py-0.5 rounded text-[8px]">${topCard.half2.color.toUpperCase()}</span>
+              </div>
+              <div class="text-[11px] font-bold text-slate-100 my-auto">
+                Snap your <b>REAR</b> onto this <b>FRONT</b>
+              </div>
+              <div class="text-[9px] font-black uppercase text-center opacity-80">
+                Click to Place Beside &rarr;
+              </div>
+            `;
+
+            adjRightBtn.onclick = () => {
+              executeAdjacentPlay(selectedCard, state.selectedHandCardIndex, slotIdx, 'after', isTrueMatch);
+            };
+
+            slotContainer.appendChild(adjRightBtn);
+          }
+        }
+
+        table.appendChild(slotContainer);
+      });
     }
 
-    // --- 6. TURN EXECUTION ---
-    function executePlay(card, handIdx, slot, isTrueMatch) {
+    // --- 7. PLAY ACTIONS: ADJACENT & STACKING ---
+    function executeAdjacentPlay(card, handIdx, targetSlotIdx, position, isTrueMatch) {
       AudioEngine.playSnap();
       const currentHand = state.activePlayer === 0 ? state.p1Hand : state.p2Hand;
       const playerName = state.activePlayer === 0 ? "Player 1" : (state.mode === 'bot' ? "Speedy Bot" : "Player 2");
@@ -874,58 +895,68 @@
       state.selectedHandCardIndex = null;
       state.totalTurns++;
 
-      // Action cards
+      // Create new slot beside
+      const newSlot = { slotId: 'slot-' + Date.now(), cardsStack: [card] };
+      if (position === 'before') {
+        state.tableSlots.splice(targetSlotIdx, 0, newSlot);
+      } else {
+        state.tableSlots.splice(targetSlotIdx + 1, 0, newSlot);
+      }
+
+      // Compact table cap
+      if (state.tableSlots.length > 4) {
+        state.tableSlots.shift();
+      }
+
+      handlePostPlayEvents(card, playerName, isTrueMatch, "Adjacent");
+    }
+
+    function executeStackPlay(card, handIdx, targetSlotIdx, isTrueMatch) {
+      AudioEngine.playSnap();
+      const currentHand = state.activePlayer === 0 ? state.p1Hand : state.p2Hand;
+      const playerName = state.activePlayer === 0 ? "Player 1" : (state.mode === 'bot' ? "Speedy Bot" : "Player 2");
+
+      currentHand.splice(handIdx, 1);
+      state.selectedHandCardIndex = null;
+      state.totalTurns++;
+
+      // PHYSICALLY PUSH CARD ONTO THIS STACK!
+      const targetStack = state.tableSlots[targetSlotIdx].cardsStack;
+      targetStack.push(card);
+
+      addLog(`🥞 <b>${playerName}</b> STACKED a car on top (Pile is now <b>${targetStack.length} cars deep!</b>)`);
+
+      handlePostPlayEvents(card, playerName, isTrueMatch, "Stack");
+    }
+
+    function handlePostPlayEvents(card, playerName, isTrueMatch, moveType) {
       if (card.action === 'red_light') {
         AudioEngine.playHonk();
-        addLog(`🛑 <b>${playerName}</b> slammed a <b>RED LIGHT!</b> Next driver hits the brakes!`);
+        addLog(`🛑 <b>${playerName}</b> slammed a <b>RED LIGHT!</b> Next driver brake checks!`);
         showAlarm("🛑 BRAKE CHECK!", "RED LIGHT TRIGGERED!");
       }
 
-      const newInstanceId = 'card-' + Date.now();
-      state.tableCards.push({
-        ...card,
-        instanceId: newInstanceId
-      });
+      const currentHand = state.activePlayer === 0 ? state.p1Hand : state.p2Hand;
 
-      // Keep table compact
-      if (state.tableCards.length > 5) {
-        state.tableCards.shift();
-      }
-
-      // Update exposed connection points
-      const remainingHalf = (card.half1.color === slot.half.color) ? card.half2 : card.half1;
-      state.exposedSlots = state.exposedSlots.filter(s => s.slotId !== slot.slotId);
-
-      const baseId = Date.now();
-      state.exposedSlots.push(
-        { slotId: 's-' + baseId + '-1', cardInstanceId: newInstanceId, halfIdx: 1, half: remainingHalf, mode: 'adjacent' },
-        { slotId: 's-' + baseId + '-2', cardInstanceId: newInstanceId, halfIdx: 2, half: remainingHalf, mode: 'overlap' }
-      );
-
-      if (state.exposedSlots.length > 8) {
-        state.exposedSlots = state.exposedSlots.slice(-6);
-      }
-
-      // CHECK FOR TRUE MATCH
       if (isTrueMatch) {
         state.trueMatchesScored++;
         state.scrapCount++;
-        const vehicleInfo = VEHICLE_DEFS[slot.half.vehicle] || VEHICLE_DEFS["Fire Truck"];
+        const vehicleInfo = VEHICLE_DEFS[card.half1.vehicle] || VEHICLE_DEFS["Fire Truck"];
 
         AudioEngine.playSiren();
-        showAlarm("🚗 " + vehicleInfo.sound, `TRUE MATCH: ${slot.half.vehicle.toUpperCase()} DRIVES OFF!`);
-        addLog(`🏆 <b>${playerName}</b> built a real <b>${slot.half.vehicle}</b>! <i>"${vehicleInfo.sound}"</i> Drives into Scrap Pile!`);
+        showAlarm("🚗 " + vehicleInfo.sound, `TRUE MATCH: ${card.half1.vehicle.toUpperCase()} DRIVES OFF!`);
+        addLog(`🏆 <b>${playerName}</b> completed a real <b>${card.half1.vehicle}</b>! <i>"${vehicleInfo.sound}"</i> Drives into Scrap Pile!`);
 
         if (currentHand.length === 0) {
           triggerWin(playerName);
           return;
         }
 
-        // TRIGGER TURBO BOOST (Fairness rule: unlocks Turn 2 onward)
+        // Turbo Boost (Turn 2 onward for fair balance)
         if (state.totalTurns > 1) {
           state.turbosTriggered++;
           state.turboBoost = true;
-          addLog(`⚡ <b>${playerName}</b> unlocked a <b>TURBO BOOST!</b> Take a bonus turn!`);
+          addLog(`⚡ <b>${playerName}</b> unlocked a <b>TURBO BOOST!</b> Play another card immediately!`);
           renderAll();
 
           if (state.mode === 'bot' && state.activePlayer === 1) {
@@ -935,9 +966,6 @@
         } else {
           addLog(`🏁 <b>Warm-Up Lap:</b> Car cleared! Turbo Boost unlocks on Turn 2!`);
         }
-      } else {
-        const frankenName = `${card.half1.vehicle}-${card.half2.vehicle}`;
-        addLog(`🔧 <b>${playerName}</b> slammed a Franken-Car: <b>${frankenName}</b>!`);
       }
 
       if (currentHand.length === 0) {
@@ -949,7 +977,7 @@
         state.turboBoost = false;
       }
 
-      // Pass Turn
+      // Next Turn
       state.activePlayer = state.activePlayer === 0 ? 1 : 0;
       renderAll();
 
@@ -958,7 +986,7 @@
       }
     }
 
-    // --- 7. DRAW CARD ---
+    // --- 8. DRAW CARD ---
     function drawCard() {
       const currentHand = state.activePlayer === 0 ? state.p1Hand : state.p2Hand;
       const playerName = state.activePlayer === 0 ? "Player 1" : (state.mode === 'bot' ? "Speedy Bot" : "Player 2");
@@ -986,58 +1014,74 @@
       }
     }
 
-    // --- 8. BOT AI ---
+    // --- 9. BOT AI ---
     function botTurn() {
       if (state.gameOver || state.activePlayer !== 1) return;
 
       const hand = state.p2Hand;
-      let chosenPlay = null;
+      let chosenMove = null;
 
-      // 1. Prioritize True Match!
+      // 1. Hunt for True Match first (Stacking or Adjacent)
       for (let i = 0; i < hand.length; i++) {
         const card = hand[i];
-        for (let s = 0; s < state.exposedSlots.length; s++) {
-          const slot = state.exposedSlots[s];
-          const isMatch1 = (card.half1.color === slot.half.color || card.half1.color === 'wild');
-          const isMatch2 = (card.half2.color === slot.half.color || card.half2.color === 'wild');
-          if (isMatch1 || isMatch2) {
-            const isTrue = (
-              (card.half1.vehicle === slot.half.vehicle && card.half1.part !== slot.half.part) ||
-              (card.half2.vehicle === slot.half.vehicle && card.half2.part !== slot.half.part)
-            );
-            if (isTrue) {
-              chosenPlay = { card, handIdx: i, slot, isTrueMatch: true };
-              break;
-            }
+        for (let s = 0; s < state.tableSlots.length; s++) {
+          const topCard = state.tableSlots[s].cardsStack[state.tableSlots[s].cardsStack.length - 1];
+
+          // Check stack true match
+          const canStackR = (card.half1.color === topCard.half2.color || card.half1.color === 'wild');
+          if (canStackR && card.half1.vehicle === topCard.half2.vehicle) {
+            chosenMove = { type: 'stack', card, handIdx: i, slotIdx: s, isTrueMatch: true };
+            break;
+          }
+
+          // Check adjacent true match
+          if (card.half1.color === topCard.half2.color && card.half1.vehicle === topCard.half2.vehicle) {
+            chosenMove = { type: 'adjacent', card, handIdx: i, slotIdx: s, position: 'after', isTrueMatch: true };
+            break;
           }
         }
-        if (chosenPlay) break;
+        if (chosenMove) break;
       }
 
-      // 2. Otherwise pick any legal color match
-      if (!chosenPlay) {
+      // 2. Otherwise pick any legal stack or adjacent move
+      if (!chosenMove) {
         for (let i = 0; i < hand.length; i++) {
           const card = hand[i];
-          for (let s = 0; s < state.exposedSlots.length; s++) {
-            const slot = state.exposedSlots[s];
-            const isMatch = (card.half1.color === slot.half.color || card.half2.color === slot.half.color || card.half1.color === 'wild');
-            if (isMatch) {
-              chosenPlay = { card, handIdx: i, slot, isTrueMatch: false };
+          for (let s = 0; s < state.tableSlots.length; s++) {
+            const topCard = state.tableSlots[s].cardsStack[state.tableSlots[s].cardsStack.length - 1];
+
+            // Try stacking
+            if (card.half1.color === topCard.half2.color || card.half2.color === topCard.half1.color || card.half1.color === 'wild') {
+              chosenMove = { type: 'stack', card, handIdx: i, slotIdx: s, isTrueMatch: false };
+              break;
+            }
+
+            // Try adjacent
+            if (card.half1.color === topCard.half2.color) {
+              chosenMove = { type: 'adjacent', card, handIdx: i, slotIdx: s, position: 'after', isTrueMatch: false };
+              break;
+            }
+            if (card.half2.color === topCard.half1.color) {
+              chosenMove = { type: 'adjacent', card, handIdx: i, slotIdx: s, position: 'before', isTrueMatch: false };
               break;
             }
           }
-          if (chosenPlay) break;
+          if (chosenMove) break;
         }
       }
 
-      if (chosenPlay) {
-        executePlay(chosenPlay.card, chosenPlay.handIdx, chosenPlay.slot, chosenPlay.isTrueMatch);
+      if (chosenMove) {
+        if (chosenMove.type === 'stack') {
+          executeStackPlay(chosenMove.card, chosenMove.handIdx, chosenMove.slotIdx, chosenMove.isTrueMatch);
+        } else {
+          executeAdjacentPlay(chosenMove.card, chosenMove.handIdx, chosenMove.slotIdx, chosenMove.position, chosenMove.isTrueMatch);
+        }
       } else {
         drawCard();
       }
     }
 
-    // --- 9. WIN & ALERTS ---
+    // --- 10. WIN & CONTROLS ---
     function triggerWin(winnerName) {
       state.gameOver = true;
       AudioEngine.playHonk();
@@ -1071,7 +1115,6 @@
       }, 2500);
     }
 
-    // --- 10. CONTROLS ---
     document.getElementById('draw-btn').onclick = () => {
       if (state.activePlayer === 0 || state.mode === 'hotseat') {
         drawCard();
