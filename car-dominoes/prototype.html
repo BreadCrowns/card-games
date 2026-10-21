@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Car Dominoes: Traffic Slam! Prototype</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;800;900&display=swap');
+    .font-cartoon { font-family: 'Fredoka One', cursive; }
+    .font-body { font-family: 'Nunito', sans-serif; }
+    
+    /* Subtle 3D Card Shadows */
+    .card-3d {
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+    .card-hover:hover {
+      transform: translateY(-4px) scale(1.02);
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .slot-glow {
+      animation: pulseGlow 1.5s infinite alternate;
+    }
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 0 10px rgba(250, 204, 21, 0.4); border-color: rgba(250, 204, 21, 0.7); }
+      100% { box-shadow: 0 0 22px rgba(250, 204, 21, 0.9); border-color: rgba(250, 204, 21, 1); }
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-body select-none overflow-x-hidden">
+
+  <!-- TOP HEADER / HUD -->
+  <header class="bg-slate-900/90 backdrop-blur border-b border-slate-800 px-4 py-2.5 flex items-center justify-between sticky top-0 z-40">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-red-500 flex items-center justify-center text-2xl shadow-lg shadow-red-500/20">
+        🚗
+      </div>
+      <div>
+        <h1 class="text-xl font-cartoon tracking-wide text-amber-400 drop-shadow flex items-center gap-2">
+          CAR DOMINOES <span class="text-xs bg-red-600 text-white font-body px-2 py-0.5 rounded-full uppercase tracking-wider font-black">Traffic Slam!</span>
+        </h1>
+        <p class="text-[11px] text-slate-400 font-bold">Ages 5+ Tabletop Franken-Car Shedding Game</p>
+      </div>
+    </div>
+
+    <!-- Center Status -->
+    <div class="flex items-center gap-4">
+      <div class="bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700 text-xs flex items-center gap-3">
+        <span>Junkyard: <b id="deck-count" class="text-amber-400 text-sm">0</b></span>
+        <span class="text-slate-600">|</span>
+        <span>Scrap Pile: <b id="scrap-count" class="text-emerald-400 text-sm">0</b></span>
+        <span class="text-slate-600">|</span>
+        <span>Turn: <b id="turn-indicator" class="text-cyan-400 text-sm uppercase">Player 1</b></span>
+      </div>
+      <button id="restart-btn" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-bold border border-slate-700 transition">
+        New Game
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN PLAY AREA: TABLETOP TRAFFIC JAM & ACTION FEED -->
+  <div class="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
+
+    <!-- THE TABLETOP (TRAFFIC JAM GRID) -->
+    <main class="flex-1 relative bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:20px_20px] p-6 overflow-auto flex flex-col items-center justify-center min-h-[440px]">
+      
+      <!-- Table Announcement Banner -->
+      <div id="alarm-banner" class="hidden absolute top-4 z-30 px-6 py-2 rounded-2xl bg-gradient-to-r from-red-600 to-amber-500 text-white font-cartoon text-xl shadow-2xl animate-bounce border-2 border-white/40 flex items-center gap-3">
+        <span class="text-3xl" id="alarm-icon">🚨</span>
+        <span id="alarm-text">WOOP-WOOP! TRUE MATCH!</span>
+      </div>
+
+      <!-- Turbo Boost Notification -->
+      <div id="turbo-badge" class="hidden absolute top-16 z-30 px-4 py-1.5 rounded-full bg-cyan-500 text-slate-950 font-black text-xs uppercase tracking-widest shadow-lg animate-pulse">
+        ⚡ TURBO BOOST ACTIVATED! PLAY 1 MORE CARD!
+      </div>
+
+      <!-- Visual Layout Container for Cards -->
+      <div id="traffic-table" class="relative w-full max-w-4xl min-h-[380px] bg-slate-900/60 rounded-3xl border-2 border-dashed border-slate-800 p-6 flex flex-wrap gap-4 items-center justify-center transition-all">
+        <!-- Cards and active placement slots will render here dynamically -->
+      </div>
+
+      <!-- Quick Guidance Banner -->
+      <div class="mt-4 text-xs font-bold text-slate-400 bg-slate-900/80 px-4 py-1.5 rounded-full border border-slate-800 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+        <span id="prompt-msg">Click a card in your hand, then choose where to SLAM it!</span>
+      </div>
+    </main>
+
+    <!-- RIGHT SIDEBAR: ACTION LOG & BOT / OPPONENT STATUS -->
+    <aside class="w-full lg:w-80 bg-slate-900 border-t lg:border-t-0 lg:border-l border-slate-800 flex flex-col">
+      <!-- Opponent Hand Preview -->
+      <div class="p-3 bg-slate-950/60 border-b border-slate-800 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-sm font-bold" id="opp-avatar">
+            🤖
+          </div>
+          <div>
+            <div class="text-xs font-bold text-slate-200" id="opp-name">Speedy Bot</div>
+            <div class="text-[10px] text-slate-400">Cards: <span id="opp-card-count" class="font-black text-amber-400">5</span></div>
+          </div>
+        </div>
+        <div class="flex gap-1" id="opp-mini-cards">
+          <!-- Mini cards back indicator -->
+        </div>
+      </div>
+
+      <!-- Action Log -->
+      <div class="p-3 border-b border-slate-800 flex items-center justify-between">
+        <span class="text-xs font-cartoon text-slate-400 uppercase tracking-wider">Race Commentary</span>
+        <span class="text-[10px] text-slate-500 font-bold" id="mode-label">Solo vs Bot</span>
+      </div>
+      <div id="log-feed" class="flex-1 p-3 overflow-y-auto space-y-2 text-xs font-medium text-slate-300 max-h-56 lg:max-h-none">
+        <!-- Action logs injected here -->
+      </div>
+
+      <!-- Bot Speed Toggle & Info -->
+      <div class="p-3 bg-slate-950/80 border-t border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
+        <span>Opponent:</span>
+        <button id="toggle-mode-btn" class="text-amber-400 hover:text-amber-300 font-bold underline">
+          Switch to 2P Hotseat
+        </button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- PLAYER HAND & ACTIVE CONTROLS (BOTTOM DOCK) -->
+  <footer class="bg-slate-900 border-t-2 border-slate-800 px-4 py-3 z-30 shadow-2xl">
+    <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      
+      <!-- Player Badge & Horn -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-amber-500 text-slate-950 flex items-center justify-center text-xl font-cartoon shadow-md">
+          P1
+        </div>
+        <div>
+          <div class="text-xs font-black text-amber-400 uppercase tracking-wider" id="active-player-title">YOUR HAND</div>
+          <div class="text-[11px] text-slate-400 font-bold">Select a card to play</div>
+        </div>
+        <button id="honk-btn" class="ml-2 px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded-xl font-cartoon text-xs transition active:scale-95 shadow">
+          🔊 HONK!
+        </button>
+      </div>
+
+      <!-- Cards Container -->
+      <div id="hand-container" class="flex-1 flex gap-2.5 overflow-x-auto py-1 px-2 items-center justify-center">
+        <!-- Player Hand Cards -->
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center gap-2">
+        <button id="draw-btn" class="px-4 py-2.5 bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider shadow-lg shadow-amber-500/20 transition flex items-center gap-1.5">
+          <span>📦 Draw from Junkyard</span>
+        </button>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- WINNER MODAL -->
+  <div id="win-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border-2 border-amber-400 rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl animate-in fade-in zoom-in duration-300">
+      <div class="text-6xl mb-3 animate-bounce">🏁</div>
+      <h2 class="text-3xl font-cartoon text-amber-400 mb-1" id="win-title">CHECKERED FLAG!</h2>
+      <p class="text-sm font-bold text-slate-300 mb-6" id="win-desc">Player 1 emptied their hand and won the race!</p>
+      
+      <div class="bg-slate-800 p-4 rounded-2xl mb-6 text-xs space-y-1.5 text-slate-400">
+        <div class="flex justify-between"><span>True Matches Scored:</span> <b id="stat-matches" class="text-emerald-400">0</b></div>
+        <div class="flex justify-between"><span>Turbo Boosts Triggered:</span> <b id="stat-turbos" class="text-cyan-400">0</b></div>
+        <div class="flex justify-between"><span>Total Turns:</span> <b id="stat-turns" class="text-amber-400">0</b></div>
+      </div>
+
+      <button id="modal-restart-btn" class="w-full py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 text-slate-950 font-cartoon text-lg rounded-2xl shadow-xl transition active:scale-95">
+        PLAY AGAIN! 🚗💨
+      </button>
+    </div>
+  </div>
+
+  <!-- CORE SCRIPT -->
+  <script>
+    // --- AUDIO SOUND SYNTHESIZER (No external mp3 required) ---
+    const AudioEngine = {
+      ctx: null,
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+        }
+      },
+      playHonk() {
+        try {
+          this.init();
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(320, this.ctx.currentTime);
+          osc.frequency.setValueAtTime(400, this.ctx.currentTime + 0.08);
+          gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.25);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.25);
+        } catch (e) {}
+      },
+      playSiren() {
+        try {
+          this.init();
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(600, this.ctx.currentTime);
+          osc.frequency.linearRampToValueAtTime(950, this.ctx.currentTime + 0.15);
+          osc.frequency.linearRampToValueAtTime(600, this.ctx.currentTime + 0.35);
+          gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.4);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.4);
+        } catch (e) {}
+      },
+      playSnap() {
+        try {
+          this.init();
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(180, this.ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(40, this.ctx.currentTime + 0.08);
+          gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.08);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.08);
+        } catch (e) {}
+      }
+    };
+
+    // --- GAME DATA: 36 DECK DEFINITION ---
+    const VEHICLES = {
+      "Fire Truck": { color: "red", hex: "#ef4444", icon: "🚒", sound: "WEE-WOO!" },
+      "Police Cruiser": { color: "blue", hex: "#3b82f6", icon: "🚓", sound: "WOOP-WOOP!" },
+      "School Bus": { color: "yellow", hex: "#eab308", icon: "🚌", sound: "HONK-HONK!" },
+      "Monster Truck": { color: "green", hex: "#22c55e", icon: "🚙", sound: "ROAAAR!" },
+      "Race Car": { color: "orange", hex: "#f97316", icon: "🏎️", sound: "VROOOOM!" },
+      "Tow Truck": { color: "wild", hex: "linear-gradient(135deg, #ec4899, #8b5cf6, #3b82f6)", icon: "🏗️", sound: "CLANK!" },
+      "Red Light": { color: "red", hex: "#dc2626", icon: "🛑", sound: "BRAKE CHECK!" }
+    };
+
+    // Generate deck
+    function buildDeck() {
+      const vKeys = ["Fire Truck", "Police Cruiser", "School Bus", "Monster Truck", "Race Car"];
+      const cuts = ["center", "edge", "corner90"];
+      const deck = [];
+      let id = 1;
+
+      // 30 combo cards across pairs
+      for (let i = 0; i < vKeys.length; i++) {
+        for (let j = 0; j < vKeys.length; j++) {
+          if (deck.length >= 32) break;
+          const v1 = vKeys[i];
+          const v2 = vKeys[(j + 1) % vKeys.length];
+          const p1 = (id % 2 === 0) ? "Front" : "Rear";
+          const p2 = (id % 3 === 0) ? "Front" : "Rear";
+          const cut1 = cuts[(id) % cuts.length];
+          const cut2 = cuts[(id + 1) % cuts.length];
+          deck.push({
+            id: id++,
+            type: "combo",
+            half1: { vehicle: v1, part: p1, color: VEHICLES[v1].color, cut: cut1 },
+            half2: { vehicle: v2, part: p2, color: VEHICLES[v2].color, cut: cut2 }
+          });
+        }
+      }
+
+      // Add 2 Tow Truck Action Cards (Wildcards)
+      deck.push({
+        id: id++,
+        type: "action",
+        action: "tow_truck",
+        name: "Tow Truck",
+        half1: { vehicle: "Tow Truck", part: "Hook", color: "wild", cut: "edge" },
+        half2: { vehicle: "Police Cruiser", part: "Rear", color: "blue", cut: "center" }
+      });
+      deck.push({
+        id: id++,
+        type: "action",
+        action: "tow_truck",
+        name: "Tow Truck",
+        half1: { vehicle: "Tow Truck", part: "Hook", color: "wild", cut: "center" },
+        half2: { vehicle: "Fire Truck", part: "Rear", color: "red", cut: "edge" }
+      });
+
+      // Add 2 Red Light Action Cards (Stop & Skip)
+      deck.push({
+        id: id++,
+        type: "action",
+        action: "red_light",
+        name: "Red Light",
+        half1: { vehicle: "Red Light", part: "Stop", color: "red", cut: "edge" },
+        half2: { vehicle: "Race Car", part: "Front", color: "orange", cut: "center" }
+      });
+      deck.push({
+        id: id++,
+        type: "action",
+        action: "red_light",
+        name: "Red Light",
+        half1: { vehicle: "Red Light", part: "Stop", color: "red", cut: "center" },
+        half2: { vehicle: "School Bus", part: "Rear", color: "yellow", cut: "edge" }
+      });
+
+      return deck;
+    }
+
+    // --- GAME STATE ---
+    let state = {
+      mode: 'bot', // 'bot' or 'hotseat'
+      deck: [],
+      p1Hand: [],
+      p2Hand: [],
+      activePlayer: 0, // 0 = P1, 1 = P2/Bot
+      turboBoost: false,
+      tableCards: [], // Placed cards on the table
+      exposedSlots: [], // Available connection points { id, cardId, halfIndex, color, vehicle, part, cut, x, y }
+      scrapCount: 0,
+      totalTurns: 0,
+      trueMatchesScored: 0,
+      turbosTriggered: 0,
+      selectedHandCardIndex: null,
+      gameOver: false
+    };
+
+    // --- INITIALIZATION ---
+    function initGame() {
+      const fullDeck = buildDeck();
+      // Fisher-Yates Shuffle
+      for (let i = fullDeck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [fullDeck[i], fullDeck[j]] = [fullDeck[j], fullDeck[i]];
+      }
+
+      state.deck = fullDeck;
+      state.p1Hand = state.deck.splice(0, 5);
+      state.p2Hand = state.deck.splice(0, 5);
+      state.activePlayer = 0;
+      state.turboBoost = false;
+      state.scrapCount = 0;
+      state.totalTurns = 0;
+      state.trueMatchesScored = 0;
+      state.turbosTriggered = 0;
+      state.selectedHandCardIndex = null;
+      state.gameOver = false;
+      state.tableCards = [];
+      state.exposedSlots = [];
+
+      // Place starter card on table
+      const starter = state.deck.shift();
+      state.tableCards.push({
+        ...starter,
+        instanceId: 'starter-1',
+        x: 0,
+        y: 0,
+        rotation: 0
+      });
+
+      // Initialize exposed slots from starter card
+      state.exposedSlots = [
+        { slotId: 's-0', cardInstanceId: 'starter-1', halfIdx: 1, half: starter.half1, mode: 'adjacent' },
+        { slotId: 's-1', cardInstanceId: 'starter-1', halfIdx: 2, half: starter.half2, mode: 'adjacent' },
+        { slotId: 's-2', cardInstanceId: 'starter-1', halfIdx: 1, half: starter.half1, mode: 'overlap' },
+        { slotId: 's-3', cardInstanceId: 'starter-1', halfIdx: 2, half: starter.half2, mode: 'overlap' }
+      ];
+
+      document.getElementById('win-modal').classList.add('hidden');
+      document.getElementById('log-feed').innerHTML = '';
+      addLog(`🚦 Race started! Starter card slammed in the street.`);
+      renderAll();
+    }
+
+    // --- RENDER FUNCTIONS ---
+    function renderAll() {
+      document.getElementById('deck-count').textContent = state.deck.length;
+      document.getElementById('scrap-count').textContent = state.scrapCount;
+      document.getElementById('turn-indicator').textContent = state.activePlayer === 0 ? "Player 1" : (state.mode === 'bot' ? "Speedy Bot" : "Player 2");
+      document.getElementById('opp-card-count').textContent = state.p2Hand.length;
+      document.getElementById('mode-label').textContent = state.mode === 'bot' ? "Solo vs Bot" : "2P Hotseat";
+      
+      const oppMinis = document.getElementById('opp-mini-cards');
+      oppMinis.innerHTML = '';
+      for (let i = 0; i < state.p2Hand.length; i++) {
+        oppMinis.innerHTML += `<div class="w-3 h-5 rounded bg-slate-700 border border-slate-600"></div>`;
+      }
+
+      const turboBadge = document.getElementById('turbo-badge');
+      if (state.turboBoost) {
+        turboBadge.classList.remove('hidden');
+      } else {
+        turboBadge.classList.add('hidden');
+      }
+
+      renderHand();
+      renderTable();
+    }
+
+    function getHalfBg(half) {
+      if (half.color === 'wild') return 'bg-gradient-to-tr from-pink-500 via-purple-500 to-indigo-500 text-white';
+      if (half.color === 'red') return 'bg-red-600 text-white';
+      if (half.color === 'blue') return 'bg-blue-600 text-white';
+      if (half.color === 'yellow') return 'bg-amber-400 text-slate-950';
+      if (half.color === 'green') return 'bg-emerald-500 text-slate-950';
+      if (half.color === 'orange') return 'bg-orange-500 text-white';
+      return 'bg-slate-700 text-white';
+    }
+
+    function getCutLabel(cut) {
+      if (cut === 'edge') return '◄ Edge';
+      if (cut === 'center') return '▲ Center';
+      return '⤹ 90° Turn';
+    }
+
+    function renderHand() {
+      const container = document.getElementById('hand-container');
+      container.innerHTML = '';
+      const currentHand = state.activePlayer === 0 ? state.p1Hand : state.p2Hand;
+
+      if (state.mode === 'bot' && state.activePlayer === 1) {
+        container.innerHTML = `<div class="text-sm font-bold text-amber-400 animate-pulse">🤖 Speedy Bot is planning its move...</div>`;
+        return;
+      }
+
+      currentHand.forEach((card, idx) => {
+        const isSelected = state.selectedHandCardIndex === idx;
+        const v1 = VEHICLES[card.half1.vehicle] || VEHICLES["Fire Truck"];
+        const v2 = VEHICLES[card.half2.vehicle] || VEHICLES["Fire Truck"];
+
+        const cardEl = document.createElement('div');
+        cardEl.className = `cursor-pointer flex rounded-2xl overflow-hidden card-3d card-hover border-2 transition-all ${
+          isSelected ? 'border-amber-400 ring-4 ring-amber-400/40 scale-105' : 'border-slate-700 hover:border-slate-500'
+        } w-44 h-24 shrink-0 bg-slate-800`;
+
+        cardEl.innerHTML = `
+          <!-- Half 1 -->
+          <div class="flex-1 ${getHalfBg(card.half1)} p-2 flex flex-col justify-between border-r border-black/20">
+            <div class="flex justify-between items-center text-[10px] font-black uppercase">
+              <span>${v1.icon}</span>
+              <span class="text-[9px] opacity-80">${getCutLabel(card.half1.cut)}</span>
+            </div>
+            <div class="text-center font-cartoon text-xs leading-tight">${card.half1.part}</div>
+            <div class="text-[9px] font-black tracking-tight truncate">${card.half1.vehicle}</div>
+          </div>
+          <!-- Half 2 -->
+          <div class="flex-1 ${getHalfBg(card.half2)} p-2 flex flex-col justify-between">
+            <div class="flex justify-between items-center text-[10px] font-black uppercase">
+              <span>${v2.icon}</span>
+              <span class="text-[9px] opacity-80">${getCutLabel(card.half2.cut)}</span>
+            </div>
+            <div class="text-center font-cartoon text-xs leading-tight">${card.half2.part}</div>
+            <div class="text-[9px] font-black tracking-tight truncate">${card.half2.vehicle}</div>
+          </div>
+        `;
+
+        cardEl.onclick = () => {
+          AudioEngine.playSnap();
+          state.selectedHandCardIndex = (state.selectedHandCardIndex === idx) ? null : idx;
+          renderHand();
+          renderTable();
+        };
+
+        container.appendChild(cardEl);
+      });
+    }
+
+    function renderTable() {
+      const table = document.getElementById('traffic-table');
+      table.innerHTML = '';
+
+      // Render placed table cards
+      state.tableCards.forEach((c) => {
+        const v1 = VEHICLES[c.half1.vehicle] || VEHICLES["Fire Truck"];
+        const v2 = VEHICLES[c.half2.vehicle] || VEHICLES["Fire Truck"];
+
+        const el = document.createElement('div');
+        el.className = `flex rounded-2xl overflow-hidden card-3d border-2 border-slate-700 w-44 h-24 shrink-0 transition-transform hover:scale-105 relative`;
+        
+        el.innerHTML = `
+          <div class="flex-1 ${getHalfBg(c.half1)} p-2 flex flex-col justify-between border-r border-black/20">
+            <div class="flex justify-between items-center text-[10px] font-black uppercase">
+              <span>${v1.icon}</span>
+              <span class="text-[9px] opacity-80">${getCutLabel(c.half1.cut)}</span>
+            </div>
+            <div class="text-center font-cartoon text-xs leading-tight">${c.half1.part}</div>
+            <div class="text-[9px] font-black tracking-tight truncate">${c.half1.vehicle}</div>
+          </div>
+          <div class="flex-1 ${getHalfBg(c.half2)} p-2 flex flex-col justify-between">
+            <div class="flex justify-between items-center text-[10px] font-black uppercase">
+              <span>${v2.icon}</span>
+              <span class="text-[9px] opacity-80">${getCutLabel(c.half2.cut)}</span>
+            </div>
+            <div class="text-center font-cartoon text-xs leading-tight">${c.half2.part}</div>
+            <div class="text-[9px] font-black tracking-tight truncate">${c.half2.vehicle}</div>
+          </div>
+        `;
+        table.appendChild(el);
+      });
+
+      // If a hand card is selected, render available target slots!
+      if (state.selectedHandCardIndex !== null) {
+        const currentHand = state.activePlayer === 0 ? state.p1Hand : state.p2Hand;
+        const selectedCard = currentHand[state.selectedHandCardIndex];
+
+        // Find legal slots
+        state.exposedSlots.forEach((slot) => {
+          const matchHalf1 = (selectedCard.half1.color === slot.half.color || selectedCard.half1.color === 'wild' || slot.half.color === 'wild');
+          const matchHalf2 = (selectedCard.half2.color === slot.half.color || selectedCard.half2.color === 'wild' || slot.half.color === 'wild');
+
+          if (matchHalf1 || matchHalf2) {
+            const isTrueMatch = (
+              (selectedCard.half1.vehicle === slot.half.vehicle && selectedCard.half1.part !== slot.half.part) ||
+              (selectedCard.half2.vehicle === slot.half.vehicle && selectedCard.half2.part !== slot.half.part)
+            );
+
+            const slotBtn = document.createElement('button');
+            slotBtn.className = `w-44 h-24 rounded-2xl border-2 border-dashed flex flex-col items-center justify-center p-2 transition-all cursor-pointer slot-glow ${
+              isTrueMatch ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300' : 'bg-amber-500/10 border-amber-400 text-amber-300'
+            }`;
+
+            slotBtn.innerHTML = `
+              <div class="font-cartoon text-xs flex items-center gap-1">
+                <span>${isTrueMatch ? '⭐ TRUE MATCH!' : (slot.mode === 'overlap' ? '🥞 OVERLAP' : '➡️ ADJACENT')}</span>
+              </div>
+              <div class="text-[10px] font-bold mt-1 text-slate-300">
+                Match on: <b class="uppercase font-black text-${slot.half.color === 'wild' ? 'pink-400' : slot.half.color + '-400'}">${slot.half.color}</b>
+              </div>
+              <div class="text-[9px] text-slate-400">${slot.half.vehicle} (${slot.half.part})</div>
+            `;
+
+            slotBtn.onclick = () => {
+              executePlay(selectedCard, state.selectedHandCardIndex, slot, isTrueMatch);
+            };
+
+            table.appendChild(slotBtn);
+          }
+        });
+      }
+    }
+
+    // --- PLAY EXECUTION ---
+    function executePlay(card, handIdx, slot, isTrueMatch) {
+      AudioEngine.playSnap();
+      const currentHand = state.activePlayer === 0 ? state.p1Hand : state.p2Hand;
+      const playerName = state.activePlayer === 0 ? "Player 1" : (state.mode === 'bot' ? "Speedy Bot" : "Player 2");
+
+      // Remove from hand
+      currentHand.splice(handIdx, 1);
+      state.selectedHandCardIndex = null;
+      state.totalTurns++;
+
+      // Action card triggers
+      if (card.action === 'red_light') {
+        AudioEngine.playHonk();
+        addLog(`🛑 <b>${playerName}</b> slammed a <b>RED LIGHT!</b> Next turn skipped!`);
+        showAlarm("🛑 BRAKE CHECK!", "RED LIGHT TRIGGERED!");
+      }
+
+      // Add to table
+      const newInstanceId = 'card-' + Date.now();
+      state.tableCards.push({
+        ...card,
+        instanceId: newInstanceId
+      });
+
+      // Manage Table Capacity (tabletop compactness)
+      if (state.tableCards.length > 5) {
+        state.tableCards.shift(); // Old cars get cleared by traffic flow
+      }
+
+      // Update exposed slots
+      // Replace matching slot with the newly exposed half
+      const remainingHalf = (card.half1.color === slot.half.color) ? card.half2 : card.half1;
+      state.exposedSlots = state.exposedSlots.filter(s => s.slotId !== slot.slotId);
+      
+      // Add new adjacent and overlap targets
+      const baseId = Date.now();
+      state.exposedSlots.push(
+        { slotId: 's-' + baseId + '-1', cardInstanceId: newInstanceId, halfIdx: 1, half: remainingHalf, mode: 'adjacent' },
+        { slotId: 's-' + baseId + '-2', cardInstanceId: newInstanceId, halfIdx: 2, half: remainingHalf, mode: 'overlap' }
+      );
+
+      // Keep exposed slots clean
+      if (state.exposedSlots.length > 8) {
+        state.exposedSlots = state.exposedSlots.slice(-6);
+      }
+
+      // CHECK FOR TRUE MATCH
+      if (isTrueMatch) {
+        state.trueMatchesScored++;
+        state.scrapCount++;
+        const vehicleInfo = VEHICLES[slot.half.vehicle] || VEHICLES["Fire Truck"];
+        
+        AudioEngine.playSiren();
+        showAlarm(vehicleInfo.icon + " " + vehicleInfo.sound, `TRUE MATCH: ${slot.half.vehicle} DRIVES OFF!`);
+        addLog(`🚗💨 <b>${playerName}</b> built a real <b>${slot.half.vehicle}</b>! <i>"${vehicleInfo.sound}"</i> Drives into Scrap Pile!`);
+
+        // Check if hand is empty first
+        if (currentHand.length === 0) {
+          triggerWin(playerName);
+          return;
+        }
+
+        // TRIGGER TURBO BOOST (Warm-up lap rule: unlocks turn 2 onward)
+        if (state.totalTurns > 1) {
+          state.turbosTriggered++;
+          state.turboBoost = true;
+          addLog(`⚡ <b>${playerName}</b> unlocked a <b>TURBO BOOST!</b> Take a bonus turn!`);
+          renderAll();
+
+          // If bot triggered turbo boost, let it act again
+          if (state.mode === 'bot' && state.activePlayer === 1) {
+            setTimeout(botTurn, 900);
+          }
+          return;
+        } else {
+          addLog(`🏁 <b>Warm-Up Lap:</b> Car cleared! Turbo Boost unlocks on Turn 2!`);
+        }
+      }
+
+      // If it was a Franken-Car
+      const frankenName = `The ${card.half1.vehicle} ${card.half2.vehicle}`;
+      addLog(`🔧 <b>${playerName}</b> joined a Franken-Car: <b>${frankenName}</b>!`);
+
+      // Check for Win
+      if (currentHand.length === 0) {
+        triggerWin(playerName);
+        return;
+      }
+
+      // If had Turbo Boost active, it is consumed
+      if (state.turboBoost) {
+        state.turboBoost = false;
+      }
+
+      // Pass Turn
+      state.activePlayer = state.activePlayer === 0 ? 1 : 0;
+      renderAll();
+
+      if (state.mode === 'bot' && state.activePlayer === 1) {
+        setTimeout(botTurn, 700);
+      }
+    }
+
+    // --- DRAW FROM JUNKYARD ---
+    function drawCard() {
+      const currentHand = state.activePlayer === 0 ? state.p1Hand : state.p2Hand;
+      const playerName = state.activePlayer === 0 ? "Player 1" : (state.mode === 'bot' ? "Speedy Bot" : "Player 2");
+
+      if (state.deck.length === 0) {
+        addLog(`📦 Junkyard is empty! Passing turn.`);
+        state.activePlayer = state.activePlayer === 0 ? 1 : 0;
+        state.turboBoost = false;
+        renderAll();
+        if (state.mode === 'bot' && state.activePlayer === 1) setTimeout(botTurn, 700);
+        return;
+      }
+
+      const drawn = state.deck.shift();
+      currentHand.push(drawn);
+      AudioEngine.playSnap();
+      addLog(`📦 <b>${playerName}</b> drew a card from the Junkyard.`);
+
+      state.turboBoost = false;
+      state.activePlayer = state.activePlayer === 0 ? 1 : 0;
+      renderAll();
+
+      if (state.mode === 'bot' && state.activePlayer === 1) {
+        setTimeout(botTurn, 700);
+      }
+    }
+
+    // --- BOT AI ---
+    function botTurn() {
+      if (state.gameOver || state.activePlayer !== 1) return;
+
+      const hand = state.p2Hand;
+      let chosenPlay = null;
+
+      // 1. Look for a True Match first!
+      for (let i = 0; i < hand.length; i++) {
+        const card = hand[i];
+        for (let s = 0; s < state.exposedSlots.length; s++) {
+          const slot = state.exposedSlots[s];
+          const isMatch1 = (card.half1.color === slot.half.color || card.half1.color === 'wild');
+          const isMatch2 = (card.half2.color === slot.half.color || card.half2.color === 'wild');
+          if (isMatch1 || isMatch2) {
+            const isTrue = (
+              (card.half1.vehicle === slot.half.vehicle && card.half1.part !== slot.half.part) ||
+              (card.half2.vehicle === slot.half.vehicle && card.half2.part !== slot.half.part)
+            );
+            if (isTrue) {
+              chosenPlay = { card, handIdx: i, slot, isTrueMatch: true };
+              break;
+            }
+          }
+        }
+        if (chosenPlay) break;
+      }
+
+      // 2. Otherwise pick any legal match
+      if (!chosenPlay) {
+        for (let i = 0; i < hand.length; i++) {
+          const card = hand[i];
+          for (let s = 0; s < state.exposedSlots.length; s++) {
+            const slot = state.exposedSlots[s];
+            const isMatch = (card.half1.color === slot.half.color || card.half2.color === slot.half.color || card.half1.color === 'wild');
+            if (isMatch) {
+              chosenPlay = { card, handIdx: i, slot, isTrueMatch: false };
+              break;
+            }
+          }
+          if (chosenPlay) break;
+        }
+      }
+
+      if (chosenPlay) {
+        executePlay(chosenPlay.card, chosenPlay.handIdx, chosenPlay.slot, chosenPlay.isTrueMatch);
+      } else {
+        drawCard();
+      }
+    }
+
+    // --- WIN TRIGGER ---
+    function triggerWin(winnerName) {
+      state.gameOver = true;
+      AudioEngine.playHonk();
+      try {
+        confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+      } catch (e) {}
+
+      document.getElementById('win-title').textContent = `${winnerName.toUpperCase()} WINS!`;
+      document.getElementById('win-desc').textContent = `${winnerName} emptied their hand and crossed the Checkered Flag!`;
+      document.getElementById('stat-matches').textContent = state.trueMatchesScored;
+      document.getElementById('stat-turbos').textContent = state.turbosTriggered;
+      document.getElementById('stat-turns').textContent = state.totalTurns;
+      document.getElementById('win-modal').classList.remove('hidden');
+    }
+
+    // --- LOG FEED & ALARM HELPERS ---
+    function addLog(html) {
+      const feed = document.getElementById('log-feed');
+      const entry = document.createElement('div');
+      entry.className = "p-2 rounded-xl bg-slate-950/50 border border-slate-800 text-[11px] leading-relaxed";
+      entry.innerHTML = html;
+      feed.prepend(entry);
+    }
+
+    function showAlarm(icon, text) {
+      const banner = document.getElementById('alarm-banner');
+      document.getElementById('alarm-icon').textContent = icon;
+      document.getElementById('alarm-text').textContent = text;
+      banner.classList.remove('hidden');
+      setTimeout(() => {
+        banner.classList.add('hidden');
+      }, 2500);
+    }
+
+    // --- BUTTON EVENT LISTENERS ---
+    document.getElementById('draw-btn').onclick = () => {
+      if (state.activePlayer === 0 || state.mode === 'hotseat') {
+        drawCard();
+      }
+    };
+
+    document.getElementById('honk-btn').onclick = () => {
+      AudioEngine.playHonk();
+      showAlarm("📢", "BEEP BEEP! OUTTA MY WAY!");
+    };
+
+    document.getElementById('restart-btn').onclick = initGame;
+    document.getElementById('modal-restart-btn').onclick = initGame;
+
+    document.getElementById('toggle-mode-btn').onclick = () => {
+      state.mode = state.mode === 'bot' ? 'hotseat' : 'bot';
+      document.getElementById('toggle-mode-btn').textContent = state.mode === 'bot' ? "Switch to 2P Hotseat" : "Switch to Solo vs Bot";
+      initGame();
+    };
+
+    // START GAME
+    initGame();
+  </script>
+</body>
+</html>
