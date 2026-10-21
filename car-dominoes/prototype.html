@@ -11,39 +11,39 @@
     .font-cartoon { font-family: 'Fredoka One', cursive; }
     .font-body { font-family: 'Nunito', sans-serif; }
     
-    /* Asphalt Road Styling */
-    .road-bg {
-      background-color: #0f172a;
+    .road-grid {
+      background-color: #0b1120;
       background-image: 
-        linear-gradient(to right, rgba(234, 179, 8, 0.25) 1px, transparent 1px),
-        radial-gradient(ellipse at center, #1e293b 0%, #090d16 100%);
-      background-size: 80px 80px, 100% 100%;
+        radial-gradient(ellipse at center, #1e293b 0%, #060911 100%),
+        linear-gradient(to right, rgba(234, 179, 8, 0.2) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+      background-size: 100% 100%, 120px 120px, 40px 40px;
     }
 
-    .card-shadow {
-      box-shadow: 0 8px 16px -2px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+    .car-card-shadow {
+      box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.6), 0 4px 6px -2px rgba(0, 0, 0, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.35);
     }
 
     .slot-glow {
-      animation: pulseTarget 1.2s infinite alternate;
+      animation: pulseSlot 1.2s infinite alternate ease-in-out;
     }
-    @keyframes pulseTarget {
-      0% { transform: scale(0.98); box-shadow: 0 0 8px rgba(52, 211, 153, 0.5); }
-      100% { transform: scale(1.02); box-shadow: 0 0 24px rgba(52, 211, 153, 0.95); }
+    @keyframes pulseSlot {
+      0% { transform: scale(0.97); box-shadow: 0 0 10px rgba(52, 211, 153, 0.4); border-color: rgba(52, 211, 153, 0.6); }
+      100% { transform: scale(1.02); box-shadow: 0 0 28px rgba(52, 211, 153, 0.95); border-color: rgba(52, 211, 153, 1); }
     }
 
     .turbo-glow {
-      animation: turboFlash 0.8s infinite alternate;
+      animation: turboFlash 0.7s infinite alternate;
     }
     @keyframes turboFlash {
-      0% { box-shadow: 0 0 10px #38bdf8; }
-      100% { box-shadow: 0 0 25px #0284c7, 0 0 45px #38bdf8; }
+      0% { box-shadow: 0 0 12px #38bdf8; }
+      100% { box-shadow: 0 0 35px #0284c7, 0 0 50px #38bdf8; }
     }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-body select-none">
 
-  <!-- TOP APP BAR -->
+  <!-- TOP HEADER / STATUS -->
   <header class="bg-slate-900 border-b border-slate-800 px-4 py-2.5 flex items-center justify-between sticky top-0 z-40 shadow-lg">
     <div class="flex items-center gap-3">
       <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-red-600 via-amber-500 to-yellow-400 flex items-center justify-center text-2xl shadow-lg shadow-amber-500/20">
@@ -51,19 +51,19 @@
       </div>
       <div>
         <h1 class="text-xl font-cartoon tracking-wide text-amber-400 drop-shadow flex items-center gap-2">
-          CAR DOMINOES <span class="text-xs bg-red-600 text-white font-body px-2 py-0.5 rounded-full uppercase tracking-wider font-black">Traffic Slam!</span>
+          CAR DOMINOES <span class="text-xs bg-red-600 text-white font-body px-2.5 py-0.5 rounded-full uppercase tracking-wider font-black">Traffic Slam!</span>
         </h1>
-        <p class="text-[11px] text-slate-400 font-bold">Match background colors • Build crazy Franken-Cars • Ages 5+</p>
+        <p class="text-[11px] text-slate-400 font-bold">1 Whole Car Per Card • Match Background Colors • Ages 5+</p>
       </div>
     </div>
 
-    <!-- Stats & Controls -->
+    <!-- Stats & Actions -->
     <div class="flex items-center gap-3">
       <button id="guide-toggle-btn" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-amber-300 rounded-xl text-xs font-bold border border-amber-500/30 flex items-center gap-1.5 transition">
         <span>📖 How To Play</span>
       </button>
 
-      <div class="bg-slate-950/80 px-3 py-1.5 rounded-xl border border-slate-800 text-xs flex items-center gap-3">
+      <div class="bg-slate-950/80 px-3.5 py-1.5 rounded-xl border border-slate-800 text-xs flex items-center gap-3">
         <span>Junkyard: <b id="deck-count" class="text-amber-400 text-sm">0</b></span>
         <span class="text-slate-700">|</span>
         <span>Scrap: <b id="scrap-count" class="text-emerald-400 text-sm">0</b></span>
@@ -77,30 +77,30 @@
     </div>
   </header>
 
-  <!-- QUICK VISUAL HOW-TO-PLAY ACCORDION (COLLAPSIBLE) -->
+  <!-- COLLAPSIBLE HOW TO PLAY DRAWER -->
   <div id="guide-drawer" class="hidden bg-slate-900 border-b-2 border-amber-500/30 px-6 py-4 transition-all">
     <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-      <div class="bg-slate-950/80 p-3 rounded-2xl border border-slate-800 flex gap-3 items-center">
+      <div class="bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800 flex gap-3 items-center">
         <div class="text-3xl shrink-0">🎨</div>
         <div>
           <div class="font-cartoon text-amber-400 text-sm mb-0.5">1. Match Colors!</div>
-          <p class="text-slate-400 leading-snug">Every car half has a solid color. You must place your card touching or covering the <b>same color</b> (Red to Red, Blue to Blue)!</p>
+          <p class="text-slate-400 leading-snug">Every card shows a large car with <b>two colored halves</b>. Place your card touching or covering the <b>same color</b> (Red to Red, Blue to Blue)!</p>
         </div>
       </div>
 
-      <div class="bg-slate-950/80 p-3 rounded-2xl border border-slate-800 flex gap-3 items-center">
+      <div class="bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800 flex gap-3 items-center">
         <div class="text-3xl shrink-0">🔧</div>
         <div>
-          <div class="font-cartoon text-amber-400 text-sm mb-0.5">2. Left = Rear, Right = Front</div>
-          <p class="text-slate-400 leading-snug">Putting a <b>Rear</b> next to a <b>Front</b> creates a complete 2-wheel car! Mismatched cars become funny <b>Franken-Cars</b>.</p>
+          <div class="font-cartoon text-amber-400 text-sm mb-0.5">2. Big Franken-Cars</div>
+          <p class="text-slate-400 leading-snug">Most cards are crazy hybrid cars (e.g. Fire Truck Rear + Police Front). They fill the street with funny cartoon vehicles!</p>
         </div>
       </div>
 
-      <div class="bg-slate-950/80 p-3 rounded-2xl border border-slate-800 flex gap-3 items-center">
+      <div class="bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800 flex gap-3 items-center">
         <div class="text-3xl shrink-0">⚡</div>
         <div>
           <div class="font-cartoon text-emerald-400 text-sm mb-0.5">3. True Match = Turbo Boost!</div>
-          <p class="text-slate-400 leading-snug">Connect the front and rear of the <b>same real car</b>! It revs into the Scrap Pile and gives you an immediate <b>Bonus Play</b>!</p>
+          <p class="text-slate-400 leading-snug">When you connect two halves of the <b>same real car</b>, it revs into the Scrap Pile and gives you an immediate <b>Bonus Play</b>!</p>
         </div>
       </div>
     </div>
@@ -109,8 +109,8 @@
   <!-- MAIN PLAY AREA: TABLETOP TRAFFIC JAM & RACING COMMENTARY -->
   <div class="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
 
-    <!-- THE TABLETOP (ASPHALT STREET) -->
-    <main class="flex-1 relative road-bg p-6 overflow-auto flex flex-col items-center justify-start min-h-[460px]">
+    <!-- THE ASPHALT HIGHWAY (TABLETOP) -->
+    <main class="flex-1 relative road-grid p-6 overflow-auto flex flex-col items-center justify-start min-h-[460px]">
       
       <!-- Big Celebration Sound Banner -->
       <div id="alarm-banner" class="hidden absolute top-4 z-40 px-6 py-2.5 rounded-2xl bg-gradient-to-r from-red-600 via-amber-500 to-emerald-500 text-white font-cartoon text-xl shadow-2xl animate-bounce border-2 border-white flex items-center gap-3">
@@ -123,24 +123,24 @@
         <span>⚡ TURBO BOOST ACTIVATED! PLAY A 2ND CARD NOW!</span>
       </div>
 
-      <!-- Road Sign / Street Header -->
+      <!-- Street Subtitle -->
       <div class="w-full max-w-4xl flex items-center justify-between mb-4 px-2">
         <div class="flex items-center gap-2 text-xs font-black uppercase text-amber-400 tracking-wider">
           <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-          <span>Active Street Gridlock (Tabletop)</span>
+          <span>The Traffic Jam (Tabletop Street)</span>
         </div>
         <div class="text-[11px] font-bold text-slate-400 bg-slate-900/90 px-3 py-1 rounded-full border border-slate-800" id="prompt-msg">
           👇 Click any card in your hand below to preview legal plays
         </div>
       </div>
 
-      <!-- The Grid of Cards on the Street -->
+      <!-- Placed Cards on Street -->
       <div id="traffic-table" class="w-full max-w-4xl min-h-[360px] bg-slate-900/40 backdrop-blur rounded-3xl border-2 border-dashed border-slate-800 p-6 flex flex-wrap gap-5 items-center justify-center transition-all">
-        <!-- Rendered dynamically -->
+        <!-- Injected dynamically -->
       </div>
     </main>
 
-    <!-- RIGHT SIDEBAR: BOT OPPONENT & RACING LOG -->
+    <!-- RIGHT SIDEBAR: BOT STATUS & COMMENTARY -->
     <aside class="w-full lg:w-80 bg-slate-900 border-t lg:border-t-0 lg:border-l border-slate-800 flex flex-col shrink-0">
       
       <!-- Opponent Driver Status -->
@@ -172,12 +172,12 @@
       <!-- Tabletop Compactness Hint -->
       <div class="p-3 bg-slate-950/90 border-t border-slate-800 text-[10px] text-slate-400 flex items-center gap-2">
         <span class="text-amber-400 text-sm">💡</span>
-        <span><b>Tabletop Control:</b> Completing True Matches drives cars off into the Scrap Pile so the street never overflows!</span>
+        <span><b>Table Control:</b> True Matches drive cars into the Scrap Pile so the street never overflows!</span>
       </div>
     </aside>
   </div>
 
-  <!-- PLAYER HAND & CONTROLS (BOTTOM DOCK) -->
+  <!-- PLAYER HAND & DOCK (BOTTOM) -->
   <footer class="bg-slate-900 border-t-2 border-slate-800 px-4 py-3 z-30 shadow-2xl">
     <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
       
@@ -229,347 +229,391 @@
     </div>
   </div>
 
-  <!-- CORE GAME SCRIPT & VECTOR ILLUSTRATION ENGINE -->
+  <!-- SCRIPT: INLINE DATA, COMPLETE CAR SVG RENDERING, AND GAME LOGIC -->
   <script>
-    // --- 1. VECTOR SVG ILLUSTRATION GENERATOR ---
-    // Generates distinct, high-clarity cartoon illustrations for each vehicle half
-    const SvgEngine = {
-      // Common wheel generator
-      wheel(cx, cy, r = 16, isMonster = false) {
-        if (isMonster) {
-          return `
-            <circle cx="${cx}" cy="${cy}" r="${r}" fill="#18181b" stroke="#09090b" stroke-width="4"/>
-            <!-- Mud treads -->
-            <circle cx="${cx}" cy="${cy}" r="${r-5}" fill="#27272a" stroke="#71717a" stroke-width="2"/>
-            <circle cx="${cx}" cy="${cy}" r="6" fill="#e4e4e7"/>
-          `;
-        }
+    // --- 1. FULL CARD SVG ENGINE: 1 WHOLE CAR ACROSS THE ENTIRE CARD ---
+    // The entire card displays a single cohesive cartoon car split down the center!
+    const CarArtEngine = {
+      // Returns the SVG markup for the entire card (240px wide by 120px tall)
+      renderFullCardSvg(card) {
+        const h1 = card.half1; // Left half (Rear)
+        const h2 = card.half2; // Right half (Front)
+
+        const c1Hex = this.getColorHex(h1.color);
+        const c2Hex = this.getColorHex(h2.color);
+
+        // Render Left Half Art (Rear Half, x: 0 to 120)
+        const rearSvg = this.getRearHalfSvg(h1.vehicle);
+        // Render Right Half Art (Front Half, x: 120 to 240)
+        const frontSvg = this.getFrontHalfSvg(h2.vehicle);
+
         return `
-          <circle cx="${cx}" cy="${cy}" r="${r}" fill="#18181b" stroke="#27272a" stroke-width="3"/>
-          <circle cx="${cx}" cy="${cy}" r="${r-6}" fill="#94a3b8" stroke="#cbd5e1" stroke-width="1.5"/>
-          <circle cx="${cx}" cy="${cy}" r="3" fill="#334155"/>
+          <svg viewBox="0 0 240 120" class="w-full h-full" preserveAspectRatio="none">
+            <!-- Left Background Color -->
+            <rect x="0" y="0" width="120" height="120" fill="${c1Hex}"/>
+            <!-- Right Background Color -->
+            <rect x="120" y="0" width="120" height="120" fill="${c2Hex}"/>
+
+            <!-- Center Cut-Off Seam Divider Line -->
+            <line x1="120" y1="0" x2="120" y2="120" stroke="#000000" stroke-width="2.5" stroke-dasharray="5,4" opacity="0.4"/>
+
+            <!-- Road Asphalt Strip across entire bottom -->
+            <rect x="0" y="96" width="240" height="24" fill="#0f172a"/>
+            <!-- Yellow Road Dashes -->
+            <line x1="10" y1="108" x2="230" y2="108" stroke="#facc15" stroke-dasharray="14,10" stroke-width="2.5"/>
+
+            <!-- Left Half (Rear) Vehicle Art -->
+            <g transform="translate(0, 0)">
+              ${rearSvg}
+            </g>
+
+            <!-- Right Half (Front) Vehicle Art -->
+            <g transform="translate(120, 0)">
+              ${frontSvg}
+            </g>
+
+            <!-- Card Labels & Indicators -->
+            <text x="8" y="16" font-family="'Fredoka One', cursive" font-size="10" fill="#ffffff" opacity="0.9" filter="drop-shadow(0 1px 1px rgba(0,0,0,0.8))">
+              ${h1.vehicle.toUpperCase()}
+            </text>
+            <text x="232" y="16" font-family="'Fredoka One', cursive" font-size="10" fill="#ffffff" opacity="0.9" text-anchor="end" filter="drop-shadow(0 1px 1px rgba(0,0,0,0.8))">
+              ${h2.vehicle.toUpperCase()}
+            </text>
+          </svg>
         `;
       },
 
-      renderHalf(vehicle, part, color, cut) {
-        const isRear = part === 'Rear';
+      getColorHex(color) {
+        if (color === 'red') return '#dc2626';
+        if (color === 'blue') return '#2563eb';
+        if (color === 'yellow') return '#f59e0b';
+        if (color === 'green') return '#16a34a';
+        if (color === 'orange') return '#ea580c';
+        if (color === 'wild') return '#8b5cf6';
+        return '#475569';
+      },
 
-        // Cut indicator badge icon
-        const cutBadge = cut === 'edge' 
-          ? `<polygon points="${isRear ? '6,55 0,60 6,65' : '94,55 100,60 94,65'}" fill="#ffffff" opacity="0.8"/>`
-          : `<polygon points="46,6 50,0 54,6" fill="#ffffff" opacity="0.8"/>`;
-
-        let artSvg = '';
-
-        // --- FIRE TRUCK (Red) ---
-        if (vehicle === 'Fire Truck') {
-          if (isRear) {
-            artSvg = `
-              <!-- Red Utility Box -->
-              <rect x="12" y="38" width="88" height="48" rx="4" fill="#b91c1c" stroke="#7f1d1d" stroke-width="2"/>
-              <!-- Silver Equipment Rollers -->
-              <rect x="20" y="44" width="40" height="34" rx="2" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1.5"/>
-              <line x1="20" y1="52" x2="60" y2="52" stroke="#64748b" stroke-width="1.5"/>
-              <line x1="20" y1="60" x2="60" y2="60" stroke="#64748b" stroke-width="1.5"/>
-              <line x1="20" y1="68" x2="60" y2="68" stroke="#64748b" stroke-width="1.5"/>
-              <!-- Big Silver Extension Ladder on Top -->
-              <rect x="10" y="24" width="90" height="12" rx="2" fill="#cbd5e1" stroke="#475569" stroke-width="2"/>
-              <line x1="22" y1="24" x2="22" y2="36" stroke="#475569" stroke-width="2"/>
-              <line x1="38" y1="24" x2="38" y2="36" stroke="#475569" stroke-width="2"/>
-              <line x1="54" y1="24" x2="54" y2="36" stroke="#475569" stroke-width="2"/>
-              <line x1="70" y1="24" x2="70" y2="36" stroke="#475569" stroke-width="2"/>
-              <line x1="86" y1="24" x2="86" y2="36" stroke="#475569" stroke-width="2"/>
-              <!-- Coiled Water Hose -->
-              <circle cx="78" cy="60" r="11" fill="none" stroke="#eab308" stroke-width="4"/>
-              <!-- Rear Wheel -->
-              ${this.wheel(45, 86, 15)}
-            `;
-          } else {
-            // Fire Truck Front
-            artSvg = `
-              <!-- Red Cabin -->
-              <path d="M0,38 L55,38 L72,54 L85,54 C88,54 90,56 90,60 L90,86 L0,86 Z" fill="#dc2626" stroke="#991b1b" stroke-width="2"/>
-              <!-- Windshield -->
-              <polygon points="52,42 68,54 36,54 36,42" fill="#bae6fd" stroke="#0284c7" stroke-width="1.5"/>
-              <!-- Chrome Bumper & Headlight -->
-              <rect x="85" y="74" width="10" height="12" rx="2" fill="#cbd5e1" stroke="#64748b" stroke-width="1.5"/>
-              <circle cx="82" cy="66" r="6" fill="#fef08a" stroke="#ca8a04" stroke-width="1.5"/>
-              <!-- Flashing Siren Light -->
-              <rect x="38" y="28" width="12" height="10" rx="3" fill="#ef4444" stroke="#7f1d1d" stroke-width="1.5"/>
-              <circle cx="44" cy="33" r="3" fill="#fecaca"/>
-              <!-- Front Wheel -->
-              ${this.wheel(50, 86, 15)}
-            `;
-          }
-        }
-
-        // --- POLICE CRUISER (Blue) ---
-        else if (vehicle === 'Police Cruiser') {
-          if (isRear) {
-            artSvg = `
-              <!-- Blue Trunk Body -->
-              <path d="M0,48 L45,48 L75,58 L75,84 L0,84 Z" fill="#1d4ed8" stroke="#1e40af" stroke-width="2"/>
-              <!-- White Door Quarter & Star -->
-              <path d="M0,48 L22,48 L22,84 L0,84 Z" fill="#f8fafc"/>
-              <polygon points="11,54 13,59 18,59 14,62 16,67 11,64 6,67 8,62 4,59 9,59" fill="#eab308"/>
-              <!-- Radio Antenna -->
-              <line x1="60" y1="48" x2="68" y2="24" stroke="#64748b" stroke-width="2"/>
-              <circle cx="68" cy="23" r="2" fill="#ef4444"/>
-              <!-- Red Taillight -->
-              <rect x="70" y="60" width="6" height="10" rx="2" fill="#ef4444"/>
-              <!-- Rear Wheel -->
-              ${this.wheel(40, 84, 14)}
-            `;
-          } else {
-            // Police Front
-            artSvg = `
-              <!-- Blue Hood & White Door -->
-              <path d="M0,48 L35,48 L65,60 L85,62 C88,62 90,64 90,68 L90,84 L0,84 Z" fill="#2563eb" stroke="#1d4ed8" stroke-width="2"/>
-              <!-- White Door Section with Star -->
-              <path d="M0,48 L24,48 L24,84 L0,84 Z" fill="#f8fafc"/>
-              <polygon points="12,56 14,60 19,60 15,63 17,68 12,65 7,68 9,63 5,60 10,60" fill="#eab308"/>
-              <!-- Windshield -->
-              <polygon points="26,50 48,60 18,60" fill="#bae6fd" stroke="#0284c7" stroke-width="1.5"/>
-              <!-- Flashing Police Lightbar -->
-              <rect x="14" y="38" width="10" height="8" rx="2" fill="#ef4444"/>
-              <rect x="24" y="38" width="10" height="8" rx="2" fill="#3b82f6"/>
-              <!-- Push Bumper & Headlight -->
-              <rect x="85" y="68" width="8" height="14" rx="2" fill="#0f172a"/>
-              <circle cx="80" cy="68" r="5" fill="#fef08a" stroke="#ca8a04" stroke-width="1.5"/>
-              <!-- Front Wheel -->
-              ${this.wheel(54, 84, 14)}
-            `;
-          }
-        }
-
-        // --- SCHOOL BUS (Yellow) ---
-        else if (vehicle === 'School Bus') {
-          if (isRear) {
-            artSvg = `
-              <!-- Yellow Bus Body -->
-              <rect x="10" y="34" width="90" height="52" rx="4" fill="#f59e0b" stroke="#b45309" stroke-width="2"/>
-              <!-- Black Warning Stripes -->
-              <rect x="10" y="70" width="90" height="5" fill="#18181b"/>
-              <rect x="10" y="44" width="90" height="4" fill="#18181b"/>
-              <!-- Two Passenger Windows -->
-              <rect x="22" y="48" width="22" height="18" rx="2" fill="#bae6fd" stroke="#0284c7" stroke-width="1.5"/>
-              <rect x="54" y="48" width="22" height="18" rx="2" fill="#bae6fd" stroke="#0284c7" stroke-width="1.5"/>
-              <!-- Rear Wheel -->
-              ${this.wheel(45, 86, 14)}
-            `;
-          } else {
-            // School Bus Front
-            artSvg = `
-              <!-- Yellow Bus Front Hood & Windshield -->
-              <path d="M0,34 L40,34 L56,48 L84,52 C88,52 90,56 90,62 L90,86 L0,86 Z" fill="#fbbf24" stroke="#d97706" stroke-width="2"/>
-              <!-- Black Side Stripe -->
-              <path d="M0,70 L86,70 L86,75 L0,75 Z" fill="#18181b"/>
-              <!-- Large Windshield -->
-              <polygon points="34,38 52,48 20,48" fill="#bae6fd" stroke="#0284c7" stroke-width="1.5"/>
-              <!-- Red Octagonal STOP Sign -->
-              <polygon points="12,54 20,54 24,58 24,66 20,70 12,70 8,66 8,58" fill="#ef4444" stroke="#ffffff" stroke-width="1.5"/>
-              <text x="16" y="64" font-size="6" font-weight="900" fill="#ffffff" text-anchor="middle">STOP</text>
-              <!-- Black Grille & Headlight -->
-              <rect x="85" y="66" width="6" height="16" fill="#18181b"/>
-              <circle cx="80" cy="62" r="5" fill="#fef08a" stroke="#ca8a04" stroke-width="1.5"/>
-              <!-- Front Wheel -->
-              ${this.wheel(52, 86, 14)}
-            `;
-          }
-        }
-
-        // --- MONSTER TRUCK (Green) ---
-        else if (vehicle === 'Monster Truck') {
-          if (isRear) {
-            artSvg = `
-              <!-- High-Lift Pickup Bed with Rollbar -->
-              <path d="M0,42 L55,42 L65,58 L65,72 L0,72 Z" fill="#16a34a" stroke="#14532d" stroke-width="2"/>
-              <!-- Chrome Tubular Rollbar & Triple Spotlights -->
-              <path d="M22,42 L32,24 L42,24 L48,42" fill="none" stroke="#cbd5e1" stroke-width="3"/>
-              <circle cx="34" cy="22" r="3.5" fill="#fef08a" stroke="#ca8a04" stroke-width="1"/>
-              <circle cx="42" cy="22" r="3.5" fill="#fef08a" stroke="#ca8a04" stroke-width="1"/>
-              <!-- Heavy Exhaust Pipe with Smoke Puff -->
-              <rect x="10" y="26" width="5" height="18" fill="#475569"/>
-              <circle cx="12" cy="18" r="4" fill="#e2e8f0" opacity="0.8"/>
-              <circle cx="8" cy="12" r="6" fill="#e2e8f0" opacity="0.6"/>
-              <!-- Heavy Suspension Spring -->
-              <line x1="42" y1="70" x2="42" y2="84" stroke="#94a3b8" stroke-width="4"/>
-              <!-- GIANT Knobby Mud Tire -->
-              ${this.wheel(42, 82, 22, true)}
-            `;
-          } else {
-            // Monster Truck Front
-            artSvg = `
-              <!-- High-Lift Cab with Flame Graphics -->
-              <path d="M0,42 L35,42 L52,54 L84,56 C88,56 90,60 90,66 L90,74 L0,74 Z" fill="#22c55e" stroke="#15803d" stroke-width="2"/>
-              <!-- Yellow Neon Flame Graphic on Door -->
-              <path d="M10,64 Q25,58 35,62 Q28,52 20,54 Z" fill="#facc15"/>
-              <!-- Chrome Engine Supercharger Blower -->
-              <rect x="58" y="44" width="16" height="12" rx="2" fill="#e2e8f0" stroke="#475569" stroke-width="1.5"/>
-              <circle cx="62" cy="48" r="2.5" fill="#ef4444"/>
-              <circle cx="70" cy="48" r="2.5" fill="#ef4444"/>
-              <!-- Suspension Spring -->
-              <line x1="52" y1="70" x2="52" y2="84" stroke="#94a3b8" stroke-width="4"/>
-              <!-- GIANT Mud Tire -->
-              ${this.wheel(54, 82, 22, true)}
-            `;
-          }
-        }
-
-        // --- RACE CAR (Orange) ---
-        else if (vehicle === 'Race Car') {
-          if (isRear) {
-            artSvg = `
-              <!-- Low-Profile Sleek Rear Body -->
-              <path d="M0,58 L45,58 L78,66 L78,82 L0,82 Z" fill="#ea580c" stroke="#9a3412" stroke-width="2"/>
-              <!-- Massive Raised GT Spoiler Wing -->
-              <rect x="52" y="42" width="28" height="5" rx="1.5" fill="#18181b"/>
-              <line x1="58" y1="47" x2="58" y2="62" stroke="#18181b" stroke-width="2.5"/>
-              <line x1="72" y1="47" x2="72" y2="64" stroke="#18181b" stroke-width="2.5"/>
-              <!-- Flame Spitting Exhaust -->
-              <rect x="74" y="74" width="8" height="5" fill="#334155"/>
-              <polygon points="82,76 96,74 88,77 98,80 82,79" fill="#facc15"/>
-              <!-- Low Profile Slick Racing Wheel -->
-              ${this.wheel(40, 82, 13)}
-            `;
-          } else {
-            // Race Car Front
-            artSvg = `
-              <!-- Low Wedge Nose with Cockpit -->
-              <path d="M0,58 L32,58 L58,68 L88,72 C92,72 94,74 94,78 L94,82 L0,82 Z" fill="#f97316" stroke="#c2410c" stroke-width="2"/>
-              <!-- Racing Canopy -->
-              <polygon points="12,58 34,58 24,50" fill="#0284c7" stroke="#0369a1" stroke-width="1.5"/>
-              <!-- White Number 1 Circle -->
-              <circle cx="56" cy="71" r="7" fill="#ffffff"/>
-              <text x="56" y="74.5" font-size="8" font-weight="900" fill="#0f172a" text-anchor="middle">1</text>
-              <!-- Black Front Splitter -->
-              <rect x="86" y="80" width="10" height="4" fill="#18181b"/>
-              <!-- Front Slick Wheel -->
-              ${this.wheel(54, 82, 13)}
-            `;
-          }
-        }
-
-        // --- TOW TRUCK (Rainbow Wild) ---
-        else if (vehicle === 'Tow Truck') {
-          artSvg = `
-            <!-- Steel Crane Boom & Cable -->
-            <path d="M10,80 L55,26 L65,26 L22,80 Z" fill="#eab308" stroke="#854d0e" stroke-width="2"/>
-            <!-- Steel Cable & Hook -->
-            <line x1="60" y1="28" x2="74" y2="54" stroke="#334155" stroke-width="2"/>
-            <path d="M74,54 C74,62 84,62 84,56 C84,50 78,50 78,54" fill="none" stroke="#eab308" stroke-width="3"/>
-            <!-- Warning Stripes -->
-            <rect x="15" y="70" width="40" height="8" fill="#18181b"/>
-            <line x1="22" y1="70" x2="28" y2="78" stroke="#facc15" stroke-width="3"/>
-            <line x1="34" y1="70" x2="40" y2="78" stroke="#facc15" stroke-width="3"/>
-            ${this.wheel(50, 84, 15)}
+      // Shared Wheel Generator
+      wheel(cx, cy, r = 17, isMonster = false) {
+        if (isMonster) {
+          return `
+            <circle cx="${cx}" cy="${cy}" r="${r+5}" fill="#09090b" stroke="#27272a" stroke-width="3"/>
+            <circle cx="${cx}" cy="${cy}" r="${r}" fill="#18181b" stroke="#71717a" stroke-width="3"/>
+            <circle cx="${cx}" cy="${cy}" r="7" fill="#e4e4e7"/>
           `;
         }
-
-        // --- RED LIGHT (Stop) ---
-        else if (vehicle === 'Red Light') {
-          artSvg = `
-            <!-- Dark Traffic Housing -->
-            <rect x="25" y="24" width="50" height="60" rx="8" fill="#1e293b" stroke="#0f172a" stroke-width="3"/>
-            <!-- Glowing Red Signal -->
-            <circle cx="50" cy="45" r="14" fill="#ef4444" stroke="#f87171" stroke-width="2"/>
-            <circle cx="50" cy="45" r="7" fill="#fecaca"/>
-            <!-- Stop Sign Text -->
-            <rect x="35" y="66" width="30" height="12" rx="3" fill="#dc2626"/>
-            <text x="50" y="75" font-size="7" font-weight="900" fill="#ffffff" text-anchor="middle">STOP</text>
-          `;
-        }
-
-        // Full Half Frame
         return `
-          <svg viewBox="0 0 100 110" class="w-full h-full" preserveAspectRatio="xMidYMid meet">
-            <!-- Road Asphalt Stripe at bottom -->
-            <rect x="0" y="88" width="100" height="22" fill="#090d16"/>
-            <line x1="0" y1="99" x2="100" y2="99" stroke="#eab308" stroke-dasharray="8,6" stroke-width="2"/>
-            <!-- Vehicle Art -->
-            ${artSvg}
-            <!-- Cut Seam Indicator -->
-            ${cutBadge}
-          </svg>
+          <circle cx="${cx}" cy="${cy}" r="${r}" fill="#0f172a" stroke="#334155" stroke-width="3"/>
+          <circle cx="${cx}" cy="${cy}" r="${r-6}" fill="#cbd5e1" stroke="#94a3b8" stroke-width="2"/>
+          <circle cx="${cx}" cy="${cy}" r="3.5" fill="#475569"/>
+        `;
+      },
+
+      // --- REAR HALF ILLUSTRATIONS (0 to 120 width) ---
+      getRearHalfSvg(vehicle) {
+        if (vehicle === 'Fire Truck') {
+          return `
+            <!-- Red Fire Truck Utility Body -->
+            <rect x="15" y="36" width="105" height="56" rx="4" fill="#991b1b" stroke="#7f1d1d" stroke-width="2"/>
+            <!-- Equipment Rollers -->
+            <rect x="25" y="44" width="46" height="38" rx="2" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1.5"/>
+            <line x1="25" y1="52" x2="71" y2="52" stroke="#64748b" stroke-width="2"/>
+            <line x1="25" y1="62" x2="71" y2="62" stroke="#64748b" stroke-width="2"/>
+            <line x1="25" y1="72" x2="71" y2="72" stroke="#64748b" stroke-width="2"/>
+            <!-- Big Extension Ladder on Roof -->
+            <rect x="10" y="20" width="110" height="14" rx="3" fill="#f8fafc" stroke="#475569" stroke-width="2"/>
+            <line x1="26" y1="20" x2="26" y2="34" stroke="#475569" stroke-width="2.5"/>
+            <line x1="46" y1="20" x2="46" y2="34" stroke="#475569" stroke-width="2.5"/>
+            <line x1="66" y1="20" x2="66" y2="34" stroke="#475569" stroke-width="2.5"/>
+            <line x1="86" y1="20" x2="86" y2="34" stroke="#475569" stroke-width="2.5"/>
+            <line x1="106" y1="20" x2="106" y2="34" stroke="#475569" stroke-width="2.5"/>
+            <!-- Yellow Water Hose -->
+            <circle cx="94" cy="62" r="14" fill="none" stroke="#facc15" stroke-width="4.5"/>
+            <!-- Big Rear Wheel -->
+            ${this.wheel(54, 94, 17)}
+          `;
+        }
+
+        if (vehicle === 'Police Cruiser') {
+          return `
+            <!-- Blue Police Trunk Body -->
+            <path d="M0,48 L55,48 L95,60 L95,92 L0,92 Z" fill="#1d4ed8" stroke="#1e40af" stroke-width="2"/>
+            <!-- White Door & Police Shield -->
+            <path d="M0,48 L28,48 L28,92 L0,92 Z" fill="#f8fafc"/>
+            <polygon points="14,56 16.5,62 23,62 18,66 20,72 14,68 8,72 10,66 5,62 11.5,62" fill="#eab308"/>
+            <!-- Radio Antenna -->
+            <line x1="75" y1="48" x2="85" y2="18" stroke="#94a3b8" stroke-width="2.5"/>
+            <circle cx="85" cy="18" r="3" fill="#ef4444"/>
+            <!-- Red Taillight -->
+            <rect x="90" y="62" width="6" height="12" rx="2" fill="#ef4444"/>
+            <!-- Rear Wheel -->
+            ${this.wheel(52, 92, 16)}
+          `;
+        }
+
+        if (vehicle === 'School Bus') {
+          return `
+            <!-- Yellow Bus Cabin Body -->
+            <rect x="10" y="32" width="110" height="60" rx="4" fill="#d97706" stroke="#92400e" stroke-width="2"/>
+            <!-- Black Warning Stripes -->
+            <rect x="10" y="74" width="110" height="6" fill="#18181b"/>
+            <rect x="10" y="44" width="110" height="5" fill="#18181b"/>
+            <!-- Passenger Windows -->
+            <rect x="25" y="48" width="28" height="22" rx="3" fill="#bae6fd" stroke="#0284c7" stroke-width="2"/>
+            <rect x="65" y="48" width="28" height="22" rx="3" fill="#bae6fd" stroke="#0284c7" stroke-width="2"/>
+            <!-- Bus Rear Wheel -->
+            ${this.wheel(55, 92, 16)}
+          `;
+        }
+
+        if (vehicle === 'Monster Truck') {
+          return `
+            <!-- High Lift Pickup Bed -->
+            <path d="M0,42 L70,42 L85,62 L85,80 L0,80 Z" fill="#15803d" stroke="#14532d" stroke-width="2.5"/>
+            <!-- Tubular Rollbar & Spotlights -->
+            <path d="M30,42 L45,18 L60,18 L68,42" fill="none" stroke="#f8fafc" stroke-width="4"/>
+            <circle cx="48" cy="16" r="4.5" fill="#fef08a" stroke="#ca8a04" stroke-width="1.5"/>
+            <circle cx="58" cy="16" r="4.5" fill="#fef08a" stroke="#ca8a04" stroke-width="1.5"/>
+            <!-- Exhaust Pipe & Smoke -->
+            <rect x="12" y="24" width="6" height="20" fill="#475569"/>
+            <circle cx="15" cy="15" r="5" fill="#e2e8f0" opacity="0.8"/>
+            <circle cx="10" cy="8" r="7" fill="#e2e8f0" opacity="0.6"/>
+            <!-- Giant Mud Wheel -->
+            ${this.wheel(54, 88, 22, true)}
+          `;
+        }
+
+        if (vehicle === 'Race Car') {
+          return `
+            <!-- Sleek GT Body -->
+            <path d="M0,60 L55,60 L95,68 L95,90 L0,90 Z" fill="#c2410c" stroke="#7c2d12" stroke-width="2"/>
+            <!-- Huge Carbon GT Wing / Spoiler -->
+            <rect x="65" y="38" width="35" height="7" rx="2" fill="#09090b"/>
+            <line x1="72" y1="45" x2="72" y2="65" stroke="#09090b" stroke-width="3.5"/>
+            <line x1="90" y1="45" x2="90" y2="68" stroke="#09090b" stroke-width="3.5"/>
+            <!-- Flame Exhaust -->
+            <rect x="90" y="76" width="8" height="6" fill="#475569"/>
+            <polygon points="98,78 116,75 106,79 118,82 98,81" fill="#facc15"/>
+            <!-- Low Profile Slick Racing Wheel -->
+            ${this.wheel(50, 90, 15)}
+          `;
+        }
+
+        if (vehicle === 'Tow Truck') {
+          return `
+            <!-- Big Tow Crane Boom -->
+            <path d="M10,88 L70,22 L85,22 L30,88 Z" fill="#ca8a04" stroke="#713f12" stroke-width="2.5"/>
+            <line x1="78" y1="24" x2="96" y2="58" stroke="#334155" stroke-width="3"/>
+            <path d="M96,58 C96,68 110,68 110,60 C110,54 102,54 102,58" fill="none" stroke="#eab308" stroke-width="4"/>
+            <!-- Wheel -->
+            ${this.wheel(55, 92, 16)}
+          `;
+        }
+
+        // Red Light default
+        return `
+          <rect x="35" y="24" width="55" height="68" rx="8" fill="#1e293b" stroke="#0f172a" stroke-width="3"/>
+          <circle cx="62" cy="48" r="15" fill="#ef4444" stroke="#f87171" stroke-width="2"/>
+          <circle cx="62" cy="48" r="7" fill="#fecaca"/>
+          <text x="62" y="80" font-family="'Fredoka One', cursive" font-size="10" font-weight="900" fill="#ffffff" text-anchor="middle">STOP</text>
+        `;
+      },
+
+      // --- FRONT HALF ILLUSTRATIONS (0 to 120 width) ---
+      getFrontHalfSvg(vehicle) {
+        if (vehicle === 'Fire Truck') {
+          return `
+            <!-- Red Fire Truck Cabin -->
+            <path d="M0,36 L65,36 L88,56 L108,56 C112,56 114,60 114,64 L114,92 L0,92 Z" fill="#dc2626" stroke="#991b1b" stroke-width="2"/>
+            <!-- Slanted Windshield -->
+            <polygon points="62,40 84,56 42,56 42,40" fill="#bae6fd" stroke="#0284c7" stroke-width="2"/>
+            <!-- Flashing Strobe Lightbar -->
+            <rect x="44" y="24" width="16" height="12" rx="3" fill="#ef4444" stroke="#7f1d1d" stroke-width="2"/>
+            <circle cx="52" cy="30" r="4" fill="#fecaca"/>
+            <!-- Heavy Chrome Bumper & Headlight -->
+            <rect x="108" y="74" width="10" height="18" rx="2" fill="#cbd5e1" stroke="#64748b" stroke-width="2"/>
+            <circle cx="102" cy="68" r="7" fill="#fef08a" stroke="#ca8a04" stroke-width="2"/>
+            <!-- Big Front Wheel -->
+            ${this.wheel(64, 94, 17)}
+          `;
+        }
+
+        if (vehicle === 'Police Cruiser') {
+          return `
+            <!-- Blue Police Hood & Star Door -->
+            <path d="M0,48 L45,48 L80,62 L108,64 C112,64 114,68 114,72 L114,92 L0,92 Z" fill="#2563eb" stroke="#1d4ed8" stroke-width="2"/>
+            <!-- White Door Front & Shield -->
+            <path d="M0,48 L30,48 L30,92 L0,92 Z" fill="#f8fafc"/>
+            <polygon points="15,56 17.5,62 24,62 19,66 21,72 15,68 9,72 11,66 6,62 12.5,62" fill="#eab308"/>
+            <!-- Windshield -->
+            <polygon points="34,50 62,62 22,62" fill="#bae6fd" stroke="#0284c7" stroke-width="2"/>
+            <!-- Red & Blue Flashing Roof Lightbar -->
+            <rect x="16" y="34" width="14" height="12" rx="3" fill="#ef4444"/>
+            <rect x="30" y="34" width="14" height="12" rx="3" fill="#3b82f6"/>
+            <!-- Police Push Bumper & Headlight -->
+            <rect x="108" y="70" width="10" height="18" rx="2" fill="#0f172a"/>
+            <circle cx="100" cy="70" r="6" fill="#fef08a" stroke="#ca8a04" stroke-width="2"/>
+            <!-- Front Wheel -->
+            ${this.wheel(68, 92, 16)}
+          `;
+        }
+
+        if (vehicle === 'School Bus') {
+          return `
+            <!-- Yellow Bus Nose & Hood -->
+            <path d="M0,32 L50,32 L72,48 L106,54 C110,54 114,58 114,64 L114,92 L0,92 Z" fill="#fbbf24" stroke="#d97706" stroke-width="2"/>
+            <!-- Black Warning Stripe -->
+            <path d="M0,74 L108,74 L108,80 L0,80 Z" fill="#18181b"/>
+            <!-- Big Windshield -->
+            <polygon points="44,36 68,48 24,48" fill="#bae6fd" stroke="#0284c7" stroke-width="2"/>
+            <!-- Swing-Out Red STOP Sign -->
+            <polygon points="14,54 24,54 30,60 30,70 24,76 14,76 8,70 8,60" fill="#ef4444" stroke="#ffffff" stroke-width="2"/>
+            <text x="19" y="68" font-family="'Fredoka One', cursive" font-size="7" font-weight="900" fill="#ffffff" text-anchor="middle">STOP</text>
+            <!-- Black Grille & Headlight -->
+            <rect x="108" y="68" width="6" height="20" fill="#18181b"/>
+            <circle cx="100" cy="66" r="6" fill="#fef08a" stroke="#ca8a04" stroke-width="2"/>
+            <!-- Bus Front Wheel -->
+            ${this.wheel(66, 92, 16)}
+          `;
+        }
+
+        if (vehicle === 'Monster Truck') {
+          return `
+            <!-- Lifted Green Pickup Hood -->
+            <path d="M0,42 L45,42 L68,56 L108,58 C112,58 114,62 114,68 L114,80 L0,80 Z" fill="#22c55e" stroke="#15803d" stroke-width="2.5"/>
+            <!-- Yellow Flame Decal on Door -->
+            <path d="M12,68 Q30,60 45,64 Q35,52 25,54 Z" fill="#facc15"/>
+            <!-- Chrome Engine Supercharger Blower with Red Butterflies -->
+            <rect x="74" y="44" width="20" height="15" rx="3" fill="#f8fafc" stroke="#475569" stroke-width="2"/>
+            <circle cx="80" cy="50" r="3" fill="#ef4444"/>
+            <circle cx="88" cy="50" r="3" fill="#ef4444"/>
+            <!-- GIANT Mud Wheel -->
+            ${this.wheel(68, 88, 22, true)}
+          `;
+        }
+
+        if (vehicle === 'Race Car') {
+          return `
+            <!-- Low Wedge Nose with Cockpit -->
+            <path d="M0,60 L40,60 L75,70 L112,74 C116,74 118,76 118,80 L118,90 L0,90 Z" fill="#f97316" stroke="#c2410c" stroke-width="2"/>
+            <!-- Cockpit Canopy -->
+            <polygon points="14,60 42,60 30,50" fill="#0284c7" stroke="#0369a1" stroke-width="2"/>
+            <!-- White Number 1 Roundel -->
+            <circle cx="70" cy="74" r="8.5" fill="#ffffff" stroke="#c2410c" stroke-width="1.5"/>
+            <text x="70" y="78.5" font-family="'Fredoka One', cursive" font-size="10" font-weight="900" fill="#0f172a" text-anchor="middle">1</text>
+            <!-- Black Front Splitter -->
+            <rect x="108" y="86" width="12" height="5" fill="#09090b"/>
+            <!-- Front Slick Racing Wheel -->
+            ${this.wheel(68, 90, 15)}
+          `;
+        }
+
+        if (vehicle === 'Tow Truck') {
+          return `
+            <!-- Front of Tow Truck -->
+            <path d="M0,36 L60,36 L80,56 L110,58 L110,92 L0,92 Z" fill="#eab308" stroke="#a16207" stroke-width="2"/>
+            <polygon points="56,40 76,56 36,56" fill="#bae6fd" stroke="#0284c7" stroke-width="2"/>
+            <rect x="106" y="72" width="10" height="16" fill="#18181b"/>
+            ${this.wheel(68, 92, 16)}
+          `;
+        }
+
+        // Red Light default
+        return `
+          <rect x="30" y="24" width="55" height="68" rx="8" fill="#1e293b" stroke="#0f172a" stroke-width="3"/>
+          <circle cx="58" cy="48" r="15" fill="#ef4444" stroke="#f87171" stroke-width="2"/>
+          <circle cx="58" cy="48" r="7" fill="#fecaca"/>
+          <text x="58" y="80" font-family="'Fredoka One', cursive" font-size="10" font-weight="900" fill="#ffffff" text-anchor="middle">STOP</text>
         `;
       }
     };
 
-    // --- 2. GAME DATA: 36 DECK DEFINITION ---
-    const VEHICLES = {
-      "Fire Truck": { color: "red", hex: "#dc2626", sound: "WEE-WOO!" },
-      "Police Cruiser": { color: "blue", hex: "#2563eb", sound: "WOOP-WOOP!" },
-      "School Bus": { color: "yellow", hex: "#f59e0b", sound: "HONK-HONK!" },
-      "Monster Truck": { color: "green", hex: "#16a34a", sound: "ROAAAR!" },
-      "Race Car": { color: "orange", hex: "#ea580c", sound: "VROOOOM!" },
-      "Tow Truck": { color: "wild", hex: "linear-gradient(135deg, #ec4899, #8b5cf6, #3b82f6)", sound: "CLANK!" },
-      "Red Light": { color: "red", hex: "#dc2626", sound: "BRAKE CHECK!" }
+    // --- 2. DECK DATA (36 CARDS) ---
+    const VEHICLE_DEFS = {
+      "Fire Truck": { color: "red", sound: "WEE-WOO!" },
+      "Police Cruiser": { color: "blue", sound: "WOOP-WOOP!" },
+      "School Bus": { color: "yellow", sound: "HONK-HONK!" },
+      "Monster Truck": { color: "green", sound: "ROAAAR!" },
+      "Race Car": { color: "orange", sound: "VROOOOM!" },
+      "Tow Truck": { color: "wild", sound: "CLANK!" },
+      "Red Light": { color: "red", sound: "BRAKE CHECK!" }
     };
 
     function buildDeck() {
       const vKeys = ["Fire Truck", "Police Cruiser", "School Bus", "Monster Truck", "Race Car"];
-      const cuts = ["center", "edge", "corner90"];
       const deck = [];
       let id = 1;
 
-      // 32 combo cards across pairs
+      // 1. Pure Factory Matching Cars (5 cards)
+      for (let i = 0; i < vKeys.length; i++) {
+        const v = vKeys[i];
+        deck.push({
+          id: id++,
+          type: "combo",
+          isPure: true,
+          half1: { vehicle: v, part: "Rear", color: VEHICLE_DEFS[v].color },
+          half2: { vehicle: v, part: "Front", color: VEHICLE_DEFS[v].color }
+        });
+      }
+
+      // 2. Franken-Cars across vehicle pairs (27 cards)
       for (let i = 0; i < vKeys.length; i++) {
         for (let j = 0; j < vKeys.length; j++) {
-          if (deck.length >= 32) break;
-          const v1 = vKeys[i];
-          const v2 = vKeys[(j + 1) % vKeys.length];
-          // Standard domino: left half is REAR, right half is FRONT!
-          const cut1 = cuts[(id) % cuts.length];
-          const cut2 = cuts[(id + 1) % cuts.length];
-          deck.push({
-            id: id++,
-            type: "combo",
-            half1: { vehicle: v1, part: "Rear", color: VEHICLES[v1].color, cut: cut1 },
-            half2: { vehicle: v2, part: "Front", color: VEHICLES[v2].color, cut: cut2 }
-          });
+          if (i !== j && deck.length < 32) {
+            const v1 = vKeys[i];
+            const v2 = vKeys[j];
+            deck.push({
+              id: id++,
+              type: "combo",
+              isPure: false,
+              half1: { vehicle: v1, part: "Rear", color: VEHICLE_DEFS[v1].color },
+              half2: { vehicle: v2, part: "Front", color: VEHICLE_DEFS[v2].color }
+            });
+          }
         }
       }
 
-      // Add 2 Tow Truck Action Cards (Wildcards)
+      // 3. Special Action Cards (4 cards)
+      // 2 Tow Trucks (Wildcard)
       deck.push({
         id: id++,
         type: "action",
         action: "tow_truck",
         name: "Tow Truck",
-        half1: { vehicle: "Tow Truck", part: "Hook", color: "wild", cut: "edge" },
-        half2: { vehicle: "Police Cruiser", part: "Front", color: "blue", cut: "center" }
+        half1: { vehicle: "Tow Truck", part: "Rear", color: "wild" },
+        half2: { vehicle: "Police Cruiser", part: "Front", color: "blue" }
       });
       deck.push({
         id: id++,
         type: "action",
         action: "tow_truck",
         name: "Tow Truck",
-        half1: { vehicle: "Tow Truck", part: "Hook", color: "wild", cut: "center" },
-        half2: { vehicle: "Fire Truck", part: "Rear", color: "red", cut: "edge" }
+        half1: { vehicle: "Tow Truck", part: "Rear", color: "wild" },
+        half2: { vehicle: "Fire Truck", part: "Front", color: "red" }
       });
 
-      // Add 2 Red Light Action Cards (Stop & Skip)
+      // 2 Red Lights (Stop & Skip)
       deck.push({
         id: id++,
         type: "action",
         action: "red_light",
         name: "Red Light",
-        half1: { vehicle: "Red Light", part: "Stop", color: "red", cut: "edge" },
-        half2: { vehicle: "Race Car", part: "Front", color: "orange", cut: "center" }
+        half1: { vehicle: "Red Light", part: "Rear", color: "red" },
+        half2: { vehicle: "Race Car", part: "Front", color: "orange" }
       });
       deck.push({
         id: id++,
         type: "action",
         action: "red_light",
         name: "Red Light",
-        half1: { vehicle: "Red Light", part: "Stop", color: "red", cut: "center" },
-        half2: { vehicle: "School Bus", part: "Rear", color: "yellow", cut: "edge" }
+        half1: { vehicle: "Red Light", part: "Rear", color: "red" },
+        half2: { vehicle: "School Bus", part: "Front", color: "yellow" }
       });
 
       return deck;
     }
 
-    // --- 3. AUDIO SOUND ENGINE ---
+    // --- 3. AUDIO ENGINE ---
     const AudioEngine = {
       ctx: null,
       init() {
@@ -586,7 +630,7 @@
           osc.type = 'sawtooth';
           osc.frequency.setValueAtTime(340, this.ctx.currentTime);
           osc.frequency.setValueAtTime(420, this.ctx.currentTime + 0.08);
-          gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+          gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
           gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.25);
           osc.connect(gain);
           gain.connect(this.ctx.destination);
@@ -631,7 +675,7 @@
 
     // --- 4. GAME STATE ---
     let state = {
-      mode: 'bot', // 'bot' or 'hotseat'
+      mode: 'bot',
       deck: [],
       p1Hand: [],
       p2Hand: [],
@@ -668,14 +712,14 @@
       state.tableCards = [];
       state.exposedSlots = [];
 
-      // Initial Starter Card on Table
+      // Starter card on street
       const starter = state.deck.shift();
       state.tableCards.push({
         ...starter,
         instanceId: 'starter-1'
       });
 
-      // Initialize exposed connection slots
+      // Exposed target connection points
       state.exposedSlots = [
         { slotId: 's-0', cardInstanceId: 'starter-1', halfIdx: 1, half: starter.half1, mode: 'adjacent' },
         { slotId: 's-1', cardInstanceId: 'starter-1', halfIdx: 2, half: starter.half2, mode: 'adjacent' },
@@ -700,7 +744,7 @@
       const oppMinis = document.getElementById('opp-mini-cards');
       oppMinis.innerHTML = '';
       for (let i = 0; i < state.p2Hand.length; i++) {
-        oppMinis.innerHTML += `<div class="w-3.5 h-6 rounded bg-slate-800 border border-slate-700 shadow-sm"></div>`;
+        oppMinis.innerHTML += `<div class="w-4 h-6 rounded bg-slate-800 border border-slate-700 shadow-sm"></div>`;
       }
 
       const turboBadge = document.getElementById('turbo-badge');
@@ -714,23 +758,13 @@
       renderTable();
     }
 
-    function getHalfColorBg(color) {
-      if (color === 'wild') return 'bg-gradient-to-tr from-pink-600 via-purple-600 to-indigo-600';
-      if (color === 'red') return 'bg-red-600';
-      if (color === 'blue') return 'bg-blue-600';
-      if (color === 'yellow') return 'bg-amber-400';
-      if (color === 'green') return 'bg-emerald-600';
-      if (color === 'orange') return 'bg-orange-600';
-      return 'bg-slate-700';
-    }
-
     function renderHand() {
       const container = document.getElementById('hand-container');
       container.innerHTML = '';
       const currentHand = state.activePlayer === 0 ? state.p1Hand : state.p2Hand;
 
       if (state.mode === 'bot' && state.activePlayer === 1) {
-        container.innerHTML = `<div class="text-sm font-cartoon text-amber-400 animate-pulse py-4">🤖 Speedy Bot is revving its engine...</div>`;
+        container.innerHTML = `<div class="text-sm font-cartoon text-amber-400 animate-pulse py-4">🤖 Speedy Bot is planning its move...</div>`;
         return;
       }
 
@@ -738,35 +772,14 @@
         const isSelected = state.selectedHandCardIndex === idx;
 
         const cardEl = document.createElement('div');
-        cardEl.className = `cursor-pointer flex rounded-2xl overflow-hidden card-shadow border-2 transition-all shrink-0 ${
+        cardEl.className = `cursor-pointer rounded-2xl overflow-hidden car-card-shadow border-2 transition-all shrink-0 ${
           isSelected 
-            ? 'border-amber-400 ring-4 ring-amber-400/50 scale-105 z-20' 
-            : 'border-slate-700 hover:border-slate-500 hover:-translate-y-1'
-        } w-52 h-28 bg-slate-900`;
+            ? 'border-amber-400 ring-4 ring-amber-400/60 scale-105 z-20' 
+            : 'border-slate-700 hover:border-slate-400 hover:-translate-y-1'
+        } w-60 h-28 bg-slate-900`;
 
-        cardEl.innerHTML = `
-          <!-- Left Half (Rear) -->
-          <div class="flex-1 ${getHalfColorBg(card.half1.color)} relative flex flex-col justify-between border-r-2 border-black/30">
-            <div class="absolute top-1 left-2 z-10 text-[9px] font-black uppercase text-white drop-shadow">
-              ${card.half1.part}
-            </div>
-            ${SvgEngine.renderHalf(card.half1.vehicle, card.half1.part, card.half1.color, card.half1.cut)}
-            <div class="absolute bottom-1 left-2 z-10 text-[8px] font-black uppercase tracking-tight text-white drop-shadow truncate max-w-[85px]">
-              ${card.half1.vehicle}
-            </div>
-          </div>
-
-          <!-- Right Half (Front) -->
-          <div class="flex-1 ${getHalfColorBg(card.half2.color)} relative flex flex-col justify-between">
-            <div class="absolute top-1 right-2 z-10 text-[9px] font-black uppercase text-white drop-shadow">
-              ${card.half2.part}
-            </div>
-            ${SvgEngine.renderHalf(card.half2.vehicle, card.half2.part, card.half2.color, card.half2.cut)}
-            <div class="absolute bottom-1 right-2 z-10 text-[8px] font-black uppercase tracking-tight text-white drop-shadow truncate max-w-[85px]">
-              ${card.half2.vehicle}
-            </div>
-          </div>
-        `;
+        // Render full card car
+        cardEl.innerHTML = CarArtEngine.renderFullCardSvg(card);
 
         cardEl.onclick = () => {
           AudioEngine.playSnap();
@@ -786,85 +799,57 @@
       const table = document.getElementById('traffic-table');
       table.innerHTML = '';
 
-      // 1. Render all placed cars on the table
+      // 1. Render all placed cars on the street
       state.tableCards.forEach((c) => {
         const cardEl = document.createElement('div');
-        cardEl.className = `flex rounded-2xl overflow-hidden card-shadow border-2 border-slate-700 w-52 h-28 shrink-0 relative bg-slate-900 transition-all hover:scale-102`;
-
-        cardEl.innerHTML = `
-          <!-- Left Half -->
-          <div class="flex-1 ${getHalfColorBg(c.half1.color)} relative flex flex-col justify-between border-r-2 border-black/30">
-            <div class="absolute top-1 left-2 z-10 text-[9px] font-black uppercase text-white drop-shadow">
-              ${c.half1.part}
-            </div>
-            ${SvgEngine.renderHalf(c.half1.vehicle, c.half1.part, c.half1.color, c.half1.cut)}
-            <div class="absolute bottom-1 left-2 z-10 text-[8px] font-black uppercase tracking-tight text-white drop-shadow truncate max-w-[85px]">
-              ${c.half1.vehicle}
-            </div>
-          </div>
-
-          <!-- Right Half -->
-          <div class="flex-1 ${getHalfColorBg(c.half2.color)} relative flex flex-col justify-between">
-            <div class="absolute top-1 right-2 z-10 text-[9px] font-black uppercase text-white drop-shadow">
-              ${c.half2.part}
-            </div>
-            ${SvgEngine.renderHalf(c.half2.vehicle, c.half2.part, c.half2.color, c.half2.cut)}
-            <div class="absolute bottom-1 right-2 z-10 text-[8px] font-black uppercase tracking-tight text-white drop-shadow truncate max-w-[85px]">
-              ${c.half2.vehicle}
-            </div>
-          </div>
-        `;
+        cardEl.className = `rounded-2xl overflow-hidden car-card-shadow border-2 border-slate-700 w-60 h-28 shrink-0 relative bg-slate-900 transition-all hover:scale-102`;
+        cardEl.innerHTML = CarArtEngine.renderFullCardSvg(c);
         table.appendChild(cardEl);
       });
 
-      // 2. If a card is selected in hand, show crystal-clear legal play target slots!
+      // 2. If a card is selected in hand, show glowing legal target slots!
       if (state.selectedHandCardIndex !== null) {
         const currentHand = state.activePlayer === 0 ? state.p1Hand : state.p2Hand;
         const selectedCard = currentHand[state.selectedHandCardIndex];
 
         state.exposedSlots.forEach((slot) => {
-          // Check matching logic
           const matchHalf1 = (selectedCard.half1.color === slot.half.color || selectedCard.half1.color === 'wild' || slot.half.color === 'wild');
           const matchHalf2 = (selectedCard.half2.color === slot.half.color || selectedCard.half2.color === 'wild' || slot.half.color === 'wild');
 
           if (matchHalf1 || matchHalf2) {
-            // Determine if this play completes a TRUE MATCH
+            // Check for True Match
             const isTrueMatch = (
               (selectedCard.half1.vehicle === slot.half.vehicle && selectedCard.half1.part !== slot.half.part) ||
               (selectedCard.half2.vehicle === slot.half.vehicle && selectedCard.half2.part !== slot.half.part)
             );
 
-            // Create Visual Ghost Preview Slot
             const slotBtn = document.createElement('button');
-            slotBtn.className = `w-52 h-28 rounded-2xl border-2 border-dashed flex flex-col justify-between p-2.5 transition-all cursor-pointer slot-glow relative ${
+            slotBtn.className = `w-60 h-28 rounded-2xl border-2 border-dashed flex flex-col justify-between p-3 transition-all cursor-pointer slot-glow relative ${
               isTrueMatch 
-                ? 'bg-emerald-950/70 border-emerald-400 text-emerald-200' 
-                : 'bg-amber-950/60 border-amber-400 text-amber-200'
+                ? 'bg-emerald-950/80 border-emerald-400 text-emerald-200' 
+                : 'bg-amber-950/70 border-amber-400 text-amber-200'
             }`;
 
             slotBtn.innerHTML = `
               <div class="flex items-center justify-between w-full">
                 <span class="font-cartoon text-xs flex items-center gap-1 ${isTrueMatch ? 'text-emerald-300' : 'text-amber-300'}">
-                  ${isTrueMatch ? '⭐ TRUE MATCH!' : (slot.mode === 'overlap' ? '🥞 OVERLAP STACK' : '➡️ ADJACENT')}
+                  ${isTrueMatch ? '⭐ TRUE MATCH!' : (slot.mode === 'overlap' ? '🥞 OVERLAP STACK' : '➡️ ADJACENT SLAM')}
                 </span>
                 <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${isTrueMatch ? 'bg-emerald-500 text-slate-950' : 'bg-amber-400 text-slate-950'}">
                   Matches ${slot.half.color.toUpperCase()}
                 </span>
               </div>
 
-              <!-- Center Descriptive Preview -->
               <div class="my-auto text-center">
-                <div class="text-[11px] font-bold text-slate-200">
-                  ${isTrueMatch 
-                    ? `Complete the <b>${slot.half.vehicle}</b>!` 
-                    : `Make a Franken-Car!`}
+                <div class="text-xs font-bold text-slate-100">
+                  ${isTrueMatch ? `Assemble Real <b>${slot.half.vehicle}</b>!` : `Slam a Franken-Car!`}
                 </div>
-                <div class="text-[9px] text-slate-400">
-                  ${isTrueMatch ? '⚡ Triggers Turbo Boost!' : `Connects to ${slot.half.vehicle} (${slot.half.part})`}
+                <div class="text-[10px] text-slate-400">
+                  ${isTrueMatch ? '⚡ Triggers Turbo Boost (Play 2nd Card)!' : `Connects to ${slot.half.vehicle}`}
                 </div>
               </div>
 
-              <div class="text-[9px] font-black uppercase text-center tracking-wider opacity-80">
+              <div class="text-[9px] font-black uppercase text-center tracking-wider opacity-90">
                 Click to Slam Here &rarr;
               </div>
             `;
@@ -889,21 +874,20 @@
       state.selectedHandCardIndex = null;
       state.totalTurns++;
 
-      // Action card special events
+      // Action cards
       if (card.action === 'red_light') {
         AudioEngine.playHonk();
         addLog(`🛑 <b>${playerName}</b> slammed a <b>RED LIGHT!</b> Next driver hits the brakes!`);
         showAlarm("🛑 BRAKE CHECK!", "RED LIGHT TRIGGERED!");
       }
 
-      // Add new card to table
       const newInstanceId = 'card-' + Date.now();
       state.tableCards.push({
         ...card,
         instanceId: newInstanceId
       });
 
-      // Keep table compact (Traffic Jam Flow)
+      // Keep table compact
       if (state.tableCards.length > 5) {
         state.tableCards.shift();
       }
@@ -926,19 +910,18 @@
       if (isTrueMatch) {
         state.trueMatchesScored++;
         state.scrapCount++;
-        const vehicleInfo = VEHICLES[slot.half.vehicle] || VEHICLES["Fire Truck"];
+        const vehicleInfo = VEHICLE_DEFS[slot.half.vehicle] || VEHICLE_DEFS["Fire Truck"];
 
         AudioEngine.playSiren();
         showAlarm("🚗 " + vehicleInfo.sound, `TRUE MATCH: ${slot.half.vehicle.toUpperCase()} DRIVES OFF!`);
         addLog(`🏆 <b>${playerName}</b> built a real <b>${slot.half.vehicle}</b>! <i>"${vehicleInfo.sound}"</i> Drives into Scrap Pile!`);
 
-        // Check if hand is empty
         if (currentHand.length === 0) {
           triggerWin(playerName);
           return;
         }
 
-        // TRIGGER TURBO BOOST (Warm-up lap rule: unlocks Turn 2 onward for fairness)
+        // TRIGGER TURBO BOOST (Fairness rule: unlocks Turn 2 onward)
         if (state.totalTurns > 1) {
           state.turbosTriggered++;
           state.turboBoost = true;
@@ -954,10 +937,9 @@
         }
       } else {
         const frankenName = `${card.half1.vehicle}-${card.half2.vehicle}`;
-        addLog(`🔧 <b>${playerName}</b> joined a Franken-Car: <b>${frankenName}</b>!`);
+        addLog(`🔧 <b>${playerName}</b> slammed a Franken-Car: <b>${frankenName}</b>!`);
       }
 
-      // Check if hand is empty
       if (currentHand.length === 0) {
         triggerWin(playerName);
         return;
@@ -976,7 +958,7 @@
       }
     }
 
-    // --- 7. DRAW FROM JUNKYARD ---
+    // --- 7. DRAW CARD ---
     function drawCard() {
       const currentHand = state.activePlayer === 0 ? state.p1Hand : state.p2Hand;
       const playerName = state.activePlayer === 0 ? "Player 1" : (state.mode === 'bot' ? "Speedy Bot" : "Player 2");
@@ -1055,12 +1037,12 @@
       }
     }
 
-    // --- 9. WIN & UI HELPERS ---
+    // --- 9. WIN & ALERTS ---
     function triggerWin(winnerName) {
       state.gameOver = true;
       AudioEngine.playHonk();
       try {
-        confetti({ particleCount: 130, spread: 85, origin: { y: 0.6 } });
+        confetti({ particleCount: 140, spread: 85, origin: { y: 0.6 } });
       } catch (e) {}
 
       document.getElementById('win-title').textContent = `${winnerName.toUpperCase()} WINS!`;
@@ -1089,7 +1071,7 @@
       }, 2500);
     }
 
-    // --- 10. EVENT LISTENERS ---
+    // --- 10. CONTROLS ---
     document.getElementById('draw-btn').onclick = () => {
       if (state.activePlayer === 0 || state.mode === 'hotseat') {
         drawCard();
@@ -1115,7 +1097,6 @@
       initGame();
     };
 
-    // START ON LOAD
     initGame();
   </script>
 </body>
