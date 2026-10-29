@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Caught Red-Handed V2: The Heat — Shedding Edition</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes pulse-red {
+      0%, 100% { box-shadow: 0 0 10px rgba(239, 68, 68, 0.7); }
+      50% { box-shadow: 0 0 22px rgba(239, 68, 68, 1); }
+    }
+    .red-evidence {
+      animation: pulse-red 1.8s infinite;
+    }
+    @keyframes pulse-amber {
+      0%, 100% { box-shadow: 0 0 10px rgba(245, 158, 11, 0.6); }
+      50% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.95); }
+    }
+    .reset-pulse {
+      animation: pulse-amber 2s infinite;
+    }
+    /* Hide scrollbars for slick mobile card swiping */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 h-screen max-h-[100dvh] w-screen flex flex-col font-sans select-none overflow-hidden touch-manipulation">
+
+  <!-- ZONE 1: Mobile Header (~40px) -->
+  <header class="bg-slate-900/95 border-b border-slate-800 px-3 py-1 flex justify-between items-center shadow shrink-0 h-10">
+    <div class="flex items-center gap-1.5">
+      <span class="text-lg">🚨</span>
+      <h1 class="text-xs sm:text-sm font-black tracking-wider text-rose-500 uppercase leading-none">Caught Red-Handed <span class="text-amber-400">V2</span></h1>
+      <span class="text-[9px] bg-rose-500/20 text-rose-400 border border-rose-500/40 px-1.5 py-0.2 rounded-full font-black hidden sm:inline">THE HEAT</span>
+    </div>
+
+    <!-- Center Status & Round / Turn info -->
+    <div class="flex items-center gap-2 text-[10px] text-slate-300 font-mono">
+      <span>R<span id="round-counter" class="font-bold text-emerald-400">1</span></span>
+      <span class="text-slate-600">•</span>
+      <span>T<span id="turn-counter" class="font-bold text-amber-400">1</span></span>
+      <span class="text-slate-600">•</span>
+      <span class="text-rose-400 font-black">3 STRIKES = OUT</span>
+    </div>
+
+    <button id="restart-match-btn" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-semibold rounded border border-slate-700 transition">
+      ↺ Reset
+    </button>
+  </header>
+
+  <!-- ZONE 2: Bots Strip (Top Opponents) -->
+  <div class="bg-slate-900/60 border-b border-slate-800/80 px-2 py-1 shrink-0">
+    <div id="bots-grid" class="grid grid-cols-3 gap-1.5 max-w-xl mx-auto w-full">
+      
+      <!-- Bot 4 (Right Neighbor) -->
+      <div id="bot4-area" class="bg-slate-900/80 border border-slate-800 rounded-xl p-1.5 flex flex-col justify-between transition-all relative overflow-hidden">
+        <div class="flex items-center justify-between gap-1">
+          <div class="flex items-center gap-1 min-w-0">
+            <div class="w-4 h-4 rounded-full bg-teal-600 flex items-center justify-center font-black text-[9px] shrink-0">4</div>
+            <span class="text-[10px] font-bold text-slate-300 truncate">Bot 4</span>
+          </div>
+          <span id="bot4-strike-badge" class="text-[8px] font-black px-1 py-0.2 rounded border bg-slate-800 text-emerald-400">0/3 Strikes</span>
+        </div>
+        
+        <div class="flex items-center justify-between my-1">
+          <div id="bot4-count-badge" class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 flex items-center gap-1">
+            <span>🎴</span><span>7 cards</span>
+          </div>
+          <div id="bot4-pips" class="flex items-center gap-[2px]"></div>
+        </div>
+
+        <div class="flex items-center justify-between text-[9px] font-mono border-t border-slate-800/80 pt-0.5">
+          <span id="bot4-status" class="text-slate-400 font-semibold truncate">Waiting...</span>
+        </div>
+      </div>
+
+      <!-- Bot 3 (Across) -->
+      <div id="bot3-area" class="bg-slate-900/80 border border-slate-800 rounded-xl p-1.5 flex flex-col justify-between transition-all relative overflow-hidden">
+        <div class="flex items-center justify-between gap-1">
+          <div class="flex items-center gap-1 min-w-0">
+            <div class="w-4 h-4 rounded-full bg-indigo-600 flex items-center justify-center font-black text-[9px] shrink-0">3</div>
+            <span class="text-[10px] font-bold text-slate-300 truncate">Bot 3</span>
+          </div>
+          <span id="bot3-strike-badge" class="text-[8px] font-black px-1 py-0.2 rounded border bg-slate-800 text-emerald-400">0/3 Strikes</span>
+        </div>
+
+        <div class="flex items-center justify-between my-1">
+          <div id="bot3-count-badge" class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 flex items-center gap-1">
+            <span>🎴</span><span>7 cards</span>
+          </div>
+          <div id="bot3-pips" class="flex items-center gap-[2px]"></div>
+        </div>
+
+        <div class="flex items-center justify-between text-[9px] font-mono border-t border-slate-800/80 pt-0.5">
+          <span id="bot3-status" class="text-slate-400 font-semibold truncate">Waiting...</span>
+        </div>
+      </div>
+
+      <!-- Bot 2 (Left Neighbor) -->
+      <div id="bot2-area" class="bg-slate-900/80 border border-slate-800 rounded-xl p-1.5 flex flex-col justify-between transition-all relative overflow-hidden">
+        <div class="flex items-center justify-between gap-1">
+          <div class="flex items-center gap-1 min-w-0">
+            <div class="w-4 h-4 rounded-full bg-rose-600 flex items-center justify-center font-black text-[9px] shrink-0">2</div>
+            <span class="text-[10px] font-bold text-slate-300 truncate">Bot 2</span>
+          </div>
+          <span id="bot2-strike-badge" class="text-[8px] font-black px-1 py-0.2 rounded border bg-slate-800 text-emerald-400">0/3 Strikes</span>
+        </div>
+
+        <div class="flex items-center justify-between my-1">
+          <div id="bot2-count-badge" class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 flex items-center gap-1">
+            <span>🎴</span><span>7 cards</span>
+          </div>
+          <div id="bot2-pips" class="flex items-center gap-[2px]"></div>
+        </div>
+
+        <div class="flex items-center justify-between text-[9px] font-mono border-t border-slate-800/80 pt-0.5">
+          <span id="bot2-status" class="text-slate-400 font-semibold truncate">Waiting...</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ZONE 3: Center Table Arena (Discard Pile & Draw Locker) -->
+  <div class="flex-1 flex flex-col justify-center items-center px-3 py-1 relative min-h-0">
+    <div class="w-full max-w-md flex justify-between items-center bg-slate-900/90 border border-slate-800 rounded-2xl p-3 shadow-2xl backdrop-blur-sm relative">
+      
+      <!-- Direction & Turn Order Indicator -->
+      <div id="camera-card" class="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-slate-950 border border-slate-800 shadow">
+        <div id="camera-icon" class="text-2xl transition-transform duration-500">↻</div>
+        <div class="flex flex-col text-left">
+          <span class="text-[8px] font-black text-slate-400 uppercase tracking-wider">Turn Order</span>
+          <span id="camera-label" class="text-xs font-black text-sky-400 leading-tight">CLOCKWISE ↻</span>
+        </div>
+      </div>
+
+      <!-- CENTER DISCARD PILE (The Active Climbing Card) -->
+      <div id="center-discard-area" class="flex flex-col items-center">
+        <span class="text-[8px] font-black text-slate-400 uppercase tracking-wider mb-1">Active Discard</span>
+        <div id="top-discard-card" class="w-[78px] h-[116px] rounded-xl border-2 p-1.5 flex flex-col justify-between items-center shadow-2xl relative transition-all bg-slate-900">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- Evidence Locker (Draw Pile) -->
+      <div id="draw-deck" class="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-slate-950 border border-indigo-900/60 shadow cursor-pointer hover:border-indigo-500 transition active:scale-95 group">
+        <div class="relative">
+          <div class="w-6 h-8 bg-indigo-950 border-2 border-indigo-500 rounded flex items-center justify-center text-[10px] font-black text-indigo-300 shadow">
+            🔒
+          </div>
+          <div class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-rose-500 rounded-full animate-ping"></div>
+        </div>
+        <div class="flex flex-col text-left">
+          <span class="text-[8px] font-black text-indigo-400 uppercase tracking-wider">Locker</span>
+          <span class="text-xs font-mono font-black text-indigo-200"><span id="deck-count">26</span> left</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Activity Ticker & Restriction Banner -->
+    <div id="announcement-banner" class="w-full max-w-md mt-1.5 text-center text-[10.5px] font-semibold text-amber-300 truncate px-2 py-0.5 rounded-md bg-amber-950/40 border border-amber-900/40">
+      Play a card with value > current top card, or play a Reset (0)!
+    </div>
+  </div>
+
+  <!-- ZONE 4: Bottom Mobile Cockpit (Player 0 / Driver) -->
+  <div class="bg-slate-900/95 border-t border-slate-800 px-3 pt-1.5 pb-2 shrink-0 flex flex-col gap-1.5 max-w-2xl mx-auto w-full">
+    
+    <!-- Player Status Bar -->
+    <div class="flex justify-between items-center px-1">
+      <div class="flex items-center gap-2">
+        <div class="w-5 h-5 rounded-full bg-blue-600 flex items-center justify-center font-black text-[10px]">1</div>
+        <span class="text-xs font-black text-slate-200">YOU (Driver)</span>
+        <span id="player-turn-status" class="px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold">YOUR TURN</span>
+      </div>
+
+      <!-- Strike Tracker -->
+      <div class="flex items-center gap-1.5">
+        <span class="text-[10px] font-bold text-slate-400">Strikes:</span>
+        <div id="player-strikes-container" class="flex items-center gap-1">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Ergonomic Action Controls Bar -->
+    <div class="grid grid-cols-2 gap-2 w-full" id="action-controls">
+      <button id="btn-play-card" disabled class="h-10 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-25 disabled:pointer-events-none text-white text-xs font-black rounded-xl shadow-lg transition flex items-center justify-center gap-1.5">
+        <span>🃏</span> <span id="btn-play-text">Select Card to Play</span>
+      </button>
+      <button id="btn-draw-card" class="h-10 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-25 disabled:pointer-events-none text-white text-xs font-black rounded-xl shadow-lg transition flex items-center justify-center gap-1.5">
+        <span>📦</span> <span>Can't Play: Draw 1 Card</span>
+      </button>
+    </div>
+
+    <!-- Touch Hand Carousel (72px x 112px tactile mobile cards) -->
+    <div class="relative w-full overflow-hidden">
+      <div id="player-hand" class="flex gap-1.5 sm:gap-2 overflow-x-auto py-2 px-1 items-end justify-start sm:justify-center w-full no-scrollbar min-h-[120px]">
+        <!-- Cards rendered dynamically -->
+      </div>
+    </div>
+
+    <!-- Micro Rule Hint -->
+    <div class="text-center text-[9px] text-slate-400 font-medium leading-none">
+      Must play <span class="text-emerald-400 font-bold">> Top Card</span> or <span class="text-amber-400 font-bold">Reset (0)</span> • 🚨 <span class="text-rose-400 font-bold">Caught holding Red (1,2,3) = Strike!</span> • <span class="text-slate-300 font-bold">3 Strikes = Out!</span>
+    </div>
+
+  </div>
+
+  <!-- Round End / Escape Check Modal -->
+  <div id="round-modal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-3 z-50 hidden">
+    <div class="bg-slate-900 border-2 border-rose-500 rounded-3xl p-5 max-w-sm sm:max-w-md w-full text-center shadow-2xl flex flex-col items-center gap-3 max-h-[90vh] overflow-y-auto">
+      <div id="modal-icon" class="w-12 h-12 rounded-full bg-rose-600/20 border-2 border-rose-500 flex items-center justify-center text-2xl shadow">
+        🚗💨
+      </div>
+      <h2 id="modal-title" class="text-xl font-black text-rose-500 tracking-wider uppercase">"GETAWAY CAR!"</h2>
+      <p id="modal-desc" class="text-slate-300 text-xs"></p>
+      
+      <!-- Hands & Strike Breakdown -->
+      <div id="modal-scores" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl p-3 flex flex-col gap-2 text-xs text-left">
+        <!-- Injected dynamically -->
+      </div>
+
+      <button id="modal-next-btn" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+        <span>NEXT ROUND</span> ➡️
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // CAUGHT RED-HANDED V2: THE HEAT (Shedding Edition)
+    // Red cards (1, 2, 3) are LOW Contraband.
+    // Blue cards (4 - 10) are HIGH Clean Loot.
+    // Reset cards (0) reset the discard pile to 0!
+    // If you're caught holding ANY Red card when someone empties hand, you get a Strike! (3 Strikes = Out).
+
+    const DECK_RECIPE = [
+      // Red Contraband: 12 cards total (1, 2, 3)
+      { val: 1, item: "Petty Pickpocket", icon: "👛", color: "RED", copies: 4, type: "CONTRABAND" },
+      { val: 2, item: "Hot Jewelry", icon: "⌚", color: "RED", copies: 4, type: "CONTRABAND" },
+      { val: 3, item: "Blood Diamond", icon: "💎", color: "RED", copies: 4, type: "CONTRABAND" },
+
+      // Clean Loot (Blue): 34 cards total (4 - 10)
+      { val: 4, item: "Cash Stack", icon: "💵", color: "BLUE", copies: 5, type: "CLEAN" },
+      { val: 5, item: "Vault Key", icon: "🗝️", color: "BLUE", copies: 5, type: "CLEAN" },
+      { val: 6, item: "Masterpiece", icon: "🖼️", color: "BLUE", copies: 5, type: "CLEAN" },
+      { val: 7, item: "Gold Ingot", icon: "🧈", color: "BLUE", copies: 5, type: "CLEAN" },
+      { val: 8, item: "Royal Crown", icon: "👑", color: "BLUE", copies: 5, type: "CLEAN" },
+      { val: 9, item: "Ancient Relic", icon: "🏺", color: "BLUE", copies: 5, type: "CLEAN" },
+      { val: 10, item: "Priceless Artifact", icon: "🗿", color: "BLUE", copies: 4, type: "CLEAN" },
+
+      // Special Resets: 8 cards total (0)
+      { val: 0, item: "The Fence", icon: "🤝", color: "SPECIAL", copies: 4, type: "RESET", sub: "Resets Pile to 0" },
+      { val: 0, item: "Smoke Bomb", icon: "💨🔄", color: "SPECIAL", copies: 2, type: "RESET_REVERSE", sub: "Resets to 0 & Flips 🔄" },
+      { val: 0, item: "The Snitch", icon: "🕵️🚨", color: "SPECIAL", copies: 2, type: "RESET_DRAW", sub: "Resets to 0 & Next Draws 1" }
+    ];
+
+    let numPlayers = 4;
+    let deck = [];
+    let discardPile = [];
+    let hands = [[], [], [], []];
+    let strikes = [0, 0, 0, 0]; // 3 strikes = eliminated!
+    let eliminated = [false, false, false, false];
+    let currentPlayer = 0;
+    let direction = 1; // 1 = Clockwise, -1 = Counter-Clockwise
+    let roundNumber = 1;
+    let turnCount = 1;
+    let starterPlayer = 0;
+    let selectedCardIndex = null;
+    let isWaitingForBot = false;
+
+    function buildDeck() {
+      const cards = [];
+      DECK_RECIPE.forEach(group => {
+        for (let i = 0; i < group.copies; i++) {
+          cards.push({
+            id: `${group.val}-${group.item}-${i}`,
+            val: group.val,
+            item: group.item,
+            icon: group.icon,
+            color: group.color,
+            type: group.type,
+            sub: group.sub || ""
+          });
+        }
+      });
+
+      // Fisher-Yates shuffle
+      for (let i = cards.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [cards[i], cards[j]] = [cards[j], cards[i]];
+      }
+      return cards;
+    }
+
+    function initRound() {
+      deck = buildDeck();
+      discardPile = [];
+      hands = [[], [], [], []];
+      turnCount = 1;
+      direction = 1;
+      selectedCardIndex = null;
+      isWaitingForBot = false;
+
+      // Deal 7 cards to each active player
+      for (let i = 0; i < 7; i++) {
+        for (let p = 0; p < numPlayers; p++) {
+          if (!eliminated[p]) {
+            hands[p].push(deck.pop());
+          }
+        }
+      }
+
+      // Flip starting discard card
+      let startCard = deck.pop();
+      discardPile.push(startCard);
+
+      // Starting player: starterPlayer or next non-eliminated
+      currentPlayer = starterPlayer;
+      while (eliminated[currentPlayer]) {
+        currentPlayer = (currentPlayer + 1) % numPlayers;
+      }
+
+      updateUI();
+      logAnnouncement(`Round ${roundNumber} begins! Discard pile starts at ${startCard.val} (${startCard.item}).`);
+
+      if (currentPlayer !== 0) {
+        setTimeout(playBotTurn, 800);
+      }
+    }
+
+    function resetEntireMatch() {
+      strikes = [0, 0, 0, 0];
+      eliminated = [false, false, false, false];
+      roundNumber = 1;
+      starterPlayer = 0;
+      initRound();
+    }
+
+    function getTopDiscard() {
+      return discardPile[discardPile.length - 1];
+    }
+
+    // Check if a card is legally playable on top of current discard
+    function isCardPlayable(card) {
+      const top = getTopDiscard();
+      if (!top) return true;
+      // Reset cards (val === 0) can ALWAYS be played!
+      if (card.val === 0) return true;
+      // Normal cards must have strictly higher value than top discard
+      return card.val > top.val;
+    }
+
+    function getPlayerName(p) {
+      if (p === 0) return "You";
+      return `Bot ${p + 1}`;
+    }
+
+    function getNextActivePlayer(current) {
+      let next = current;
+      do {
+        next = (next + direction + numPlayers) % numPlayers;
+      } while (eliminated[next] && next !== current);
+      return next;
+    }
+
+    function playCard(playerIdx, cardIdx) {
+      const card = hands[playerIdx].splice(cardIdx, 1)[0];
+      discardPile.push(card);
+
+      let extraAction = null;
+
+      // Check special reset effects
+      if (card.type === 'RESET_REVERSE') {
+        direction = -direction;
+        logAnnouncement(`🔄 SMOKE BOMB! ${getPlayerName(playerIdx)} reset pile to 0 & reversed play!`);
+      } else if (card.type === 'RESET_DRAW') {
+        const victim = getNextActivePlayer(playerIdx);
+        if (deck.length > 0) {
+          hands[victim].push(deck.pop());
+        }
+        logAnnouncement(`🚨 THE SNITCH! ${getPlayerName(playerIdx)} reset pile to 0 & forced ${getPlayerName(victim)} to draw 1 card!`);
+      } else if (card.type === 'RESET') {
+        logAnnouncement(`🤝 THE FENCE! ${getPlayerName(playerIdx)} reset pile to 0! Low Contraband can now be dumped!`);
+      } else {
+        logAnnouncement(`${getPlayerName(playerIdx)} played ${card.val} (${card.item}).`);
+      }
+
+      updateUI();
+
+      // Check if player emptied hand
+      if (hands[playerIdx].length === 0) {
+        logAnnouncement(`🚗💨 GETAWAY CAR! ${getPlayerName(playerIdx)} emptied their hand!`);
+        showRoundEndModal(playerIdx);
+        return;
+      }
+
+      advanceTurn();
+    }
+
+    function drawCard(playerIdx) {
+      if (deck.length === 0) {
+        // Reshuffle discard pile except top card
+        if (discardPile.length > 1) {
+          const top = discardPile.pop();
+          deck = [...discardPile];
+          discardPile = [top];
+          for (let i = deck.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [deck[i], deck[j]] = [deck[j], deck[i]];
+          }
+          logAnnouncement("Locker reshuffled!");
+        }
+      }
+
+      if (deck.length > 0) {
+        const drawn = deck.pop();
+        hands[playerIdx].push(drawn);
+        logAnnouncement(`${getPlayerName(playerIdx)} drew 1 card from the Locker.`);
+        return drawn;
+      }
+      return null;
+    }
+
+    function advanceTurn() {
+      currentPlayer = getNextActivePlayer(currentPlayer);
+      turnCount++;
+      selectedCardIndex = null;
+      updateUI();
+
+      if (currentPlayer === 0) {
+        logAnnouncement("Your turn! Play a card > top card, or draw 1.");
+      } else {
+        setTimeout(playBotTurn, 750);
+      }
+    }
+
+    // Bot AI Turn
+    function playBotTurn() {
+      if (eliminated[currentPlayer] || currentPlayer === 0) return;
+      const b = currentPlayer;
+      const hand = hands[b];
+      const top = getTopDiscard();
+
+      // 1. Find all playable cards in hand
+      const playable = [];
+      hand.forEach((card, idx) => {
+        if (isCardPlayable(card)) {
+          playable.push({ card, idx });
+        }
+      });
+
+      if (playable.length > 0) {
+        // Strategic selection:
+        // Priority A: If top card is 0 (or low <= 3), IMMEDIATELY DUMP lowest Red Contraband!
+        const playableReds = playable.filter(p => p.card.color === 'RED');
+        if (playableReds.length > 0) {
+          playableReds.sort((a, b) => a.card.val - b.card.val);
+          playCard(b, playableReds[0].idx);
+          return;
+        }
+
+        // Priority B: If we hold Red cards, and have a Reset card, drop the Reset card to open window!
+        const hasRedInHand = hand.some(c => c.color === 'RED');
+        const playableResets = playable.filter(p => p.card.val === 0);
+        if (hasRedInHand && playableResets.length > 0 && top.val >= 4) {
+          playCard(b, playableResets[0].idx);
+          return;
+        }
+
+        // Priority C: Play lowest valid Blue card to climb steadily
+        const playableBlues = playable.filter(p => p.card.color === 'BLUE');
+        if (playableBlues.length > 0) {
+          playableBlues.sort((a, b) => a.card.val - b.card.val);
+          playCard(b, playableBlues[0].idx);
+          return;
+        }
+
+        // Fallback: play any legal card
+        playCard(b, playable[0].idx);
+      } else {
+        // Can't play: draw 1 card
+        const drawn = drawCard(b);
+        updateUI();
+
+        // If drawn card can be played, bot plays it!
+        if (drawn && isCardPlayable(drawn)) {
+          setTimeout(() => {
+            const idx = hand.indexOf(drawn);
+            if (idx !== -1) {
+              logAnnouncement(`${getPlayerName(b)} immediately played drawn ${drawn.val} (${drawn.item})!`);
+              playCard(b, idx);
+            } else {
+              advanceTurn();
+            }
+          }, 450);
+        } else {
+          setTimeout(advanceTurn, 450);
+        }
+      }
+    }
+
+    // UI Updates
+    function updateUI() {
+      document.getElementById('round-counter').innerText = roundNumber;
+      document.getElementById('turn-counter').innerText = turnCount;
+      document.getElementById('deck-count').innerText = deck.length;
+
+      // Turn Order Indicator
+      const cameraLabel = document.getElementById('camera-label');
+      const cameraIcon = document.getElementById('camera-icon');
+      if (direction === 1) {
+        cameraLabel.innerText = "CLOCKWISE ↻";
+        cameraLabel.className = "text-xs font-black text-sky-400 leading-tight";
+        cameraIcon.innerText = "↻";
+      } else {
+        cameraLabel.innerText = "COUNTER-CW ↺";
+        cameraLabel.className = "text-xs font-black text-rose-400 leading-tight";
+        cameraIcon.innerText = "↺";
+      }
+
+      // Render Top Discard Card
+      const topCardEl = document.getElementById('top-discard-card');
+      const top = getTopDiscard();
+      if (top) {
+        let borderStyle = "border-blue-500 bg-blue-950/70";
+        let valColor = "text-blue-400";
+        let typeBadge = "Clean Loot";
+
+        if (top.color === 'RED') {
+          borderStyle = "border-rose-500 bg-rose-950/80 red-evidence";
+          valColor = "text-rose-400";
+          typeBadge = "🚨 Contraband";
+        } else if (top.color === 'SPECIAL') {
+          borderStyle = "border-amber-400 bg-amber-950/80 reset-pulse";
+          valColor = "text-amber-300";
+          typeBadge = "⚡ Reset (0)";
+        }
+
+        topCardEl.className = `w-[78px] h-[116px] rounded-xl border-2 p-1.5 flex flex-col justify-between items-center shadow-2xl relative transition-all ${borderStyle}`;
+        topCardEl.innerHTML = `
+          <div class="w-full flex justify-between items-center leading-none">
+            <span class="text-xs font-black ${valColor}">${top.val}</span>
+            <span class="text-[7.5px] font-black uppercase text-slate-300">${top.icon}</span>
+          </div>
+          <div class="flex flex-col items-center justify-center my-auto leading-none">
+            <span class="text-2xl">${top.icon}</span>
+            <span class="text-[9px] font-black text-white mt-1 uppercase text-center leading-tight truncate max-w-[68px]">${top.item}</span>
+            <span class="text-[7px] font-semibold text-slate-400 mt-0.5 text-center leading-tight">${top.sub || typeBadge}</span>
+          </div>
+          <div class="w-full flex justify-between items-center leading-none rotate-180 opacity-70">
+            <span class="text-xs font-black ${valColor}">${top.val}</span>
+            <span class="text-[7.5px] font-black uppercase text-slate-300">${top.icon}</span>
+          </div>
+        `;
+      }
+
+      // Render Opponent Bots
+      const botAreas = [null, document.getElementById('bot2-area'), document.getElementById('bot3-area'), document.getElementById('bot4-area')];
+      for (let b = 1; b < 4; b++) {
+        const area = botAreas[b];
+        const strikeBadge = document.getElementById(`bot${b+1}-strike-badge`);
+        const countBadge = document.getElementById(`bot${b+1}-count-badge`);
+        const pipsContainer = document.getElementById(`bot${b+1}-pips`);
+        const statusEl = document.getElementById(`bot${b+1}-status`);
+
+        if (eliminated[b]) {
+          area.className = "bg-slate-950/90 border border-rose-900/60 rounded-xl p-1.5 flex flex-col justify-between opacity-50";
+          strikeBadge.className = "text-[8px] font-black px-1 py-0.2 rounded border bg-rose-950 text-rose-400 border-rose-800";
+          strikeBadge.innerText = "BUSTED (OUT)";
+          countBadge.innerText = "0 cards";
+          pipsContainer.innerHTML = '';
+          statusEl.innerText = "In Prison 🚔";
+          continue;
+        }
+
+        const count = hands[b].length;
+        countBadge.innerHTML = `<span>🎴</span><span>${count} cards</span>`;
+        strikeBadge.innerText = `${strikes[b]}/3 Strikes`;
+        strikeBadge.className = (strikes[b] >= 2) 
+          ? "text-[8px] font-black px-1 py-0.2 rounded border bg-rose-950 text-rose-400 border-rose-700 animate-pulse"
+          : "text-[8px] font-black px-1 py-0.2 rounded border bg-slate-800 text-emerald-400 border-slate-700";
+
+        pipsContainer.innerHTML = '';
+        for (let i = 0; i < Math.min(count, 8); i++) {
+          const pip = document.createElement('div');
+          pip.className = 'w-1 h-3 rounded-sm bg-slate-600';
+          pipsContainer.appendChild(pip);
+        }
+
+        if (currentPlayer === b) {
+          area.className = "bg-slate-900 border-2 border-amber-400/90 rounded-xl p-1.5 flex flex-col justify-between shadow-lg shadow-amber-950/40 scale-[1.02] transition-all relative overflow-hidden";
+          statusEl.innerText = "Thinking...";
+          statusEl.className = "text-amber-300 font-bold truncate";
+        } else {
+          area.className = "bg-slate-900/80 border border-slate-800 rounded-xl p-1.5 flex flex-col justify-between transition-all relative overflow-hidden";
+          statusEl.innerText = "Waiting...";
+          statusEl.className = "text-slate-400 font-semibold truncate";
+        }
+      }
+
+      // Render Player 0 Strikes & Status
+      const playerTurnStatus = document.getElementById('player-turn-status');
+      const strikesContainer = document.getElementById('player-strikes-container');
+      strikesContainer.innerHTML = '';
+      for (let s = 0; s < 3; s++) {
+        const dot = document.createElement('span');
+        dot.className = (s < strikes[0]) ? "text-rose-500 font-black text-xs" : "text-slate-600 font-bold text-xs";
+        dot.innerText = (s < strikes[0]) ? "🚨" : "⚪";
+        strikesContainer.appendChild(dot);
+      }
+
+      if (currentPlayer === 0) {
+        playerTurnStatus.className = "px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold animate-pulse";
+        playerTurnStatus.innerText = "YOUR TURN";
+      } else {
+        playerTurnStatus.className = "px-1.5 py-0.2 rounded bg-slate-800 text-slate-500 text-[10px] font-bold";
+        playerTurnStatus.innerText = "WAITING";
+      }
+
+      // Action Buttons
+      const btnPlay = document.getElementById('btn-play-card');
+      const btnPlayText = document.getElementById('btn-play-text');
+      const btnDraw = document.getElementById('btn-draw-card');
+
+      if (currentPlayer === 0) {
+        btnDraw.disabled = false;
+        if (selectedCardIndex !== null) {
+          const card = hands[0][selectedCardIndex];
+          btnPlay.disabled = false;
+          btnPlay.className = "h-10 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black rounded-xl shadow-lg ring-2 ring-emerald-400 transition flex items-center justify-center gap-1.5 animate-bounce";
+          btnPlayText.innerText = `Play ${card.val} (${card.item})`;
+        } else {
+          btnPlay.disabled = true;
+          btnPlay.className = "h-10 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-25 disabled:pointer-events-none text-white text-xs font-black rounded-xl shadow-lg transition flex items-center justify-center gap-1.5";
+          btnPlayText.innerText = "Select Card to Play";
+        }
+      } else {
+        btnPlay.disabled = true;
+        btnDraw.disabled = true;
+      }
+
+      // Render Player Cards
+      renderPlayerHand();
+    }
+
+    function renderPlayerHand() {
+      const container = document.getElementById('player-hand');
+      container.innerHTML = '';
+      const top = getTopDiscard();
+
+      hands[0].forEach((c, idx) => {
+        const cardEl = document.createElement('div');
+        const playable = isCardPlayable(c);
+        const isSelected = (selectedCardIndex === idx);
+
+        let borderStyle = "border border-slate-700 bg-slate-800/90";
+
+        if (c.color === 'RED') {
+          borderStyle = "border-2 border-rose-500 bg-rose-950/80 red-evidence";
+        } else if (c.color === 'SPECIAL') {
+          borderStyle = "border-2 border-amber-400 bg-amber-950/80 reset-pulse";
+        } else if (c.color === 'BLUE') {
+          borderStyle = "border-2 border-blue-500 bg-blue-950/50";
+        }
+
+        if (isSelected) {
+          borderStyle += " ring-4 ring-emerald-400 -translate-y-3 shadow-2xl scale-105";
+        } else if (!playable) {
+          borderStyle += " opacity-40 grayscale-[40%]";
+        }
+
+        // 72px x 112px mobile card
+        cardEl.className = `w-[72px] h-[112px] sm:w-[84px] sm:h-[128px] shrink-0 rounded-xl p-1.5 flex flex-col justify-between items-center shadow-md cursor-pointer transition-all select-none relative ${borderStyle}`;
+
+        let statusPill = '';
+        if (!playable) {
+          statusPill = `<span class="bg-slate-900/95 text-slate-400 border border-slate-700 px-1 py-0.2 rounded text-[7px] font-black uppercase tracking-wider">≤ ${top.val}</span>`;
+        } else if (c.val === 0) {
+          statusPill = `<span class="bg-amber-950 text-amber-300 border border-amber-500 px-1 py-0.2 rounded text-[7px] font-black uppercase tracking-wider">RESET 0</span>`;
+        } else if (c.color === 'RED') {
+          statusPill = `<span class="bg-rose-950 text-rose-300 border border-rose-500 px-1 py-0.2 rounded text-[7px] font-black uppercase tracking-wider">🚨 HOT</span>`;
+        } else {
+          statusPill = `<span class="bg-blue-950 text-blue-300 border border-blue-500 px-1 py-0.2 rounded text-[7px] font-black uppercase tracking-wider">> ${top.val}</span>`;
+        }
+
+        cardEl.innerHTML = `
+          <!-- Top Row -->
+          <div class="w-full flex justify-between items-center leading-none">
+            <span class="text-xs font-black ${c.color === 'RED' ? 'text-rose-400' : (c.color === 'SPECIAL' ? 'text-amber-300' : 'text-blue-400')}">${c.val}</span>
+            ${statusPill}
+          </div>
+
+          <!-- Center Focus -->
+          <div class="flex flex-col items-center justify-center my-auto leading-none">
+            <span class="text-xl sm:text-2xl">${c.icon}</span>
+            <span class="text-[8px] sm:text-[9px] font-bold text-slate-200 mt-0.5 uppercase text-center leading-tight truncate max-w-[64px]">${c.item}</span>
+            <span class="text-[6.5px] font-medium text-slate-400 mt-0.5 text-center leading-none">${c.sub || (c.color === 'RED' ? 'Toxic Contraband' : 'Clean Loot')}</span>
+          </div>
+
+          <!-- Bottom Row Inverted -->
+          <div class="w-full flex justify-between items-center leading-none rotate-180 opacity-70">
+            <span class="text-xs font-black ${c.color === 'RED' ? 'text-rose-400' : (c.color === 'SPECIAL' ? 'text-amber-300' : 'text-blue-400')}">${c.val}</span>
+            ${statusPill}
+          </div>
+        `;
+
+        cardEl.onclick = () => {
+          if (currentPlayer !== 0) return;
+          if (!playable) {
+            logAnnouncement(`⚠️ Cannot play ${c.val} on ${top.val}! Must be strictly higher (or play a Reset 0).`);
+            return;
+          }
+          selectedCardIndex = (selectedCardIndex === idx) ? null : idx;
+          if (selectedCardIndex !== null) {
+            logAnnouncement(`Selected ${c.val} (${c.item}). Tap Play.`);
+          }
+          updateUI();
+        };
+
+        container.appendChild(cardEl);
+      });
+    }
+
+    function logAnnouncement(msg) {
+      document.getElementById('announcement-banner').innerText = msg;
+    }
+
+    function showRoundEndModal(escapedPlayerIdx) {
+      const modal = document.getElementById('round-modal');
+      const icon = document.getElementById('modal-icon');
+      const title = document.getElementById('modal-title');
+      const desc = document.getElementById('modal-desc');
+      const scores = document.getElementById('modal-scores');
+      const nextBtn = document.getElementById('modal-next-btn');
+
+      const escapeName = getPlayerName(escapedPlayerIdx);
+      title.innerText = "GETAWAY CAR!";
+      desc.innerText = `${escapeName} shed all their cards and escaped into the night! The police swarm the scene!`;
+
+      // Check each player's hand for Red Contraband
+      let breakdownHtml = '';
+      for (let p = 0; p < numPlayers; p++) {
+        if (eliminated[p]) continue;
+        const name = getPlayerName(p);
+        const redCards = hands[p].filter(c => c.color === 'RED');
+        const hasRed = (redCards.length > 0);
+
+        if (p === escapedPlayerIdx) {
+          breakdownHtml += `
+            <div class="p-2 rounded-lg border-2 border-emerald-500 bg-emerald-950/70 flex justify-between items-center">
+              <div>
+                <span class="font-black text-emerald-300">${name}</span>
+                <span class="text-[10px] text-emerald-400 ml-1.5 font-bold">🏁 Emptied Hand</span>
+              </div>
+              <span class="px-2 py-0.5 bg-emerald-600 text-white font-black text-[9px] rounded uppercase">ESCAPED CLEAN!</span>
+            </div>
+          `;
+        } else if (hasRed) {
+          strikes[p]++;
+          const isOut = (strikes[p] >= 3);
+          if (isOut) eliminated[p] = true;
+
+          breakdownHtml += `
+            <div class="p-2 rounded-lg border-2 border-rose-500 bg-rose-950/80 flex justify-between items-center">
+              <div>
+                <span class="font-black text-rose-400">${name}</span>
+                <span class="text-[10px] text-rose-300 ml-1.5 font-mono">(${redCards.length} Red Contraband: ${redCards.map(c=>c.val).join(', ')})</span>
+              </div>
+              <div class="text-right">
+                <span class="px-1.5 py-0.5 bg-rose-600 text-white font-black text-[9px] rounded uppercase">🚨 CAUGHT RED-HANDED!</span>
+                <div class="text-[10px] text-rose-300 font-bold mt-0.5">+1 Strike (${strikes[p]}/3)${isOut ? ' • BUSTED OUT!' : ''}</div>
+              </div>
+            </div>
+          `;
+        } else {
+          breakdownHtml += `
+            <div class="p-2 rounded-lg border border-slate-800 bg-slate-900/60 flex justify-between items-center opacity-85">
+              <div>
+                <span class="font-bold text-slate-200">${name}</span>
+                <span class="text-[10px] text-slate-400 ml-1.5 font-mono">(${hands[p].length} cards, 0 Red)</span>
+              </div>
+              <div>
+                <span class="px-1.5 py-0.5 bg-emerald-950 text-emerald-400 border border-emerald-700/60 font-black text-[9px] rounded uppercase">🛡️ Clean (0 Strikes)</span>
+              </div>
+            </div>
+          `;
+        }
+      }
+
+      scores.innerHTML = breakdownHtml;
+
+      // Check tournament winner (last thief standing)
+      const activePlayers = [];
+      for (let p = 0; p < numPlayers; p++) {
+        if (!eliminated[p]) activePlayers.push(p);
+      }
+
+      if (activePlayers.length <= 1) {
+        const winner = activePlayers[0] !== undefined ? activePlayers[0] : escapedPlayerIdx;
+        icon.innerText = "🏆";
+        title.innerText = `${getPlayerName(winner)} WINS THE HEIST!`;
+        desc.innerText = "All other thieves have been arrested and sent to prison! Crowned Master Thief!";
+        nextBtn.innerHTML = `<span>NEW MATCH (RESET)</span> ↺`;
+        nextBtn.onclick = () => {
+          modal.classList.add('hidden');
+          resetEntireMatch();
+        };
+      } else {
+        nextBtn.innerHTML = `<span>START ROUND ${roundNumber + 1}</span> ➡️`;
+        nextBtn.onclick = () => {
+          modal.classList.add('hidden');
+          roundNumber++;
+          starterPlayer = (starterPlayer + 1) % numPlayers;
+          initRound();
+        };
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    // Play Selected Card Button
+    document.getElementById('btn-play-card').onclick = () => {
+      if (currentPlayer !== 0 || selectedCardIndex === null) return;
+      playCard(0, selectedCardIndex);
+    };
+
+    // Draw Card Button
+    document.getElementById('btn-draw-card').onclick = () => {
+      if (currentPlayer !== 0) return;
+      const drawn = drawCard(0);
+      updateUI();
+      if (drawn) {
+        if (isCardPlayable(drawn)) {
+          selectedCardIndex = hands[0].length - 1;
+          logAnnouncement(`Drew playable ${drawn.val} (${drawn.item})! Tap Play or draw again.`);
+          updateUI();
+        } else {
+          logAnnouncement(`Drew ${drawn.val} (${drawn.item}). Cannot play, passing turn...`);
+          setTimeout(advanceTurn, 700);
+        }
+      }
+    };
+
+    document.getElementById('restart-match-btn').onclick = resetEntireMatch;
+
+    // Start Round 1
+    initRound();
+  </script>
+</body>
+</html>
