@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Caught Red-Handed — Mobile Edition</title>
+  <title>Caught Red-Handed — Trios & The Snitch Edition</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @keyframes pulse-red {
       0%, 100% { box-shadow: 0 0 10px rgba(239, 68, 68, 0.6); }
-      50% { box-shadow: 0 0 18px rgba(239, 68, 68, 0.9); }
+      50% { box-shadow: 0 0 18px rgba(239, 68, 68, 0.95); }
     }
     .red-evidence {
       animation: pulse-red 2s infinite;
@@ -19,6 +19,13 @@
     }
     .green-wild {
       animation: pulse-green 2.5s infinite;
+    }
+    @keyframes pulse-amber {
+      0%, 100% { box-shadow: 0 0 10px rgba(245, 158, 11, 0.6); }
+      50% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.95); }
+    }
+    .snitch-pulse {
+      animation: pulse-amber 1.8s infinite;
     }
     /* Hide scrollbars for slick mobile card swiping */
     .no-scrollbar::-webkit-scrollbar {
@@ -37,7 +44,7 @@
     <div class="flex items-center gap-1.5">
       <span class="text-lg">🚨</span>
       <h1 class="text-xs sm:text-sm font-black tracking-wider text-rose-500 uppercase leading-none">Caught Red-Handed</h1>
-      <span class="text-[9px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-1.5 py-0.2 rounded-full font-bold hidden sm:inline">WILDS</span>
+      <span class="text-[9px] bg-amber-500/20 text-amber-400 border border-amber-500/40 px-1.5 py-0.2 rounded-full font-black hidden sm:inline">TRIOS & SNITCH</span>
     </div>
 
     <!-- Center Status & Round / Turn info -->
@@ -54,15 +61,20 @@
     </button>
   </header>
 
-  <!-- GAME MODE SELECTOR (4P Heist vs 2P Duel C1) -->
-  <div class="bg-slate-900/90 border-b border-slate-800 px-3 py-1 flex justify-center items-center shrink-0">
+  <!-- GAME MODE SELECTOR (4P Heist vs 2P Duel) -->
+  <div class="bg-slate-900/90 border-b border-slate-800 px-3 py-1 flex justify-between items-center shrink-0">
     <div class="inline-flex rounded-lg p-0.5 bg-slate-950 border border-slate-800 text-[10px] font-bold">
-      <button id="mode-4p-btn" class="px-2.5 py-0.5 rounded-md bg-rose-600 text-white shadow transition">
-        👥 4P Heist (55c)
+      <button id="mode-4p-btn" class="px-2.5 py-0.5 rounded-md bg-rose-600 text-white shadow transition font-black">
+        👥 4P Heist (54c)
       </button>
       <button id="mode-2p-btn" class="px-2.5 py-0.5 rounded-md text-slate-400 hover:text-slate-200 transition">
-        ⚔️ 2P Duel C1 (29c Petty)
+        ⚔️ 2P Duel (28c)
       </button>
+    </div>
+
+    <!-- Match Scores Bar -->
+    <div id="header-match-scores" class="text-[10px] font-mono flex items-center gap-1.5 text-slate-400">
+      <!-- Injected dynamically -->
     </div>
   </div>
 
@@ -80,7 +92,6 @@
           <span id="bot4-mood-badge" class="text-[7.5px] font-black px-1 py-0.2 rounded border bg-slate-800 text-slate-400 truncate">⚖️ Balanced</span>
         </div>
         
-        <!-- Prominent Card Count & Pip Meter -->
         <div class="flex items-center justify-between my-1">
           <div id="bot4-count-badge" class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 flex items-center gap-1">
             <span>🎴</span><span>7 cards</span>
@@ -89,7 +100,7 @@
         </div>
 
         <div class="flex items-center justify-between text-[9px] font-mono border-t border-slate-800/80 pt-0.5">
-          <span id="bot4-score-badge" class="text-emerald-400 font-semibold">Stash: 0</span>
+          <span id="bot4-score-badge" class="text-emerald-400 font-semibold">Vault: 0</span>
           <span id="bot4-match-total" class="text-amber-300/80 font-bold">0/300</span>
         </div>
       </div>
@@ -104,7 +115,6 @@
           <span id="bot3-mood-badge" class="text-[7.5px] font-black px-1 py-0.2 rounded border bg-slate-800 text-slate-400 truncate">⚖️ Balanced</span>
         </div>
 
-        <!-- Prominent Card Count & Pip Meter -->
         <div class="flex items-center justify-between my-1">
           <div id="bot3-count-badge" class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 flex items-center gap-1">
             <span>🎴</span><span>7 cards</span>
@@ -113,7 +123,7 @@
         </div>
 
         <div class="flex items-center justify-between text-[9px] font-mono border-t border-slate-800/80 pt-0.5">
-          <span id="bot3-score-badge" class="text-emerald-400 font-semibold">Stash: 0</span>
+          <span id="bot3-score-badge" class="text-emerald-400 font-semibold">Vault: 0</span>
           <span id="bot3-match-total" class="text-amber-300/80 font-bold">0/300</span>
         </div>
       </div>
@@ -122,13 +132,12 @@
       <div id="bot2-area" class="bg-slate-900/80 border border-slate-800 rounded-xl p-1.5 flex flex-col justify-between transition-all relative overflow-hidden">
         <div class="flex items-center justify-between gap-1">
           <div class="flex items-center gap-1 min-w-0">
-            <div class="w-4 h-4 rounded-full bg-amber-600 flex items-center justify-center font-black text-[9px] shrink-0">2</div>
+            <div class="w-4 h-4 rounded-full bg-rose-600 flex items-center justify-center font-black text-[9px] shrink-0">2</div>
             <span class="text-[10px] font-bold text-slate-300 truncate">Bot 2</span>
           </div>
           <span id="bot2-mood-badge" class="text-[7.5px] font-black px-1 py-0.2 rounded border bg-slate-800 text-slate-400 truncate">⚖️ Balanced</span>
         </div>
 
-        <!-- Prominent Card Count & Pip Meter -->
         <div class="flex items-center justify-between my-1">
           <div id="bot2-count-badge" class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 flex items-center gap-1">
             <span>🎴</span><span>7 cards</span>
@@ -137,7 +146,7 @@
         </div>
 
         <div class="flex items-center justify-between text-[9px] font-mono border-t border-slate-800/80 pt-0.5">
-          <span id="bot2-score-badge" class="text-emerald-400 font-semibold">Stash: 0</span>
+          <span id="bot2-score-badge" class="text-emerald-400 font-semibold">Vault: 0</span>
           <span id="bot2-match-total" class="text-amber-300/80 font-bold">0/300</span>
         </div>
       </div>
@@ -145,88 +154,95 @@
     </div>
   </div>
 
-  <!-- ZONE 3: Center Arena Tabletop (Draw Pile, Camera HUD, Live Announcement, ~115px) -->
-  <div class="flex-1 min-h-0 flex flex-col items-center justify-center px-3 py-1 gap-1.5 max-w-xl mx-auto w-full">
-    
-    <div class="flex items-center justify-center gap-6 w-full">
+  <!-- ZONE 3: Center Table Arena (Compact 90px–110px) -->
+  <div class="flex-1 flex flex-col justify-center items-center px-3 py-1 relative min-h-0">
+    <div class="w-full max-w-md flex justify-between items-center bg-slate-900/80 border border-slate-800/80 rounded-2xl p-2.5 shadow-xl backdrop-blur-sm relative">
       
-      <!-- Evidence Locker (Draw Deck) - Tap to Draw! -->
-      <div id="draw-deck" class="w-16 h-22 sm:w-20 sm:h-26 bg-gradient-to-br from-slate-800 to-slate-900 border-2 border-slate-700 hover:border-amber-400 rounded-xl flex flex-col items-center justify-center shadow-lg cursor-pointer transition transform active:scale-95">
-        <span class="text-2xl sm:text-3xl leading-none">📦</span>
-        <span class="text-[8px] font-black text-slate-400 tracking-wider mt-0.5">LOCKER</span>
-        <span id="deck-count" class="text-xs sm:text-sm font-black text-amber-400 leading-none">26</span>
+      <!-- Direction Camera Card -->
+      <div id="camera-card" class="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-slate-950 border border-slate-800 shadow">
+        <div id="camera-icon" class="text-2xl transition-transform duration-500">📹</div>
+        <div class="flex flex-col text-left">
+          <span class="text-[8px] font-black text-slate-400 uppercase tracking-wider">Security Camera</span>
+          <span id="camera-label" class="text-xs font-black text-sky-400 leading-tight">PASS CLOCKWISE ↻</span>
+        </div>
       </div>
 
-      <!-- Center Security Camera Indicator -->
-      <div class="flex flex-col items-center justify-center gap-1 bg-slate-900/90 border border-slate-700/80 px-3 py-1.5 rounded-2xl shadow w-44">
-        <div id="compass-arrow" class="w-12 h-12 rounded-full bg-slate-800 border-2 border-amber-500 flex items-center justify-center shadow-inner transition-transform duration-500">
-          <svg viewBox="0 0 100 100" class="w-10 h-10">
-            <circle cx="50" cy="50" r="45" fill="none" stroke="#0284c7" stroke-width="1.2" stroke-dasharray="3,3" opacity="0.6"/>
-            <path d="M 22 46 A 34 34 0 0 1 76 30" fill="none" stroke="#38bdf8" stroke-width="7" stroke-linecap="round"/>
-            <polygon points="70,16 90,30 72,42" fill="#38bdf8"/>
-            <path d="M 78 54 A 34 34 0 0 1 24 70" fill="none" stroke="#38bdf8" stroke-width="7" stroke-linecap="round"/>
-            <polygon points="30,84 10,70 28,58" fill="#38bdf8"/>
-            <path d="M 44 38 L 44 32 L 54 32" fill="none" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
-            <rect x="34" y="38" width="26" height="18" rx="4" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
-            <polygon points="60,43 72,37 72,51 60,45" fill="#38bdf8"/>
-            <circle cx="41" cy="47" r="2.8" fill="#ef4444"/>
-            <circle cx="50" cy="47" r="3.5" fill="none" stroke="#38bdf8" stroke-width="1.8"/>
-          </svg>
+      <!-- Center Live Pass Indicator -->
+      <div id="pass-indicator-box" class="flex flex-col items-center justify-center text-center px-1">
+        <span class="text-[7.5px] font-bold text-slate-400 uppercase tracking-wider">Active Passing</span>
+        <div id="pass-arrow" class="text-sm font-black text-amber-400">➡️ Passing Left</div>
+      </div>
+
+      <!-- Evidence Locker (Draw Pile) -->
+      <div id="draw-deck" class="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-slate-950 border border-indigo-900/60 shadow cursor-pointer hover:border-indigo-500 transition active:scale-95 group">
+        <div class="relative">
+          <div class="w-6 h-8 bg-indigo-950 border-2 border-indigo-500 rounded flex items-center justify-center text-[10px] font-black text-indigo-300 shadow">
+            🔒
+          </div>
+          <div class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-rose-500 rounded-full animate-ping"></div>
         </div>
-        <div class="text-center">
-          <div id="compass-label" class="text-[10px] font-black text-amber-400 uppercase tracking-wide">CLOCKWISE ↻</div>
-          <div id="compass-sub" class="text-[8px] text-slate-400 leading-none">Pass Left (Green flips 🔄)</div>
+        <div class="flex flex-col text-left">
+          <span class="text-[8px] font-black text-indigo-400 uppercase tracking-wider">Locker</span>
+          <span class="text-xs font-mono font-black text-indigo-200"><span id="deck-count">26</span> left</span>
         </div>
       </div>
 
     </div>
 
-    <!-- Match Standings Pill -->
-    <div id="header-match-scores" class="flex gap-2 text-[10px] font-mono text-slate-400 bg-slate-900/60 border border-slate-800/80 px-2.5 py-0.5 rounded-full shadow-inner">
-      <!-- Injected dynamically -->
-    </div>
-
-    <!-- Live Announcement Banner -->
-    <div id="announcement-banner" class="w-full text-center py-1 px-3 bg-slate-900/90 border border-slate-800 rounded-xl text-[10px] sm:text-xs font-semibold text-slate-300 min-h-[26px] flex items-center justify-center shadow truncate">
-      Turn starts: Draw 1 card, bank 1 pair using a Blue card, then pass 1 card in direction of play.
+    <!-- Activity Ticker & Raid Banner -->
+    <div id="announcement-banner" class="w-full max-w-md mt-1.5 text-center text-[10.5px] font-semibold text-amber-300/90 truncate px-2 py-0.5 rounded-md bg-amber-950/40 border border-amber-900/40">
+      Welcome to Caught Red-Handed! Tap Draw Card or tap the Locker.
     </div>
   </div>
 
-  <!-- ZONE 4 & 5: Bottom Player Deck, Controls & Hand (Primary Touch Zone, ~230px) -->
-  <div class="bg-slate-900/95 border-t border-slate-800 p-2 sm:p-3 flex flex-col gap-1.5 shrink-0 shadow-2xl">
+  <!-- ZONE 4: Bottom Mobile Cockpit (Player 0) -->
+  <div class="bg-slate-900/95 border-t border-slate-800 px-3 pt-1.5 pb-2 shrink-0 flex flex-col gap-1.5 max-w-2xl mx-auto w-full">
     
-    <!-- Player Stash & Status Row -->
-    <div class="flex items-center justify-between px-1">
+    <!-- Player Status Bar -->
+    <div class="flex justify-between items-center px-1">
       <div class="flex items-center gap-2">
-        <div class="w-5 h-5 rounded-full bg-rose-600 flex items-center justify-center font-black text-[9px] shadow">YOU</div>
-        <div class="flex items-center gap-2 text-[11px] font-bold">
-          <span id="player-status-tag" class="px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 text-[10px]">YOUR TURN</span>
-          <span class="text-amber-300 bg-slate-800/80 px-1.5 py-0.2 rounded border border-slate-700/60 font-mono text-[10px]">🎴 <span id="player-hand-count" class="font-black text-amber-400">7</span></span>
-          <span class="text-emerald-300">Bank: <span id="player-score-display" class="font-mono text-xs font-black">0</span> pts</span>
+        <div class="w-5 h-5 rounded-full bg-blue-600 flex items-center justify-center font-black text-[10px]">1</div>
+        <span class="text-xs font-black text-slate-200">YOU (Driver)</span>
+        <span id="player-turn-status" class="px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold">YOUR TURN</span>
+      </div>
+
+      <div class="flex items-center gap-3 text-xs font-mono">
+        <div class="flex items-center gap-1">
+          <span class="text-emerald-300">Vault: <span id="player-score-display" class="font-mono text-xs font-black">0</span> pts</span>
           <span class="text-amber-400">Total: <span id="player-match-total" class="font-mono text-xs font-black">0</span>/300</span>
         </div>
       </div>
 
-      <!-- Banked Stash Pills Scroll -->
-      <div id="player-stash-container" class="flex items-center gap-1 overflow-x-auto max-w-[150px] sm:max-w-xs no-scrollbar">
+      <!-- Banked Vault Pills Scroll -->
+      <div id="player-stash-container" class="flex items-center gap-1 overflow-x-auto max-w-[130px] sm:max-w-xs no-scrollbar">
         <!-- Rendered dynamically -->
       </div>
     </div>
 
-    <!-- Ergonomic Mobile Action Controls Bar (40px high) -->
-    <div class="grid grid-cols-4 gap-1.5 w-full" id="action-controls">
-      <button id="btn-draw" class="h-9 sm:h-10 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-30 disabled:pointer-events-none text-white text-[11px] font-bold rounded-xl shadow transition flex items-center justify-center gap-1">
-        <span>📦</span> <span>1. Draw</span>
-      </button>
-      <button id="btn-pair" disabled class="col-span-2 h-9 sm:h-10 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-30 disabled:pointer-events-none text-white text-[11px] font-bold rounded-xl shadow transition flex items-center justify-center gap-1 truncate px-1">
-        <span>💰</span> <span id="btn-pair-text" class="truncate">2. Lay Pair</span>
-      </button>
-      <button id="btn-skip-pair" disabled class="h-9 sm:h-10 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 disabled:pointer-events-none text-slate-300 text-[11px] font-bold rounded-xl border border-slate-700 shadow transition flex items-center justify-center gap-1">
-        <span>Skip</span> ➡️
-      </button>
-      <button id="btn-pass" disabled class="h-9 sm:h-10 bg-rose-600 hover:bg-rose-500 disabled:opacity-30 disabled:pointer-events-none text-white text-[11px] font-bold rounded-xl shadow transition flex items-center justify-center gap-1 col-span-4 mt-0.5 sm:col-span-1 sm:mt-0">
-        <span>👉</span> <span>3. Pass Card</span>
-      </button>
+    <!-- Ergonomic Mobile Action Controls Bar (Two Tier Mobile Fit) -->
+    <div class="flex flex-col gap-1 w-full" id="action-controls">
+      <!-- Tier 1: Draw, Trio, Skip, Snitch -->
+      <div class="grid grid-cols-5 gap-1.5 w-full">
+        <button id="btn-draw" class="h-9 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-25 disabled:pointer-events-none text-white text-[11px] font-black rounded-xl shadow transition flex items-center justify-center gap-1">
+          <span>📦</span> <span>1. Draw</span>
+        </button>
+        <button id="btn-trio" disabled class="col-span-2 h-9 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-25 disabled:pointer-events-none text-white text-[10.5px] font-black rounded-xl shadow transition flex items-center justify-center gap-1 truncate px-1">
+          <span>💰</span> <span id="btn-trio-text" class="truncate">2. Lay Trio (3c)</span>
+        </button>
+        <button id="btn-skip-trio" disabled class="h-9 bg-slate-800 hover:bg-slate-700 disabled:opacity-25 disabled:pointer-events-none text-slate-300 text-[11px] font-bold rounded-xl border border-slate-700 shadow transition flex items-center justify-center gap-1">
+          <span>Skip</span> ➡️
+        </button>
+        <button id="btn-snitch" disabled class="h-9 bg-amber-600 hover:bg-amber-500 disabled:opacity-20 disabled:pointer-events-none text-white text-[11px] font-black rounded-xl shadow transition flex items-center justify-center gap-1 border border-amber-400/80">
+          <span>🕵️</span> <span>RAID!</span>
+        </button>
+      </div>
+
+      <!-- Tier 2: Pass Card -->
+      <div class="w-full">
+        <button id="btn-pass" disabled class="w-full h-8.5 bg-rose-600 hover:bg-rose-500 disabled:opacity-25 disabled:pointer-events-none text-white text-[11px] font-black rounded-xl shadow transition flex items-center justify-center gap-1.5">
+          <span>👉</span> <span>3. Pass Selected Card (Face Up!)</span>
+        </button>
+      </div>
     </div>
 
     <!-- Touch Hand Carousel (Mobile optimized scale: 72px x 112px) -->
@@ -238,9 +254,29 @@
 
     <!-- Micro Rule Hint -->
     <div class="text-center text-[9px] text-slate-400 font-medium leading-none">
-      Needs <span class="text-blue-400 font-bold">Blue</span> to pair • ⚡ <span class="text-sky-300 font-bold">Passes Face Up (Recipient can Intercept!)</span> • <span class="text-rose-400 font-bold">Most Red in hand busts (0 pts)!</span>
+      Trios need <span class="text-blue-400 font-bold">≥1 Blue</span> • 🕵️ <span class="text-amber-400 font-bold">Snitch wipes most Red</span> • ⚡ <span class="text-sky-300 font-bold">Face-Up Intercept</span> • <span class="text-rose-400 font-bold">Most Red in hand busts (0 pts)!</span>
     </div>
 
+  </div>
+
+  <!-- Snitch Police Raid Modal -->
+  <div id="snitch-modal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 flex items-center justify-center p-3 hidden">
+    <div class="bg-slate-900 border-2 border-amber-500 rounded-3xl max-w-sm sm:max-w-md w-full p-4 text-center shadow-2xl flex flex-col items-center gap-2.5 max-h-[90vh] overflow-y-auto">
+      <div class="w-12 h-12 rounded-full bg-amber-600/20 border-2 border-amber-500 flex items-center justify-center text-2xl shadow snitch-pulse">
+        🕵️🚨
+      </div>
+      <h3 id="snitch-modal-title" class="text-base font-black text-amber-400 uppercase tracking-wider">POLICE RAID TRIGGERED!</h3>
+      <p id="snitch-modal-desc" class="text-xs text-slate-300 leading-relaxed"></p>
+      
+      <!-- Players Hands and Red Cards Breakdown -->
+      <div id="snitch-modal-breakdown" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl p-3 flex flex-col gap-2 text-xs text-left">
+        <!-- Injected dynamically -->
+      </div>
+
+      <button id="btn-snitch-continue" class="w-full py-2.5 bg-amber-600 hover:bg-amber-500 text-white font-black text-xs rounded-xl shadow-lg transition flex items-center justify-center gap-1.5">
+        <span>RESUME HEIST</span> ➡️
+      </button>
+    </div>
   </div>
 
   <!-- Intercept Modal (Recipient's Advantage) -->
@@ -249,14 +285,14 @@
       <div class="text-3xl mb-1">⚡🚨</div>
       <h3 class="text-sm font-black text-sky-400 uppercase tracking-wider">RECIPIENT'S ADVANTAGE!</h3>
       <p id="intercept-desc" class="text-xs text-slate-300 mt-2 leading-relaxed">
-        You were passed a <b>Red Contraband</b> face up, and you hold the matching <b>Blue Card</b>!
+        You were passed a <b>Red Contraband</b> face up, and you hold cards to complete a <b>Trio</b>!
       </p>
-      <div id="intercept-cards-preview" class="flex justify-center items-center gap-2 my-3">
+      <div id="intercept-cards-preview" class="flex justify-center items-center gap-1.5 my-3">
         <!-- Rendered dynamically -->
       </div>
       <div class="flex gap-2 mt-3">
         <button id="btn-intercept-meld" class="flex-1 py-2.5 bg-sky-600 hover:bg-sky-500 text-white font-black text-xs rounded-xl shadow-lg transition flex items-center justify-center gap-1.5">
-          <span>⚡ SNAP MELD (+PTS)</span>
+          <span>⚡ SNAP TRIO (+PTS)</span>
         </button>
         <button id="btn-intercept-accept" class="px-3 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs rounded-xl border border-slate-700 transition">
           Accept to Hand
@@ -286,8 +322,9 @@
   </div>
 
   <script>
-    // Counterfeit Wild Edition: Every pair requires at least one Blue card!
-    // 8 Asymmetrical Heist Items (30 Blue + 16 Red + 8 Green Wilds = 54 play cards)
+    // Trios & The Snitch Edition:
+    // Core melds require 3 cards and at least one Clean (Blue) card!
+    // 8 Asymmetrical Items (30 Blue + 16 Red + 6 Green Wilds + 2 Snitches = 54 play cards)
     const ITEMS = [
       { name: 'Cash', icon: '💵', isGrand: false, blueCopies: 4, redCopies: 2, redVal: 10 },
       { name: 'Diamond', icon: '💎', isGrand: false, blueCopies: 4, redCopies: 2, redVal: 10 },
@@ -300,7 +337,7 @@
     ];
 
     // Match State
-    let gameMode = '4P'; // '4P' (54 cards to 300 pts) or '2P' (28 cards C1 to 200 pts)
+    let gameMode = '4P'; // '4P' (54 cards to 300 pts) or '2P' (28 cards to 200 pts)
     let numPlayers = 4;
     let targetMatchScore = 300;
     let matchScores = [0, 0, 0, 0];
@@ -310,15 +347,16 @@
     // Round State
     let deck = [];
     let hands = [[], [], [], []]; // P0=User, P1=Bot2, P2=Bot3, P3=Bot4
-    let stashes = [[], [], [], []]; // Banked pairs for current round
+    let stashes = [[], [], [], []]; // Banked Trios for current round
     let currentPlayer = 0;
     let direction = 1; // 1 = Clockwise (Pass Left), -1 = Counter-Clockwise (Pass Right)
     let turnCount = 1;
     let selectedPassCardIndex = null;
-    let selectedPairIndices = []; // Stores user's selected cards for laying a pair
-    let playerStep = 'DRAW'; // 'DRAW', 'PAIR', 'PASS'
+    let selectedMeldIndices = []; // Stores user's selected cards for laying a 3-card Trio
+    let playerStep = 'DRAW'; // 'DRAW', 'TRIO', 'PASS'
     let consecutiveTurnsWithoutMeld = 0; // Tracks standoff rule: full rotation without melds ends round
     let playerMadeMeldThisTurn = false;
+    let pendingSnitchResume = null; // Callback after snitch raid modal closes
 
     function setGameMode(mode) {
       if (gameMode === mode) return;
@@ -338,14 +376,15 @@
       resetEntireMatch();
     }
 
-    // Build the playable deck (4P: 54 cards, 2P Duel C1: 28 cards)
+    // Build the playable deck (4P: 54 cards, 2P Duel: 28 cards)
     function buildDeck() {
       const cards = [];
       const activeItems = (gameMode === '2P')
-        ? ITEMS.filter(it => !it.isGrand) // 4 Petty items (Cash, Diamond, Watch, Key: 16 Blue, 8 Red)
+        ? ITEMS.filter(it => !it.isGrand) // 4 Petty items (16 Blue, 8 Red)
         : ITEMS; // All 8 items (30 Blue, 16 Red)
 
-      const wildsCount = (gameMode === '2P') ? 4 : 8;
+      const wildsCount = (gameMode === '2P') ? 2 : 6;
+      const snitchCount = 2;
 
       // 1. Clean Loot (Blue, 5 pts each)
       activeItems.forEach(it => {
@@ -361,9 +400,14 @@
         }
       });
 
-      // 3. Green Counterfeit Wilds (0 pts, pairs with ANY Blue, flips direction)
+      // 3. Green Counterfeit Wilds (0 pts, wild connector, flips direction)
       for (let i = 0; i < wildsCount; i++) {
         cards.push({ type: 'LOOT', color: 'GREEN', item: 'Wild', icon: '🎭🔄', val: 0, isGrand: false, isWild: true });
+      }
+
+      // 4. The Snitch (Take-That Police Raid Card)
+      for (let i = 0; i < snitchCount; i++) {
+        cards.push({ type: 'SPECIAL', color: 'SPECIAL', item: 'The Snitch', icon: '🕵️🚨', val: 0, isGrand: false, isSnitch: true });
       }
 
       // Shuffle Fisher-Yates
@@ -390,7 +434,7 @@
       consecutiveTurnsWithoutMeld = 0;
       playerMadeMeldThisTurn = false;
       selectedPassCardIndex = null;
-      selectedPairIndices = [];
+      selectedMeldIndices = [];
       playerStep = (currentPlayer === 0) ? 'DRAW' : 'BOT';
 
       // Deal 7 cards each
@@ -402,8 +446,8 @@
 
       updateUI();
       const modeAnnouncement = (gameMode === '2P')
-        ? `⚔️ 2-Player Duel C1! 28 cards (4 Petty Items + 4 Wilds). Pass face-up & Intercept! First to 200 pts!`
-        : `👥 Round ${roundNumber} begins! 54 cards (8 Items + 8 Wilds). Dealing 7 cards each. First to 300 pts!`;
+        ? `⚔️ 2-Player Duel! 28 cards (4 Items + 2 Wilds + 2 Snitches). First to 200 pts!`
+        : `👥 Round ${roundNumber} begins! 54 cards (30 Blue, 16 Red, 6 Wild, 2 Snitch). Dealing 7 cards. First to 300 pts!`;
       logAnnouncement(modeAnnouncement);
 
       if (currentPlayer !== 0) {
@@ -423,135 +467,218 @@
     }
 
     function calculateStashPoints(stash) {
-      return stash.reduce((sum, pair) => sum + pair.points, 0);
+      return stash.reduce((sum, item) => sum + item.points, 0);
     }
 
-    // Evaluates any 2 cards selected by the player against the Golden Pairing Law
-    function evaluateSelectedPair(c1, c2) {
-      if (!c1 || !c2) return { valid: false, error: "Select 2 cards." };
+    // Evaluates any 3 cards selected by the player against the Golden Melding Law
+    function evaluateSelectedTrio(cards) {
+      if (!cards || cards.length !== 3) return { valid: false, error: "Select exactly 3 cards." };
 
-      let blue = null;
-      let other = null;
+      const blues = cards.filter(c => c.color === 'BLUE');
+      const reds = cards.filter(c => c.color === 'RED');
+      const greens = cards.filter(c => c.color === 'GREEN');
+      const specials = cards.filter(c => c.color === 'SPECIAL');
 
-      if (c1.color === 'BLUE' && c2.color !== 'BLUE') {
-        blue = c1; other = c2;
-      } else if (c2.color === 'BLUE' && c1.color !== 'BLUE') {
-        blue = c2; other = c1;
-      } else if (c1.color === 'BLUE' && c2.color === 'BLUE') {
-        if (c1.item === c2.item) {
+      if (specials.length > 0) {
+        return { valid: false, error: "The Snitch cannot be melded! Use the Raid button." };
+      }
+
+      // Golden Law: Must have at least 1 Blue!
+      if (blues.length === 0) {
+        return { valid: false, error: "Golden Law: Every Trio requires ≥1 Blue card!" };
+      }
+
+      if (greens.length > 1) {
+        return { valid: false, error: "At most 1 Counterfeit Wild per Trio!" };
+      }
+
+      // 1. Clean Syndicate (3 Blues of same item)
+      if (blues.length === 3) {
+        if (blues[0].item === blues[1].item && blues[1].item === blues[2].item) {
           return {
             valid: true,
-            item: c1.item,
-            icon: c1.icon,
+            type: 'CLEAN',
+            item: blues[0].item,
+            icon: blues[0].icon,
             color: 'BLUE',
-            category: 'CLEAN',
-            points: 10,
+            category: blues[0].isGrand ? 'GRAND' : 'PETTY',
+            points: 15,
             flipsCamera: false,
-            label: `Clean ${c1.item}`
+            label: `Clean Syndicate ${blues[0].item}`
           };
         } else {
-          return { valid: false, error: `Must match (${c1.item} ≠ ${c2.item})!` };
+          return { valid: false, error: `All 3 Blue cards must match item (${blues[0].item}, ${blues[1].item}, ${blues[2].item})!` };
         }
-      } else {
-        return { valid: false, error: "Needs 1 Blue card!" };
       }
 
-      // One Blue + Green Wild
-      if (other.color === 'GREEN') {
-        return {
-          valid: true,
-          item: `Wild (${blue.item})`,
-          icon: '🎭🔄',
-          color: 'GREEN',
-          category: 'WILD',
-          points: 5,
-          flipsCamera: true,
-          label: `Wild w/ ${blue.item}`
-        };
-      }
-
-      // One Blue + Red Contraband
-      if (other.color === 'RED') {
-        if (other.item === blue.item) {
-          const pts = blue.val + other.val;
+      // 2. Laundered Heist (2 Blues + 1 Red of same item)
+      if (blues.length === 2 && reds.length === 1) {
+        const red = reds[0];
+        if (blues[0].item === red.item && blues[1].item === red.item) {
+          const pts = 5 + 5 + red.val; // 20 for Petty, 25 for Grand
           return {
             valid: true,
-            item: other.item,
-            icon: other.icon,
+            type: 'LAUNDERED',
+            item: red.item,
+            icon: red.icon,
             color: 'RED',
-            category: other.isGrand ? 'GRAND' : 'PETTY',
+            category: red.isGrand ? 'GRAND' : 'PETTY',
             points: pts,
             flipsCamera: false,
-            label: `Laundered ${other.item}`
+            label: `Laundered ${red.item}`
           };
         } else {
-          return { valid: false, error: `Mismatch (${other.item} ≠ ${blue.item})!` };
+          return { valid: false, error: `Items must match (${blues[0].item} & ${red.item})!` };
+        }
+      }
+
+      // 3. The Smuggler's Run (1 Blue + 2 Reds of same item)
+      if (blues.length === 1 && reds.length === 2) {
+        const blue = blues[0];
+        if (reds[0].item === blue.item && reds[1].item === blue.item) {
+          const pts = 5 + reds[0].val + reds[1].val; // 25 for Petty (5+10+10), 35 for Grand (5+15+15)
+          return {
+            valid: true,
+            type: 'SMUGGLER',
+            item: blue.item,
+            icon: blue.icon,
+            color: 'RED',
+            category: reds[0].isGrand ? 'GRAND' : 'PETTY',
+            points: pts,
+            flipsCamera: false,
+            label: `Smuggler's Run ${blue.item}!`
+          };
+        } else {
+          return { valid: false, error: `Items must match (${blue.item} & ${reds[0].item})!` };
+        }
+      }
+
+      // 4. Counterfeit Wild Trio (1 Wild + either 2 Blues OR 1 Blue + 1 Red)
+      if (greens.length === 1) {
+        if (blues.length === 2) {
+          if (blues[0].item === blues[1].item) {
+            return {
+              valid: true,
+              type: 'WILD_CLEAN',
+              item: `Wild Clean (${blues[0].item})`,
+              icon: '🎭🔄',
+              color: 'GREEN',
+              category: blues[0].isGrand ? 'GRAND' : 'PETTY',
+              points: 10,
+              flipsCamera: true,
+              label: `Wild Clean ${blues[0].item}`
+            };
+          } else {
+            return { valid: false, error: "The 2 Blue cards must match item!" };
+          }
+        }
+        if (blues.length === 1 && reds.length === 1) {
+          if (blues[0].item === reds[0].item) {
+            const pts = 5 + reds[0].val; // 15 for Petty, 20 for Grand
+            return {
+              valid: true,
+              type: 'WILD_HOT',
+              item: `Wild Laundered (${reds[0].item})`,
+              icon: '🎭🔄',
+              color: 'GREEN',
+              category: reds[0].isGrand ? 'GRAND' : 'PETTY',
+              points: pts,
+              flipsCamera: true,
+              label: `Wild Laundered ${reds[0].item}`
+            };
+          } else {
+            return { valid: false, error: `Blue & Red must match item (${blues[0].item} ≠ ${reds[0].item})!` };
+          }
         }
       }
 
       return { valid: false, error: "Invalid combination!" };
     }
 
-    // Available candidate pairs for bot AI
-    function getCandidatePairs(playerIdx) {
+    // Available candidate Trios for bot AI
+    function getCandidateTrios(playerIdx) {
       const hand = hands[playerIdx];
       const candidates = [];
-
       const blues = hand.filter(c => c.color === 'BLUE');
       const reds = hand.filter(c => c.color === 'RED');
       const greens = hand.filter(c => c.color === 'GREEN');
 
       if (blues.length === 0) return candidates;
 
-      // 1. Red + Blue
-      reds.forEach(r => {
-        const matchBlue = blues.find(b => b.item === r.item);
-        if (matchBlue) {
-          const pts = matchBlue.val + r.val;
-          candidates.push({
-            item: r.item,
-            icon: r.icon,
-            color: 'RED',
-            category: r.isGrand ? 'GRAND' : 'PETTY',
-            points: pts,
-            flipsCamera: false,
-            c1: r,
-            c2: matchBlue
-          });
-        }
-      });
-
-      // 2. Blue + Blue
       ITEMS.forEach(it => {
         const itemBlues = blues.filter(b => b.item === it.name);
-        if (itemBlues.length >= 2) {
+        const itemReds = reds.filter(r => r.item === it.name);
+
+        // 1. Smuggler's Run (1 Blue + 2 Reds) -> 25 or 35 pts!
+        if (itemBlues.length >= 1 && itemReds.length >= 2) {
           candidates.push({
+            type: 'SMUGGLER',
+            item: it.name,
+            icon: it.icon,
+            color: 'RED',
+            category: it.isGrand ? 'GRAND' : 'PETTY',
+            points: 5 + itemReds[0].val + itemReds[1].val,
+            flipsCamera: false,
+            cards: [itemBlues[0], itemReds[0], itemReds[1]]
+          });
+        }
+
+        // 2. Laundered Heist (2 Blues + 1 Red) -> 20 or 25 pts
+        if (itemBlues.length >= 2 && itemReds.length >= 1) {
+          candidates.push({
+            type: 'LAUNDERED',
+            item: it.name,
+            icon: it.icon,
+            color: 'RED',
+            category: it.isGrand ? 'GRAND' : 'PETTY',
+            points: 10 + itemReds[0].val,
+            flipsCamera: false,
+            cards: [itemBlues[0], itemBlues[1], itemReds[0]]
+          });
+        }
+
+        // 3. Clean Syndicate (3 Blues) -> 15 pts
+        if (itemBlues.length >= 3) {
+          candidates.push({
+            type: 'CLEAN',
             item: it.name,
             icon: it.icon,
             color: 'BLUE',
-            category: 'CLEAN',
-            points: 10,
+            category: it.isGrand ? 'GRAND' : 'PETTY',
+            points: 15,
             flipsCamera: false,
-            c1: itemBlues[0],
-            c2: itemBlues[1]
+            cards: [itemBlues[0], itemBlues[1], itemBlues[2]]
+          });
+        }
+
+        // 4. Wild Laundered (1 Wild + 1 Blue + 1 Red) -> 15 or 20 pts & flips camera
+        if (greens.length >= 1 && itemBlues.length >= 1 && itemReds.length >= 1) {
+          candidates.push({
+            type: 'WILD_HOT',
+            item: `Wild Laundered (${it.name})`,
+            icon: '🎭🔄',
+            color: 'GREEN',
+            category: it.isGrand ? 'GRAND' : 'PETTY',
+            points: 5 + itemReds[0].val,
+            flipsCamera: true,
+            cards: [greens[0], itemBlues[0], itemReds[0]]
+          });
+        }
+
+        // 5. Wild Clean (1 Wild + 2 Blues) -> 10 pts & flips camera
+        if (greens.length >= 1 && itemBlues.length >= 2) {
+          candidates.push({
+            type: 'WILD_CLEAN',
+            item: `Wild Clean (${it.name})`,
+            icon: '🎭🔄',
+            color: 'GREEN',
+            category: it.isGrand ? 'GRAND' : 'PETTY',
+            points: 10,
+            flipsCamera: true,
+            cards: [greens[0], itemBlues[0], itemBlues[1]]
           });
         }
       });
-
-      // 3. ANY Green Wild + ANY Blue
-      if (greens.length > 0 && blues.length > 0) {
-        const bestBlueToBurn = blues[0];
-        candidates.push({
-          item: `Wild (${bestBlueToBurn.item})`,
-          icon: '🎭🔄',
-          color: 'GREEN',
-          category: 'WILD',
-          points: 5,
-          flipsCamera: true,
-          c1: greens[0],
-          c2: bestBlueToBurn
-        });
-      }
 
       return candidates;
     }
@@ -563,15 +690,12 @@
       const leaderIdx = matchScores.indexOf(maxScore);
       const deficit = maxScore - myScore;
 
-      // 1. Zero Score after R1 or Heavy Deficit -> Cautious / Floor-Builder
       if (myScore === 0 && roundNumber > 1) {
         return { val: 0.15, label: "🛡️ Cautious", class: "bg-blue-950/80 text-blue-300 border-blue-700/60" };
       }
       if (deficit >= 60) {
         return { val: 0.25, label: "🛡️ Defensive", class: "bg-blue-950/80 text-blue-300 border-blue-700/60" };
       }
-
-      // 2. Match Leader with cushion -> High Roller
       if (b === leaderIdx && myScore > 0) {
         const sorted = [...matchScores].sort((a, b) => b - a);
         const lead = myScore - (sorted[1] || 0);
@@ -579,73 +703,62 @@
         if (lead >= 20) return { val: 0.70, label: "👑 Aggressive", class: "bg-amber-950/80 text-amber-300 border-amber-600/70" };
         return { val: 0.55, label: "👑 Leader", class: "bg-amber-950/60 text-amber-300 border-amber-700/60" };
       }
-
-      // 3. Endgame Desperation
       if (maxScore >= 225 && b !== leaderIdx) {
         return { val: 0.80, label: "⚡ Desperate", class: "bg-rose-950/80 text-rose-300 border-rose-600/70" };
       }
-
-      // 4. Default Balanced
       return { val: 0.50, label: "⚖️ Balanced", class: "bg-slate-800 text-slate-400 border-slate-700" };
     }
 
-    // Bot AI pair playing
-    function discardBotPairs(b) {
+    // Bot AI Trio Melding
+    function discardBotTrios(b) {
       const hand = hands[b];
-      const candidates = getCandidatePairs(b);
-      const mindset = getBotMindset(b);
-      const minOppHand = hands.filter((_, idx) => idx !== b).reduce((min, h) => Math.min(min, h.length), 99);
+      const candidates = getCandidateTrios(b);
 
       if (candidates.length > 0) {
+        // Sort highest points first
         candidates.sort((a, b) => b.points - a.points);
-        const bestPair = candidates[0];
+        const best = candidates[0];
 
-        // High Roller AI: if candidate is only 5-pt Counterfeit Wild, and bot holds unpartnered 15-pt Grand Red, and minOppHand > 3:
-        // skip 5-pt wild to save the Blue card for Grand match!
-        if (mindset.val >= 0.75 && bestPair.points === 5 && minOppHand > 3) {
-          const hasUnpartneredGrand = hand.some(c => c.color === 'RED' && c.val === 15 && !hand.some(bc => bc.color === 'BLUE' && bc.item === c.item));
-          if (hasUnpartneredGrand) {
-            logAnnouncement(`${getPlayerName(b)} (${mindset.label}) holds Blue card hoping for Grand Contraband!`);
-            return false;
-          }
-        }
-
-        hand.splice(hand.indexOf(bestPair.c1), 1);
-        hand.splice(hand.indexOf(bestPair.c2), 1);
-
-        stashes[b].push({
-          item: bestPair.item,
-          icon: bestPair.icon,
-          color: bestPair.color,
-          points: bestPair.points,
-          category: bestPair.category
+        // Remove the 3 cards from bot's hand
+        best.cards.forEach(card => {
+          const idx = hand.indexOf(card);
+          if (idx !== -1) hand.splice(idx, 1);
         });
 
-        if (bestPair.flipsCamera) {
+        stashes[b].push({
+          item: best.item,
+          icon: best.icon,
+          color: best.color,
+          points: best.points,
+          category: best.category
+        });
+
+        if (best.flipsCamera) {
           direction = -direction;
-          logAnnouncement(`${getPlayerName(b)} (${mindset.label}) banked Counterfeit Wild! Direction flipped! 🔄`);
-        } else if (bestPair.color === 'RED') {
-          logAnnouncement(`${getPlayerName(b)} (${mindset.label}) laundered ${bestPair.item} pair (+${bestPair.points} pts)!`);
+          logAnnouncement(`${getPlayerName(b)} banked ${best.item} (+${best.points} pts)! Play reversed 🔄!`);
+        } else if (best.type === 'SMUGGLER') {
+          logAnnouncement(`🔥 ${getPlayerName(b)} banked SMUGGLER'S RUN ${best.item} (+${best.points} PTS)!`);
         } else {
-          logAnnouncement(`${getPlayerName(b)} (${mindset.label}) banked clean ${bestPair.item}s (+${bestPair.points} pts).`);
+          logAnnouncement(`${getPlayerName(b)} banked a Trio of ${best.item}s (+${best.points} pts).`);
         }
         return true;
       }
-
       return false;
     }
 
+    // Check if hand emptied
     function checkWinCondition(playerIdx) {
       if (hands[playerIdx].length === 0) {
-        showRoundModal(playerIdx);
+        logAnnouncement(`🚗💨 GETAWAY CAR! ${getPlayerName(playerIdx)} emptied their hand!`);
+        showRoundModal(playerIdx, 'EMPTY_HAND');
         return true;
       }
       return false;
     }
 
     function getPlayerName(p) {
-      if (p === 0) return "You (P1)";
-      return (numPlayers === 2) ? "Rival Thief (Bot 2)" : `Bot ${p+1}`;
+      if (p === 0) return "You";
+      return `Bot ${p + 1}`;
     }
 
     function getTargetNeighbor(p) {
@@ -653,50 +766,210 @@
       return (p + direction + 4) % 4;
     }
 
-    function showInterceptModal(senderIdx, passedCard, matchingBlueIdx, onMeld, onAccept) {
+    // Police Raid Execution (The Snitch Take-That)
+    function triggerSnitchRaid(snitcherIdx, onResume) {
+      const snitchCardIdx = hands[snitcherIdx].findIndex(c => c.color === 'SPECIAL');
+      if (snitchCardIdx !== -1) {
+        hands[snitcherIdx].splice(snitchCardIdx, 1);
+      }
+
+      // Count red cards in all hands
+      const redCounts = [];
+      for (let p = 0; p < numPlayers; p++) {
+        redCounts.push(hands[p].filter(c => c.color === 'RED').length);
+      }
+      const maxRed = Math.max(...redCounts);
+
+      const bustedPlayers = [];
+      const wipedAmounts = [];
+
+      for (let p = 0; p < numPlayers; p++) {
+        const isBusted = (redCounts[p] === maxRed && maxRed > 0);
+        const prevStashPts = calculateStashPoints(stashes[p]);
+        if (isBusted) {
+          bustedPlayers.push(p);
+          wipedAmounts.push(prevStashPts);
+          stashes[p] = []; // Entire vault wiped!
+        } else {
+          wipedAmounts.push(0);
+        }
+      }
+
+      showSnitchModal(snitcherIdx, redCounts, maxRed, bustedPlayers, wipedAmounts, onResume);
+      updateUI();
+    }
+
+    function showSnitchModal(snitcherIdx, redCounts, maxRed, bustedPlayers, wipedAmounts, onResume) {
+      const modal = document.getElementById('snitch-modal');
+      const desc = document.getElementById('snitch-modal-desc');
+      const breakdown = document.getElementById('snitch-modal-breakdown');
+      const continueBtn = document.getElementById('btn-snitch-continue');
+
+      const snitcherName = getPlayerName(snitcherIdx);
+      const isSelfSnitch = bustedPlayers.includes(snitcherIdx);
+
+      desc.innerHTML = `<b>${snitcherName}</b> threw down <b>The Snitch</b> and dropped a dime to the Feds! All hands are revealed!`;
+
+      let breakdownHtml = '';
+      for (let p = 0; p < numPlayers; p++) {
+        const name = getPlayerName(p);
+        const count = redCounts[p];
+        const isBusted = bustedPlayers.includes(p);
+        const wipedPts = wipedAmounts[p];
+
+        if (isBusted) {
+          breakdownHtml += `
+            <div class="p-2 rounded-lg border-2 border-rose-500 bg-rose-950/70 flex justify-between items-center">
+              <div>
+                <span class="font-black text-rose-400">${name}</span>
+                <span class="text-[10px] text-slate-300 ml-1.5 font-mono">(${count} Red Cards)</span>
+              </div>
+              <div class="text-right">
+                <span class="px-1.5 py-0.5 bg-rose-600 text-white font-black text-[9px] rounded uppercase">🚨 BUSTED!</span>
+                <div class="text-[10px] text-rose-300 font-bold mt-0.5">Vault Wiped (${wipedPts} pts seized)</div>
+              </div>
+            </div>
+          `;
+        } else {
+          breakdownHtml += `
+            <div class="p-2 rounded-lg border border-slate-800 bg-slate-900/60 flex justify-between items-center opacity-85">
+              <div>
+                <span class="font-bold text-slate-300">${name}</span>
+                <span class="text-[10px] text-slate-400 ml-1.5 font-mono">(${count} Red Cards)</span>
+              </div>
+              <div>
+                <span class="px-1.5 py-0.5 bg-emerald-950 text-emerald-400 border border-emerald-700/60 font-black text-[9px] rounded uppercase">🛡️ Clean</span>
+              </div>
+            </div>
+          `;
+        }
+      }
+
+      if (isSelfSnitch) {
+        breakdownHtml += `
+          <div class="p-2 rounded-lg bg-amber-950/80 border border-amber-500 text-center text-amber-300 font-bold text-[11px]">
+            🤦 BACKFIRE! ${snitcherName} held the most Red cards and raided their own vault!
+          </div>
+        `;
+      }
+
+      breakdown.innerHTML = breakdownHtml;
+
+      continueBtn.onclick = () => {
+        modal.classList.add('hidden');
+        if (onResume) onResume();
+      };
+
+      modal.classList.remove('hidden');
+    }
+
+    // Intercept check for Trios (Holding 2 cards that complete a Trio with passed Red card)
+    function findInterceptCandidate(targetIdx, passedCard) {
+      if (passedCard.color !== 'RED') return null;
+      const hand = hands[targetIdx];
+      const blues = hand.filter(c => c.color === 'BLUE' && c.item === passedCard.item);
+      const reds = hand.filter(c => c.color === 'RED' && c.item === passedCard.item);
+      const wilds = hand.filter(c => c.color === 'GREEN');
+
+      // 1. Smuggler's Run (1 matching Blue + 1 matching Red)
+      if (blues.length >= 1 && reds.length >= 1) {
+        const pts = 5 + reds[0].val + passedCard.val;
+        return {
+          type: 'SMUGGLER',
+          points: pts,
+          cardsInHand: [blues[0], reds[0]],
+          flipsCamera: false,
+          label: `Smuggler's Run ${passedCard.item} (+${pts} pts)`
+        };
+      }
+
+      // 2. Laundered Heist (2 matching Blues)
+      if (blues.length >= 2) {
+        const pts = 5 + 5 + passedCard.val;
+        return {
+          type: 'LAUNDERED',
+          points: pts,
+          cardsInHand: [blues[0], blues[1]],
+          flipsCamera: false,
+          label: `Laundered Heist ${passedCard.item} (+${pts} pts)`
+        };
+      }
+
+      // 3. Wild Laundered (1 matching Blue + 1 Wild)
+      if (blues.length >= 1 && wilds.length >= 1) {
+        const pts = 5 + passedCard.val;
+        return {
+          type: 'WILD_HOT',
+          points: pts,
+          cardsInHand: [blues[0], wilds[0]],
+          flipsCamera: true,
+          label: `Wild Laundered ${passedCard.item} (+${pts} pts & 🔄)`
+        };
+      }
+
+      return null;
+    }
+
+    function showInterceptModal(senderIdx, passedCard, candidate, onMeld, onAccept) {
       const modal = document.getElementById('intercept-modal');
       const desc = document.getElementById('intercept-desc');
       const preview = document.getElementById('intercept-cards-preview');
       const meldBtn = document.getElementById('btn-intercept-meld');
       const acceptBtn = document.getElementById('btn-intercept-accept');
 
-      const blueCard = hands[0][matchingBlueIdx];
-      const pts = blueCard.val + passedCard.val;
+      const c1 = candidate.cardsInHand[0];
+      const c2 = candidate.cardsInHand[1];
 
-      desc.innerHTML = `<b>${getPlayerName(senderIdx)}</b> passed you <b>${passedCard.item} (${passedCard.icon})</b> face up!<br>You hold matching <b>Blue ${blueCard.item}</b> in your hand!`;
+      desc.innerHTML = `<b>${getPlayerName(senderIdx)}</b> passed you <b>${passedCard.item} (${passedCard.icon})</b> face up!<br>You hold cards in hand to complete a <b>${candidate.label}</b>!`;
 
       preview.innerHTML = `
-        <div class="px-2.5 py-1.5 rounded-lg border-2 border-rose-500 bg-rose-950/70 text-center text-xs">
-          <div class="text-xl">${passedCard.icon}</div>
-          <div class="text-[9px] font-black text-rose-400 uppercase">Passed Red</div>
-          <div class="text-[8px] text-slate-300 font-bold">+${passedCard.val} pts</div>
+        <div class="px-2 py-1.5 rounded-lg border-2 border-rose-500 bg-rose-950/70 text-center text-xs">
+          <div class="text-lg">${passedCard.icon}</div>
+          <div class="text-[8px] font-black text-rose-400 uppercase">Incoming</div>
+          <div class="text-[7.5px] text-slate-300 font-bold">+${passedCard.val}</div>
         </div>
-        <div class="text-lg font-black text-sky-400">+</div>
-        <div class="px-2.5 py-1.5 rounded-lg border-2 border-blue-500 bg-blue-950/70 text-center text-xs">
-          <div class="text-xl">${blueCard.icon}</div>
-          <div class="text-[9px] font-black text-blue-400 uppercase">Your Blue</div>
-          <div class="text-[8px] text-slate-300 font-bold">+5 pts</div>
+        <div class="text-sm font-black text-sky-400">+</div>
+        <div class="px-2 py-1.5 rounded-lg border-2 border-blue-500 bg-blue-950/70 text-center text-xs">
+          <div class="text-lg">${c1.icon}</div>
+          <div class="text-[8px] font-black text-blue-400 uppercase">${c1.item}</div>
+          <div class="text-[7.5px] text-slate-300 font-bold">+${c1.val}</div>
         </div>
-        <div class="text-lg font-black text-emerald-400">=</div>
-        <div class="px-2.5 py-1.5 rounded-lg border-2 border-emerald-500 bg-emerald-950/70 text-center text-xs font-black text-emerald-300">
-          <div class="text-xl">💰</div>
-          <div class="text-[9px] uppercase">Laundered</div>
-          <div class="text-[10px] font-black text-emerald-300">+${pts} PTS</div>
+        <div class="text-sm font-black text-sky-400">+</div>
+        <div class="px-2 py-1.5 rounded-lg border-2 ${c2.color === 'GREEN' ? 'border-emerald-500 bg-emerald-950/70' : (c2.color === 'RED' ? 'border-rose-500 bg-rose-950/70' : 'border-blue-500 bg-blue-950/70')} text-center text-xs">
+          <div class="text-lg">${c2.icon}</div>
+          <div class="text-[8px] font-black uppercase">${c2.item}</div>
+          <div class="text-[7.5px] text-slate-300 font-bold">+${c2.val}</div>
+        </div>
+        <div class="text-sm font-black text-emerald-400">=</div>
+        <div class="px-2 py-1.5 rounded-lg border-2 border-emerald-500 bg-emerald-950/90 text-center text-xs font-black text-emerald-300">
+          <div class="text-lg">💰</div>
+          <div class="text-[8px] uppercase">TRIO</div>
+          <div class="text-[9px] font-black text-emerald-300">+${candidate.points} PTS</div>
         </div>
       `;
 
       meldBtn.onclick = () => {
         modal.classList.add('hidden');
-        hands[0].splice(matchingBlueIdx, 1);
+        // Remove the 2 cards from hand
+        candidate.cardsInHand.forEach(c => {
+          const idx = hands[0].indexOf(c);
+          if (idx !== -1) hands[0].splice(idx, 1);
+        });
+
         stashes[0].push({
           item: passedCard.item,
           icon: passedCard.icon,
           color: 'RED',
-          points: pts,
+          points: candidate.points,
           category: passedCard.isGrand ? 'GRAND' : 'PETTY'
         });
+
+        if (candidate.flipsCamera) {
+          direction = -direction;
+        }
+
         consecutiveTurnsWithoutMeld = 0;
-        logAnnouncement(`⚡ INTERCEPT! You snap-matched incoming ${passedCard.item} with your Blue ${passedCard.item} (+${pts} pts)! Contraband never touched your hand!`);
+        logAnnouncement(`⚡ INTERCEPT! You snap-melded ${passedCard.item} (+${candidate.points} pts)! Contraband never touched your hand!`);
         onMeld();
       };
 
@@ -713,17 +986,14 @@
 
       const cardDesc = (passedCard.color === 'RED')
         ? `RED Contraband (${passedCard.item})`
-        : ((passedCard.color === 'GREEN') ? 'Counterfeit Wild 🎭' : `Clean ${passedCard.item}`);
+        : ((passedCard.color === 'GREEN') ? 'Counterfeit Wild 🎭' : ((passedCard.color === 'SPECIAL') ? 'The Snitch 🕵️' : `Clean ${passedCard.item}`));
 
-      // Recipient Advantage: Check if target holds matching BLUE card for incoming RED card
-      const matchingBlueIdx = (passedCard.color === 'RED')
-        ? hands[targetIdx].findIndex(c => c.color === 'BLUE' && c.item === passedCard.item)
-        : -1;
+      // Recipient Advantage: Check if target can complete a Trio
+      const candidate = findInterceptCandidate(targetIdx, passedCard);
 
-      if (matchingBlueIdx !== -1) {
+      if (candidate !== null) {
         if (targetIdx === 0) {
-          // Player 0 (Human) gets the option to snap meld or accept!
-          showInterceptModal(senderIdx, passedCard, matchingBlueIdx, () => {
+          showInterceptModal(senderIdx, passedCard, candidate, () => {
             updateUI();
             if (checkWinCondition(0)) return;
             if (deck.length === 0 && consecutiveTurnsWithoutMeld >= numPlayers) {
@@ -743,18 +1013,21 @@
           });
           return;
         } else {
-          // Bot always seizes the intercept opportunity!
-          const matchingBlue = hands[targetIdx].splice(matchingBlueIdx, 1)[0];
-          const pts = matchingBlue.val + passedCard.val;
+          // Bot Intercept
+          candidate.cardsInHand.forEach(c => {
+            const idx = hands[targetIdx].indexOf(c);
+            if (idx !== -1) hands[targetIdx].splice(idx, 1);
+          });
           stashes[targetIdx].push({
             item: passedCard.item,
             icon: passedCard.icon,
             color: 'RED',
-            points: pts,
+            points: candidate.points,
             category: passedCard.isGrand ? 'GRAND' : 'PETTY'
           });
+          if (candidate.flipsCamera) direction = -direction;
           consecutiveTurnsWithoutMeld = 0;
-          logAnnouncement(`⚡ INTERCEPT! ${getPlayerName(targetIdx)} snap-matched passed RED ${passedCard.item} with their Blue ${passedCard.item} (+${pts} pts)! Contraband neutralized!`);
+          logAnnouncement(`⚡ INTERCEPT! ${getPlayerName(targetIdx)} snap-melded RED ${passedCard.item} (+${candidate.points} pts)!`);
           updateUI();
           if (checkWinCondition(targetIdx)) return;
           if (deck.length === 0 && consecutiveTurnsWithoutMeld >= numPlayers) {
@@ -786,70 +1059,89 @@
         const card = drawFromDeck();
         if (card) hands[b].push(card);
 
-        const botMeld = discardBotPairs(b);
-        if (botMeld) {
-          consecutiveTurnsWithoutMeld = 0;
-        } else {
-          consecutiveTurnsWithoutMeld++;
-        }
-        updateUI();
-
-        if (checkWinCondition(b)) return;
-        if (deck.length === 0 && consecutiveTurnsWithoutMeld >= numPlayers) {
-          showRoundModal(-1, 'STANDOFF');
-          return;
-        }
-
-        setTimeout(() => {
-          if (hands[b].length > 0) {
-            const targetP = getTargetNeighbor(b);
-            const hand = hands[b];
-            const mindset = getBotMindset(b);
-            const curMatchLeader = matchScores.indexOf(Math.max(...matchScores));
-            const passingToLeader = (targetP === curMatchLeader && matchScores[curMatchLeader] > 0);
-            const minOppHand = hands.filter((_, idx) => idx !== b).reduce((min, h) => Math.min(min, h.length), 99);
-            const myBanked = calculateStashPoints(stashes[b]);
-
-            let bestCardIdx = 0;
-            let maxUrgency = -9999;
-
-            hand.forEach((card, idx) => {
-              let score = 0;
-
-              if (card.color === 'RED') {
-                score += (1.0 - mindset.val) * 60;
-                if (minOppHand <= 3) score += (4 - minOppHand) * 35;
-                if (myBanked >= 20) score += 30;
-                score += (card.val === 15 ? 15 : 5) * (1.2 - mindset.val);
-                if (passingToLeader) score += 55;
-                if (mindset.val > 0.7 && minOppHand > 3) score -= 35;
-              } else if (card.color === 'GREEN') {
-                score += mindset.val * 30;
-                const bluesCount = hand.filter(c => c.color === 'BLUE').length;
-                const greensCount = hand.filter(c => c.color === 'GREEN').length;
-                if (bluesCount === 0 && greensCount >= 2) score += 20;
-              } else if (card.color === 'BLUE') {
-                score += 20;
-                const sameItemBlues = hand.filter(c => c.color === 'BLUE' && c.item === card.item).length;
-                if (sameItemBlues >= 2) score -= 40;
-              }
-
-              if (score > maxUrgency) {
-                maxUrgency = score;
-                bestCardIdx = idx;
-              }
+        // Check if Bot wants to play The Snitch
+        const botHasSnitch = hands[b].some(c => c.color === 'SPECIAL');
+        if (botHasSnitch) {
+          const myRedCount = hands[b].filter(c => c.color === 'RED').length;
+          const maxOppVault = Math.max(...stashes.map((s, idx) => idx !== b ? calculateStashPoints(s) : 0));
+          // Bot plays Snitch if opponent has >= 20 pts and bot has <= 1 red card
+          if (maxOppVault >= 20 && myRedCount <= 1) {
+            triggerSnitchRaid(b, () => {
+              resumeBotTurnAfterSnitch(b);
             });
-
-            const passed = hands[b].splice(bestCardIdx, 1)[0];
-            executePassCard(b, targetP, passed, () => {
-              advanceTurn();
-            });
-          } else {
-            advanceTurn();
+            return;
           }
-        }, 500);
+        }
 
+        resumeBotTurnAfterSnitch(b);
       }, 400);
+    }
+
+    function resumeBotTurnAfterSnitch(b) {
+      const botMeld = discardBotTrios(b);
+      if (botMeld) {
+        consecutiveTurnsWithoutMeld = 0;
+      } else {
+        consecutiveTurnsWithoutMeld++;
+      }
+      updateUI();
+
+      if (checkWinCondition(b)) return;
+      if (deck.length === 0 && consecutiveTurnsWithoutMeld >= numPlayers) {
+        showRoundModal(-1, 'STANDOFF');
+        return;
+      }
+
+      setTimeout(() => {
+        if (hands[b].length > 0) {
+          const targetP = getTargetNeighbor(b);
+          const hand = hands[b];
+          const mindset = getBotMindset(b);
+          const curMatchLeader = matchScores.indexOf(Math.max(...matchScores));
+          const passingToLeader = (targetP === curMatchLeader && matchScores[curMatchLeader] > 0);
+          const minOppHand = hands.filter((_, idx) => idx !== b).reduce((min, h) => Math.min(min, h.length), 99);
+          const myBanked = calculateStashPoints(stashes[b]);
+
+          let bestCardIdx = 0;
+          let maxUrgency = -9999;
+
+          hand.forEach((card, idx) => {
+            let score = 0;
+
+            if (card.color === 'RED') {
+              score += (1.0 - mindset.val) * 60;
+              if (minOppHand <= 3) score += (4 - minOppHand) * 35;
+              if (myBanked >= 20) score += 30;
+              score += (card.val === 15 ? 15 : 5) * (1.2 - mindset.val);
+              if (passingToLeader) score += 55;
+              if (mindset.val > 0.7 && minOppHand > 3) score -= 35;
+            } else if (card.color === 'SPECIAL') {
+              // Prefer holding Snitch unless hand is bloated
+              score -= 50;
+            } else if (card.color === 'GREEN') {
+              score += mindset.val * 30;
+              const bluesCount = hand.filter(c => c.color === 'BLUE').length;
+              if (bluesCount === 0) score += 20;
+            } else if (card.color === 'BLUE') {
+              score += 20;
+              const sameItemBlues = hand.filter(c => c.color === 'BLUE' && c.item === card.item).length;
+              if (sameItemBlues >= 3) score -= 45;
+            }
+
+            if (score > maxUrgency) {
+              maxUrgency = score;
+              bestCardIdx = idx;
+            }
+          });
+
+          const passed = hands[b].splice(bestCardIdx, 1)[0];
+          executePassCard(b, targetP, passed, () => {
+            advanceTurn();
+          });
+        } else {
+          advanceTurn();
+        }
+      }, 500);
     }
 
     function advanceTurn() {
@@ -863,7 +1155,7 @@
 
       if (currentPlayer === 0) {
         playerStep = 'DRAW';
-        selectedPairIndices = [];
+        selectedMeldIndices = [];
         selectedPassCardIndex = null;
         logAnnouncement("Your turn! Tap Draw Card or tap the Locker.");
         updateUI();
@@ -901,151 +1193,74 @@
         if (targetLabel) targetLabel.innerText = "300 PTS WIN";
       }
 
-      // Update bot area grid layout
-      const botsGrid = document.getElementById('bots-grid');
-      const bot3Area = document.getElementById('bot3-area');
-      const bot4Area = document.getElementById('bot4-area');
-      if (botsGrid) {
-        if (numPlayers === 2) {
-          botsGrid.className = "grid grid-cols-1 max-w-xs mx-auto w-full";
-          if (bot3Area) bot3Area.classList.add('hidden');
-          if (bot4Area) bot4Area.classList.add('hidden');
-        } else {
-          botsGrid.className = "grid grid-cols-3 gap-1.5 max-w-xl mx-auto w-full";
-          if (bot3Area) bot3Area.classList.remove('hidden');
-          if (bot4Area) bot4Area.classList.remove('hidden');
-        }
-      }
-
-      // Camera HUD
-      const compassArrow = document.getElementById('compass-arrow');
-      const compassLabel = document.getElementById('compass-label');
-      const compassSub = document.getElementById('compass-sub');
-
-      if (numPlayers === 2) {
-        compassArrow.innerHTML = `<span class="text-xl">⚔️</span>`;
-        compassArrow.className = "w-12 h-12 rounded-full bg-slate-800 border-2 border-amber-500 flex items-center justify-center shadow-inner";
-        compassLabel.innerText = "DUEL (ACROSS)";
-        compassLabel.className = "text-[10px] font-black text-amber-400 uppercase tracking-wide";
-        if (compassSub) compassSub.innerText = "Direct Head-to-Head";
-      } else if (direction === 1) {
-        compassArrow.innerHTML = `
-          <svg viewBox="0 0 100 100" class="w-10 h-10">
-            <circle cx="50" cy="50" r="45" fill="none" stroke="#0284c7" stroke-width="1.2" stroke-dasharray="3,3" opacity="0.6"/>
-            <path d="M 22 46 A 34 34 0 0 1 76 30" fill="none" stroke="#38bdf8" stroke-width="7" stroke-linecap="round"/>
-            <polygon points="70,16 90,30 72,42" fill="#38bdf8"/>
-            <path d="M 78 54 A 34 34 0 0 1 24 70" fill="none" stroke="#38bdf8" stroke-width="7" stroke-linecap="round"/>
-            <polygon points="30,84 10,70 28,58" fill="#38bdf8"/>
-            <path d="M 44 38 L 44 32 L 54 32" fill="none" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
-            <rect x="34" y="38" width="26" height="18" rx="4" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
-            <polygon points="60,43 72,37 72,51 60,45" fill="#38bdf8"/>
-            <circle cx="41" cy="47" r="2.8" fill="#ef4444"/>
-            <circle cx="50" cy="47" r="3.5" fill="none" stroke="#38bdf8" stroke-width="1.8"/>
-          </svg>
-        `;
-        compassArrow.className = "w-12 h-12 rounded-full bg-slate-800 border-2 border-amber-500 flex items-center justify-center shadow-inner ring-2 ring-amber-500/30";
-        compassLabel.innerText = "CLOCKWISE ↻";
-        compassLabel.className = "text-[10px] font-black text-amber-400 uppercase tracking-wide";
-        if (compassSub) compassSub.innerText = "Pass Left (Green flips 🔄)";
+      // Camera Card Indicator
+      const cameraLabel = document.getElementById('camera-label');
+      const cameraIcon = document.getElementById('camera-icon');
+      const passArrow = document.getElementById('pass-arrow');
+      if (direction === 1) {
+        cameraLabel.innerText = "PASS CLOCKWISE ↻";
+        cameraLabel.className = "text-xs font-black text-sky-400 leading-tight";
+        cameraIcon.style.transform = "rotate(0deg)";
+        passArrow.innerText = (numPlayers === 2) ? "➡️ Passing to Rival" : "➡️ Passing Left (Bot 2)";
       } else {
-        compassArrow.innerHTML = `
-          <svg viewBox="0 0 100 100" class="w-10 h-10">
-            <circle cx="50" cy="50" r="45" fill="none" stroke="#be123c" stroke-width="1.2" stroke-dasharray="3,3" opacity="0.6"/>
-            <path d="M 78 46 A 34 34 0 0 0 24 30" fill="none" stroke="#f43f5e" stroke-width="7" stroke-linecap="round"/>
-            <polygon points="30,16 10,30 28,42" fill="#f43f5e"/>
-            <path d="M 22 54 A 34 34 0 0 0 76 70" fill="none" stroke="#f43f5e" stroke-width="7" stroke-linecap="round"/>
-            <polygon points="70,84 90,70 72,58" fill="#f43f5e"/>
-            <path d="M 56 38 L 56 32 L 46 32" fill="none" stroke="#f43f5e" stroke-width="3" stroke-linecap="round"/>
-            <rect x="40" y="38" width="26" height="18" rx="4" fill="#0f172a" stroke="#f43f5e" stroke-width="2.5"/>
-            <polygon points="40,43 28,37 28,51 40,45" fill="#f43f5e"/>
-            <circle cx="59" cy="47" r="2.8" fill="#ef4444"/>
-            <circle cx="50" cy="47" r="3.5" fill="none" stroke="#f43f5e" stroke-width="1.8"/>
-          </svg>
-        `;
-        compassArrow.className = "w-12 h-12 rounded-full bg-slate-800 border-2 border-rose-500 flex items-center justify-center shadow-inner ring-2 ring-rose-500/30";
-        compassLabel.innerText = "COUNTER-CLOCKWISE ↺";
-        compassLabel.className = "text-[10px] font-black text-rose-400 uppercase tracking-wide";
-        if (compassSub) compassSub.innerText = "Pass Right (Green flips 🔄)";
+        cameraLabel.innerText = "COUNTER-CLOCKWISE ↺";
+        cameraLabel.className = "text-xs font-black text-rose-400 leading-tight";
+        cameraIcon.style.transform = "rotate(180deg)";
+        passArrow.innerText = (numPlayers === 2) ? "⬅️ Passing to Rival" : "⬅️ Passing Right (Bot 4)";
       }
 
-      // Update Active Bots
-      const activeBots = (numPlayers === 2) ? [1] : [1, 2, 3];
-      activeBots.forEach(b => {
-        const count = hands[b].length;
-        const pts = calculateStashPoints(stashes[b]);
-        const mindset = getBotMindset(b);
-
-        // Update Mood Badge
-        const moodEl = document.getElementById(`bot${b+1}-mood-badge`);
-        if (moodEl) {
-          moodEl.className = `text-[7.5px] font-black px-1 py-0.2 rounded border truncate ${mindset.class}`;
-          moodEl.innerText = mindset.label;
+      // Update Bots UI
+      const botAreas = [null, document.getElementById('bot2-area'), document.getElementById('bot3-area'), document.getElementById('bot4-area')];
+      for (let b = 1; b < 4; b++) {
+        if (b >= numPlayers) {
+          if (botAreas[b]) botAreas[b].style.display = 'none';
+          continue;
         }
+        if (botAreas[b]) botAreas[b].style.display = 'flex';
 
-        // Prominent Card Count Badge with Dynamic Urgency Colors
+        const area = botAreas[b];
         const countBadge = document.getElementById(`bot${b+1}-count-badge`);
-        if (countBadge) {
-          if (count <= 1) {
-            countBadge.className = "text-[10px] font-mono font-black px-1.5 py-0.5 rounded bg-rose-600 text-white ring-2 ring-rose-400 shadow-lg flex items-center gap-1 animate-bounce";
-            countBadge.innerHTML = `<span>🚨</span><span>${count} CARD!</span>`;
-          } else if (count === 2) {
-            countBadge.className = "text-[10px] font-mono font-black px-1.5 py-0.5 rounded bg-amber-500 text-slate-950 ring-2 ring-amber-300 shadow flex items-center gap-1 animate-pulse";
-            countBadge.innerHTML = `<span>⚠️</span><span>${count} CARDS</span>`;
-          } else if (count === 3) {
-            countBadge.className = "text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-amber-950/80 text-amber-300 border border-amber-600/70 flex items-center gap-1";
-            countBadge.innerHTML = `<span>🎴</span><span>${count} cards</span>`;
-          } else {
-            countBadge.className = "text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 flex items-center gap-1";
-            countBadge.innerHTML = `<span>🎴</span><span>${count} cards</span>`;
-          }
+        const scoreBadge = document.getElementById(`bot${b+1}-score-badge`);
+        const totalBadge = document.getElementById(`bot${b+1}-match-total`);
+        const moodBadge = document.getElementById(`bot${b+1}-mood-badge`);
+        const pipsContainer = document.getElementById(`bot${b+1}-pips`);
+
+        const cardCount = hands[b].length;
+        countBadge.innerHTML = `<span>🎴</span><span>${cardCount} cards</span>`;
+        scoreBadge.innerText = `Vault: ${calculateStashPoints(stashes[b])}`;
+        totalBadge.innerText = `${matchScores[b]}/${targetMatchScore}`;
+
+        const mindset = getBotMindset(b);
+        moodBadge.innerText = mindset.label;
+        moodBadge.className = `text-[7.5px] font-black px-1 py-0.2 rounded border truncate ${mindset.class}`;
+
+        pipsContainer.innerHTML = '';
+        for (let i = 0; i < Math.min(cardCount, 8); i++) {
+          const pip = document.createElement('div');
+          pip.className = 'w-1 h-3 rounded-sm bg-slate-600';
+          pipsContainer.appendChild(pip);
         }
 
-        // Visual Card Silhouette Pips
-        const pipsEl = document.getElementById(`bot${b+1}-pips`);
-        if (pipsEl) {
-          pipsEl.innerHTML = '';
-          for (let c = 0; c < count; c++) {
-            const pip = document.createElement('span');
-            let pipColor = "bg-slate-500";
-            if (count <= 1) pipColor = "bg-rose-400 animate-ping";
-            else if (count === 2) pipColor = "bg-amber-400 shadow";
-            else if (count === 3) pipColor = "bg-amber-500/80";
-            pip.className = `w-1.5 h-3 rounded-[1px] border border-black/40 inline-block shrink-0 ${pipColor}`;
-            pipsEl.appendChild(pip);
-          }
-        }
-
-        document.getElementById(`bot${b+1}-score-badge`).innerText = `Stash: ${pts}`;
-        document.getElementById(`bot${b+1}-match-total`).innerText = `${matchScores[b]}/${targetMatchScore}`;
-
-        const botArea = document.getElementById(`bot${b+1}-area`);
         if (currentPlayer === b) {
-          botArea.className = "bg-amber-950/40 border-2 border-amber-400 rounded-xl p-1.5 flex flex-col justify-between shadow-lg scale-102 ring-2 ring-amber-400/60 transition-all";
-        } else if (count <= 1) {
-          botArea.className = "bg-rose-950/50 border-2 border-rose-500 rounded-xl p-1.5 flex flex-col justify-between shadow-lg ring-2 ring-rose-500/80 transition-all animate-pulse";
-        } else if (count === 2) {
-          botArea.className = "bg-amber-950/30 border-2 border-amber-500/80 rounded-xl p-1.5 flex flex-col justify-between shadow transition-all";
+          area.className = "bg-slate-900 border-2 border-amber-400/90 rounded-xl p-1.5 flex flex-col justify-between shadow-lg shadow-amber-950/40 scale-[1.02] transition-all relative overflow-hidden";
         } else {
-          botArea.className = "bg-slate-900/80 border border-slate-800 rounded-xl p-1.5 flex flex-col justify-between transition-all";
+          area.className = "bg-slate-900/80 border border-slate-800 rounded-xl p-1.5 flex flex-col justify-between transition-all relative overflow-hidden";
         }
-      });
+      }
 
-      // Update Player Area
-      const statusTag = document.getElementById('player-status-tag');
+      // Player Score & Stashes
       const playerScoreDisplay = document.getElementById('player-score-display');
       const playerMatchTotal = document.getElementById('player-match-total');
+      const statusTag = document.getElementById('player-turn-status');
       const playerStashContainer = document.getElementById('player-stash-container');
 
-      const userPts = calculateStashPoints(stashes[0]);
-      playerScoreDisplay.innerText = userPts;
-      playerMatchTotal.innerText = matchScores[0];
-      const playerHandCountEl = document.getElementById('player-hand-count');
-      if (playerHandCountEl) playerHandCountEl.innerText = hands[0].length;
+      playerScoreDisplay.innerText = calculateStashPoints(stashes[0]);
+      playerMatchTotal.innerText = `${matchScores[0]}/${targetMatchScore}`;
 
       playerStashContainer.innerHTML = '';
       stashes[0].forEach(p => {
         const badge = document.createElement('div');
-        let style = 'bg-slate-800 border-slate-700 text-slate-300';
+        let style = 'bg-blue-950/80 border-blue-600 text-blue-300';
         if (p.color === 'RED') style = 'bg-rose-950/80 border-rose-600 text-rose-300';
         else if (p.color === 'GREEN') style = 'bg-emerald-950/80 border-emerald-600 text-emerald-300';
 
@@ -1062,52 +1277,61 @@
         statusTag.innerText = "WAITING";
       }
 
-      // Dynamic Controls State for Pair Selection
+      // Snitch Button: Player 0 can trigger police raid anytime if holding The Snitch!
+      const btnSnitch = document.getElementById('btn-snitch');
+      const userHasSnitch = hands[0].some(c => c.color === 'SPECIAL');
+      btnSnitch.disabled = !userHasSnitch;
+      if (userHasSnitch) {
+        btnSnitch.className = "h-9 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-[11px] rounded-xl shadow-lg border-2 border-amber-300 flex items-center justify-center gap-1 snitch-pulse";
+      } else {
+        btnSnitch.className = "h-9 bg-amber-600 hover:bg-amber-500 disabled:opacity-20 disabled:pointer-events-none text-white text-[11px] font-black rounded-xl shadow transition flex items-center justify-center gap-1 border border-amber-400/80";
+      }
+
+      // Dynamic Controls State for Trio Selection
       const btnDraw = document.getElementById('btn-draw');
-      const btnPair = document.getElementById('btn-pair');
-      const btnSkipPair = document.getElementById('btn-skip-pair');
+      const btnTrio = document.getElementById('btn-trio');
+      const btnSkipTrio = document.getElementById('btn-skip-trio');
       const btnPass = document.getElementById('btn-pass');
-      const btnPairText = document.getElementById('btn-pair-text');
+      const btnTrioText = document.getElementById('btn-trio-text');
 
       if (currentPlayer === 0) {
         btnDraw.disabled = (playerStep !== 'DRAW');
-        btnSkipPair.disabled = (playerStep !== 'PAIR');
+        btnSkipTrio.disabled = (playerStep !== 'TRIO');
 
-        if (playerStep === 'PAIR') {
-          if (selectedPairIndices.length === 2) {
-            const c1 = hands[0][selectedPairIndices[0]];
-            const c2 = hands[0][selectedPairIndices[1]];
-            const evalRes = evaluateSelectedPair(c1, c2);
+        if (playerStep === 'TRIO') {
+          if (selectedMeldIndices.length === 3) {
+            const selectedCards = selectedMeldIndices.map(i => hands[0][i]);
+            const evalRes = evaluateSelectedTrio(selectedCards);
 
             if (evalRes.valid) {
-              btnPair.disabled = false;
-              btnPair.className = "col-span-2 h-9 sm:h-10 bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-black rounded-xl shadow-lg ring-2 ring-emerald-400 transition flex items-center justify-center gap-1 animate-bounce";
-              btnPairText.innerText = `Bank ${evalRes.label} (+${evalRes.points}pts${evalRes.flipsCamera ? ' & 🔄' : ''})`;
+              btnTrio.disabled = false;
+              btnTrio.className = "col-span-2 h-9 bg-emerald-600 hover:bg-emerald-500 text-white text-[10.5px] font-black rounded-xl shadow-lg ring-2 ring-emerald-400 transition flex items-center justify-center gap-1 animate-bounce";
+              btnTrioText.innerText = `Bank ${evalRes.label} (+${evalRes.points}pts${evalRes.flipsCamera ? ' & 🔄' : ''})`;
             } else {
-              btnPair.disabled = true;
-              btnPair.className = "col-span-2 h-9 sm:h-10 bg-slate-800 text-rose-400 border border-rose-800/60 text-[10px] font-bold rounded-xl shadow opacity-80 cursor-not-allowed flex items-center justify-center gap-1";
-              btnPairText.innerText = `Invalid (${evalRes.error})`;
+              btnTrio.disabled = true;
+              btnTrio.className = "col-span-2 h-9 bg-slate-800 text-rose-400 border border-rose-800/60 text-[10px] font-bold rounded-xl shadow opacity-80 cursor-not-allowed flex items-center justify-center gap-1";
+              btnTrioText.innerText = `Invalid (${evalRes.error})`;
             }
-          } else if (selectedPairIndices.length === 1) {
-            btnPair.disabled = true;
-            btnPair.className = "col-span-2 h-9 sm:h-10 bg-emerald-950/40 text-emerald-400 border border-emerald-800/50 text-[11px] font-bold rounded-xl shadow flex items-center justify-center gap-1 cursor-not-allowed";
-            btnPairText.innerText = "Tap 2nd Card (1/2)";
+          } else if (selectedMeldIndices.length > 0) {
+            btnTrio.disabled = true;
+            btnTrio.className = "col-span-2 h-9 bg-emerald-950/40 text-emerald-400 border border-emerald-800/50 text-[10.5px] font-bold rounded-xl shadow flex items-center justify-center gap-1 cursor-not-allowed";
+            btnTrioText.innerText = `Selected ${selectedMeldIndices.length}/3 Cards`;
           } else {
-            btnPair.disabled = true;
-            btnPair.className = "col-span-2 h-9 sm:h-10 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-30 disabled:pointer-events-none text-white text-[11px] font-bold rounded-xl shadow transition flex items-center justify-center gap-1";
-            btnPairText.innerText = "2. Tap 2 Cards to Bank";
+            btnTrio.disabled = true;
+            btnTrio.className = "col-span-2 h-9 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-25 disabled:pointer-events-none text-white text-[10.5px] font-bold rounded-xl shadow transition flex items-center justify-center gap-1";
+            btnTrioText.innerText = "2. Tap 3 Cards to Bank";
           }
         } else {
-          btnPair.disabled = true;
-          btnPair.className = "col-span-2 h-9 sm:h-10 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-30 disabled:pointer-events-none text-white text-[11px] font-bold rounded-xl shadow transition flex items-center justify-center gap-1";
-          btnPairText.innerText = "2. Lay Pair";
+          btnTrio.disabled = true;
+          btnTrio.className = "col-span-2 h-9 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-25 disabled:pointer-events-none text-white text-[10.5px] font-bold rounded-xl shadow transition flex items-center justify-center gap-1";
+          btnTrioText.innerText = "2. Lay Trio (3c)";
         }
 
         btnPass.disabled = (playerStep !== 'PASS' || selectedPassCardIndex === null);
       } else {
         btnDraw.disabled = true;
-        btnPair.disabled = true;
-        btnSkipPair.disabled = true;
+        btnTrio.disabled = true;
+        btnSkipTrio.disabled = true;
         btnPass.disabled = true;
       }
 
@@ -1119,15 +1343,15 @@
       const container = document.getElementById('player-hand');
       container.innerHTML = '';
 
-      const evalRes = (selectedPairIndices.length === 2 && playerStep === 'PAIR')
-        ? evaluateSelectedPair(hands[0][selectedPairIndices[0]], hands[0][selectedPairIndices[1]])
+      const evalRes = (selectedMeldIndices.length === 3 && playerStep === 'TRIO')
+        ? evaluateSelectedTrio(selectedMeldIndices.map(i => hands[0][i]))
         : null;
 
       hands[0].forEach((c, idx) => {
         const cardEl = document.createElement('div');
         const isPassSelected = (playerStep === 'PASS' && selectedPassCardIndex === idx);
-        const pairSelectionIndex = (playerStep === 'PAIR') ? selectedPairIndices.indexOf(idx) : -1;
-        const isPairSelected = (pairSelectionIndex !== -1);
+        const meldSelectionIndex = (playerStep === 'TRIO') ? selectedMeldIndices.indexOf(idx) : -1;
+        const isMeldSelected = (meldSelectionIndex !== -1);
 
         let borderStyle = "border border-slate-700 bg-slate-800/90";
 
@@ -1139,13 +1363,15 @@
           borderStyle = "border-2 border-emerald-400 bg-emerald-950/60 green-wild";
         } else if (c.color === 'BLUE') {
           borderStyle = "border-2 border-blue-500/80 bg-blue-950/40";
+        } else if (c.color === 'SPECIAL') {
+          borderStyle = "border-2 border-amber-400 bg-slate-900 snitch-pulse";
         }
 
         // Selection Visual Styling
         if (isPassSelected) {
           borderStyle += " ring-4 ring-rose-400 -translate-y-3 shadow-2xl scale-105";
-        } else if (isPairSelected) {
-          if (selectedPairIndices.length === 2) {
+        } else if (isMeldSelected) {
+          if (selectedMeldIndices.length === 3) {
             if (evalRes && evalRes.valid) {
               borderStyle += " ring-4 ring-emerald-400 bg-emerald-950/90 -translate-y-3.5 shadow-2xl scale-105";
             } else {
@@ -1167,25 +1393,29 @@
           targetPill = `<span class="${c.val === 15 ? 'bg-amber-950/90 text-amber-300 border-amber-600/80' : 'bg-rose-950/90 text-rose-400 border-rose-700/80'} border px-1 py-0.2 rounded text-[7px] font-black uppercase tracking-wider">NEEDS 🔵</span>`;
         } else if (c.color === 'GREEN') {
           badgeText = `<span class="text-emerald-400 font-black text-[9px]">WILD</span>`;
-          targetPill = `<span class="bg-blue-950/95 text-blue-300 border border-blue-400/90 px-1 py-0.2 rounded text-[7px] font-black uppercase tracking-wider shadow">🔵 ONLY</span>`;
+          targetPill = `<span class="bg-blue-950/95 text-blue-300 border border-blue-400/90 px-1 py-0.2 rounded text-[7px] font-black uppercase tracking-wider shadow">🔵 CONNECTOR</span>`;
         } else if (c.color === 'BLUE') {
           badgeText = `<span class="text-blue-400 font-black text-[9px]">+5</span>`;
           const targetVal = c.redVal || (c.isGrand ? 15 : 10);
           targetPill = (c.isGrand)
             ? `<span class="bg-amber-950/95 text-amber-300 border border-amber-500/90 px-1 py-0.2 rounded text-[7px] font-black flex items-center gap-0.5 shadow">🔴 15</span>`
             : `<span class="bg-rose-950/90 text-rose-300 border border-rose-600/80 px-1 py-0.2 rounded text-[7px] font-black flex items-center gap-0.5 shadow">🔴 10</span>`;
+        } else if (c.color === 'SPECIAL') {
+          badgeText = `<span class="text-amber-400 font-black text-[9px]">RAID</span>`;
+          targetPill = `<span class="bg-rose-950/95 text-rose-300 border border-rose-500 px-1 py-0.2 rounded text-[7px] font-black uppercase tracking-wider">FED RAID</span>`;
         }
 
         let typeSubtitle = '';
         if (c.color === 'RED') typeSubtitle = (c.val === 15) ? '👑 Grand Hot (+15)' : '⭐ Petty Hot (+10)';
-        else if (c.color === 'GREEN') typeSubtitle = 'Pairs w/ Blue • Flips Camera 🔄';
-        else if (c.color === 'BLUE') typeSubtitle = (c.isGrand) ? '👑 Grand (+15/20)' : '⭐ Petty (+10/15)';
+        else if (c.color === 'GREEN') typeSubtitle = 'Connects Blue • Flips 🔄';
+        else if (c.color === 'BLUE') typeSubtitle = (c.isGrand) ? '👑 Grand Clean' : '⭐ Petty Clean';
+        else if (c.color === 'SPECIAL') typeSubtitle = '⚡ Fed Police Raid';
 
         // Badges for active selection
         let selectionPill = '';
-        if (isPairSelected) {
-          const pillColor = (selectedPairIndices.length === 2 && evalRes && !evalRes.valid) ? 'bg-rose-600' : 'bg-amber-500';
-          selectionPill = `<div class="absolute -top-2 px-1.5 py-0.2 ${pillColor} text-white font-black text-[8px] rounded-full shadow tracking-wider uppercase">Pair #${pairSelectionIndex + 1}</div>`;
+        if (isMeldSelected) {
+          const pillColor = (selectedMeldIndices.length === 3 && evalRes && !evalRes.valid) ? 'bg-rose-600' : 'bg-amber-500';
+          selectionPill = `<div class="absolute -top-2 px-1.5 py-0.2 ${pillColor} text-white font-black text-[8px] rounded-full shadow tracking-wider uppercase">Trio #${meldSelectionIndex + 1}</div>`;
         } else if (isPassSelected) {
           selectionPill = `<div class="absolute -top-2 px-1.5 py-0.2 bg-rose-600 text-white font-black text-[8px] rounded-full shadow tracking-wider uppercase">Pass 👉</div>`;
         }
@@ -1221,30 +1451,27 @@
         cardEl.onclick = () => {
           if (currentPlayer !== 0) return;
 
-          if (playerStep === 'PAIR') {
-            const pos = selectedPairIndices.indexOf(idx);
+          if (playerStep === 'TRIO') {
+            const pos = selectedMeldIndices.indexOf(idx);
             if (pos !== -1) {
-              selectedPairIndices.splice(pos, 1);
+              selectedMeldIndices.splice(pos, 1);
             } else {
-              if (selectedPairIndices.length < 2) {
-                selectedPairIndices.push(idx);
+              if (selectedMeldIndices.length < 3) {
+                selectedMeldIndices.push(idx);
               } else {
-                selectedPairIndices[1] = idx;
+                selectedMeldIndices[2] = idx;
               }
             }
 
-            if (selectedPairIndices.length === 1) {
-              const sel1 = hands[0][selectedPairIndices[0]];
-              logAnnouncement(`Selected ${sel1.item}. Tap a second card to pair, or tap 'Skip'.`);
-            } else if (selectedPairIndices.length === 2) {
-              const res = evaluateSelectedPair(hands[0][selectedPairIndices[0]], hands[0][selectedPairIndices[1]]);
+            if (selectedMeldIndices.length < 3) {
+              logAnnouncement(`Selected ${selectedMeldIndices.length}/3 cards. Tap ${3 - selectedMeldIndices.length} more card(s) or tap 'Skip'.`);
+            } else {
+              const res = evaluateSelectedTrio(selectedMeldIndices.map(i => hands[0][i]));
               if (res.valid) {
-                logAnnouncement(`Valid: ${res.label} (+${res.points} pts${res.flipsCamera ? ' & 🔄' : ''})! Tap Bank Pair.`);
+                logAnnouncement(`Valid: ${res.label} (+${res.points} pts${res.flipsCamera ? ' & 🔄' : ''})! Tap Bank Trio.`);
               } else {
                 logAnnouncement(`⚠️ ${res.error}`);
               }
-            } else {
-              logAnnouncement("Tap 2 cards to bank a pair (needs a Blue card!), or tap 'Skip'.");
             }
 
             updateUI();
@@ -1252,7 +1479,7 @@
             selectedPassCardIndex = (selectedPassCardIndex === idx) ? null : idx;
             if (selectedPassCardIndex !== null) {
               const pCard = hands[0][selectedPassCardIndex];
-              logAnnouncement(`Selected ${pCard.item} to pass. Tap '3. Pass Card'.`);
+              logAnnouncement(`Selected ${pCard.item} to pass. Tap '3. Pass Selected Card'.`);
             } else {
               logAnnouncement("Tap 1 card to select for passing.");
             }
@@ -1293,147 +1520,120 @@
         const bankedPoints = calculateStashPoints(stashes[p]);
 
         // Penalty Rule: Only player(s) holding the MOST (or tied for most) Red cards bust!
-        // Must hold at least 1 Red card (if maxRed === 0, nobody busts).
         const isCaught = (redCards === maxRed && maxRed > 0);
 
         if (isCaught) {
           roundPointsEarned[p] = 0; // Caught Red-Handed! 0 points for this round!
           caughtPlayers.push(p);
         } else {
-          roundPointsEarned[p] = bankedPoints; // Escaped or evaded arrest! Bank stash!
+          roundPointsEarned[p] = bankedPoints;
         }
 
         matchScores[p] += roundPointsEarned[p];
       }
 
-      const matchWinner = matchScores.slice(0, numPlayers).findIndex(s => s >= targetMatchScore);
-      const isMatchOver = (matchWinner !== -1);
+      // Check match winner
+      const highestScore = Math.max(...matchScores);
+      const isMatchOver = highestScore >= targetMatchScore;
 
       if (isMatchOver) {
-        const grandChamp = Array.from(matchScores.slice(0, numPlayers).entries()).reduce((max, curr) => curr[1] > max[1] ? curr : max)[0];
-        icon.innerText = "👑";
-        title.innerText = `${getPlayerName(grandChamp)} WINS!`;
-        desc.innerText = `${getPlayerName(grandChamp)} crossed ${targetMatchScore} points (${matchScores[grandChamp]} pts) and takes the crown!`;
-        nextBtn.innerHTML = `<span>START NEW HEIST MATCH</span> 🔄`;
-        nextBtn.className = "w-full py-2.5 bg-amber-600 hover:bg-amber-500 text-white font-black text-xs rounded-xl shadow-lg transition flex items-center justify-center gap-2";
+        icon.innerText = "🏆";
+        const winnerP = matchScores.indexOf(highestScore);
+        title.innerText = `${getPlayerName(winnerP)} WINS THE HEIST!`;
+        desc.innerText = `Reached ${highestScore} points! Crowned Master Thief!`;
       } else if (isStandoff) {
         icon.innerText = "🚨";
-        title.innerText = "STANDOFF! POLICE RAID!";
-        if (maxRed === 0) {
-          desc.innerText = "Empty Locker standoff! No contraband held—all players escaped clean and banked their stashes!";
-        } else {
-          const caughtNames = caughtPlayers.map(p => getPlayerName(p)).join(" & ");
-          desc.innerText = `Empty Locker standoff! ${caughtNames} held the most Red Contraband (${maxRed} red) and took the fall (0 pts)! Others banked their stashes!`;
-        }
-        nextBtn.innerHTML = `<span>PROCEED TO ROUND ${roundNumber + 1}</span> ➡️`;
-        nextBtn.className = "w-full py-2.5 bg-rose-600 hover:bg-rose-500 text-white font-black text-xs rounded-xl shadow-lg transition flex items-center justify-center gap-2";
+        title.innerText = "STANDOFF! POLICE SURROUND YOU!";
+        desc.innerText = "The Locker ran dry and an entire orbit passed without any meld! Sirens wail!";
       } else {
         icon.innerText = "🚗💨";
-        title.innerText = `${getPlayerName(winnerIdx)} ESCAPED!`;
-        if (maxRed === 0) {
-          desc.innerText = `${getPlayerName(winnerIdx)} emptied their hand! No one held Red Contraband—clean escape for all!`;
-        } else {
-          const caughtNames = caughtPlayers.map(p => getPlayerName(p)).join(" & ");
-          desc.innerText = `${getPlayerName(winnerIdx)} emptied their hand! ${caughtNames} caught with the most Red Contraband (${maxRed} red) and busted!`;
-        }
-        nextBtn.innerHTML = `<span>PROCEED TO ROUND ${roundNumber + 1}</span> ➡️`;
-        nextBtn.className = "w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs rounded-xl shadow-lg transition flex items-center justify-center gap-2";
+        title.innerText = "GETAWAY CAR!";
+        desc.innerText = `${getPlayerName(winnerIdx)} emptied their hand and escaped into the night!`;
       }
 
-      scores.innerHTML = '';
+      let scoresHtml = '';
       for (let p = 0; p < numPlayers; p++) {
-        const redCards = redCounts[p];
-        const greenCards = hands[p].filter(c => c.color === 'GREEN').length;
-        const isWinner = (p === winnerIdx && !isStandoff);
-        const isCaught = (redCards === maxRed && maxRed > 0);
-        const ptsEarned = roundPointsEarned[p];
+        const name = getPlayerName(p);
+        const banked = calculateStashPoints(stashes[p]);
+        const redCount = redCounts[p];
+        const earned = roundPointsEarned[p];
+        const total = matchScores[p];
+        const isCaught = caughtPlayers.includes(p);
 
-        const row = document.createElement('div');
-        row.className = `flex justify-between items-center p-2 rounded-lg ${isWinner ? 'bg-amber-950/40 border border-amber-600' : (isCaught ? 'bg-rose-950/40 border border-rose-800' : 'bg-emerald-950/40 border border-emerald-800')}`;
-        
-        let statusSub = '';
-        if (isWinner) {
-          statusSub = '🚗 Getaway Driver! Emptied hand first & banked full stash.';
-        } else if (isCaught) {
-          statusSub = (caughtPlayers.length > 1)
-            ? `🚨 CAUGHT! Tied for most Contraband (${redCards} Red)! Took the fall (0 pts).`
-            : `🚨 CAUGHT! Held the most Contraband (${redCards} Red)! Primary suspect (0 pts).`;
-        } else if (redCards > 0) {
-          statusSub = `🛡️ EVADED ARREST! Held ${redCards} Red, but avoided having the most (Leader had ${maxRed})! Banked stash (+${ptsEarned} pts).`;
+        if (isCaught) {
+          scoresHtml += `
+            <div class="p-2 rounded-lg border-2 border-rose-500 bg-rose-950/70 flex justify-between items-center">
+              <div>
+                <span class="font-black text-rose-400">${name}</span>
+                <span class="text-[10px] text-rose-300 ml-1.5 font-bold">(${redCount} Red Contraband)</span>
+              </div>
+              <div class="text-right">
+                <span class="px-1.5 py-0.5 bg-rose-600 text-white font-black text-[9px] rounded uppercase">CAUGHT RED-HANDED!</span>
+                <div class="text-[10px] text-slate-300 mt-0.5">+0 pts (Total: <span class="font-bold text-amber-300">${total}</span>)</div>
+              </div>
+            </div>
+          `;
         } else {
-          statusSub = `✨ CLEAN! 0 Red Contraband${greenCards > 0 ? ` (${greenCards} Wilds)` : ''}! Banked stash (+${ptsEarned} pts).`;
+          scoresHtml += `
+            <div class="p-2 rounded-lg border border-slate-800 bg-slate-900/60 flex justify-between items-center">
+              <div>
+                <span class="font-bold text-slate-200">${name}</span>
+                <span class="text-[10px] text-slate-400 ml-1.5 font-mono">(${redCount} Red)</span>
+              </div>
+              <div class="text-right">
+                <span class="px-1.5 py-0.5 bg-emerald-950 text-emerald-400 border border-emerald-700/60 font-black text-[9px] rounded uppercase">ESCAPED CLEAN!</span>
+                <div class="text-[10px] text-slate-300 mt-0.5">+${earned} pts (Total: <span class="font-bold text-amber-300">${total}</span>)</div>
+              </div>
+            </div>
+          `;
         }
+      }
 
-        row.innerHTML = `
-          <div>
-            <div class="font-bold text-slate-200 flex items-center gap-1 text-[11px]">
-              <span>${getPlayerName(p)}</span>
-              ${isWinner ? '<span class="text-[8px] bg-amber-500/20 text-amber-300 px-1 py-0.2 rounded font-black">GETAWAY 🚗</span>' : ''}
-              ${isCaught ? '<span class="text-[8px] bg-rose-500/20 text-rose-300 px-1 py-0.2 rounded font-black">CAUGHT RED-HANDED 🚨</span>' : ''}
-              ${!isWinner && !isCaught && redCards > 0 ? '<span class="text-[8px] bg-emerald-500/20 text-emerald-300 px-1 py-0.2 rounded font-black">EVADED ARREST 🛡️</span>' : ''}
-              ${!isWinner && !isCaught && redCards === 0 ? '<span class="text-[8px] bg-blue-500/20 text-blue-300 px-1 py-0.2 rounded font-black">CLEAN ✨</span>' : ''}
-            </div>
-            <div class="text-[10px] text-slate-400">
-              ${statusSub}
-            </div>
-          </div>
-          <div class="text-right">
-            <div class="text-[11px] font-black ${isCaught ? 'text-rose-400 line-through' : 'text-emerald-400'}">
-              +${ptsEarned} pts
-            </div>
-            <div class="text-[10px] font-black text-amber-400">
-              Total: ${matchScores[p]}/${targetMatchScore}
-            </div>
-          </div>
-        `;
-        scores.appendChild(row);
+      scores.innerHTML = scoresHtml;
+
+      if (isMatchOver) {
+        nextBtn.innerHTML = `<span>NEW MATCH (RESET)</span> ↺`;
+        nextBtn.onclick = () => {
+          modal.classList.add('hidden');
+          resetEntireMatch();
+        };
+      } else {
+        nextBtn.innerHTML = `<span>NEXT ROUND (R${roundNumber + 1})</span> ➡️`;
+        nextBtn.onclick = () => {
+          modal.classList.add('hidden');
+          roundNumber++;
+          starterPlayer = (starterPlayer + 1) % numPlayers;
+          initRound();
+        };
       }
 
       modal.classList.remove('hidden');
-
-      nextBtn.onclick = () => {
-        modal.classList.add('hidden');
-        if (isMatchOver) {
-          resetEntireMatch();
-        } else {
-          roundNumber++;
-          starterPlayer = (starterPlayer + 1) % 4;
-          initRound();
-        }
-      };
     }
 
-    // Player Interaction Handlers
     function handleDrawAction() {
       if (currentPlayer !== 0 || playerStep !== 'DRAW') return;
-      playerMadeMeldThisTurn = false;
       const card = drawFromDeck();
       if (card) hands[0].push(card);
-      logAnnouncement("You drew a card! Tap 2 cards to bank a pair (needs a Blue card!), or tap 'Skip'.");
-      playerStep = 'PAIR';
-      selectedPairIndices = [];
+      logAnnouncement("You drew a card! Tap 3 cards to bank a Trio (needs ≥1 Blue card!), or tap 'Skip'.");
+      playerStep = 'TRIO';
+      selectedMeldIndices = [];
       updateUI();
     }
 
     document.getElementById('btn-draw').onclick = handleDrawAction;
     document.getElementById('draw-deck').onclick = handleDrawAction;
 
-    // User banks the chosen pair
-    document.getElementById('btn-pair').onclick = () => {
-      if (currentPlayer !== 0 || playerStep !== 'PAIR' || selectedPairIndices.length !== 2) return;
+    // User banks the chosen Trio
+    document.getElementById('btn-trio').onclick = () => {
+      if (currentPlayer !== 0 || playerStep !== 'TRIO' || selectedMeldIndices.length !== 3) return;
       
-      const idx1 = selectedPairIndices[0];
-      const idx2 = selectedPairIndices[1];
-      const c1 = hands[0][idx1];
-      const c2 = hands[0][idx2];
-
-      const evalRes = evaluateSelectedPair(c1, c2);
+      const selectedCards = selectedMeldIndices.map(i => hands[0][i]);
+      const evalRes = evaluateSelectedTrio(selectedCards);
       if (!evalRes.valid) return;
 
-      const first = Math.max(idx1, idx2);
-      const second = Math.min(idx1, idx2);
-      hands[0].splice(first, 1);
-      hands[0].splice(second, 1);
+      // Remove in descending index order
+      const sortedIndices = [...selectedMeldIndices].sort((a, b) => b - a);
+      sortedIndices.forEach(idx => hands[0].splice(idx, 1));
 
       stashes[0].push({
         item: evalRes.item,
@@ -1449,28 +1649,30 @@
       if (evalRes.flipsCamera) {
         direction = -direction;
         logAnnouncement(`You banked ${evalRes.label}! Passing direction reversed! 🔄`);
+      } else if (evalRes.type === 'SMUGGLER') {
+        logAnnouncement(`🔥 JACKPOT! You banked SMUGGLER'S RUN ${evalRes.item}! Massive +${evalRes.points} points!`);
       } else if (evalRes.color === 'RED') {
-        logAnnouncement(`You laundered a ${evalRes.item} pair! Massive +${evalRes.points} points banked!`);
+        logAnnouncement(`You laundered a ${evalRes.item} Trio! +${evalRes.points} points banked!`);
       } else {
-        logAnnouncement(`You banked a clean pair of ${evalRes.item}s (+${evalRes.points} pts).`);
+        logAnnouncement(`You banked a clean syndicate of ${evalRes.item}s (+${evalRes.points} pts).`);
       }
 
-      selectedPairIndices = [];
+      selectedMeldIndices = [];
       updateUI();
 
       if (checkWinCondition(0)) return;
 
       playerStep = 'PASS';
-      logAnnouncement("Pair banked! Now tap 1 card in your hand to pass to your neighbor.");
+      logAnnouncement("Trio banked! Now tap 1 card in your hand to pass face up to your neighbor.");
       updateUI();
     };
 
-    // User skips pair laying
-    document.getElementById('btn-skip-pair').onclick = () => {
-      if (currentPlayer !== 0 || playerStep !== 'PAIR') return;
-      selectedPairIndices = [];
+    // User skips Trio laying
+    document.getElementById('btn-skip-trio').onclick = () => {
+      if (currentPlayer !== 0 || playerStep !== 'TRIO') return;
+      selectedMeldIndices = [];
       playerStep = 'PASS';
-      logAnnouncement("Skipped pair. Now tap 1 card in your hand to pass to your neighbor.");
+      logAnnouncement("Skipped Trio. Now tap 1 card in your hand to pass face up to your neighbor.");
       updateUI();
     };
 
@@ -1489,6 +1691,13 @@
 
       executePassCard(0, targetP, passedCard, () => {
         advanceTurn();
+      });
+    };
+
+    // User triggers Snitch Raid
+    document.getElementById('btn-snitch').onclick = () => {
+      triggerSnitchRaid(0, () => {
+        updateUI();
       });
     };
 

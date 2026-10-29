@@ -9,7 +9,7 @@ namespace PnpDeckGenerator
     {
         public string Item;
         public string Name;
-        public string Color; // BLUE, RED, GREEN
+        public string Color; // BLUE, RED, GREEN, SPECIAL
         public int Val;
         public int Copies;
         public string Icon;
@@ -48,11 +48,14 @@ namespace PnpDeckGenerator
                 new CardDef { Item = "Crown", Name = "Cursed Crown", Color = "RED", Val = 15, Copies = 2, Icon = "👑", IsGrand = true },
                 new CardDef { Item = "Relic", Name = "Smuggled Relic", Color = "RED", Val = 15, Copies = 2, Icon = "🏺", IsGrand = true },
 
-                // Counterfeit Wilds (Green) - 8 cards
-                new CardDef { Item = "Wild", Name = "Fake Receipt", Color = "GREEN", Val = 0, Copies = 8, Icon = "🎭", IsGrand = false }
+                // Counterfeit Wilds (Green) - 6 cards
+                new CardDef { Item = "Wild", Name = "Fake Receipt", Color = "GREEN", Val = 0, Copies = 6, Icon = "🎭", IsGrand = false },
+
+                // The Snitch (Special / Slate) - 2 cards
+                new CardDef { Item = "Snitch", Name = "The Snitch", Color = "SPECIAL", Val = 0, Copies = 2, Icon = "🕵️", IsGrand = false }
             };
 
-            // Exactly 54 play cards (30 Blue + 16 Red + 8 Green)
+            // Exactly 54 play cards (30 Blue + 16 Red + 6 Green + 2 Snitch)
             var deck = new List<CardDef>();
             foreach (var def in cardDefs)
             {
@@ -66,7 +69,7 @@ namespace PnpDeckGenerator
             sb.AppendLine("<html lang=\"en\">");
             sb.AppendLine("<head>");
             sb.AppendLine("  <meta charset=\"UTF-8\">");
-            sb.AppendLine("  <title>Caught Red-Handed - Printer-Friendly Low-Ink PnP Poker Deck (8.5x11)</title>");
+            sb.AppendLine("  <title>Caught Red-Handed: Trios & The Snitch - Low-Ink PnP Poker Deck (8.5x11)</title>");
             sb.AppendLine("  <style>");
             sb.AppendLine("    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap');");
             sb.AppendLine("    @page { size: letter portrait; margin: 0.25in 0.5in 0.25in 0.5in; }");
@@ -107,10 +110,10 @@ namespace PnpDeckGenerator
             sb.AppendLine("    .card.blue .index-type { color: #0369a1; }");
             sb.AppendLine("    .card.blue .art-name { color: #0c4a6e; }");
             sb.AppendLine("    .card.blue .art-tier { color: #0284c7; }");
-            sb.AppendLine("    .card.blue .pill { background: #ffffff; border-color: #dc2626; color: #dc2626; }");
+            sb.AppendLine("    .card.blue .pill { background: #ffffff; border-color: #0284c7; color: #0284c7; }");
 
             sb.AppendLine("    .card.blue.grand .card-inner { border-color: #0284c7; }");
-            sb.AppendLine("    .card.blue.grand .pill { background: #ffffff; border-color: #b91c1c; color: #b91c1c; }");
+            sb.AppendLine("    .card.blue.grand .pill { background: #ffffff; border-color: #b45309; color: #b45309; }");
             sb.AppendLine("    .card.blue.grand .art-tier { color: #b45309; font-weight: 900; }");
 
             sb.AppendLine("    .card.red .card-inner { border-color: #dc2626; background: #ffffff; color: #b91c1c; }");
@@ -128,7 +131,15 @@ namespace PnpDeckGenerator
             sb.AppendLine("    .card.green .index-type { color: #15803d; }");
             sb.AppendLine("    .card.green .art-name { color: #064e3b; }");
             sb.AppendLine("    .card.green .art-tier { color: #16a34a; }");
-            sb.AppendLine("    .card.green .pill { background: #ffffff; border-color: #0284c7; color: #0284c7; }");
+            sb.AppendLine("    .card.green .pill { background: #ffffff; border-color: #16a34a; color: #16a34a; }");
+
+            // The Snitch Special Slate Theme
+            sb.AppendLine("    .card.special .card-inner { border-color: #475569; background: #ffffff; color: #334155; }");
+            sb.AppendLine("    .card.special .index-val { color: #d97706; }");
+            sb.AppendLine("    .card.special .index-type { color: #64748b; }");
+            sb.AppendLine("    .card.special .art-name { color: #0f172a; }");
+            sb.AppendLine("    .card.special .art-tier { color: #dc2626; font-weight: 900; }");
+            sb.AppendLine("    .card.special .pill { background: #ffffff; border-color: #dc2626; color: #dc2626; font-weight: 900; }");
 
             // Printer-Friendly Camera Markers & Card Backs (Pure White, line-art, zero black fills)
             sb.AppendLine("    .card.marker .card-inner { background: #ffffff; color: #0f172a; border-width: 1.5px; }");
@@ -138,7 +149,7 @@ namespace PnpDeckGenerator
             sb.AppendLine("</head>");
             sb.AppendLine("<body>");
             sb.AppendLine("  <div class=\"no-print-bar\">");
-            sb.AppendLine("    <div><span style=\"font-weight: 900; font-size: 16px; color: #38bdf8;\">CAUGHT RED-HANDED</span><span style=\"color: #94a3b8; font-size: 13px; margin-left: 8px;\">• 54-Card Low-Ink PnP Deck + Markers (8.5\" x 11\")</span><span style=\"background:#059669; color:#fff; font-size:10px; font-weight:800; padding:2px 8px; border-radius:12px; margin-left:12px;\">🌱 ECO INK-SAVER</span></div>");
+            sb.AppendLine("    <div><span style=\"font-weight: 900; font-size: 16px; color: #38bdf8;\">CAUGHT RED-HANDED</span><span style=\"color: #94a3b8; font-size: 13px; margin-left: 8px;\">• 54-Card Trios & Snitch Deck (8.5\" x 11\")</span><span style=\"background:#059669; color:#fff; font-size:10px; font-weight:800; padding:2px 8px; border-radius:12px; margin-left:12px;\">🌱 ECO INK-SAVER</span></div>");
             sb.AppendLine("    <button onclick=\"window.print()\">🖨️ PRINT DECK TO PDF / PRINTER</button>");
             sb.AppendLine("  </div>");
             sb.AppendLine("  <div class=\"sheet-wrapper\">");
@@ -150,7 +161,7 @@ namespace PnpDeckGenerator
                 "Sheet 3 of 8: Clean Grand Loot (Paintings, Gold & Crowns)",
                 "Sheet 4 of 8: Relics & Red Contraband (Cash, Diamonds, Watches)",
                 "Sheet 5 of 8: Red Contraband (Keys, Paintings, Gold, Crowns & Relic)",
-                "Sheet 6 of 8: Relic Contraband & 8 Counterfeit Wilds (Blue-Only Connector)"
+                "Sheet 6 of 8: Relic Contraband, 6 Counterfeit Wilds & 2 Snitches"
             };
 
             for (int s = 0; s < 6; s++)
@@ -168,7 +179,7 @@ namespace PnpDeckGenerator
             }
 
             // Sheet 7: Double-Sided Camera Marker & Reference Rules Cards (9 cards total)
-            sb.AppendLine("    <div class=\"sheet-header-label\">Sheet 7 of 8: Double-Sided Camera Marker, Intercept Rules & Reference Cards</div>");
+            sb.AppendLine("    <div class=\"sheet-header-label\">Sheet 7 of 8: Double-Sided Camera Marker, Trios, Snitch & Reference Cards</div>");
             sb.AppendLine("    <div class=\"sheet\">");
 
             // Card 1 on Sheet 7: Clockwise Camera Marker (Front: Pass Left)
@@ -259,39 +270,39 @@ namespace PnpDeckGenerator
             sb.AppendLine("        </div>");
             sb.AppendLine("      </div>");
 
-            // Card 3: Turn Structure Reference (Face Up passing updated)
+            // Card 3: Turn Structure Reference (Face Up passing + Trios)
             sb.AppendLine("      <div class=\"card marker\"><div class=\"card-inner\" style=\"border-color:#475569;\">");
             sb.AppendLine("        <div class=\"header-block\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">📋</span><span class=\"index-val\" style=\"color:#0f172a;\">HEIST</span></div><span class=\"index-type\" style=\"color:#64748b;\">Turn Guide</span></div><div class=\"pill\" style=\"background:#ffffff; border-color:#d97706; color:#b45309;\">RULES</div></div></div>");
-            sb.AppendLine("        <div class=\"center-art\" style=\"margin:2px 0;\"><span style=\"font-size:9px; font-weight:900; color:#0f172a; text-transform:uppercase;\">1. DRAW • 2. MELD • 3. PASS</span><div style=\"font-size:6.7px; text-align:left; margin-top:3px; line-height:1.32; color:#334155;\">• <b>1. Draw</b> 1 card from Locker.<br>• <b>2. Meld</b> 1 pair (optional):<br>&nbsp;&nbsp;<b>GOLDEN LAW: All pairs need Blue!</b><br>&nbsp;&nbsp;🔵+🔵 = 10 pts (Clean)<br>&nbsp;&nbsp;🔵+🔴 Petty = 15 pts | Grand = 20 pts<br>&nbsp;&nbsp;🔵+🎭 Wild = 5 pts & Flips Camera 🔄<br>• <b>3. Pass</b> 1 card <b>FACE UP</b> to neighbor!<br><span style=\"color:#0284c7; font-weight:bold;\">⚡ Passing face-up triggers Intercept opportunity!</span></div></div>");
+            sb.AppendLine("        <div class=\"center-art\" style=\"margin:2px 0;\"><span style=\"font-size:9px; font-weight:900; color:#0f172a; text-transform:uppercase;\">1. DRAW • 2. TRIO • 3. PASS</span><div style=\"font-size:6.6px; text-align:left; margin-top:3px; line-height:1.32; color:#334155;\">• <b>1. Draw</b> 1 card from Locker.<br>• <b>2. Meld</b> at most 1 Trio (3 cards):<br>&nbsp;&nbsp;<b>GOLDEN LAW: All Trios need ≥1 Blue!</b><br>&nbsp;&nbsp;🔵🔵🔵 Clean Trio = 15 pts<br>&nbsp;&nbsp;🔵🔵🔴 Laundered = 20 / 25 pts<br>&nbsp;&nbsp;🔵🔴🔴 Smuggler's Run = 25 / 35 pts!<br>• <b>3. Pass</b> 1 card <b>FACE UP</b> to neighbor!<br><span style=\"color:#0284c7; font-weight:bold;\">⚡ Passing face-up triggers Intercept opportunity!</span></div></div>");
             sb.AppendLine("        <div class=\"header-block inverted\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">📋</span><span class=\"index-val\" style=\"color:#0f172a;\">HEIST</span></div><span class=\"index-type\" style=\"color:#64748b;\">Turn Guide</span></div><div class=\"pill\" style=\"background:#ffffff; border-color:#d97706; color:#b45309;\">RULES</div></div></div>");
             sb.AppendLine("      </div></div>");
 
-            // Card 4: Recipient's Advantage ("The Intercept")
+            // Card 4: The Snitch Reference ("Take-That Police Raid")
+            sb.AppendLine("      <div class=\"card marker\"><div class=\"card-inner\" style=\"border-color:#d97706;\">");
+            sb.AppendLine("        <div class=\"header-block\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">🕵️</span><span class=\"index-val\" style=\"color:#d97706;\">SNITCH</span></div><span class=\"index-type\" style=\"color:#64748b;\">Take-That</span></div><div class=\"pill\" style=\"background:#ffffff; border-color:#dc2626; color:#dc2626;\">FED RAID</div></div></div>");
+            sb.AppendLine("        <div class=\"center-art\" style=\"margin:2px 0;\"><span style=\"font-size:9px; font-weight:900; color:#b45309; text-transform:uppercase;\">THE SNITCH (POLICE RAID)</span><div style=\"font-size:6.6px; text-align:left; margin-top:3px; line-height:1.32; color:#334155;\">• Play <b>ANYTIME</b> (even out-of-turn)!<br>• <b>All players reveal hands</b> immediately.<br>• Player(s) with <b>MOST Red cards</b> have their <b>entire banked Vault wiped to 0</b>!<br>• ⚠️ <b>INCLUDES YOU!</b> If you play it while holding the most Red cards, you wipe yourself!<br>• Discard Snitch after resolution.</div></div>");
+            sb.AppendLine("        <div class=\"header-block inverted\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">🕵️</span><span class=\"index-val\" style=\"color:#d97706;\">SNITCH</span></div><span class=\"index-type\" style=\"color:#64748b;\">Take-That</span></div><div class=\"pill\" style=\"background:#ffffff; border-color:#dc2626; color:#dc2626;\">FED RAID</div></div></div>");
+            sb.AppendLine("      </div></div>");
+
+            // Card 5: Trio Melds & Scoring Reference
+            sb.AppendLine("      <div class=\"card marker\"><div class=\"card-inner\" style=\"border-color:#16a34a;\">");
+            sb.AppendLine("        <div class=\"header-block\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">💎</span><span class=\"index-val\" style=\"color:#16a34a;\">TRIOS</span></div><span class=\"index-type\" style=\"color:#64748b;\">Scoring</span></div><div class=\"pill\" style=\"background:#ffffff; border-color:#16a34a; color:#16a34a;\">MELDS</div></div></div>");
+            sb.AppendLine("        <div class=\"center-art\" style=\"margin:2px 0;\"><span style=\"font-size:9px; font-weight:900; color:#15803d; text-transform:uppercase;\">TRIO SCORING MATRIX</span><div style=\"font-size:6.6px; text-align:left; margin-top:3px; line-height:1.32; color:#334155;\">• <b>Clean Syndicate (🔵+🔵+🔵)</b>: 15 pts<br>• <b>Laundered (🔵+🔵+🔴)</b>: Petty 20 / Grand 25<br>• <b>Smuggler's Run (🔵+🔴+🔴)</b>: Petty 25 / Grand 35!<br>• <b>Wild Trio (🎭+🔵+🔵 or 🎭+🔵+🔴)</b>: 10 / 15 / 20 pts & reverses camera direction!<br>• 🚫 Illegal: 🔴🔴🔴, 🎭🎭+ANY, 🎭🔴🔴.</div></div>");
+            sb.AppendLine("        <div class=\"header-block inverted\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">💎</span><span class=\"index-val\" style=\"color:#16a34a;\">TRIOS</span></div><span class=\"index-type\" style=\"color:#64748b;\">Scoring</span></div><div class=\"pill\" style=\"background:#ffffff; border-color:#16a34a; color:#16a34a;\">MELDS</div></div></div>");
+            sb.AppendLine("      </div></div>");
+
+            // Card 6: Intercept & Fall Guy Reference
             sb.AppendLine("      <div class=\"card marker\"><div class=\"card-inner\" style=\"border-color:#0284c7;\">");
             sb.AppendLine("        <div class=\"header-block\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">⚡</span><span class=\"index-val\" style=\"color:#0284c7;\">SNAP!</span></div><span class=\"index-type\" style=\"color:#64748b;\">Advantage</span></div><div class=\"pill\" style=\"background:#ffffff; border-color:#0284c7; color:#0284c7;\">INTERCEPT</div></div></div>");
-            sb.AppendLine("        <div class=\"center-art\" style=\"margin:2px 0;\"><span style=\"font-size:9px; font-weight:900; color:#0284c7; text-transform:uppercase;\">THE RECIPIENT'S ADVANTAGE</span><div style=\"font-size:6.7px; text-align:left; margin-top:3px; line-height:1.32; color:#334155;\">When handed a 🔴 <b>Red card face up</b>:<br>• If you already hold the <b>matching Blue card</b> in hand, you may <b>INTERCEPT</b> before accepting!<br>• Reveal your Blue card & match the incoming Red immediately!<br>• Bank the pair into your Stash (+15/+20 pts)!<br>• The Red card <b>never touches your hand</b>!<br>• Then take your normal turn!</div></div>");
+            sb.AppendLine("        <div class=\"center-art\" style=\"margin:2px 0;\"><span style=\"font-size:9px; font-weight:900; color:#0284c7; text-transform:uppercase;\">INTERCEPT & FALL GUY</span><div style=\"font-size:6.6px; text-align:left; margin-top:3px; line-height:1.32; color:#334155;\">• <b>The Intercept</b>: If handed 🔴 Red face up & you hold 2 cards completing a legal Trio, shout INTERCEPT! Snap-meld before taking turn!<br>• <b>Fall Guy Bust</b>: At round end, player(s) holding the <b>MOST Red cards</b> bust = <b>0 pts</b>!<br>• Fewer Red than leader banks full vault.</div></div>");
             sb.AppendLine("        <div class=\"header-block inverted\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">⚡</span><span class=\"index-val\" style=\"color:#0284c7;\">SNAP!</span></div><span class=\"index-type\" style=\"color:#64748b;\">Advantage</span></div><div class=\"pill\" style=\"background:#ffffff; border-color:#0284c7; color:#0284c7;\">INTERCEPT</div></div></div>");
             sb.AppendLine("      </div></div>");
 
-            // Card 5: Scoring & Fall Guy Reference (Printer Friendly)
-            sb.AppendLine("      <div class=\"card marker\"><div class=\"card-inner\" style=\"border-color:#dc2626;\">");
-            sb.AppendLine("        <div class=\"header-block\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">🚨</span><span class=\"index-val\" style=\"color:#dc2626;\">SCORING</span></div><span class=\"index-type\" style=\"color:#64748b;\">End Round</span></div><div class=\"pill\" style=\"background:#ffffff; border-color:#dc2626; color:#dc2626;\">FALL GUY</div></div></div>");
-            sb.AppendLine("        <div class=\"center-art\" style=\"margin:2px 0;\"><span style=\"font-size:9px; font-weight:900; color:#dc2626; text-transform:uppercase;\">THE ESCAPE CHECK</span><div style=\"font-size:6.7px; text-align:left; margin-top:3px; line-height:1.32; color:#334155;\">• <b>Getaway Driver</b> (First empty hand) triggers alarm & banks full haul!<br>• <b>Caught Red-Handed</b>: Only player(s) holding the <b>MOST Red Contraband</b> take the fall = <b>0 POINTS</b>!<br>• <b>Evaded Arrest</b>: Fewer Red than the leader banks full stash!<br>• <b>Win Goal</b>: First to 300 pts (200 in 2P Duel).</div></div>");
-            sb.AppendLine("        <div class=\"header-block inverted\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">🚨</span><span class=\"index-val\" style=\"color:#dc2626;\">SCORING</span></div><span class=\"index-type\" style=\"color:#64748b;\">End Round</span></div><div class=\"pill\" style=\"background:#ffffff; border-color:#dc2626; color:#dc2626;\">FALL GUY</div></div></div>");
-            sb.AppendLine("      </div></div>");
-
-            // Card 6: 2-Player Quickdraw Setup C1 (28 Cards, 200 pts)
-            sb.AppendLine("      <div class=\"card marker\"><div class=\"card-inner\" style=\"border-color:#0284c7;\">");
-            sb.AppendLine("        <div class=\"header-block\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">⚔️</span><span class=\"index-val\" style=\"color:#0284c7;\">2-PLAYER</span></div><span class=\"index-type\" style=\"color:#64748b;\">Duel Setup</span></div><div class=\"pill\" style=\"background:#ffffff; border-color:#0284c7; color:#0284c7;\">28 CARDS</div></div></div>");
-            sb.AppendLine("        <div class=\"center-art\" style=\"margin:2px 0;\"><span style=\"font-size:9px; font-weight:900; color:#0284c7; text-transform:uppercase;\">QUICKDRAW DUEL (28c)</span><div style=\"font-size:6.7px; text-align:left; margin-top:3px; line-height:1.32; color:#334155;\">For high-voltage 2-player matches:<br>• Remove all 4 Grand items & 4 Wilds.<br>• Play with Petty items (16 Blue, 8 Red) + 4 Wilds = <b>28 cards</b>.<br>• Deal 7 cards each (14 in Locker).<br>• Target Score: <b>200 Points</b>.<br>• Intense face-up passing and intercepts!</div></div>");
-            sb.AppendLine("        <div class=\"header-block inverted\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">⚔️</span><span class=\"index-val\" style=\"color:#0284c7;\">2-PLAYER</span></div><span class=\"index-type\" style=\"color:#64748b;\">Duel Setup</span></div><div class=\"pill\" style=\"background:#ffffff; border-color:#0284c7; color:#0284c7;\">28 CARDS</div></div></div>");
-            sb.AppendLine("      </div></div>");
-
-            // Card 7: Double Deck 5-6 Players (108 Cards)
+            // Card 7: Player Setups (2P Duel 28c, 3-4P 54c, 5-6P 108c)
             sb.AppendLine("      <div class=\"card marker\"><div class=\"card-inner\" style=\"border-color:#7c3aed;\">");
-            sb.AppendLine("        <div class=\"header-block\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">👑</span><span class=\"index-val\" style=\"color:#7c3aed;\">5-6 PLAYERS</span></div><span class=\"index-type\" style=\"color:#64748b;\">Syndicate</span></div><div class=\"pill\" style=\"background:#ffffff; border-color:#7c3aed; color:#7c3aed;\">108 CARDS</div></div></div>");
-            sb.AppendLine("        <div class=\"center-art\" style=\"margin:2px 0;\"><span style=\"font-size:9px; font-weight:900; color:#7c3aed; text-transform:uppercase;\">GRAND SYNDICATE</span><div style=\"font-size:6.7px; text-align:left; margin-top:3px; line-height:1.32; color:#334155;\">For 5 or 6 players at the table:<br>• Shuffle <b>2 full 54-card decks</b> together.<br>• Total: 60 Blue, 32 Red, 16 Wilds.<br>• Deal 7 cards each.<br>• Target Score: <b>300 Points</b>.<br>• Double the heat, passes, and intercepts!</div></div>");
-            sb.AppendLine("        <div class=\"header-block inverted\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">👑</span><span class=\"index-val\" style=\"color:#7c3aed;\">5-6 PLAYERS</span></div><span class=\"index-type\" style=\"color:#64748b;\">Syndicate</span></div><div class=\"pill\" style=\"background:#ffffff; border-color:#7c3aed; color:#7c3aed;\">108 CARDS</div></div></div>");
+            sb.AppendLine("        <div class=\"header-block\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">👥</span><span class=\"index-val\" style=\"color:#7c3aed;\">SETUPS</span></div><span class=\"index-type\" style=\"color:#64748b;\">Scaling</span></div><div class=\"pill\" style=\"background:#ffffff; border-color:#7c3aed; color:#7c3aed;\">SCALING</div></div></div>");
+            sb.AppendLine("        <div class=\"center-art\" style=\"margin:2px 0;\"><span style=\"font-size:9px; font-weight:900; color:#7c3aed; text-transform:uppercase;\">DECK SCALING</span><div style=\"font-size:6.6px; text-align:left; margin-top:3px; line-height:1.32; color:#334155;\">• <b>2P Quickdraw Duel (28c)</b>: 4 Petty Items (16 Blue, 8 Red) + 2 Wilds + 2 Snitches. Target: 200 pts.<br>• <b>3-4P Standard Heist (54c)</b>: Full deck. 30 Blue, 16 Red, 6 Wild, 2 Snitch. Target: 300 pts.<br>• <b>5-6P Grand Syndicate (108c)</b>: Double deck (4 Snitches). Target: 300 pts.</div></div>");
+            sb.AppendLine("        <div class=\"header-block inverted\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">👥</span><span class=\"index-val\" style=\"color:#7c3aed;\">SETUPS</span></div><span class=\"index-type\" style=\"color:#64748b;\">Scaling</span></div><div class=\"pill\" style=\"background:#ffffff; border-color:#7c3aed; color:#7c3aed;\">SCALING</div></div></div>");
             sb.AppendLine("      </div></div>");
 
             // 2 Blank Spare Cards (completes 9-card Sheet 7)
@@ -299,7 +310,7 @@ namespace PnpDeckGenerator
             {
                 sb.AppendLine("      <div class=\"card marker\"><div class=\"card-inner\" style=\"border-style:dashed; border-color:#94a3b8;\">");
                 sb.AppendLine("        <div class=\"header-block\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">🃏</span><span class=\"index-val\" style=\"color:#64748b;\">SPARE</span></div><span class=\"index-type\" style=\"color:#94a3b8;\">Blank</span></div></div></div>");
-                sb.AppendLine("        <div class=\"center-art\"><span class=\"art-icon\" style=\"opacity:0.25;\">🃏</span><span class=\"art-name\" style=\"color:#64748b;\">REPLACEMENT</span><span class=\"art-tier\" style=\"color:#94a3b8;\">Create custom item</span></div>");
+                sb.AppendLine("        <div class=\"center-art\"><span class=\"art-icon\" style=\"opacity:0.25;\">🃏</span><span class=\"art-name\" style=\"color:#64748b;\">REPLACEMENT</span><span class=\"art-tier\" style=\"color:#94a3b8;\">Create custom card</span></div>");
                 sb.AppendLine("        <div class=\"header-block inverted\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">🃏</span><span class=\"index-val\" style=\"color:#64748b;\">SPARE</span></div><span class=\"index-type\" style=\"color:#94a3b8;\">Blank</span></div></div></div>");
                 sb.AppendLine("      </div></div>");
             }
@@ -342,8 +353,8 @@ namespace PnpDeckGenerator
             string colorClass = card.Color.ToLower();
             string tierClass = card.IsGrand ? "grand" : "petty";
 
-            string valDisplay = (card.Color == "GREEN") ? "WILD" : ("+" + card.Val);
-            string typeDisplay = (card.Color == "BLUE") ? "Clean" : ((card.Color == "RED") ? "Contraband" : "Counterfeit");
+            string valDisplay = (card.Color == "SPECIAL") ? "RAID" : ((card.Color == "GREEN") ? "WILD" : ("+" + card.Val));
+            string typeDisplay = (card.Color == "BLUE") ? "Clean" : ((card.Color == "RED") ? "Contraband" : ((card.Color == "GREEN") ? "Counterfeit" : "The Snitch"));
 
             string pillHtml = "";
             if (card.Color == "BLUE")
@@ -356,32 +367,41 @@ namespace PnpDeckGenerator
                 string tag = card.IsGrand ? "🚨 GRAND" : "🚨 HOT";
                 pillHtml = string.Format("<div class=\"pill\">{0}</div>", tag);
             }
+            else if (card.Color == "GREEN")
+            {
+                pillHtml = "<div class=\"pill\">🔵 CONNECTOR</div>";
+            }
             else
             {
-                pillHtml = "<div class=\"pill\">🔵 ONLY</div>";
+                pillHtml = "<div class=\"pill\">🚨 TAKE THAT</div>";
             }
 
             string ruleText = "";
             if (card.Color == "BLUE")
             {
-                int redMeld = card.IsGrand ? 20 : 15;
-                ruleText = string.Format("Pairs w/ Blue {0} (10pts) • Intercepts Red {0} ({1}pts)", card.Item, redMeld);
+                int redMeld = card.IsGrand ? 25 : 20;
+                ruleText = string.Format("Trio: 🔵🔵🔵 (15pts), 🔵🔵🔴 ({0}pts), 🔵🔴🔴 ({1}pts)", redMeld, card.IsGrand ? 35 : 25);
             }
             else if (card.Color == "RED")
             {
-                int redMeld = card.IsGrand ? 20 : 15;
-                ruleText = string.Format("Pairs ONLY w/ Blue {0} (+{1}pts) • Recipient can Intercept!", card.Item, redMeld);
+                int redMeld = card.IsGrand ? 25 : 20;
+                ruleText = string.Format("Trio: Needs 🔵 {0} ({1}pts) • Intercept if holding 2 matching!", card.Item, redMeld);
+            }
+            else if (card.Color == "GREEN")
+            {
+                ruleText = "Wild Trio: Connects matching Blue+Blue or Blue+Red & flips Camera";
             }
             else
             {
-                ruleText = "Can only pair with any blue card and flips camera card";
+                ruleText = "Play anytime: reveals all hands. Most Red loses entire banked Vault!";
             }
 
-            string artTier = (card.Color == "BLUE") ? (card.IsGrand ? "👑 Grand Heist" : "⭐ Petty Loot")
+            string artTier = (card.Color == "BLUE") ? (card.IsGrand ? "👑 Grand Clean" : "⭐ Petty Clean")
                            : (card.Color == "RED") ? (card.IsGrand ? "👑 Grand Hot" : "⭐ Petty Hot")
-                           : "Pairs w/ Any Blue";
+                           : (card.Color == "GREEN") ? "Pairs w/ Matching Blue"
+                           : "⚡ Fed Police Raid";
 
-            string artIcon = (card.Color == "GREEN") ? "🎭🔄" : card.Icon;
+            string artIcon = (card.Color == "SPECIAL") ? "🕵️🚨" : ((card.Color == "GREEN") ? "🎭🔄" : card.Icon);
 
             sb.AppendLine(string.Format("      <div class=\"card {0} {1}\">", colorClass, tierClass));
             sb.AppendLine("        <div class=\"card-inner\">");

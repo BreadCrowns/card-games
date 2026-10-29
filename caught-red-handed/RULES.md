@@ -1,32 +1,35 @@
-# 🚨 Caught Red-Handed: Counterfeit Wild Edition
+# 🚨 Caught Red-Handed: Trios & The Snitch Edition
 
-**A Fast-Paced Family Heist Game of Banking Loot & Getting Away Clean**  
-*Players*: 2–6 (Optimized for 4) | *Ages*: 7+ | *Match Length*: ~25–30 mins (First to 300 pts) | *Components*: 56 Cards
+**A High-Stakes Heist Game of Banking Trios, Hot Contraband & Out-of-Turn Raids**  
+*Players*: 2–6 (Optimized for 4) | *Ages*: 8+ | *Match Length*: ~25–35 mins (First to 300 pts) | *Components*: 56 Cards (54 Play Cards + 2 Double-Sided Reference/Markers)
 
 ---
 
 ## 1. The Heist Premise
-You and your crew just pulled off a daring robbery. You want to walk away with the biggest haul of loot banked in front of you across multiple heist rounds.
+You and your crew just pulled off a multi-million-dollar syndicate robbery. You want to walk away with the highest score banked in your personal Vault across multiple heist rounds.
 
-* Laundering **Red Contraband** scores massive points—up to **20 points in a single pair**!
-* But beware: when a round ends, only the player(s) holding the **MOST Red Contraband cards** take the fall and are **CAUGHT RED-HANDED**—scoring **0 points** for the round! Anyone holding fewer Red cards slips away clean and banks their entire haul!
-* **Green Counterfeit Wilds** are circulating through the crew: they are worth **0 points**, but pairing one with **ANY Blue card** flips the Security Camera direction of play and dumps 2 cards from your hand!
+* Instead of simple pairs, players assemble **3-Card Trios** to bank loot!
+* Laundering dangerous **Red Contraband** scores colossal points—up to **35 points in a single Trio**!
+* But beware **THE SNITCH** (`🕵️🚨`): A take-that card that can be played at any time (even out of turn!) to trigger a **Police Raid**. All hands are revealed, and whoever holds the **MOST Red cards** loses their **entire banked vault**!
+* Green **Counterfeit Wilds** substitute for missing cards and flip the Security Camera direction of play.
+* At round end, the player(s) holding the **MOST Red Contraband** are **CAUGHT RED-HANDED**—scoring **0 points** for the round! Everyone else escapes clean.
 
 ---
 
-## 2. Deck Anatomy (56 Cards)
+## 2. Deck Anatomy (54 Play Cards)
 
-The deck features **8 Asymmetrical Heist Items** and Counterfeit Wilds:
+The deck features **8 Asymmetrical Heist Items**, Counterfeit Wilds, and Snitch cards:
 
 | Card Group | Count | Details & Values |
 | :--- | :---: | :--- |
 | **Clean Loot (Blue)** | **30** | 8 Items: Cash (4), Diamonds (4), Watches (4), Keys (4), Paintings (4), Gold (4), Crowns (3), Relics (3). **Value: 5 pts each**. |
 | **Petty Contraband (Red)** | **8** | Cash (2), Diamonds (2), Watches (2), Keys (2). **Value: 10 pts each**. |
 | **Grand Contraband (Red)** | **8** | Paintings (2), Gold (2), Crowns (2), Relics (2). **Value: 15 pts each**! |
-| **Counterfeit Wilds (Green)** | **8** | Prop Cash & Counterfeits. **Value: 0 pts each**. Pairs with **ANY** Blue card and flips direction! |
-| **Table Markers** | **2** | 1 Flippable **Security Camera** card (Clockwise / Counter-Clockwise) + 1 Match Scorecard / Ref Card. |
+| **Counterfeit Wilds (Green)** | **6** | Prop Cash & Fakes. **Value: 0 pts**. Substitutes for 1 card in a Trio + reverses play direction! |
+| **The Snitch (Special / Slate)** | **2** | **"The Informant"**. Value: 0 pts. Can be played on your turn or instantly **OUT OF TURN** to trigger an immediate **Police Raid**! |
+| **Table Markers & Refs** | **2** | 1 Flippable **Security Camera** card (↻ Clockwise / ↺ Counter-Clockwise) + Match Reference Cards. |
 
-> **Zero Central Discard Piles**: Every card in the game is either in the Draw Pile, in players' hands, banked in front of players in their Stash, or being passed!
+> **Zero Central Discard Piles**: Every card in the game is either in the Evidence Locker (draw pile), in players' hands, banked in front of players in their Vault, or being passed!
 
 ---
 
@@ -34,7 +37,7 @@ The deck features **8 Asymmetrical Heist Items** and Counterfeit Wilds:
 1. Place the **Security Camera** card in the center pointing **Clockwise (Pass Left)**.
 2. Deal **7 cards** face-down to each player.
 3. The remaining cards form the face-down **Evidence Locker** (draw pile).
-4. **No Free Starting Pairs**: There is no pre-game discard. All players keep their full 7-card hand and must wait for their turn to bank pairs!
+4. **No Free Starting Melds**: All players keep their full 7-card hand and must wait for their turn to bank Trios!
 
 ---
 
@@ -43,90 +46,106 @@ The deck features **8 Asymmetrical Heist Items** and Counterfeit Wilds:
 On your turn, execute these **3 steps** in order:
 
 ```
-[1. DRAW] ──▶ [2. LAY AT MOST 1 PAIR] ──▶ [3. PASS IN DIRECTION OF PLAY]
+[1. DRAW 1 CARD] ──▶ [2. LAY AT MOST 1 TRIO] ──▶ [3. PASS 1 CARD FACE UP]
 ```
 
 ### Step 1: Draw (The Evidence Locker)
 Draw **1 card** from the center Evidence Locker.  
-*(If the Locker runs out, continue playing from hands until someone escapes or no pairs remain).*
+*(If the Locker runs dry, players continue playing with the cards circulating in their hands).*
 
-### Step 2: Lay At Most 1 Pair (The Golden Rule of Pairs)
-> 🔑 **THE GOLDEN PAIRING LAW**:  
-> **Every single pair in the game REQUIRES a Clean (Blue) card!**
+---
 
-You may lay at most **1 pair** per turn into your front-of-table Stash. A Blue card can be paired with:
+### Step 2: Lay At Most 1 Trio (The Golden Melding Law)
+> 🔑 **THE GOLDEN TRIO LAW**:  
+> **Every legal Trio REQUIRES at least 1 Clean (Blue) card!**  
+> *(You cannot launder contraband with pure contraband—you need clean legal cover!)*
 
-1. **Another Matching Blue Card** ──▶ **Clean Pair**:
-   * Example: Blue Cash + Blue Cash.
-   * **Score**: $5 + 5 = \mathbf{10\text{ Points}}$!
-2. **A Matching Red Card** ──▶ **Laundered Contraband Pair**:
-   * Example: Blue Diamond + Red Diamond.
-   * **Score**: Petty = $5 + 10 = \mathbf{15\text{ Points}}$; Grand = $5 + 15 = \mathbf{20\text{ Points}}$!
-   * Cleans dangerous contraband from your hand so you won't bust!
-3. **ANY Green Counterfeit Wild** ──▶ **Counterfeit Wild Pair**:
-   * Example: Green Wild + ANY Blue card (does **not** need to match items!).
-   * **Score**: $5 + 0 = \mathbf{5\text{ Points}}$!
-   * 🔄 **CAMERA FLIP**: Immediately flip the **Security Camera** card to reverse play direction!
+You may bank at most **1 Trio (3 cards)** per turn into your front-of-table Vault. Valid Trios:
 
-> *Illegal Pairs: Red + Red (cannot launder contraband with contraband), Green + Green (fakes need real items), and Red + Green (cannot counterfeit contraband).*
+| Trio Type | Cards Required | Scoring Formula | Points | Strategic Perk |
+| :--- | :--- | :--- | :---: | :--- |
+| **Clean Syndicate** | 🔵 + 🔵 + 🔵 *(Same item)* | $5 + 5 + 5$ | **15 pts** | 100% safe. Zero contraband risk! |
+| **Laundered Heist** | 🔵 + 🔵 + 🔴 *(Same item)* | Petty: $5 + 5 + 10$<br>Grand: $5 + 5 + 15$ | **20 pts**<br>**25 pts** | Safely cleans 1 hot card from hand. |
+| **The Smuggler's Run** | 🔵 + 🔴 + 🔴 *(Same item)* | Petty: $5 + 10 + 10$<br>Grand: $5 + 15 + 15$ | **25 pts**<br>**35 pts**! | **Jackpot score!** Dumps 2 hot cards at once! |
+| **Counterfeit Trio** | 🎭 + 🔵 + 🔵 *(Same item)*<br>🎭 + 🔵 + 🔴 *(Same item)* | 2 Blue: $0 + 5 + 5$<br>1 Blue + Petty: $0 + 5 + 10$<br>1 Blue + Grand: $0 + 5 + 15$ | **10 pts**<br>**15 pts**<br>**20 pts** | Replaces 3rd card AND immediately reverses play direction (↻ ↔ ↺)! |
+
+> 🚫 **Illegal Melds**:
+> * `🔴 + 🔴 + 🔴` (Banned: pure contraband cannot be laundered without clean Blue cover).
+> * `🎭 + 🎭 + ANY` (Banned: syndicate inspectors detect multiple fakes).
+> * `🎭 + 🔴 + 🔴` (Banned: fakes cannot cover double contraband without Blue).
+
+---
 
 ### Step 3: Pass Face Up (Direction of Play)
 Choose **1 card** from your hand and pass it **FACE UP** to your neighbor in the active direction (Left if Clockwise, Right if Counter-Clockwise).  
-* **Full Transparency**: Passing face-up gives all players at the table a glimpse of what you are dumping!
-* **Passing your last card is 100% legal!** If passing leaves your hand empty, you just planted evidence on your neighbor and emptied your hand to trigger the getaway!
+* **Full Transparency**: Passing face-up lets the entire table track what contraband is circulating.
+* **Passing your last card is legal!** If passing empties your hand, you trigger the Getaway!
 
 ---
 
-### ⚡ The Recipient's Advantage: "The Intercept"
-Passing hot contraband carries a huge tactical risk!
+## 5. ⚡ Special Actions & Reactions
 
-If you are handed a **Red Contraband card face up**, and you **already have the matching Blue card in your hand**:
-1. **Before accepting that Red card into your hand**, you may declare an **INTERCEPT**!
-2. Reveal your matching Blue card from your hand and pair it immediately with the incoming Red card.
-3. Bank the pair into your Stash right away (+15 points for Petty, +20 points for Grand)!
+### 1. 🕵️🚨 "THE SNITCH" & THE POLICE RAID (Take-That!)
+The Snitch represents an informant inside the crew cutting a deal with the feds.
+* **When can it be played?**  
+  At **ANY TIME**—on your turn, or instantly **OUT OF TURN** (e.g., right as an opponent is bragging about their giant score pile)!
+* **How does the Police Raid work?**
+  1. The player throws down **The Snitch** and shouts *"FED RAID!"*
+  2. **All players immediately reveal their hands** face up on the table and count their **Red Contraband cards**.
+  3. The player(s) holding the **MOST Red cards** are busted in the raid:
+     * 💥 **THEIR ENTIRE BANKED VAULT SCORE IS INSTANTLY WIPED TO 0 FOR THIS ROUND!**
+     * *(Their banked cards are discarded into an evidence box).*
+  4. Players holding fewer Red cards keep their vaults completely safe!
+  5. The Snitch card is discarded. Play resumes from where it paused.
+* ⚠️ **THE RUSSIAN ROULETTE CATCH**:  
+  **The raid includes the player who played The Snitch!** If you play the Snitch while secretly holding the most red cards (or tied for the most), the feds arrest **YOU** and wipe your vault! Count your own red cards carefully before snitching!
+
+---
+
+### 2. ⚡ The Recipient's Advantage: "The Intercept"
+Passing hot contraband carries acute tactical danger.
+
+If you are handed a **Red Contraband card face up**, and you **already hold 2 cards in hand that complete a legal Trio with it** (e.g., two matching Blues, one matching Blue + matching Red, or matching Blue + Wild):
+1. **Before picking up that Red card**, shout **"INTERCEPT!"**
+2. Reveal the 2 cards from your hand and snap-meld them with the incoming Red card.
+3. Bank the Trio immediately into your Vault!
 4. The dangerous Red card **never touches your hand**!
-5. **Then, take your normal turn** (Draw 1, optional Meld 1, Pass 1).
-
-*(If you do not have the matching Blue card, or choose not to reveal it, simply pick up the passed card into your hand as normal before starting your turn).*
+5. **Then take your normal turn** (Draw 1, optional Meld 1, Pass 1).
 
 ---
 
-## 5. End of Round & Scoring
+## 6. End of Round & Scoring
 
 A round ends immediately in one of two ways:
 
-1. 🚗💨 **The Getaway (Hand Emptied)**: The split second a player empties their hand (either by laying a pair or passing their final card), they shout *"GETAWAY CAR!"* and the round ends immediately.
-2. 🚨 **The Standoff (Locker Empty & Full Rotation Without Melds)**: If the Locker (draw pile) is completely empty and every player takes a turn in sequence without anyone laying down a meld, sirens wail and the round ends immediately! (This eliminates infinite stalemates and creates a sudden-death scramble when only unmatchable contraband remains circulating).
+1. 🚗💨 **The Getaway (Hand Emptied)**: The moment any player empties their hand (either by laying a Trio or passing their final card), they shout *"GETAWAY CAR!"* and the round ends immediately.
+2. 🚨 **The Standoff (Locker Empty & Full Rotation Without Melds)**: If the Locker is empty and an entire orbit passes (4 consecutive turns) without anyone banking a Trio, sirens wail and the standoff ends the round!
 
-In either case, **FREEZE!** End of round scoring applies immediately:
+### The Escape Check (Final Round Scoring)
+When the round ends, execute the Escape Check:
 
-1. **The Escape Check**: All players score what they successfully banked in their personal Stash:
-   * **The Getaway Driver (Emptied Hand First)**:  
-     You trigger the alarm and get away scot-free! You keep 100% of your banked Stash points.
-   * **Caught Red-Handed (Holding the MOST Red Cards)**:  
-     🚨 **BUSTED!** Only the player(s) holding the **MOST Red Contraband cards** (or tied for the most) are Caught Red-Handed! The sirens wail, the cops swarm the primary suspects, and **their entire banked haul for that round is seized (0 Points)!** *(Note: A player must hold at least 1 Red card to be caught. If no one holds Red cards, everyone is safe).*
-   * **Evaded Arrest / Clean Hand (Fewer Red Cards than the Leader)**:  
-     🛡️ **You escape!** As long as you hold fewer Red Contraband cards than the fall guy, you slip away into the shadows! Count up all the points on your banked pairs in front of you and add them to your match score! *(Green cards in hand are worth 0 pts, but they do NOT cause a bust).*
-
-> **The Fall Guy Dynamic**: You don't always need to get down to 0 Red cards to survive—you just need to avoid holding the *most* Red cards! This keeps endgame tension razor-sharp: even when the draw pile runs dry, passing a single Red card to make an opponent hold more contraband than you will save your entire haul!
+1. **The Getaway Driver (Emptied Hand First)**:  
+   Gets away clean! Banks 100% of their Vault score.
+2. **Caught Red-Handed (Holding the MOST Red Cards)**:  
+   🚨 **BUSTED!** The player(s) holding the **MOST Red Contraband cards** (or tied for the most) are Caught Red-Handed! The feds swarm them, and **their entire banked vault for that round is seized (0 Points)!**  
+   *(Must hold at least 1 Red card to bust. If no one holds Red cards, everyone escapes).*
+3. **Evaded Arrest (Fewer Red Cards than the Leader)**:  
+   🛡️ **Escapes clean!** Count up all the points on your banked Trios and add them to your match score!
 
 ---
 
-## 6. Winning the Game (First to 300 Points)
+## 7. Winning the Game (First to 300 Points)
 
 Add each player's round score to their cumulative match total on the scorecard:
 * If at least one player reaches **300 points**, the heist series ends immediately! The player with the highest total score is crowned the **Master Thief**!
-* If no player has reached 300 points, gather all cards, rotate the first player, deal 7 fresh cards, and start the next round! (Typically takes **~5–6 rounds**).
+* If no player has reached 300 points, rotate the starting dealer, shuffle all 54 cards, deal 7 fresh cards each, and start the next round! (Typically takes **~4–5 rounds**).
 
 ---
 
-## 7. Player Count Setups & Variants
+## 8. Player Count Setups & Scaling
 
-| Player Count | Deck Composition | Cards in Deck | Starting Hand | Target Score | Typical Match |
-| :---: | :--- | :---: | :---: | :---: | :---: |
-| **2 Players**<br>*(The Quickdraw Duel)* | **Setup C1 (Petty Loot + Wilds)**<br>Remove all 4 Grand items & 4 Wilds.<br>*(Cash, Diamond, Watch, Key + 4 Wilds)* | **28 cards**<br>*(16 Blue, 8 Red, 4 Green)* | 7 cards each<br>*(14 in Locker)* | **200 Points** | **~3.4 rounds**<br>(12 turns/rd, 90% escapes) |
-| **3–4 Players**<br>*(Standard Heist)* | **Standard Full Deck**<br>All 8 Items + 8 Counterfeit Wilds | **54 cards**<br>*(30 Blue, 16 Red, 8 Green)* | 7 cards each | **300 Points** | **~5.5 rounds**<br>(22–25 turns/rd) |
-| **5–6 Players**<br>*(Grand Syndicate)* | **Double Deck**<br>Shuffle 2 full decks together | **108 cards**<br>*(60 Blue, 32 Red, 16 Green)* | 7 cards each | **300 Points** | **~5.6 rounds**<br>(35–40 turns/rd) |
-
-> 💡 **Why the 2-Player Quickdraw (28 Cards) Works**:  
-> In a 2-player game with the full 54-card deck, 40 cards sit in the draw pile, diluting item matches across 8 items. The **28-card Quickdraw** creates a tight **4:2:1 ratio** (16 Clean : 8 Contraband : 4 Wilds). Dealing 7 cards each leaves exactly 14 cards in the Locker—the deck cycles in a single breathless pass, eliminating sluggish stalemates and delivering sharp head-to-head tension.
+| Mode | Players | Cards in Deck | Starting Hand | Target Score | Pacing & Dynamics |
+| :---: | :---: | :---: | :---: | :---: | :--- |
+| **Quickdraw Duel** | **2** | **28 cards**<br>*(16 Blue, 8 Red, 2 Wild, 2 Snitch)* | 7 cards each<br>*(14 in Locker)* | **200 Pts** | ~3–4 rounds. Vicious head-to-head intercepts and Snitch ambushes! |
+| **Standard Heist** | **3–4** | **54 cards**<br>*(30 Blue, 16 Red, 6 Wild, 2 Snitch)* | 7 cards each<br>*(26 in Locker)* | **300 Pts** | **6.4–8 turns/player** (~26 table turns). 1.9 raids/round! |
+| **Grand Syndicate** | **5–6** | **108 cards**<br>*(Double deck: 60 Blue, 32 Red, 12 Wild, 4 Snitch)* | 8 cards each<br>*(60 in Locker)* | **300 Pts** | **15 turns/player** (60 table turns). Massive table tension! |
