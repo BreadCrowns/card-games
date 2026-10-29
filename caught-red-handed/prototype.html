@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Caught Red-Handed — Trios & The Snitch Edition</title>
+  <title>Caught Red-Handed — Pairs & The Snitch Edition</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @keyframes pulse-red {
@@ -44,7 +44,7 @@
     <div class="flex items-center gap-1.5">
       <span class="text-lg">🚨</span>
       <h1 class="text-xs sm:text-sm font-black tracking-wider text-rose-500 uppercase leading-none">Caught Red-Handed</h1>
-      <span class="text-[9px] bg-amber-500/20 text-amber-400 border border-amber-500/40 px-1.5 py-0.2 rounded-full font-black hidden sm:inline">TRIOS & SNITCH</span>
+      <span class="text-[9px] bg-amber-500/20 text-amber-400 border border-amber-500/40 px-1.5 py-0.2 rounded-full font-black hidden sm:inline">PAIRS & SNITCH</span>
     </div>
 
     <!-- Center Status & Round / Turn info -->
@@ -219,21 +219,21 @@
       </div>
     </div>
 
-    <!-- Ergonomic Mobile Action Controls Bar (Two Tier Mobile Fit) -->
+    <!-- Ergonomic Mobile Action Controls Bar -->
     <div class="flex flex-col gap-1 w-full" id="action-controls">
-      <!-- Tier 1: Draw, Trio, Skip, Snitch -->
+      <!-- Tier 1: Draw, Pair, Skip, Snitch -->
       <div class="grid grid-cols-5 gap-1.5 w-full">
         <button id="btn-draw" class="h-9 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-25 disabled:pointer-events-none text-white text-[11px] font-black rounded-xl shadow transition flex items-center justify-center gap-1">
           <span>📦</span> <span>1. Draw</span>
         </button>
-        <button id="btn-trio" disabled class="col-span-2 h-9 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-25 disabled:pointer-events-none text-white text-[10.5px] font-black rounded-xl shadow transition flex items-center justify-center gap-1 truncate px-1">
-          <span>💰</span> <span id="btn-trio-text" class="truncate">2. Lay Trio (3c)</span>
+        <button id="btn-pair" disabled class="col-span-2 h-9 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-25 disabled:pointer-events-none text-white text-[10.5px] font-black rounded-xl shadow transition flex items-center justify-center gap-1 truncate px-1">
+          <span>💰</span> <span id="btn-pair-text" class="truncate">2. Lay Pair</span>
         </button>
-        <button id="btn-skip-trio" disabled class="h-9 bg-slate-800 hover:bg-slate-700 disabled:opacity-25 disabled:pointer-events-none text-slate-300 text-[11px] font-bold rounded-xl border border-slate-700 shadow transition flex items-center justify-center gap-1">
+        <button id="btn-skip-pair" disabled class="h-9 bg-slate-800 hover:bg-slate-700 disabled:opacity-25 disabled:pointer-events-none text-slate-300 text-[11px] font-bold rounded-xl border border-slate-700 shadow transition flex items-center justify-center gap-1">
           <span>Skip</span> ➡️
         </button>
-        <button id="btn-snitch" disabled class="h-9 bg-amber-600 hover:bg-amber-500 disabled:opacity-20 disabled:pointer-events-none text-white text-[11px] font-black rounded-xl shadow transition flex items-center justify-center gap-1 border border-amber-400/80">
-          <span>🕵️</span> <span>RAID!</span>
+        <button id="btn-snitch" disabled class="h-9 bg-amber-600 hover:bg-amber-500 disabled:opacity-20 disabled:pointer-events-none text-white text-[10.5px] font-black rounded-xl shadow transition flex items-center justify-center gap-1 border border-amber-400/80">
+          <span>🕵️</span> <span>SNITCH</span>
         </button>
       </div>
 
@@ -254,7 +254,7 @@
 
     <!-- Micro Rule Hint -->
     <div class="text-center text-[9px] text-slate-400 font-medium leading-none">
-      Trios need <span class="text-blue-400 font-bold">≥1 Blue</span> • 🕵️ <span class="text-amber-400 font-bold">Snitch wipes most Red</span> • ⚡ <span class="text-sky-300 font-bold">Face-Up Intercept</span> • <span class="text-rose-400 font-bold">Most Red in hand busts (0 pts)!</span>
+      Pairs need <span class="text-blue-400 font-bold">≥1 Blue</span> • 🕵️ <span class="text-amber-400 font-bold">Discard Snitch on turn to wipe most Red</span> • ⚡ <span class="text-sky-300 font-bold">Face-Up Intercept</span>
     </div>
 
   </div>
@@ -274,7 +274,7 @@
       </div>
 
       <button id="btn-snitch-continue" class="w-full py-2.5 bg-amber-600 hover:bg-amber-500 text-white font-black text-xs rounded-xl shadow-lg transition flex items-center justify-center gap-1.5">
-        <span>RESUME HEIST</span> ➡️
+        <span>PROCEED TO PASSING</span> ➡️
       </button>
     </div>
   </div>
@@ -285,14 +285,14 @@
       <div class="text-3xl mb-1">⚡🚨</div>
       <h3 class="text-sm font-black text-sky-400 uppercase tracking-wider">RECIPIENT'S ADVANTAGE!</h3>
       <p id="intercept-desc" class="text-xs text-slate-300 mt-2 leading-relaxed">
-        You were passed a <b>Red Contraband</b> face up, and you hold cards to complete a <b>Trio</b>!
+        You were passed a <b>Red Contraband</b> face up, and you hold the matching <b>Blue Card</b>!
       </p>
-      <div id="intercept-cards-preview" class="flex justify-center items-center gap-1.5 my-3">
+      <div id="intercept-cards-preview" class="flex justify-center items-center gap-2 my-3">
         <!-- Rendered dynamically -->
       </div>
       <div class="flex gap-2 mt-3">
         <button id="btn-intercept-meld" class="flex-1 py-2.5 bg-sky-600 hover:bg-sky-500 text-white font-black text-xs rounded-xl shadow-lg transition flex items-center justify-center gap-1.5">
-          <span>⚡ SNAP TRIO (+PTS)</span>
+          <span>⚡ SNAP PAIR (+PTS)</span>
         </button>
         <button id="btn-intercept-accept" class="px-3 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs rounded-xl border border-slate-700 transition">
           Accept to Hand
@@ -322,9 +322,9 @@
   </div>
 
   <script>
-    // Trios & The Snitch Edition:
-    // Core melds require 3 cards and at least one Clean (Blue) card!
-    // 8 Asymmetrical Items (30 Blue + 16 Red + 6 Green Wilds + 2 Snitches = 54 play cards)
+    // Pairs & The Snitch Edition:
+    // Core melds require 2 cards and at least one Clean (Blue) card!
+    // On player's turn, instead of laying a pair, they may discard The Snitch to their score pile!
     const ITEMS = [
       { name: 'Cash', icon: '💵', isGrand: false, blueCopies: 4, redCopies: 2, redVal: 10 },
       { name: 'Diamond', icon: '💎', isGrand: false, blueCopies: 4, redCopies: 2, redVal: 10 },
@@ -347,16 +347,15 @@
     // Round State
     let deck = [];
     let hands = [[], [], [], []]; // P0=User, P1=Bot2, P2=Bot3, P3=Bot4
-    let stashes = [[], [], [], []]; // Banked Trios for current round
+    let stashes = [[], [], [], []]; // Banked pairs for current round
     let currentPlayer = 0;
     let direction = 1; // 1 = Clockwise (Pass Left), -1 = Counter-Clockwise (Pass Right)
     let turnCount = 1;
     let selectedPassCardIndex = null;
-    let selectedMeldIndices = []; // Stores user's selected cards for laying a 3-card Trio
-    let playerStep = 'DRAW'; // 'DRAW', 'TRIO', 'PASS'
+    let selectedPairIndices = []; // Stores user's selected 2 cards for laying a pair
+    let playerStep = 'DRAW'; // 'DRAW', 'PAIR', 'PASS'
     let consecutiveTurnsWithoutMeld = 0; // Tracks standoff rule: full rotation without melds ends round
     let playerMadeMeldThisTurn = false;
-    let pendingSnitchResume = null; // Callback after snitch raid modal closes
 
     function setGameMode(mode) {
       if (gameMode === mode) return;
@@ -434,7 +433,7 @@
       consecutiveTurnsWithoutMeld = 0;
       playerMadeMeldThisTurn = false;
       selectedPassCardIndex = null;
-      selectedMeldIndices = [];
+      selectedPairIndices = [];
       playerStep = (currentPlayer === 0) ? 'DRAW' : 'BOT';
 
       // Deal 7 cards each
@@ -470,215 +469,136 @@
       return stash.reduce((sum, item) => sum + item.points, 0);
     }
 
-    // Evaluates any 3 cards selected by the player against the Golden Melding Law
-    function evaluateSelectedTrio(cards) {
-      if (!cards || cards.length !== 3) return { valid: false, error: "Select exactly 3 cards." };
+    // Evaluates any 2 cards selected by the player against the Golden Pairing Law
+    function evaluateSelectedPair(c1, c2) {
+      if (!c1 || !c2) return { valid: false, error: "Select 2 cards." };
 
-      const blues = cards.filter(c => c.color === 'BLUE');
-      const reds = cards.filter(c => c.color === 'RED');
-      const greens = cards.filter(c => c.color === 'GREEN');
-      const specials = cards.filter(c => c.color === 'SPECIAL');
-
-      if (specials.length > 0) {
-        return { valid: false, error: "The Snitch cannot be melded! Use the Raid button." };
+      if (c1.color === 'SPECIAL' || c2.color === 'SPECIAL') {
+        return { valid: false, error: "The Snitch is played with the Snitch button, not as a pair!" };
       }
 
-      // Golden Law: Must have at least 1 Blue!
-      if (blues.length === 0) {
-        return { valid: false, error: "Golden Law: Every Trio requires ≥1 Blue card!" };
-      }
+      let blue = null;
+      let other = null;
 
-      if (greens.length > 1) {
-        return { valid: false, error: "At most 1 Counterfeit Wild per Trio!" };
-      }
-
-      // 1. Clean Syndicate (3 Blues of same item)
-      if (blues.length === 3) {
-        if (blues[0].item === blues[1].item && blues[1].item === blues[2].item) {
+      if (c1.color === 'BLUE' && c2.color !== 'BLUE') {
+        blue = c1; other = c2;
+      } else if (c2.color === 'BLUE' && c1.color !== 'BLUE') {
+        blue = c2; other = c1;
+      } else if (c1.color === 'BLUE' && c2.color === 'BLUE') {
+        if (c1.item === c2.item) {
           return {
             valid: true,
-            type: 'CLEAN',
-            item: blues[0].item,
-            icon: blues[0].icon,
+            item: c1.item,
+            icon: c1.icon,
             color: 'BLUE',
-            category: blues[0].isGrand ? 'GRAND' : 'PETTY',
-            points: 15,
+            category: 'CLEAN',
+            points: 10,
             flipsCamera: false,
-            label: `Clean Syndicate ${blues[0].item}`
+            label: `Clean ${c1.item}`
           };
         } else {
-          return { valid: false, error: `All 3 Blue cards must match item (${blues[0].item}, ${blues[1].item}, ${blues[2].item})!` };
+          return { valid: false, error: `Must match (${c1.item} ≠ ${c2.item})!` };
         }
+      } else {
+        return { valid: false, error: "Golden Law: Needs 1 Blue card!" };
       }
 
-      // 2. Laundered Heist (2 Blues + 1 Red of same item)
-      if (blues.length === 2 && reds.length === 1) {
-        const red = reds[0];
-        if (blues[0].item === red.item && blues[1].item === red.item) {
-          const pts = 5 + 5 + red.val; // 20 for Petty, 25 for Grand
+      // One Blue + Green Wild
+      if (other.color === 'GREEN') {
+        return {
+          valid: true,
+          item: `Wild (${blue.item})`,
+          icon: '🎭🔄',
+          color: 'GREEN',
+          category: 'WILD',
+          points: 5,
+          flipsCamera: true,
+          label: `Wild w/ ${blue.item}`
+        };
+      }
+
+      // One Blue + Red Contraband
+      if (other.color === 'RED') {
+        if (other.item === blue.item) {
+          const pts = blue.val + other.val;
           return {
             valid: true,
-            type: 'LAUNDERED',
-            item: red.item,
-            icon: red.icon,
+            item: other.item,
+            icon: other.icon,
             color: 'RED',
-            category: red.isGrand ? 'GRAND' : 'PETTY',
+            category: other.isGrand ? 'GRAND' : 'PETTY',
             points: pts,
             flipsCamera: false,
-            label: `Laundered ${red.item}`
+            label: `Laundered ${other.item}`
           };
         } else {
-          return { valid: false, error: `Items must match (${blues[0].item} & ${red.item})!` };
-        }
-      }
-
-      // 3. The Smuggler's Run (1 Blue + 2 Reds of same item)
-      if (blues.length === 1 && reds.length === 2) {
-        const blue = blues[0];
-        if (reds[0].item === blue.item && reds[1].item === blue.item) {
-          const pts = 5 + reds[0].val + reds[1].val; // 25 for Petty (5+10+10), 35 for Grand (5+15+15)
-          return {
-            valid: true,
-            type: 'SMUGGLER',
-            item: blue.item,
-            icon: blue.icon,
-            color: 'RED',
-            category: reds[0].isGrand ? 'GRAND' : 'PETTY',
-            points: pts,
-            flipsCamera: false,
-            label: `Smuggler's Run ${blue.item}!`
-          };
-        } else {
-          return { valid: false, error: `Items must match (${blue.item} & ${reds[0].item})!` };
-        }
-      }
-
-      // 4. Counterfeit Wild Trio (1 Wild + either 2 Blues OR 1 Blue + 1 Red)
-      if (greens.length === 1) {
-        if (blues.length === 2) {
-          if (blues[0].item === blues[1].item) {
-            return {
-              valid: true,
-              type: 'WILD_CLEAN',
-              item: `Wild Clean (${blues[0].item})`,
-              icon: '🎭🔄',
-              color: 'GREEN',
-              category: blues[0].isGrand ? 'GRAND' : 'PETTY',
-              points: 10,
-              flipsCamera: true,
-              label: `Wild Clean ${blues[0].item}`
-            };
-          } else {
-            return { valid: false, error: "The 2 Blue cards must match item!" };
-          }
-        }
-        if (blues.length === 1 && reds.length === 1) {
-          if (blues[0].item === reds[0].item) {
-            const pts = 5 + reds[0].val; // 15 for Petty, 20 for Grand
-            return {
-              valid: true,
-              type: 'WILD_HOT',
-              item: `Wild Laundered (${reds[0].item})`,
-              icon: '🎭🔄',
-              color: 'GREEN',
-              category: reds[0].isGrand ? 'GRAND' : 'PETTY',
-              points: pts,
-              flipsCamera: true,
-              label: `Wild Laundered ${reds[0].item}`
-            };
-          } else {
-            return { valid: false, error: `Blue & Red must match item (${blues[0].item} ≠ ${reds[0].item})!` };
-          }
+          return { valid: false, error: `Mismatch (${other.item} ≠ ${blue.item})!` };
         }
       }
 
       return { valid: false, error: "Invalid combination!" };
     }
 
-    // Available candidate Trios for bot AI
-    function getCandidateTrios(playerIdx) {
+    // Available candidate pairs for bot AI
+    function getCandidatePairs(playerIdx) {
       const hand = hands[playerIdx];
       const candidates = [];
+
       const blues = hand.filter(c => c.color === 'BLUE');
       const reds = hand.filter(c => c.color === 'RED');
       const greens = hand.filter(c => c.color === 'GREEN');
 
       if (blues.length === 0) return candidates;
 
-      ITEMS.forEach(it => {
-        const itemBlues = blues.filter(b => b.item === it.name);
-        const itemReds = reds.filter(r => r.item === it.name);
-
-        // 1. Smuggler's Run (1 Blue + 2 Reds) -> 25 or 35 pts!
-        if (itemBlues.length >= 1 && itemReds.length >= 2) {
+      // 1. Red + Blue
+      reds.forEach(r => {
+        const matchBlue = blues.find(b => b.item === r.item);
+        if (matchBlue) {
+          const pts = matchBlue.val + r.val;
           candidates.push({
-            type: 'SMUGGLER',
-            item: it.name,
-            icon: it.icon,
+            item: r.item,
+            icon: r.icon,
             color: 'RED',
-            category: it.isGrand ? 'GRAND' : 'PETTY',
-            points: 5 + itemReds[0].val + itemReds[1].val,
+            category: r.isGrand ? 'GRAND' : 'PETTY',
+            points: pts,
             flipsCamera: false,
-            cards: [itemBlues[0], itemReds[0], itemReds[1]]
-          });
-        }
-
-        // 2. Laundered Heist (2 Blues + 1 Red) -> 20 or 25 pts
-        if (itemBlues.length >= 2 && itemReds.length >= 1) {
-          candidates.push({
-            type: 'LAUNDERED',
-            item: it.name,
-            icon: it.icon,
-            color: 'RED',
-            category: it.isGrand ? 'GRAND' : 'PETTY',
-            points: 10 + itemReds[0].val,
-            flipsCamera: false,
-            cards: [itemBlues[0], itemBlues[1], itemReds[0]]
-          });
-        }
-
-        // 3. Clean Syndicate (3 Blues) -> 15 pts
-        if (itemBlues.length >= 3) {
-          candidates.push({
-            type: 'CLEAN',
-            item: it.name,
-            icon: it.icon,
-            color: 'BLUE',
-            category: it.isGrand ? 'GRAND' : 'PETTY',
-            points: 15,
-            flipsCamera: false,
-            cards: [itemBlues[0], itemBlues[1], itemBlues[2]]
-          });
-        }
-
-        // 4. Wild Laundered (1 Wild + 1 Blue + 1 Red) -> 15 or 20 pts & flips camera
-        if (greens.length >= 1 && itemBlues.length >= 1 && itemReds.length >= 1) {
-          candidates.push({
-            type: 'WILD_HOT',
-            item: `Wild Laundered (${it.name})`,
-            icon: '🎭🔄',
-            color: 'GREEN',
-            category: it.isGrand ? 'GRAND' : 'PETTY',
-            points: 5 + itemReds[0].val,
-            flipsCamera: true,
-            cards: [greens[0], itemBlues[0], itemReds[0]]
-          });
-        }
-
-        // 5. Wild Clean (1 Wild + 2 Blues) -> 10 pts & flips camera
-        if (greens.length >= 1 && itemBlues.length >= 2) {
-          candidates.push({
-            type: 'WILD_CLEAN',
-            item: `Wild Clean (${it.name})`,
-            icon: '🎭🔄',
-            color: 'GREEN',
-            category: it.isGrand ? 'GRAND' : 'PETTY',
-            points: 10,
-            flipsCamera: true,
-            cards: [greens[0], itemBlues[0], itemBlues[1]]
+            c1: r,
+            c2: matchBlue
           });
         }
       });
+
+      // 2. Blue + Blue
+      ITEMS.forEach(it => {
+        const itemBlues = blues.filter(b => b.item === it.name);
+        if (itemBlues.length >= 2) {
+          candidates.push({
+            item: it.name,
+            icon: it.icon,
+            color: 'BLUE',
+            category: 'CLEAN',
+            points: 10,
+            flipsCamera: false,
+            c1: itemBlues[0],
+            c2: itemBlues[1]
+          });
+        }
+      });
+
+      // 3. ANY Green Wild + ANY Blue
+      if (greens.length > 0 && blues.length > 0) {
+        const bestBlueToBurn = blues[0];
+        candidates.push({
+          item: `Wild (${bestBlueToBurn.item})`,
+          icon: '🎭🔄',
+          color: 'GREEN',
+          category: 'WILD',
+          points: 5,
+          flipsCamera: true,
+          c1: greens[0],
+          c2: bestBlueToBurn
+        });
+      }
 
       return candidates;
     }
@@ -709,21 +629,19 @@
       return { val: 0.50, label: "⚖️ Balanced", class: "bg-slate-800 text-slate-400 border-slate-700" };
     }
 
-    // Bot AI Trio Melding
-    function discardBotTrios(b) {
+    // Bot AI pair playing
+    function discardBotPairs(b) {
       const hand = hands[b];
-      const candidates = getCandidateTrios(b);
+      const candidates = getCandidatePairs(b);
 
       if (candidates.length > 0) {
-        // Sort highest points first
         candidates.sort((a, b) => b.points - a.points);
         const best = candidates[0];
 
-        // Remove the 3 cards from bot's hand
-        best.cards.forEach(card => {
-          const idx = hand.indexOf(card);
-          if (idx !== -1) hand.splice(idx, 1);
-        });
+        const idx1 = hand.indexOf(best.c1);
+        if (idx1 !== -1) hand.splice(idx1, 1);
+        const idx2 = hand.indexOf(best.c2);
+        if (idx2 !== -1) hand.splice(idx2, 1);
 
         stashes[b].push({
           item: best.item,
@@ -735,18 +653,17 @@
 
         if (best.flipsCamera) {
           direction = -direction;
-          logAnnouncement(`${getPlayerName(b)} banked ${best.item} (+${best.points} pts)! Play reversed 🔄!`);
-        } else if (best.type === 'SMUGGLER') {
-          logAnnouncement(`🔥 ${getPlayerName(b)} banked SMUGGLER'S RUN ${best.item} (+${best.points} PTS)!`);
+          logAnnouncement(`${getPlayerName(b)} banked ${best.item}! Passing direction reversed! 🔄`);
+        } else if (best.color === 'RED') {
+          logAnnouncement(`${getPlayerName(b)} laundered a ${best.item} pair (+${best.points} pts)!`);
         } else {
-          logAnnouncement(`${getPlayerName(b)} banked a Trio of ${best.item}s (+${best.points} pts).`);
+          logAnnouncement(`${getPlayerName(b)} banked a clean pair of ${best.item}s (+${best.points} pts).`);
         }
         return true;
       }
       return false;
     }
 
-    // Check if hand emptied
     function checkWinCondition(playerIdx) {
       if (hands[playerIdx].length === 0) {
         logAnnouncement(`🚗💨 GETAWAY CAR! ${getPlayerName(playerIdx)} emptied their hand!`);
@@ -766,12 +683,24 @@
       return (p + direction + 4) % 4;
     }
 
-    // Police Raid Execution (The Snitch Take-That)
+    // Police Raid Execution (The Snitch On-Turn Action)
     function triggerSnitchRaid(snitcherIdx, onResume) {
       const snitchCardIdx = hands[snitcherIdx].findIndex(c => c.color === 'SPECIAL');
       if (snitchCardIdx !== -1) {
         hands[snitcherIdx].splice(snitchCardIdx, 1);
       }
+
+      // Add The Snitch to snitcher's score pile (worth 0 pts)
+      stashes[snitcherIdx].push({
+        item: 'The Snitch',
+        icon: '🕵️🚨',
+        color: 'SPECIAL',
+        points: 0,
+        category: 'RAID'
+      });
+
+      playerMadeMeldThisTurn = true;
+      consecutiveTurnsWithoutMeld = 0;
 
       // Count red cards in all hands
       const redCounts = [];
@@ -808,7 +737,7 @@
       const snitcherName = getPlayerName(snitcherIdx);
       const isSelfSnitch = bustedPlayers.includes(snitcherIdx);
 
-      desc.innerHTML = `<b>${snitcherName}</b> threw down <b>The Snitch</b> and dropped a dime to the Feds! All hands are revealed!`;
+      desc.innerHTML = `<b>${snitcherName}</b> dropped <b>The Snitch</b> onto their score pile and called a Police Raid! All hands revealed!`;
 
       let breakdownHtml = '';
       for (let p = 0; p < numPlayers; p++) {
@@ -835,7 +764,7 @@
             <div class="p-2 rounded-lg border border-slate-800 bg-slate-900/60 flex justify-between items-center opacity-85">
               <div>
                 <span class="font-bold text-slate-300">${name}</span>
-                <span class="text-[10px] text-slate-400 ml-1.5 font-mono">(${count} Red Cards)</span>
+                <span class="text-[10px] text-slate-400 ml-1.5 font-mono">(${count} Red)</span>
               </div>
               <div>
                 <span class="px-1.5 py-0.5 bg-emerald-950 text-emerald-400 border border-emerald-700/60 font-black text-[9px] rounded uppercase">🛡️ Clean</span>
@@ -863,113 +792,51 @@
       modal.classList.remove('hidden');
     }
 
-    // Intercept check for Trios (Holding 2 cards that complete a Trio with passed Red card)
-    function findInterceptCandidate(targetIdx, passedCard) {
-      if (passedCard.color !== 'RED') return null;
-      const hand = hands[targetIdx];
-      const blues = hand.filter(c => c.color === 'BLUE' && c.item === passedCard.item);
-      const reds = hand.filter(c => c.color === 'RED' && c.item === passedCard.item);
-      const wilds = hand.filter(c => c.color === 'GREEN');
-
-      // 1. Smuggler's Run (1 matching Blue + 1 matching Red)
-      if (blues.length >= 1 && reds.length >= 1) {
-        const pts = 5 + reds[0].val + passedCard.val;
-        return {
-          type: 'SMUGGLER',
-          points: pts,
-          cardsInHand: [blues[0], reds[0]],
-          flipsCamera: false,
-          label: `Smuggler's Run ${passedCard.item} (+${pts} pts)`
-        };
-      }
-
-      // 2. Laundered Heist (2 matching Blues)
-      if (blues.length >= 2) {
-        const pts = 5 + 5 + passedCard.val;
-        return {
-          type: 'LAUNDERED',
-          points: pts,
-          cardsInHand: [blues[0], blues[1]],
-          flipsCamera: false,
-          label: `Laundered Heist ${passedCard.item} (+${pts} pts)`
-        };
-      }
-
-      // 3. Wild Laundered (1 matching Blue + 1 Wild)
-      if (blues.length >= 1 && wilds.length >= 1) {
-        const pts = 5 + passedCard.val;
-        return {
-          type: 'WILD_HOT',
-          points: pts,
-          cardsInHand: [blues[0], wilds[0]],
-          flipsCamera: true,
-          label: `Wild Laundered ${passedCard.item} (+${pts} pts & 🔄)`
-        };
-      }
-
-      return null;
-    }
-
-    function showInterceptModal(senderIdx, passedCard, candidate, onMeld, onAccept) {
+    // Intercept check for Pairs (Holding matching Blue card for incoming Red card)
+    function showInterceptModal(senderIdx, passedCard, matchingBlueIdx, onMeld, onAccept) {
       const modal = document.getElementById('intercept-modal');
       const desc = document.getElementById('intercept-desc');
       const preview = document.getElementById('intercept-cards-preview');
       const meldBtn = document.getElementById('btn-intercept-meld');
       const acceptBtn = document.getElementById('btn-intercept-accept');
 
-      const c1 = candidate.cardsInHand[0];
-      const c2 = candidate.cardsInHand[1];
+      const blueCard = hands[0][matchingBlueIdx];
+      const pts = blueCard.val + passedCard.val;
 
-      desc.innerHTML = `<b>${getPlayerName(senderIdx)}</b> passed you <b>${passedCard.item} (${passedCard.icon})</b> face up!<br>You hold cards in hand to complete a <b>${candidate.label}</b>!`;
+      desc.innerHTML = `<b>${getPlayerName(senderIdx)}</b> passed you <b>${passedCard.item} (${passedCard.icon})</b> face up!<br>You hold matching <b>Blue ${blueCard.item}</b> in your hand!`;
 
       preview.innerHTML = `
-        <div class="px-2 py-1.5 rounded-lg border-2 border-rose-500 bg-rose-950/70 text-center text-xs">
-          <div class="text-lg">${passedCard.icon}</div>
-          <div class="text-[8px] font-black text-rose-400 uppercase">Incoming</div>
-          <div class="text-[7.5px] text-slate-300 font-bold">+${passedCard.val}</div>
+        <div class="px-2.5 py-1.5 rounded-lg border-2 border-rose-500 bg-rose-950/70 text-center text-xs">
+          <div class="text-xl">${passedCard.icon}</div>
+          <div class="text-[9px] font-black text-rose-400 uppercase">Passed Red</div>
+          <div class="text-[8px] text-slate-300 font-bold">+${passedCard.val} pts</div>
         </div>
-        <div class="text-sm font-black text-sky-400">+</div>
-        <div class="px-2 py-1.5 rounded-lg border-2 border-blue-500 bg-blue-950/70 text-center text-xs">
-          <div class="text-lg">${c1.icon}</div>
-          <div class="text-[8px] font-black text-blue-400 uppercase">${c1.item}</div>
-          <div class="text-[7.5px] text-slate-300 font-bold">+${c1.val}</div>
+        <div class="text-lg font-black text-sky-400">+</div>
+        <div class="px-2.5 py-1.5 rounded-lg border-2 border-blue-500 bg-blue-950/70 text-center text-xs">
+          <div class="text-xl">${blueCard.icon}</div>
+          <div class="text-[9px] font-black text-blue-400 uppercase">Your Blue</div>
+          <div class="text-[8px] text-slate-300 font-bold">+5 pts</div>
         </div>
-        <div class="text-sm font-black text-sky-400">+</div>
-        <div class="px-2 py-1.5 rounded-lg border-2 ${c2.color === 'GREEN' ? 'border-emerald-500 bg-emerald-950/70' : (c2.color === 'RED' ? 'border-rose-500 bg-rose-950/70' : 'border-blue-500 bg-blue-950/70')} text-center text-xs">
-          <div class="text-lg">${c2.icon}</div>
-          <div class="text-[8px] font-black uppercase">${c2.item}</div>
-          <div class="text-[7.5px] text-slate-300 font-bold">+${c2.val}</div>
-        </div>
-        <div class="text-sm font-black text-emerald-400">=</div>
-        <div class="px-2 py-1.5 rounded-lg border-2 border-emerald-500 bg-emerald-950/90 text-center text-xs font-black text-emerald-300">
-          <div class="text-lg">💰</div>
-          <div class="text-[8px] uppercase">TRIO</div>
-          <div class="text-[9px] font-black text-emerald-300">+${candidate.points} PTS</div>
+        <div class="text-lg font-black text-emerald-400">=</div>
+        <div class="px-2.5 py-1.5 rounded-lg border-2 border-emerald-500 bg-emerald-950/70 text-center text-xs font-black text-emerald-300">
+          <div class="text-xl">💰</div>
+          <div class="text-[9px] uppercase">Laundered</div>
+          <div class="text-[10px] font-black text-emerald-300">+${pts} PTS</div>
         </div>
       `;
 
       meldBtn.onclick = () => {
         modal.classList.add('hidden');
-        // Remove the 2 cards from hand
-        candidate.cardsInHand.forEach(c => {
-          const idx = hands[0].indexOf(c);
-          if (idx !== -1) hands[0].splice(idx, 1);
-        });
-
+        hands[0].splice(matchingBlueIdx, 1);
         stashes[0].push({
           item: passedCard.item,
           icon: passedCard.icon,
           color: 'RED',
-          points: candidate.points,
+          points: pts,
           category: passedCard.isGrand ? 'GRAND' : 'PETTY'
         });
-
-        if (candidate.flipsCamera) {
-          direction = -direction;
-        }
-
         consecutiveTurnsWithoutMeld = 0;
-        logAnnouncement(`⚡ INTERCEPT! You snap-melded ${passedCard.item} (+${candidate.points} pts)! Contraband never touched your hand!`);
+        logAnnouncement(`⚡ INTERCEPT! You snap-matched incoming ${passedCard.item} with your Blue ${passedCard.item} (+${pts} pts)! Contraband never touched your hand!`);
         onMeld();
       };
 
@@ -988,12 +855,14 @@
         ? `RED Contraband (${passedCard.item})`
         : ((passedCard.color === 'GREEN') ? 'Counterfeit Wild 🎭' : ((passedCard.color === 'SPECIAL') ? 'The Snitch 🕵️' : `Clean ${passedCard.item}`));
 
-      // Recipient Advantage: Check if target can complete a Trio
-      const candidate = findInterceptCandidate(targetIdx, passedCard);
+      // Recipient Advantage: Check if target holds matching BLUE card for incoming RED card
+      const matchingBlueIdx = (passedCard.color === 'RED')
+        ? hands[targetIdx].findIndex(c => c.color === 'BLUE' && c.item === passedCard.item)
+        : -1;
 
-      if (candidate !== null) {
+      if (matchingBlueIdx !== -1) {
         if (targetIdx === 0) {
-          showInterceptModal(senderIdx, passedCard, candidate, () => {
+          showInterceptModal(senderIdx, passedCard, matchingBlueIdx, () => {
             updateUI();
             if (checkWinCondition(0)) return;
             if (deck.length === 0 && consecutiveTurnsWithoutMeld >= numPlayers) {
@@ -1014,20 +883,17 @@
           return;
         } else {
           // Bot Intercept
-          candidate.cardsInHand.forEach(c => {
-            const idx = hands[targetIdx].indexOf(c);
-            if (idx !== -1) hands[targetIdx].splice(idx, 1);
-          });
+          const matchBlue = hands[targetIdx].splice(matchingBlueIdx, 1)[0];
+          const pts = matchBlue.val + passedCard.val;
           stashes[targetIdx].push({
             item: passedCard.item,
             icon: passedCard.icon,
             color: 'RED',
-            points: candidate.points,
+            points: pts,
             category: passedCard.isGrand ? 'GRAND' : 'PETTY'
           });
-          if (candidate.flipsCamera) direction = -direction;
           consecutiveTurnsWithoutMeld = 0;
-          logAnnouncement(`⚡ INTERCEPT! ${getPlayerName(targetIdx)} snap-melded RED ${passedCard.item} (+${candidate.points} pts)!`);
+          logAnnouncement(`⚡ INTERCEPT! ${getPlayerName(targetIdx)} snap-matched passed RED ${passedCard.item} with their Blue ${passedCard.item} (+${pts} pts)! Contraband neutralized!`);
           updateUI();
           if (checkWinCondition(targetIdx)) return;
           if (deck.length === 0 && consecutiveTurnsWithoutMeld >= numPlayers) {
@@ -1059,33 +925,33 @@
         const card = drawFromDeck();
         if (card) hands[b].push(card);
 
-        // Check if Bot wants to play The Snitch
+        // Check if Bot wants to play The Snitch instead of laying a pair
         const botHasSnitch = hands[b].some(c => c.color === 'SPECIAL');
         if (botHasSnitch) {
           const myRedCount = hands[b].filter(c => c.color === 'RED').length;
           const maxOppVault = Math.max(...stashes.map((s, idx) => idx !== b ? calculateStashPoints(s) : 0));
-          // Bot plays Snitch if opponent has >= 20 pts and bot has <= 1 red card
-          if (maxOppVault >= 20 && myRedCount <= 1) {
+          // Bot plays Snitch if opponent has >= 15 pts in vault and bot has <= 1 red card
+          if (maxOppVault >= 15 && myRedCount <= 1) {
             triggerSnitchRaid(b, () => {
-              resumeBotTurnAfterSnitch(b);
+              resumeBotTurnAfterMeld(b);
             });
             return;
           }
         }
 
-        resumeBotTurnAfterSnitch(b);
+        const botMeld = discardBotPairs(b);
+        if (botMeld) {
+          consecutiveTurnsWithoutMeld = 0;
+        } else {
+          consecutiveTurnsWithoutMeld++;
+        }
+        updateUI();
+
+        resumeBotTurnAfterMeld(b);
       }, 400);
     }
 
-    function resumeBotTurnAfterSnitch(b) {
-      const botMeld = discardBotTrios(b);
-      if (botMeld) {
-        consecutiveTurnsWithoutMeld = 0;
-      } else {
-        consecutiveTurnsWithoutMeld++;
-      }
-      updateUI();
-
+    function resumeBotTurnAfterMeld(b) {
       if (checkWinCondition(b)) return;
       if (deck.length === 0 && consecutiveTurnsWithoutMeld >= numPlayers) {
         showRoundModal(-1, 'STANDOFF');
@@ -1116,8 +982,7 @@
               if (passingToLeader) score += 55;
               if (mindset.val > 0.7 && minOppHand > 3) score -= 35;
             } else if (card.color === 'SPECIAL') {
-              // Prefer holding Snitch unless hand is bloated
-              score -= 50;
+              score -= 40; // Hold onto snitch
             } else if (card.color === 'GREEN') {
               score += mindset.val * 30;
               const bluesCount = hand.filter(c => c.color === 'BLUE').length;
@@ -1125,7 +990,7 @@
             } else if (card.color === 'BLUE') {
               score += 20;
               const sameItemBlues = hand.filter(c => c.color === 'BLUE' && c.item === card.item).length;
-              if (sameItemBlues >= 3) score -= 45;
+              if (sameItemBlues >= 2) score -= 40;
             }
 
             if (score > maxUrgency) {
@@ -1155,7 +1020,7 @@
 
       if (currentPlayer === 0) {
         playerStep = 'DRAW';
-        selectedMeldIndices = [];
+        selectedPairIndices = [];
         selectedPassCardIndex = null;
         logAnnouncement("Your turn! Tap Draw Card or tap the Locker.");
         updateUI();
@@ -1263,6 +1128,7 @@
         let style = 'bg-blue-950/80 border-blue-600 text-blue-300';
         if (p.color === 'RED') style = 'bg-rose-950/80 border-rose-600 text-rose-300';
         else if (p.color === 'GREEN') style = 'bg-emerald-950/80 border-emerald-600 text-emerald-300';
+        else if (p.color === 'SPECIAL') style = 'bg-amber-950/80 border-amber-500 text-amber-300';
 
         badge.className = `px-1.5 py-0.5 rounded text-[9px] font-bold border flex items-center gap-0.5 shrink-0 ${style}`;
         badge.innerHTML = `<span>${p.icon}</span><span>+${p.points}</span>`;
@@ -1277,61 +1143,63 @@
         statusTag.innerText = "WAITING";
       }
 
-      // Snitch Button: Player 0 can trigger police raid anytime if holding The Snitch!
+      // Snitch Button: Can only be played on player's turn during Step 2 (instead of laying a pair)
       const btnSnitch = document.getElementById('btn-snitch');
       const userHasSnitch = hands[0].some(c => c.color === 'SPECIAL');
-      btnSnitch.disabled = !userHasSnitch;
-      if (userHasSnitch) {
-        btnSnitch.className = "h-9 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-[11px] rounded-xl shadow-lg border-2 border-amber-300 flex items-center justify-center gap-1 snitch-pulse";
+      const canPlaySnitch = (currentPlayer === 0 && playerStep === 'PAIR' && userHasSnitch);
+      btnSnitch.disabled = !canPlaySnitch;
+      if (canPlaySnitch) {
+        btnSnitch.className = "h-9 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-[10.5px] rounded-xl shadow-lg border-2 border-amber-300 flex items-center justify-center gap-1 snitch-pulse";
       } else {
-        btnSnitch.className = "h-9 bg-amber-600 hover:bg-amber-500 disabled:opacity-20 disabled:pointer-events-none text-white text-[11px] font-black rounded-xl shadow transition flex items-center justify-center gap-1 border border-amber-400/80";
+        btnSnitch.className = "h-9 bg-amber-600 hover:bg-amber-500 disabled:opacity-20 disabled:pointer-events-none text-white text-[10.5px] font-black rounded-xl shadow transition flex items-center justify-center gap-1 border border-amber-400/80";
       }
 
-      // Dynamic Controls State for Trio Selection
+      // Dynamic Controls State for Pair Selection
       const btnDraw = document.getElementById('btn-draw');
-      const btnTrio = document.getElementById('btn-trio');
-      const btnSkipTrio = document.getElementById('btn-skip-trio');
+      const btnPair = document.getElementById('btn-pair');
+      const btnSkipPair = document.getElementById('btn-skip-pair');
       const btnPass = document.getElementById('btn-pass');
-      const btnTrioText = document.getElementById('btn-trio-text');
+      const btnPairText = document.getElementById('btn-pair-text');
 
       if (currentPlayer === 0) {
         btnDraw.disabled = (playerStep !== 'DRAW');
-        btnSkipTrio.disabled = (playerStep !== 'TRIO');
+        btnSkipPair.disabled = (playerStep !== 'PAIR');
 
-        if (playerStep === 'TRIO') {
-          if (selectedMeldIndices.length === 3) {
-            const selectedCards = selectedMeldIndices.map(i => hands[0][i]);
-            const evalRes = evaluateSelectedTrio(selectedCards);
+        if (playerStep === 'PAIR') {
+          if (selectedPairIndices.length === 2) {
+            const c1 = hands[0][selectedPairIndices[0]];
+            const c2 = hands[0][selectedPairIndices[1]];
+            const evalRes = evaluateSelectedPair(c1, c2);
 
             if (evalRes.valid) {
-              btnTrio.disabled = false;
-              btnTrio.className = "col-span-2 h-9 bg-emerald-600 hover:bg-emerald-500 text-white text-[10.5px] font-black rounded-xl shadow-lg ring-2 ring-emerald-400 transition flex items-center justify-center gap-1 animate-bounce";
-              btnTrioText.innerText = `Bank ${evalRes.label} (+${evalRes.points}pts${evalRes.flipsCamera ? ' & 🔄' : ''})`;
+              btnPair.disabled = false;
+              btnPair.className = "col-span-2 h-9 bg-emerald-600 hover:bg-emerald-500 text-white text-[10.5px] font-black rounded-xl shadow-lg ring-2 ring-emerald-400 transition flex items-center justify-center gap-1 animate-bounce";
+              btnPairText.innerText = `Bank ${evalRes.label} (+${evalRes.points}pts${evalRes.flipsCamera ? ' & 🔄' : ''})`;
             } else {
-              btnTrio.disabled = true;
-              btnTrio.className = "col-span-2 h-9 bg-slate-800 text-rose-400 border border-rose-800/60 text-[10px] font-bold rounded-xl shadow opacity-80 cursor-not-allowed flex items-center justify-center gap-1";
-              btnTrioText.innerText = `Invalid (${evalRes.error})`;
+              btnPair.disabled = true;
+              btnPair.className = "col-span-2 h-9 bg-slate-800 text-rose-400 border border-rose-800/60 text-[10px] font-bold rounded-xl shadow opacity-80 cursor-not-allowed flex items-center justify-center gap-1";
+              btnPairText.innerText = `Invalid (${evalRes.error})`;
             }
-          } else if (selectedMeldIndices.length > 0) {
-            btnTrio.disabled = true;
-            btnTrio.className = "col-span-2 h-9 bg-emerald-950/40 text-emerald-400 border border-emerald-800/50 text-[10.5px] font-bold rounded-xl shadow flex items-center justify-center gap-1 cursor-not-allowed";
-            btnTrioText.innerText = `Selected ${selectedMeldIndices.length}/3 Cards`;
+          } else if (selectedPairIndices.length === 1) {
+            btnPair.disabled = true;
+            btnPair.className = "col-span-2 h-9 bg-emerald-950/40 text-emerald-400 border border-emerald-800/50 text-[10.5px] font-bold rounded-xl shadow flex items-center justify-center gap-1 cursor-not-allowed";
+            btnPairText.innerText = "Tap 2nd Card (1/2)";
           } else {
-            btnTrio.disabled = true;
-            btnTrio.className = "col-span-2 h-9 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-25 disabled:pointer-events-none text-white text-[10.5px] font-bold rounded-xl shadow transition flex items-center justify-center gap-1";
-            btnTrioText.innerText = "2. Tap 3 Cards to Bank";
+            btnPair.disabled = true;
+            btnPair.className = "col-span-2 h-9 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-25 disabled:pointer-events-none text-white text-[10.5px] font-bold rounded-xl shadow transition flex items-center justify-center gap-1";
+            btnPairText.innerText = "2. Lay Pair (or Snitch)";
           }
         } else {
-          btnTrio.disabled = true;
-          btnTrio.className = "col-span-2 h-9 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-25 disabled:pointer-events-none text-white text-[10.5px] font-bold rounded-xl shadow transition flex items-center justify-center gap-1";
-          btnTrioText.innerText = "2. Lay Trio (3c)";
+          btnPair.disabled = true;
+          btnPair.className = "col-span-2 h-9 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-25 disabled:pointer-events-none text-white text-[10.5px] font-bold rounded-xl shadow transition flex items-center justify-center gap-1";
+          btnPairText.innerText = "2. Lay Pair";
         }
 
         btnPass.disabled = (playerStep !== 'PASS' || selectedPassCardIndex === null);
       } else {
         btnDraw.disabled = true;
-        btnTrio.disabled = true;
-        btnSkipTrio.disabled = true;
+        btnPair.disabled = true;
+        btnSkipPair.disabled = true;
         btnPass.disabled = true;
       }
 
@@ -1343,15 +1211,15 @@
       const container = document.getElementById('player-hand');
       container.innerHTML = '';
 
-      const evalRes = (selectedMeldIndices.length === 3 && playerStep === 'TRIO')
-        ? evaluateSelectedTrio(selectedMeldIndices.map(i => hands[0][i]))
+      const evalRes = (selectedPairIndices.length === 2 && playerStep === 'PAIR')
+        ? evaluateSelectedPair(hands[0][selectedPairIndices[0]], hands[0][selectedPairIndices[1]])
         : null;
 
       hands[0].forEach((c, idx) => {
         const cardEl = document.createElement('div');
         const isPassSelected = (playerStep === 'PASS' && selectedPassCardIndex === idx);
-        const meldSelectionIndex = (playerStep === 'TRIO') ? selectedMeldIndices.indexOf(idx) : -1;
-        const isMeldSelected = (meldSelectionIndex !== -1);
+        const pairSelectionIndex = (playerStep === 'PAIR') ? selectedPairIndices.indexOf(idx) : -1;
+        const isPairSelected = (pairSelectionIndex !== -1);
 
         let borderStyle = "border border-slate-700 bg-slate-800/90";
 
@@ -1370,8 +1238,8 @@
         // Selection Visual Styling
         if (isPassSelected) {
           borderStyle += " ring-4 ring-rose-400 -translate-y-3 shadow-2xl scale-105";
-        } else if (isMeldSelected) {
-          if (selectedMeldIndices.length === 3) {
+        } else if (isPairSelected) {
+          if (selectedPairIndices.length === 2) {
             if (evalRes && evalRes.valid) {
               borderStyle += " ring-4 ring-emerald-400 bg-emerald-950/90 -translate-y-3.5 shadow-2xl scale-105";
             } else {
@@ -1402,20 +1270,20 @@
             : `<span class="bg-rose-950/90 text-rose-300 border border-rose-600/80 px-1 py-0.2 rounded text-[7px] font-black flex items-center gap-0.5 shadow">🔴 10</span>`;
         } else if (c.color === 'SPECIAL') {
           badgeText = `<span class="text-amber-400 font-black text-[9px]">RAID</span>`;
-          targetPill = `<span class="bg-rose-950/95 text-rose-300 border border-rose-500 px-1 py-0.2 rounded text-[7px] font-black uppercase tracking-wider">FED RAID</span>`;
+          targetPill = `<span class="bg-rose-950/95 text-rose-300 border border-rose-500 px-1 py-0.2 rounded text-[7px] font-black uppercase tracking-wider">ON TURN</span>`;
         }
 
         let typeSubtitle = '';
         if (c.color === 'RED') typeSubtitle = (c.val === 15) ? '👑 Grand Hot (+15)' : '⭐ Petty Hot (+10)';
         else if (c.color === 'GREEN') typeSubtitle = 'Connects Blue • Flips 🔄';
         else if (c.color === 'BLUE') typeSubtitle = (c.isGrand) ? '👑 Grand Clean' : '⭐ Petty Clean';
-        else if (c.color === 'SPECIAL') typeSubtitle = '⚡ Fed Police Raid';
+        else if (c.color === 'SPECIAL') typeSubtitle = '⚡ On-Turn Fed Raid';
 
         // Badges for active selection
         let selectionPill = '';
-        if (isMeldSelected) {
-          const pillColor = (selectedMeldIndices.length === 3 && evalRes && !evalRes.valid) ? 'bg-rose-600' : 'bg-amber-500';
-          selectionPill = `<div class="absolute -top-2 px-1.5 py-0.2 ${pillColor} text-white font-black text-[8px] rounded-full shadow tracking-wider uppercase">Trio #${meldSelectionIndex + 1}</div>`;
+        if (isPairSelected) {
+          const pillColor = (selectedPairIndices.length === 2 && evalRes && !evalRes.valid) ? 'bg-rose-600' : 'bg-amber-500';
+          selectionPill = `<div class="absolute -top-2 px-1.5 py-0.2 ${pillColor} text-white font-black text-[8px] rounded-full shadow tracking-wider uppercase">Pair #${pairSelectionIndex + 1}</div>`;
         } else if (isPassSelected) {
           selectionPill = `<div class="absolute -top-2 px-1.5 py-0.2 bg-rose-600 text-white font-black text-[8px] rounded-full shadow tracking-wider uppercase">Pass 👉</div>`;
         }
@@ -1451,27 +1319,29 @@
         cardEl.onclick = () => {
           if (currentPlayer !== 0) return;
 
-          if (playerStep === 'TRIO') {
-            const pos = selectedMeldIndices.indexOf(idx);
+          if (playerStep === 'PAIR') {
+            const pos = selectedPairIndices.indexOf(idx);
             if (pos !== -1) {
-              selectedMeldIndices.splice(pos, 1);
+              selectedPairIndices.splice(pos, 1);
             } else {
-              if (selectedMeldIndices.length < 3) {
-                selectedMeldIndices.push(idx);
+              if (selectedPairIndices.length < 2) {
+                selectedPairIndices.push(idx);
               } else {
-                selectedMeldIndices[2] = idx;
+                selectedPairIndices[1] = idx;
               }
             }
 
-            if (selectedMeldIndices.length < 3) {
-              logAnnouncement(`Selected ${selectedMeldIndices.length}/3 cards. Tap ${3 - selectedMeldIndices.length} more card(s) or tap 'Skip'.`);
-            } else {
-              const res = evaluateSelectedTrio(selectedMeldIndices.map(i => hands[0][i]));
+            if (selectedPairIndices.length === 1) {
+              logAnnouncement(`Selected ${hands[0][selectedPairIndices[0]].item}. Tap a second card to pair, or tap 'Skip'.`);
+            } else if (selectedPairIndices.length === 2) {
+              const res = evaluateSelectedPair(hands[0][selectedPairIndices[0]], hands[0][selectedPairIndices[1]]);
               if (res.valid) {
-                logAnnouncement(`Valid: ${res.label} (+${res.points} pts${res.flipsCamera ? ' & 🔄' : ''})! Tap Bank Trio.`);
+                logAnnouncement(`Valid: ${res.label} (+${res.points} pts${res.flipsCamera ? ' & 🔄' : ''})! Tap Bank Pair.`);
               } else {
                 logAnnouncement(`⚠️ ${res.error}`);
               }
+            } else {
+              logAnnouncement("Tap 2 cards to bank a pair (needs a Blue card!), or tap 'Skip', or tap 'SNITCH'.");
             }
 
             updateUI();
@@ -1544,7 +1414,7 @@
       } else if (isStandoff) {
         icon.innerText = "🚨";
         title.innerText = "STANDOFF! POLICE SURROUND YOU!";
-        desc.innerText = "The Locker ran dry and an entire orbit passed without any meld! Sirens wail!";
+        desc.innerText = "The Locker ran dry and an entire orbit passed without any meld or snitch! Sirens wail!";
       } else {
         icon.innerText = "🚗💨";
         title.innerText = "GETAWAY CAR!";
@@ -1554,7 +1424,6 @@
       let scoresHtml = '';
       for (let p = 0; p < numPlayers; p++) {
         const name = getPlayerName(p);
-        const banked = calculateStashPoints(stashes[p]);
         const redCount = redCounts[p];
         const earned = roundPointsEarned[p];
         const total = matchScores[p];
@@ -1614,26 +1483,31 @@
       if (currentPlayer !== 0 || playerStep !== 'DRAW') return;
       const card = drawFromDeck();
       if (card) hands[0].push(card);
-      logAnnouncement("You drew a card! Tap 3 cards to bank a Trio (needs ≥1 Blue card!), or tap 'Skip'.");
-      playerStep = 'TRIO';
-      selectedMeldIndices = [];
+      logAnnouncement("You drew a card! Tap 2 cards to bank a pair, or tap 'SNITCH' to raid, or tap 'Skip'.");
+      playerStep = 'PAIR';
+      selectedPairIndices = [];
       updateUI();
     }
 
     document.getElementById('btn-draw').onclick = handleDrawAction;
     document.getElementById('draw-deck').onclick = handleDrawAction;
 
-    // User banks the chosen Trio
-    document.getElementById('btn-trio').onclick = () => {
-      if (currentPlayer !== 0 || playerStep !== 'TRIO' || selectedMeldIndices.length !== 3) return;
+    // User banks the chosen Pair
+    document.getElementById('btn-pair').onclick = () => {
+      if (currentPlayer !== 0 || playerStep !== 'PAIR' || selectedPairIndices.length !== 2) return;
       
-      const selectedCards = selectedMeldIndices.map(i => hands[0][i]);
-      const evalRes = evaluateSelectedTrio(selectedCards);
+      const idx1 = selectedPairIndices[0];
+      const idx2 = selectedPairIndices[1];
+      const c1 = hands[0][idx1];
+      const c2 = hands[0][idx2];
+
+      const evalRes = evaluateSelectedPair(c1, c2);
       if (!evalRes.valid) return;
 
-      // Remove in descending index order
-      const sortedIndices = [...selectedMeldIndices].sort((a, b) => b - a);
-      sortedIndices.forEach(idx => hands[0].splice(idx, 1));
+      const first = Math.max(idx1, idx2);
+      const second = Math.min(idx1, idx2);
+      hands[0].splice(first, 1);
+      hands[0].splice(second, 1);
 
       stashes[0].push({
         item: evalRes.item,
@@ -1649,31 +1523,41 @@
       if (evalRes.flipsCamera) {
         direction = -direction;
         logAnnouncement(`You banked ${evalRes.label}! Passing direction reversed! 🔄`);
-      } else if (evalRes.type === 'SMUGGLER') {
-        logAnnouncement(`🔥 JACKPOT! You banked SMUGGLER'S RUN ${evalRes.item}! Massive +${evalRes.points} points!`);
       } else if (evalRes.color === 'RED') {
-        logAnnouncement(`You laundered a ${evalRes.item} Trio! +${evalRes.points} points banked!`);
+        logAnnouncement(`You laundered a ${evalRes.item} pair! Massive +${evalRes.points} points banked!`);
       } else {
-        logAnnouncement(`You banked a clean syndicate of ${evalRes.item}s (+${evalRes.points} pts).`);
+        logAnnouncement(`You banked a clean pair of ${evalRes.item}s (+${evalRes.points} pts).`);
       }
 
-      selectedMeldIndices = [];
+      selectedPairIndices = [];
       updateUI();
 
       if (checkWinCondition(0)) return;
 
       playerStep = 'PASS';
-      logAnnouncement("Trio banked! Now tap 1 card in your hand to pass face up to your neighbor.");
+      logAnnouncement("Pair banked! Now tap 1 card in your hand to pass face up to your neighbor.");
       updateUI();
     };
 
-    // User skips Trio laying
-    document.getElementById('btn-skip-trio').onclick = () => {
-      if (currentPlayer !== 0 || playerStep !== 'TRIO') return;
-      selectedMeldIndices = [];
+    // User skips Pair laying
+    document.getElementById('btn-skip-pair').onclick = () => {
+      if (currentPlayer !== 0 || playerStep !== 'PAIR') return;
+      selectedPairIndices = [];
       playerStep = 'PASS';
-      logAnnouncement("Skipped Trio. Now tap 1 card in your hand to pass face up to your neighbor.");
+      logAnnouncement("Skipped pair. Now tap 1 card in your hand to pass face up to your neighbor.");
       updateUI();
+    };
+
+    // User plays The Snitch on their turn instead of laying a pair
+    document.getElementById('btn-snitch').onclick = () => {
+      if (currentPlayer !== 0 || playerStep !== 'PAIR') return;
+      selectedPairIndices = [];
+      triggerSnitchRaid(0, () => {
+        if (checkWinCondition(0)) return;
+        playerStep = 'PASS';
+        logAnnouncement("Snitch raid completed! Now tap 1 card in your hand to pass face up.");
+        updateUI();
+      });
     };
 
     // User passes selected card
@@ -1691,13 +1575,6 @@
 
       executePassCard(0, targetP, passedCard, () => {
         advanceTurn();
-      });
-    };
-
-    // User triggers Snitch Raid
-    document.getElementById('btn-snitch').onclick = () => {
-      triggerSnitchRaid(0, () => {
-        updateUI();
       });
     };
 
