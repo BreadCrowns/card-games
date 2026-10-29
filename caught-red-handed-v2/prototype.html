@@ -2,873 +2,1160 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Caught Red-Handed V2: The Bridge & Shed Edition</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Caught Red-Handed V2: The Interrogation</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
   <style>
-    @keyframes pulse-red {
-      0%, 100% { box-shadow: 0 0 10px rgba(239, 68, 68, 0.7); }
-      50% { box-shadow: 0 0 22px rgba(239, 68, 68, 1); }
+    body {
+      font-family: 'Montserrat', system-ui, sans-serif;
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
     }
-    .red-evidence {
-      animation: pulse-red 1.8s infinite;
+    .mono { font-family: 'JetBrains+Mono', monospace; }
+
+    /* Card styling */
+    .game-card {
+      transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform-origin: center bottom;
     }
-    @keyframes pulse-amber {
-      0%, 100% { box-shadow: 0 0 10px rgba(245, 158, 11, 0.6); }
-      50% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.95); }
+    .game-card:hover {
+      transform: translateY(-14px) scale(1.05);
+      z-index: 30;
     }
-    .reset-pulse {
-      animation: pulse-amber 2s infinite;
+    .game-card.selected {
+      transform: translateY(-22px) scale(1.1);
+      box-shadow: 0 0 0 3px #38bdf8, 0 16px 25px -5px rgba(0, 0, 0, 0.5);
+      z-index: 40;
     }
-    /* Hide scrollbars for slick mobile card swiping */
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
+    .card-red {
+      border: 2px solid #ef4444;
+      background: linear-gradient(145deg, #ffffff 0%, #fee2e2 100%);
+      color: #b91c1c;
     }
-    .no-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
+    .card-blue {
+      border: 2px solid #0ea5e9;
+      background: linear-gradient(145deg, #ffffff 0%, #e0f2fe 100%);
+      color: #0369a1;
+    }
+    .card-special {
+      border: 2px solid #f59e0b;
+      background: linear-gradient(145deg, #ffffff 0%, #fef3c7 100%);
+      color: #b45309;
+    }
+    .card-back {
+      background: repeating-linear-gradient(45deg, #1e293b, #1e293b 8px, #0f172a 8px, #0f172a 16px);
+      border: 2px solid #475569;
+    }
+
+    /* Flip animation */
+    .flip-container {
+      perspective: 1000px;
+    }
+    .flipper {
+      transition: 0.6s;
+      transform-style: preserve-3d;
+      position: relative;
+    }
+    .flipped {
+      transform: rotateY(180deg);
+    }
+    .front, .back {
+      backface-visibility: hidden;
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+    }
+    .front {
+      transform: rotateY(180deg);
+      z-index: 2;
+    }
+    .back {
+      z-index: 1;
+    }
+
+    /* Pulse glow */
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
+      50% { box-shadow: 0 0 30px rgba(239, 68, 68, 0.9); }
+    }
+    .pulse-danger {
+      animation: pulse-glow 1.5s infinite;
     }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 h-screen max-h-[100dvh] w-screen flex flex-col font-sans select-none overflow-hidden touch-manipulation">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between overflow-x-hidden">
 
-  <!-- ZONE 1: Mobile Header (~40px) -->
-  <header class="bg-slate-900/95 border-b border-slate-800 px-3 py-1 flex justify-between items-center shadow shrink-0 h-10">
-    <div class="flex items-center gap-1.5">
-      <span class="text-lg">🚨</span>
-      <h1 class="text-xs sm:text-sm font-black tracking-wider text-rose-500 uppercase leading-none">Caught Red-Handed <span class="text-amber-400">V2</span></h1>
-      <span class="text-[9px] bg-sky-500/20 text-sky-400 border border-sky-500/40 px-1.5 py-0.2 rounded-full font-black hidden sm:inline">ITEM BRIDGES</span>
+  <!-- TOP APP BAR -->
+  <header class="bg-slate-900/90 border-b border-slate-800 px-4 py-2 flex items-center justify-between backdrop-blur-md sticky top-0 z-50">
+    <div class="flex items-center gap-2">
+      <span class="text-2xl">🚨</span>
+      <div>
+        <h1 class="font-black text-sm md:text-base tracking-wide bg-gradient-to-r from-red-500 via-amber-400 to-sky-400 bg-clip-text text-transparent">
+          CAUGHT RED-HANDED V2
+        </h1>
+        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">The Interrogation • Bluffing & Shedding</p>
+      </div>
     </div>
 
-    <!-- Center Status & Round / Turn info -->
-    <div class="flex items-center gap-2 text-[10px] text-slate-300 font-mono">
-      <span>R<span id="round-counter" class="font-bold text-emerald-400">1</span></span>
-      <span class="text-slate-600">•</span>
-      <span>T<span id="turn-counter" class="font-bold text-amber-400">1</span></span>
-      <span class="text-slate-600">•</span>
-      <span class="text-rose-400 font-black">3 STRIKES = OUT</span>
+    <div class="flex items-center gap-2">
+      <button id="rulesBtn" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-700 flex items-center gap-1.5 transition">
+        <span>📖</span> Rules
+      </button>
+      <button id="restartBtn" class="bg-red-950/60 hover:bg-red-900/80 text-red-300 text-xs font-bold px-3 py-1.5 rounded-lg border border-red-800/60 transition">
+        Restart Match
+      </button>
     </div>
-
-    <button id="restart-match-btn" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-semibold rounded border border-slate-700 transition">
-      ↺ Reset
-    </button>
   </header>
 
-  <!-- ZONE 2: Bots Strip (Top Opponents) -->
-  <div class="bg-slate-900/60 border-b border-slate-800/80 px-2 py-1 shrink-0">
-    <div id="bots-grid" class="grid grid-cols-3 gap-1.5 max-w-xl mx-auto w-full">
-      
-      <!-- Bot 4 (Right Neighbor) -->
-      <div id="bot4-area" class="bg-slate-900/80 border border-slate-800 rounded-xl p-1.5 flex flex-col justify-between transition-all relative overflow-hidden">
-        <div class="flex items-center justify-between gap-1">
-          <div class="flex items-center gap-1 min-w-0">
-            <div class="w-4 h-4 rounded-full bg-teal-600 flex items-center justify-center font-black text-[9px] shrink-0">4</div>
-            <span class="text-[10px] font-bold text-slate-300 truncate">Bot 4</span>
-          </div>
-          <span id="bot4-strike-badge" class="text-[8px] font-black px-1 py-0.2 rounded border bg-slate-800 text-emerald-400">0/3 Strikes</span>
-        </div>
-        
-        <div class="flex items-center justify-between my-1">
-          <div id="bot4-count-badge" class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 flex items-center gap-1">
-            <span>🎴</span><span>7 cards</span>
-          </div>
-          <div id="bot4-pips" class="flex items-center gap-[2px]"></div>
-        </div>
+  <!-- MAIN PLAYFIELD -->
+  <main class="flex-1 flex flex-col justify-between max-w-5xl mx-auto w-full px-2 py-2 gap-2">
 
-        <div class="flex items-center justify-between text-[9px] font-mono border-t border-slate-800/80 pt-0.5">
-          <span id="bot4-status" class="text-slate-400 font-semibold truncate">Waiting...</span>
+    <!-- BOT ROW (OPPONENTS) -->
+    <div class="grid grid-cols-3 gap-2 w-full pt-1">
+      <!-- Bot 1 (Left) -->
+      <div id="p1-card" class="bg-slate-900/70 border border-slate-800 rounded-xl p-2 flex flex-col items-center relative transition-all">
+        <div class="flex items-center justify-between w-full mb-1">
+          <span class="text-xs font-black text-slate-300 flex items-center gap-1">🤖 Vic "The Viper"</span>
+          <span id="p1-cards-left" class="bg-slate-800 text-[10px] font-bold px-2 py-0.5 rounded-full text-sky-400 border border-slate-700">7 cards</span>
+        </div>
+        <div class="flex items-center gap-1 my-1">
+          <span class="text-[11px] font-bold text-slate-400">Strikes:</span>
+          <div id="p1-strikes" class="flex gap-1 text-xs">
+            <span class="text-slate-700">⚪</span><span class="text-slate-700">⚪</span><span class="text-slate-700">⚪</span>
+          </div>
+        </div>
+        <div class="text-[10px] font-bold text-red-400 flex items-center gap-1">
+          <span>Penalty Red:</span>
+          <span id="p1-penalty-count" class="bg-red-950/80 border border-red-800 px-1.5 py-0.2 rounded font-mono text-red-300">0</span>
         </div>
       </div>
 
-      <!-- Bot 3 (Across) -->
-      <div id="bot3-area" class="bg-slate-900/80 border border-slate-800 rounded-xl p-1.5 flex flex-col justify-between transition-all relative overflow-hidden">
-        <div class="flex items-center justify-between gap-1">
-          <div class="flex items-center gap-1 min-w-0">
-            <div class="w-4 h-4 rounded-full bg-indigo-600 flex items-center justify-center font-black text-[9px] shrink-0">3</div>
-            <span class="text-[10px] font-bold text-slate-300 truncate">Bot 3</span>
+      <!-- Bot 2 (Top Center) -->
+      <div id="p2-card" class="bg-slate-900/70 border border-slate-800 rounded-xl p-2 flex flex-col items-center relative transition-all">
+        <div class="flex items-center justify-between w-full mb-1">
+          <span class="text-xs font-black text-slate-300 flex items-center gap-1">🤖 Frankie "Fingers"</span>
+          <span id="p2-cards-left" class="bg-slate-800 text-[10px] font-bold px-2 py-0.5 rounded-full text-sky-400 border border-slate-700">7 cards</span>
+        </div>
+        <div class="flex items-center gap-1 my-1">
+          <span class="text-[11px] font-bold text-slate-400">Strikes:</span>
+          <div id="p2-strikes" class="flex gap-1 text-xs">
+            <span class="text-slate-700">⚪</span><span class="text-slate-700">⚪</span><span class="text-slate-700">⚪</span>
           </div>
-          <span id="bot3-strike-badge" class="text-[8px] font-black px-1 py-0.2 rounded border bg-slate-800 text-emerald-400">0/3 Strikes</span>
         </div>
+        <div class="text-[10px] font-bold text-red-400 flex items-center gap-1">
+          <span>Penalty Red:</span>
+          <span id="p2-penalty-count" class="bg-red-950/80 border border-red-800 px-1.5 py-0.2 rounded font-mono text-red-300">0</span>
+        </div>
+      </div>
 
-        <div class="flex items-center justify-between my-1">
-          <div id="bot3-count-badge" class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 flex items-center gap-1">
-            <span>🎴</span><span>7 cards</span>
+      <!-- Bot 3 (Right) -->
+      <div id="p3-card" class="bg-slate-900/70 border border-slate-800 rounded-xl p-2 flex flex-col items-center relative transition-all">
+        <div class="flex items-center justify-between w-full mb-1">
+          <span class="text-xs font-black text-slate-300 flex items-center gap-1">🤖 "Slick" Sal</span>
+          <span id="p3-cards-left" class="bg-slate-800 text-[10px] font-bold px-2 py-0.5 rounded-full text-sky-400 border border-slate-700">7 cards</span>
+        </div>
+        <div class="flex items-center gap-1 my-1">
+          <span class="text-[11px] font-bold text-slate-400">Strikes:</span>
+          <div id="p3-strikes" class="flex gap-1 text-xs">
+            <span class="text-slate-700">⚪</span><span class="text-slate-700">⚪</span><span class="text-slate-700">⚪</span>
           </div>
-          <div id="bot3-pips" class="flex items-center gap-[2px]"></div>
         </div>
-
-        <div class="flex items-center justify-between text-[9px] font-mono border-t border-slate-800/80 pt-0.5">
-          <span id="bot3-status" class="text-slate-400 font-semibold truncate">Waiting...</span>
-        </div>
-      </div>
-
-      <!-- Bot 2 (Left Neighbor) -->
-      <div id="bot2-area" class="bg-slate-900/80 border border-slate-800 rounded-xl p-1.5 flex flex-col justify-between transition-all relative overflow-hidden">
-        <div class="flex items-center justify-between gap-1">
-          <div class="flex items-center gap-1 min-w-0">
-            <div class="w-4 h-4 rounded-full bg-rose-600 flex items-center justify-center font-black text-[9px] shrink-0">2</div>
-            <span class="text-[10px] font-bold text-slate-300 truncate">Bot 2</span>
-          </div>
-          <span id="bot2-strike-badge" class="text-[8px] font-black px-1 py-0.2 rounded border bg-slate-800 text-emerald-400">0/3 Strikes</span>
-        </div>
-
-        <div class="flex items-center justify-between my-1">
-          <div id="bot2-count-badge" class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 flex items-center gap-1">
-            <span>🎴</span><span>7 cards</span>
-          </div>
-          <div id="bot2-pips" class="flex items-center gap-[2px]"></div>
-        </div>
-
-        <div class="flex items-center justify-between text-[9px] font-mono border-t border-slate-800/80 pt-0.5">
-          <span id="bot2-status" class="text-slate-400 font-semibold truncate">Waiting...</span>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ZONE 3: Center Table Arena (Discard Pile & Draw Locker) -->
-  <div class="flex-1 flex flex-col justify-center items-center px-3 py-1 relative min-h-0">
-    <div class="w-full max-w-md flex justify-between items-center bg-slate-900/90 border border-slate-800 rounded-2xl p-3 shadow-2xl backdrop-blur-sm relative">
-      
-      <!-- Direction & Turn Order Indicator -->
-      <div id="camera-card" class="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-slate-950 border border-slate-800 shadow">
-        <div id="camera-icon" class="text-2xl transition-transform duration-500">↻</div>
-        <div class="flex flex-col text-left">
-          <span class="text-[8px] font-black text-slate-400 uppercase tracking-wider">Turn Order</span>
-          <span id="camera-label" class="text-xs font-black text-sky-400 leading-tight">CLOCKWISE ↻</span>
-        </div>
-      </div>
-
-      <!-- CENTER DISCARD PILE (The Active Climbing / Item Card) -->
-      <div id="center-discard-area" class="flex flex-col items-center">
-        <span class="text-[8px] font-black text-slate-400 uppercase tracking-wider mb-1">Active Discard</span>
-        <div id="top-discard-card" class="w-[78px] h-[116px] rounded-xl border-2 p-1.5 flex flex-col justify-between items-center shadow-2xl relative transition-all bg-slate-900">
-          <!-- Rendered dynamically -->
-        </div>
-      </div>
-
-      <!-- Evidence Locker (Draw Pile) -->
-      <div id="draw-deck" class="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-slate-950 border border-indigo-900/60 shadow cursor-pointer hover:border-indigo-500 transition active:scale-95 group">
-        <div class="relative">
-          <div class="w-6 h-8 bg-indigo-950 border-2 border-indigo-500 rounded flex items-center justify-center text-[10px] font-black text-indigo-300 shadow">
-            🔒
-          </div>
-          <div class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-rose-500 rounded-full animate-ping"></div>
-        </div>
-        <div class="flex flex-col text-left">
-          <span class="text-[8px] font-black text-indigo-400 uppercase tracking-wider">Locker</span>
-          <span class="text-xs font-mono font-black text-indigo-200"><span id="deck-count">26</span> left</span>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Activity Ticker & Restriction Banner -->
-    <div id="announcement-banner" class="w-full max-w-md mt-1.5 text-center text-[10.5px] font-semibold text-amber-300 truncate px-2 py-0.5 rounded-md bg-amber-950/40 border border-amber-900/40">
-      Play a card with value > top card OR match the Item Icon!
-    </div>
-  </div>
-
-  <!-- ZONE 4: Bottom Mobile Cockpit (Player 0 / Driver) -->
-  <div class="bg-slate-900/95 border-t border-slate-800 px-3 pt-1.5 pb-2 shrink-0 flex flex-col gap-1.5 max-w-2xl mx-auto w-full">
-    
-    <!-- Player Status Bar -->
-    <div class="flex justify-between items-center px-1">
-      <div class="flex items-center gap-2">
-        <div class="w-5 h-5 rounded-full bg-blue-600 flex items-center justify-center font-black text-[10px]">1</div>
-        <span class="text-xs font-black text-slate-200">YOU (Driver)</span>
-        <span id="player-turn-status" class="px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold">YOUR TURN</span>
-      </div>
-
-      <!-- Strike Tracker -->
-      <div class="flex items-center gap-1.5">
-        <span class="text-[10px] font-bold text-slate-400">Strikes:</span>
-        <div id="player-strikes-container" class="flex items-center gap-1">
-          <!-- Rendered dynamically -->
+        <div class="text-[10px] font-bold text-red-400 flex items-center gap-1">
+          <span>Penalty Red:</span>
+          <span id="p3-penalty-count" class="bg-red-950/80 border border-red-800 px-1.5 py-0.2 rounded font-mono text-red-300">0</span>
         </div>
       </div>
     </div>
 
-    <!-- Ergonomic Action Controls Bar -->
-    <div class="grid grid-cols-2 gap-2 w-full" id="action-controls">
-      <button id="btn-play-card" disabled class="h-10 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-25 disabled:pointer-events-none text-white text-xs font-black rounded-xl shadow-lg transition flex items-center justify-center gap-1.5">
-        <span>🃏</span> <span id="btn-play-text">Select Card to Play</span>
+    <!-- CENTER EVIDENCE TABLE -->
+    <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 relative overflow-hidden shadow-2xl">
+      <!-- Glow aura for high stakes -->
+      <div id="evidenceAura" class="absolute inset-0 bg-red-600/5 pointer-events-none transition-all duration-500"></div>
+
+      <!-- Turn & Direction Banner -->
+      <div class="flex flex-col items-center md:items-start z-10">
+        <div class="flex items-center gap-2 mb-1">
+          <span id="turnDirectionIcon" class="text-base bg-slate-800 p-1 rounded border border-slate-700 text-amber-400 font-bold">↻</span>
+          <span id="turnNotice" class="text-xs font-black uppercase tracking-wider text-sky-400">Round 1 • Player 1's Turn</span>
+        </div>
+        <div class="text-xs text-slate-400 flex items-center gap-2">
+          <span>Evidence Pile: <strong id="pileCardCount" class="text-slate-200">0</strong> cards</span>
+          <span>•</span>
+          <span class="text-red-400 font-bold">Red Contraband: <strong id="pileRedCount" class="text-red-400">0</strong></span>
+        </div>
+      </div>
+
+      <!-- CENTER DISCARD EVIDENCE PILE -->
+      <div class="flex flex-col items-center justify-center my-2 z-10">
+        <div id="evidencePileContainer" class="relative w-28 h-40 flex items-center justify-center">
+          <!-- Stack background cards -->
+          <div class="absolute inset-0 card-back rounded-xl rotate-[-4deg] opacity-70 transform"></div>
+          <div class="absolute inset-0 card-back rounded-xl rotate-[3deg] opacity-80 transform"></div>
+          
+          <!-- Top Card on Evidence Pile -->
+          <div id="topEvidenceCard" class="absolute inset-0 card-back rounded-xl shadow-xl flex flex-col items-center justify-center p-2 text-center border-2 border-slate-600">
+            <span class="text-3xl mb-1">📁</span>
+            <span class="text-[9px] font-black uppercase tracking-wider text-slate-300">EVIDENCE</span>
+            <span class="text-[7.5px] font-bold text-slate-400">FACE DOWN</span>
+          </div>
+
+          <!-- Flip Reveal Card (Initially hidden) -->
+          <div id="revealCard" class="absolute inset-0 rounded-xl shadow-2xl flex flex-col justify-between p-2 hidden z-30 transform transition-all duration-500">
+            <!-- Rendered dynamically during investigation -->
+          </div>
+        </div>
+
+        <!-- ACTIVE CLAIM CALLOUT -->
+        <div id="activeClaimBanner" class="mt-2 text-center bg-slate-800/90 border border-slate-700 px-3 py-1.5 rounded-lg shadow">
+          <div class="text-[10px] uppercase font-bold text-slate-400">Current Claim</div>
+          <div id="currentClaimText" class="text-base font-black text-amber-300">Pile Empty (Declare 1-10)</div>
+          <div id="lastClaimantText" class="text-[9.5px] text-slate-400 font-semibold">—</div>
+        </div>
+      </div>
+
+      <!-- ACTION CHALLENGE & INVESTIGATION BUTTONS -->
+      <div class="flex flex-col items-center md:items-end gap-2 w-full md:w-auto z-10">
+        <!-- INVESTIGATE BUTTON -->
+        <button id="investigateBtn" disabled class="w-full md:w-44 bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 disabled:opacity-40 disabled:cursor-not-allowed text-white font-black text-sm px-4 py-3 rounded-xl shadow-lg border border-red-500/50 flex items-center justify-center gap-2 transition pulse-danger">
+          <span class="text-lg">🔍</span>
+          <span>INVESTIGATE!</span>
+        </button>
+
+        <!-- PASS & DRAW BUTTON -->
+        <button id="passDrawBtn" disabled class="w-full md:w-44 bg-slate-800 hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed text-slate-200 font-bold text-xs px-4 py-2 rounded-xl border border-slate-700 flex items-center justify-center gap-2 transition">
+          <span>📥</span>
+          <span>Pass & Draw 1 Card</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- GAME LOG / ACTIVITY FEED -->
+    <div id="gameLog" class="bg-slate-900/60 border border-slate-800/70 rounded-xl px-3 py-1.5 h-14 overflow-y-auto text-[11px] text-slate-300 space-y-0.5 mono">
+      <div class="text-slate-400">🚨 Game started! Shed all your cards. Bluff or tell the truth!</div>
+    </div>
+
+    <!-- HUMAN PLAYER DASHBOARD (YOU) -->
+    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-3 shadow-xl">
+      <div class="flex items-center justify-between mb-2">
+        <div class="flex items-center gap-2">
+          <span class="text-base font-black text-sky-400 flex items-center gap-1">🕵️ You (Player 1)</span>
+          <span id="playerStrikes" class="text-xs flex gap-1 items-center bg-slate-800 px-2 py-0.5 rounded-full border border-slate-700">
+            <span class="text-[10px] font-bold text-slate-400 mr-1">Strikes:</span>
+            <span id="p0-s1" class="text-slate-700">⚪</span>
+            <span id="p0-s2" class="text-slate-700">⚪</span>
+            <span id="p0-s3" class="text-slate-700">⚪</span>
+          </span>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="text-xs font-bold text-red-400 bg-red-950/70 border border-red-800/60 px-2.5 py-1 rounded-lg">
+            🚨 Your Penalty Red: <strong id="playerPenaltyCount" class="font-mono text-red-200">0</strong>
+          </span>
+          <span id="playerCardCount" class="text-xs font-bold text-slate-400">7 cards</span>
+        </div>
+      </div>
+
+      <!-- PLAYER HAND CARDS CONTAINER -->
+      <div id="playerHand" class="flex gap-2 overflow-x-auto pb-2 pt-2 px-1 min-h-[145px] items-center justify-center md:justify-start">
+        <!-- Cards injected dynamically -->
+      </div>
+
+      <!-- PLAY SELECTION PANEL (Reveals when a card in hand is tapped) -->
+      <div id="declarationPanel" class="mt-2 p-2.5 bg-slate-950/90 border border-sky-500/50 rounded-xl hidden flex flex-col md:flex-row items-center justify-between gap-2">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold text-sky-400">Selected Card:</span>
+          <span id="selectedCardLabel" class="text-xs font-black text-white bg-slate-800 px-2.5 py-1 rounded border border-slate-700">None</span>
+          <span id="selectedCardTruthHint" class="text-[10px] text-slate-400 font-semibold">(Truthful or Bluff?)</span>
+        </div>
+
+        <!-- DECLARATION NUMBERS SELECTOR -->
+        <div class="flex items-center gap-1.5 flex-wrap justify-center">
+          <span class="text-xs font-bold text-slate-300">Declare Value:</span>
+          <div id="declareButtonsContainer" class="flex gap-1 flex-wrap">
+            <!-- Buttons 1..10 + Reset injected -->
+          </div>
+          <button id="confirmPlayBtn" class="bg-sky-600 hover:bg-sky-500 text-white font-black text-xs px-4 py-2 rounded-lg shadow transition flex items-center gap-1 ml-2">
+            <span>🚀</span> Play Face Down
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- MODAL: ROUND OVER / GETAWAY CAR -->
+  <div id="roundOverModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-slate-900 border border-slate-700 max-w-md w-full rounded-2xl p-6 shadow-2xl text-center">
+      <div class="text-4xl mb-2">🚗💨</div>
+      <h2 id="roundOverTitle" class="text-2xl font-black text-amber-400 tracking-wide uppercase">GETAWAY CAR!</h2>
+      <p id="roundOverSubtitle" class="text-xs font-bold text-slate-300 mb-4">Player escaped! Tallying remaining contraband...</p>
+
+      <!-- Contraband Table -->
+      <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-3 mb-4 text-xs">
+        <div class="grid grid-cols-4 font-bold text-slate-400 border-b border-slate-800 pb-1 mb-2 text-[10px] uppercase">
+          <span>Thief</span>
+          <span>Hand Red</span>
+          <span>Penalty</span>
+          <span>Total Red</span>
+        </div>
+        <div id="roundOverScores" class="space-y-1.5 text-xs font-semibold">
+          <!-- Injected dynamically -->
+        </div>
+      </div>
+
+      <div id="strikeNotice" class="text-sm font-black text-red-400 mb-4 p-2 bg-red-950/50 border border-red-800 rounded-lg">
+        🚨 Player receives 1 Mugshot Strike!
+      </div>
+
+      <button id="nextRoundBtn" class="w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-black text-sm py-3 rounded-xl shadow-lg transition">
+        NEXT ROUND ➔
       </button>
-      <button id="btn-draw-card" class="h-10 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-25 disabled:pointer-events-none text-white text-xs font-black rounded-xl shadow-lg transition flex items-center justify-center gap-1.5">
-        <span>📦</span> <span>Can't Play: Draw 1 Card</span>
-      </button>
-    </div>
-
-    <!-- Touch Hand Carousel (72px x 112px tactile mobile cards) -->
-    <div class="relative w-full overflow-hidden">
-      <div id="player-hand" class="flex gap-1.5 sm:gap-2 overflow-x-auto py-2 px-1 items-end justify-start sm:justify-center w-full no-scrollbar min-h-[120px]">
-        <!-- Cards rendered dynamically -->
-      </div>
-    </div>
-
-    <!-- Micro Rule Hint -->
-    <div class="text-center text-[9px] text-slate-400 font-medium leading-none">
-      Play <span class="text-emerald-400 font-bold">> Top Card</span> OR <span class="text-sky-400 font-bold">Match Item 🌉</span> • 🚨 <span class="text-rose-400 font-bold">Holding Red in hand = Strike!</span> • <span class="text-slate-300 font-bold">3 Strikes = Out!</span>
-    </div>
-
-  </div>
-
-  <!-- Round End / Escape Check Modal -->
-  <div id="round-modal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-3 z-50 hidden">
-    <div class="bg-slate-900 border-2 border-rose-500 rounded-3xl p-5 max-w-sm sm:max-w-md w-full text-center shadow-2xl flex flex-col items-center gap-3 max-h-[90vh] overflow-y-auto">
-      <div id="modal-icon" class="w-12 h-12 rounded-full bg-rose-600/20 border-2 border-rose-500 flex items-center justify-center text-2xl shadow">
-        🚗💨
-      </div>
-      <h2 id="modal-title" class="text-xl font-black text-rose-500 tracking-wider uppercase">"GETAWAY CAR!"</h2>
-      <p id="modal-desc" class="text-slate-300 text-xs"></p>
-      
-      <!-- Hands & Strike Breakdown -->
-      <div id="modal-scores" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl p-3 flex flex-col gap-2 text-xs text-left">
-        <!-- Injected dynamically -->
-      </div>
-
-      <button id="modal-next-btn" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs rounded-xl shadow-lg transition flex items-center justify-center gap-2">
-        <span>NEXT ROUND</span> ➡️
-      </button>
     </div>
   </div>
 
+  <!-- MODAL: RULES EXPLAINER -->
+  <div id="rulesModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-slate-900 border border-slate-700 max-w-lg w-full rounded-2xl p-6 shadow-2xl max-h-[85vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">🚨</span>
+          <h3 class="text-lg font-black text-white">How To Play: The Interrogation</h3>
+        </div>
+        <button id="closeRulesBtn" class="text-slate-400 hover:text-white font-bold text-lg p-1">✕</button>
+      </div>
+
+      <div class="text-xs text-slate-300 space-y-3 leading-relaxed">
+        <p><strong>Goal:</strong> Empty your hand first to trigger the <strong>Getaway Car</strong>, while sticking your rivals with toxic Red Contraband!</p>
+
+        <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800">
+          <strong class="text-sky-400 block mb-1">On Your Turn, Choose ONE:</strong>
+          <ul class="list-disc list-inside space-y-1 text-[11px] text-slate-300">
+            <li><strong>Play Face Down & Declare:</strong> Choose 1 card, place it face-down, and declare its value. The declared value must be <strong>strictly higher</strong> than the previous declared value (&gt; X). Or declare "Reset" with a Reset card!</li>
+            <li><strong>INVESTIGATE!:</strong> Call bluff on the previous player's card!</li>
+            <li><strong>Pass & Draw:</strong> Draw 1 card from locker. Turn passes.</li>
+          </ul>
+        </div>
+
+        <div class="bg-red-950/50 p-2.5 rounded-lg border border-red-900/60">
+          <strong class="text-red-400 block mb-1">🔍 Investigation Resolution:</strong>
+          <ul class="list-disc list-inside space-y-1 text-[11px] text-slate-300">
+            <li><strong>Caught Red-Handed (Bluff / Illegal):</strong> Bluffer takes ALL Red Contraband cards from the pile into their Penalty Pile!</li>
+            <li><strong>False Accusation (Truth / Legal):</strong> Investigator takes ALL Red Contraband cards from the pile!</li>
+            <li><i>Blue & Reset cards are secured into the Vault (cleared)!</i></li>
+          </ul>
+        </div>
+
+        <div class="bg-amber-950/50 p-2.5 rounded-lg border border-amber-900/60">
+          <strong class="text-amber-400 block mb-1">🚨 Red Contraband Types:</strong>
+          <ul class="list-disc list-inside space-y-1 text-[11px] text-slate-300">
+            <li><strong>Numbered Red (1-6):</strong> Low contraband. Can be played legally if &gt; previous number!</li>
+            <li><strong>Hot Evidence (🚨):</strong> NO NUMBER! You CANNOT play it legally. You <strong>MUST BLUFF</strong> to shed it!</li>
+          </ul>
+        </div>
+
+        <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800">
+          <strong class="text-emerald-400 block mb-1">🚗 Getaway Car & Strikes:</strong>
+          <p class="text-[11px]">When any player empties their hand, the round ends. The escapee gets 0 Strikes! Everyone else counts: <code>Hand Red + Penalty Red</code>. Highest red count takes <strong>1 Strike</strong>! <strong>3 Strikes = Federal Prison!</strong></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOUND SYNTH (Web Audio API) -->
   <script>
-    // CAUGHT RED-HANDED V2: THE BRIDGE & SHED EDITION
-    // 6 Items x 8 cards = 48 cards (Red 1,2 + Blue 3..8) + 6 Resets (0) = 54 cards total!
-    // Discard Rule: Play card if value > top card OR if Item matches top card (Item Bridge)!
-    // If you're caught holding ANY Red card when someone empties hand, you get a Strike! (3 Strikes = Out).
+    const AudioEngine = {
+      ctx: null,
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) this.ctx = new AudioContext();
+        }
+      },
+      playTone(freq, type, duration, gainVal = 0.1) {
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+          gain.gain.setValueAtTime(gainVal, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + duration);
+        } catch(e) {}
+      },
+      playCardSlap() {
+        this.playTone(220, 'triangle', 0.08, 0.15);
+      },
+      playInvestigateAlert() {
+        try {
+          this.init();
+          if (!this.ctx) return;
+          this.playTone(600, 'sawtooth', 0.15, 0.2);
+          setTimeout(() => this.playTone(900, 'sawtooth', 0.25, 0.25), 120);
+        } catch(e) {}
+      },
+      playCaughtBusted() {
+        try {
+          this.init();
+          if (!this.ctx) return;
+          this.playTone(300, 'sawtooth', 0.2, 0.3);
+          setTimeout(() => this.playTone(200, 'sawtooth', 0.4, 0.35), 180);
+        } catch(e) {}
+      },
+      playFalseAccusation() {
+        try {
+          this.init();
+          if (!this.ctx) return;
+          this.playTone(450, 'sine', 0.15, 0.2);
+          setTimeout(() => this.playTone(350, 'sine', 0.25, 0.2), 140);
+        } catch(e) {}
+      },
+      playEscapeFanfare() {
+        try {
+          this.init();
+          if (!this.ctx) return;
+          [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+            setTimeout(() => this.playTone(freq, 'triangle', 0.3, 0.25), idx * 120);
+          });
+        } catch(e) {}
+      }
+    };
+  </script>
 
-    const ITEMS = [
-      { name: "Cash", icon: "💵" },
-      { name: "Diamond", icon: "💎" },
-      { name: "Watch", icon: "⌚" },
-      { name: "Key", icon: "🗝️" },
-      { name: "Art", icon: "🖼️" },
-      { name: "Gold", icon: "🧈" }
-    ];
+  <!-- CORE GAME LOGIC -->
+  <script>
+    // DECK DEFINITION (54 Cards)
+    // 36 Blue + 8 Red Numbered + 6 Red Hot + 4 Resets
+    function createDeck() {
+      const deck = [];
+      let idCounter = 1;
 
-    let numPlayers = 4;
-    let deck = [];
-    let discardPile = [];
-    let hands = [[], [], [], []];
-    let strikes = [0, 0, 0, 0]; // 3 strikes = eliminated!
-    let eliminated = [false, false, false, false];
-    let currentPlayer = 0;
-    let direction = 1; // 1 = Clockwise, -1 = Counter-Clockwise
-    let roundNumber = 1;
-    let turnCount = 1;
-    let starterPlayer = 0;
-    let selectedCardIndex = null;
+      // Blue Clean Loot (36 Cards: 1..10)
+      const blueDistribution = [3, 3, 4, 4, 4, 4, 4, 4, 3, 3];
+      const items = ["💵 Cash", "💎 Gems", "⌚ Watch", "🗝️ Key", "🖼️ Art", "🧈 Gold"];
+      for (let v = 1; v <= 10; v++) {
+        const count = blueDistribution[v - 1];
+        for (let i = 0; i < count; i++) {
+          const item = items[(v + i) % items.length];
+          deck.push({
+            id: idCounter++,
+            type: 'BLUE',
+            val: v,
+            displayVal: v.toString(),
+            name: `${item.split(' ')[1]} ${v}`,
+            icon: item.split(' ')[0],
+            sub: 'Clean Loot • Safe'
+          });
+        }
+      }
 
-    function buildDeck() {
-      const cards = [];
+      // Red Numbered Contraband (8 Cards: 1..6)
+      const redNumbered = [
+        { v: 1, name: 'Hot Cash', icon: '💵🚨' },
+        { v: 1, name: 'Hot Cash', icon: '💵🚨' },
+        { v: 2, name: 'Blood Gem', icon: '💎🚨' },
+        { v: 2, name: 'Blood Gem', icon: '💎🚨' },
+        { v: 3, name: 'Hot Rolex', icon: '⌚🚨' },
+        { v: 4, name: 'Master Key', icon: '🗝️🚨' },
+        { v: 5, name: 'Stolen Art', icon: '🖼️🚨' },
+        { v: 6, name: 'Smuggled Gold', icon: '🧈🚨' }
+      ];
+      redNumbered.forEach(rn => {
+        deck.push({
+          id: idCounter++,
+          type: 'RED_NUM',
+          val: rn.v,
+          displayVal: rn.v.toString(),
+          name: rn.name,
+          icon: rn.icon,
+          sub: 'Numbered Red • Legal if > prev'
+        });
+      });
 
-      ITEMS.forEach(it => {
-        // Red Contraband: 1, 2
-        cards.push({ val: 1, item: it.name, icon: it.icon, color: "RED", type: "CONTRABAND", sub: "Petty Contraband" });
-        cards.push({ val: 2, item: it.name, icon: it.icon, color: "RED", type: "CONTRABAND", sub: "Grand Contraband" });
+      // Red Hot Evidence (6 Cards: Unnumbered)
+      const hotEvidenceNames = [
+        "Crime Scene Dossier", "Crime Scene Dossier",
+        "Federal Wire Bug", "Federal Wire Bug",
+        "Syndicate Seal", "Syndicate Seal"
+      ];
+      hotEvidenceNames.forEach(name => {
+        deck.push({
+          id: idCounter++,
+          type: 'RED_HOT',
+          val: -1,
+          displayVal: '🚨',
+          name: name,
+          icon: '📁🚨',
+          sub: 'HOT EVIDENCE • MUST BLUFF!'
+        });
+      });
 
-        // Blue Clean Loot: 3, 4, 5, 6, 7, 8
-        for (let v = 3; v <= 8; v++) {
-          cards.push({ val: v, item: it.name, icon: it.icon, color: "BLUE", type: "CLEAN", sub: "Clean Loot" });
+      // Tactical Resets (4 Cards: 0)
+      deck.push({ id: idCounter++, type: 'RESET', val: 0, displayVal: '0', name: 'The Fence', icon: '🤝0', sub: 'Resets to 0 • Next 1-10', isSmoke: false });
+      deck.push({ id: idCounter++, type: 'RESET', val: 0, displayVal: '0', name: 'The Fence', icon: '🤝0', sub: 'Resets to 0 • Next 1-10', isSmoke: false });
+      deck.push({ id: idCounter++, type: 'RESET', val: 0, displayVal: '0', name: 'Smoke Bomb', icon: '💨🔄', sub: 'Resets to 0 & REVERSES', isSmoke: true });
+      deck.push({ id: idCounter++, type: 'RESET', val: 0, displayVal: '0', name: 'Smoke Bomb', icon: '💨🔄', sub: 'Resets to 0 & REVERSES', isSmoke: true });
+
+      return deck;
+    }
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    // GAME STATE
+    const GameState = {
+      players: [
+        { id: 0, name: "You", isHuman: true, hand: [], penaltyPile: [], strikes: 0 },
+        { id: 1, name: 'Vic "The Viper"', isHuman: false, hand: [], penaltyPile: [], strikes: 0 },
+        { id: 2, name: 'Frankie "Fingers"', isHuman: false, hand: [], penaltyPile: [], strikes: 0 },
+        { id: 3, name: '"Slick" Sal', isHuman: false, hand: [], penaltyPile: [], strikes: 0 }
+      ],
+      drawDeck: [],
+      evidencePile: [], // Array of card objects currently on the pile
+      lastPlay: null, // { playerId, card, declaredVal, declaredReset, isLegal }
+      activeDeclaredVal: 0,
+      activeTurnPlayer: 0,
+      turnDirection: 1, // 1 for clockwise, -1 for counter-clockwise
+      consecutivePasses: 0,
+      selectedCardId: null,
+      selectedDeclaredVal: null,
+      isInvestigatingAnimation: false,
+      roundNumber: 1
+    };
+
+    // DOM ELEMENTS
+    const gameLog = document.getElementById('gameLog');
+    const turnNotice = document.getElementById('turnNotice');
+    const turnDirectionIcon = document.getElementById('turnDirectionIcon');
+    const pileCardCount = document.getElementById('pileCardCount');
+    const pileRedCount = document.getElementById('pileRedCount');
+    const currentClaimText = document.getElementById('currentClaimText');
+    const lastClaimantText = document.getElementById('lastClaimantText');
+    const investigateBtn = document.getElementById('investigateBtn');
+    const passDrawBtn = document.getElementById('passDrawBtn');
+    const playerHandContainer = document.getElementById('playerHand');
+    const declarationPanel = document.getElementById('declarationPanel');
+    const selectedCardLabel = document.getElementById('selectedCardLabel');
+    const selectedCardTruthHint = document.getElementById('selectedCardTruthHint');
+    const declareButtonsContainer = document.getElementById('declareButtonsContainer');
+    const confirmPlayBtn = document.getElementById('confirmPlayBtn');
+    const roundOverModal = document.getElementById('roundOverModal');
+    const rulesModal = document.getElementById('rulesModal');
+    const revealCard = document.getElementById('revealCard');
+    const evidenceAura = document.getElementById('evidenceAura');
+
+    function log(msg, color = 'text-slate-300') {
+      const line = document.createElement('div');
+      line.className = color;
+      line.innerHTML = msg;
+      gameLog.appendChild(line);
+      gameLog.scrollTop = gameLog.scrollHeight;
+    }
+
+    function initMatch() {
+      GameState.players.forEach(p => {
+        p.strikes = 0;
+        p.penaltyPile = [];
+      });
+      GameState.roundNumber = 1;
+      startRound();
+    }
+
+    function startRound() {
+      const fullDeck = shuffle(createDeck());
+      GameState.drawDeck = fullDeck;
+      GameState.evidencePile = [];
+      GameState.lastPlay = null;
+      GameState.activeDeclaredVal = 0;
+      GameState.turnDirection = 1;
+      GameState.consecutivePasses = 0;
+      GameState.selectedCardId = null;
+      GameState.selectedDeclaredVal = null;
+      GameState.isInvestigatingAnimation = false;
+
+      // Deal 7 cards to each player
+      GameState.players.forEach(p => {
+        p.hand = [];
+        p.penaltyPile = [];
+        for (let i = 0; i < 7; i++) {
+          p.hand.push(GameState.drawDeck.pop());
+        }
+        // Sort human player hand by color and value
+        if (p.isHuman) {
+          sortPlayerHand();
         }
       });
 
-      // Special Resets: 6 cards total (0)
-      cards.push({ val: 0, item: "Wild", name: "The Fence", icon: "🤝", color: "SPECIAL", type: "RESET", sub: "Resets Pile to 0 & Wild" });
-      cards.push({ val: 0, item: "Wild", name: "The Fence", icon: "🤝", color: "SPECIAL", type: "RESET", sub: "Resets Pile to 0 & Wild" });
-      cards.push({ val: 0, item: "Wild", name: "Smoke Bomb", icon: "💨🔄", color: "SPECIAL", type: "RESET_REVERSE", sub: "Resets to 0 & Flips 🔄" });
-      cards.push({ val: 0, item: "Wild", name: "Smoke Bomb", icon: "💨🔄", color: "SPECIAL", type: "RESET_REVERSE", sub: "Resets to 0 & Flips 🔄" });
-      cards.push({ val: 0, item: "Wild", name: "The Snitch", icon: "🕵️🚨", color: "SPECIAL", type: "RESET_DRAW", sub: "Resets to 0 & Next Draws 1" });
-      cards.push({ val: 0, item: "Wild", name: "The Snitch", icon: "🕵️🚨", color: "SPECIAL", type: "RESET_DRAW", sub: "Resets to 0 & Next Draws 1" });
-
-      // Fisher-Yates shuffle
-      for (let i = cards.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [cards[i], cards[j]] = [cards[j], cards[i]];
-      }
-      return cards;
-    }
-
-    function initRound() {
-      deck = buildDeck();
-      discardPile = [];
-      hands = [[], [], [], []];
-      turnCount = 1;
-      direction = 1;
-      selectedCardIndex = null;
-
-      // Deal 7 cards to each active player
-      for (let i = 0; i < 7; i++) {
-        for (let p = 0; p < numPlayers; p++) {
-          if (!eliminated[p]) {
-            hands[p].push(deck.pop());
-          }
-        }
-      }
-
-      // Flip starting discard card
-      let startCard = deck.pop();
-      discardPile.push(startCard);
-
-      // Starting player: starterPlayer or next non-eliminated
-      currentPlayer = starterPlayer;
-      while (eliminated[currentPlayer]) {
-        currentPlayer = (currentPlayer + 1) % numPlayers;
-      }
-
+      // Player 0 (Human) or random leads first
+      GameState.activeTurnPlayer = 0;
+      log(`<strong>--- ROUND ${GameState.roundNumber} BEGINS ---</strong> 7 cards dealt to all thieves.`, 'text-amber-400 font-bold');
       updateUI();
-      logAnnouncement(`Round ${roundNumber} begins! Top discard is ${startCard.item} ${startCard.val > 0 ? startCard.val : ''} (${startCard.icon}).`);
 
-      if (currentPlayer !== 0) {
-        setTimeout(playBotTurn, 800);
+      if (!GameState.players[GameState.activeTurnPlayer].isHuman) {
+        setTimeout(botTurn, 1000);
       }
     }
 
-    function resetEntireMatch() {
-      strikes = [0, 0, 0, 0];
-      eliminated = [false, false, false, false];
-      roundNumber = 1;
-      starterPlayer = 0;
-      initRound();
+    function sortPlayerHand() {
+      const order = { 'RED_HOT': 1, 'RED_NUM': 2, 'RESET': 3, 'BLUE': 4 };
+      GameState.players[0].hand.sort((a, b) => {
+        if (order[a.type] !== order[b.type]) return order[a.type] - order[b.type];
+        return a.val - b.val;
+      });
     }
 
-    function getTopDiscard() {
-      return discardPile[discardPile.length - 1];
-    }
+    function updateUI() {
+      // Turn direction
+      turnDirectionIcon.textContent = GameState.turnDirection === 1 ? '↻' : '↺';
 
-    // Evaluation for Option 3:
-    // Playable if:
-    // 1. Reset card (val === 0)
-    // 2. Value > top.val
-    // 3. Item === top.item (Item Bridge!)
-    function evaluateCardPlayability(card) {
-      const top = getTopDiscard();
-      if (!top) return { playable: true, reason: "OPEN" };
-      if (card.val === 0) return { playable: true, reason: "RESET" };
-      if (card.val > top.val) return { playable: true, reason: "HIGHER" };
-      if (top.item !== "Wild" && card.item === top.item) return { playable: true, reason: "BRIDGE" };
-      return { playable: false, reason: "LOCKED" };
-    }
+      // Active player notice
+      const activeP = GameState.players[GameState.activeTurnPlayer];
+      turnNotice.innerHTML = `Round ${GameState.roundNumber} • <span class="${activeP.isHuman ? 'text-sky-400' : 'text-amber-400'} font-black">${activeP.name}'s Turn</span>`;
 
-    function getPlayerName(p) {
-      if (p === 0) return "You";
-      return `Bot ${p + 1}`;
-    }
+      // Evidence pile stats
+      pileCardCount.textContent = GameState.evidencePile.length;
+      const redCount = GameState.evidencePile.filter(c => c.type === 'RED_NUM' || c.type === 'RED_HOT').length;
+      pileRedCount.textContent = redCount;
 
-    function getNextActivePlayer(current) {
-      let next = current;
-      do {
-        next = (next + direction + numPlayers) % numPlayers;
-      } while (eliminated[next] && next !== current);
-      return next;
-    }
-
-    function playCard(playerIdx, cardIdx) {
-      const card = hands[playerIdx].splice(cardIdx, 1)[0];
-      const topBefore = getTopDiscard();
-      discardPile.push(card);
-
-      const isBridge = (topBefore && topBefore.item !== "Wild" && card.item === topBefore.item && card.val <= topBefore.val);
-
-      if (card.type === 'RESET_REVERSE') {
-        direction = -direction;
-        logAnnouncement(`🔄 SMOKE BOMB! ${getPlayerName(playerIdx)} reset pile to 0 & reversed play direction!`);
-      } else if (card.type === 'RESET_DRAW') {
-        const victim = getNextActivePlayer(playerIdx);
-        if (deck.length > 0) {
-          hands[victim].push(deck.pop());
-        }
-        logAnnouncement(`🚨 THE SNITCH! ${getPlayerName(playerIdx)} reset pile to 0 & forced ${getPlayerName(victim)} to draw 1 card!`);
-      } else if (card.type === 'RESET') {
-        logAnnouncement(`🤝 THE FENCE! ${getPlayerName(playerIdx)} reset pile to 0 & wild item!`);
-      } else if (isBridge) {
-        logAnnouncement(`🌉 ITEM BRIDGE! ${getPlayerName(playerIdx)} matched ${card.item} and pivoted pile down to ${card.val}!`);
+      // Evidence aura intensity
+      if (redCount >= 3) {
+        evidenceAura.className = "absolute inset-0 bg-red-600/25 pointer-events-none transition-all duration-500 animate-pulse";
+      } else if (redCount >= 1) {
+        evidenceAura.className = "absolute inset-0 bg-red-600/10 pointer-events-none transition-all duration-500";
       } else {
-        logAnnouncement(`${getPlayerName(playerIdx)} climbed pile with ${card.item} ${card.val}.`);
+        evidenceAura.className = "absolute inset-0 bg-transparent pointer-events-none transition-all duration-500";
+      }
+
+      // Claim text
+      if (GameState.lastPlay) {
+        const valStr = GameState.lastPlay.declaredReset ? '0 (RESET)' : GameState.lastPlay.declaredVal.toString();
+        currentClaimText.textContent = `Declared: ${valStr}`;
+        lastClaimantText.textContent = `Claimed by ${GameState.players[GameState.lastPlay.playerId].name}`;
+      } else {
+        currentClaimText.textContent = `Pile Empty (Start 1-10)`;
+        lastClaimantText.textContent = `Ready for initial play`;
+      }
+
+      // Opponent cards & strikes
+      [1, 2, 3].forEach(idx => {
+        const bot = GameState.players[idx];
+        const botEl = document.getElementById(`p${idx}-card`);
+        document.getElementById(`p${idx}-cards-left`).textContent = `${bot.hand.length} cards`;
+        document.getElementById(`p${idx}-penalty-count`).textContent = bot.penaltyPile.length;
+
+        // Active border highlight
+        if (GameState.activeTurnPlayer === idx) {
+          botEl.className = "bg-slate-900 border-2 border-amber-400 rounded-xl p-2 flex flex-col items-center relative shadow-lg shadow-amber-500/10 scale-[1.02] transition-all";
+        } else {
+          botEl.className = "bg-slate-900/70 border border-slate-800 rounded-xl p-2 flex flex-col items-center relative transition-all";
+        }
+
+        // Strike icons
+        const strikeContainer = document.getElementById(`p${idx}-strikes`);
+        strikeContainer.innerHTML = '';
+        for (let s = 1; s <= 3; s++) {
+          strikeContainer.innerHTML += s <= bot.strikes ? '<span class="text-red-500">🔴</span>' : '<span class="text-slate-700">⚪</span>';
+        }
+      });
+
+      // Human player (P0) stats
+      const p0 = GameState.players[0];
+      document.getElementById('playerCardCount').textContent = `${p0.hand.length} cards`;
+      document.getElementById('playerPenaltyCount').textContent = p0.penaltyPile.length;
+      for (let s = 1; s <= 3; s++) {
+        const el = document.getElementById(`p0-s${s}`);
+        el.className = s <= p0.strikes ? 'text-red-500' : 'text-slate-700';
+        el.textContent = s <= p0.strikes ? '🔴' : '⚪';
+      }
+
+      // Action buttons state
+      const isMyTurn = GameState.activeTurnPlayer === 0 && !GameState.isInvestigatingAnimation;
+      investigateBtn.disabled = !isMyTurn || !GameState.lastPlay;
+      passDrawBtn.disabled = !isMyTurn;
+
+      // Render player hand
+      renderPlayerHand();
+    }
+
+    function renderPlayerHand() {
+      playerHandContainer.innerHTML = '';
+      const p0 = GameState.players[0];
+      const isMyTurn = GameState.activeTurnPlayer === 0 && !GameState.isInvestigatingAnimation;
+
+      p0.hand.forEach(card => {
+        const isSelected = GameState.selectedCardId === card.id;
+        const cardEl = document.createElement('div');
+        
+        let themeClass = 'card-blue';
+        if (card.type === 'RED_NUM' || card.type === 'RED_HOT') themeClass = 'card-red';
+        if (card.type === 'RESET') themeClass = 'card-special';
+
+        cardEl.className = `game-card ${themeClass} ${isSelected ? 'selected' : ''} w-20 h-28 rounded-xl p-1.5 flex flex-col justify-between cursor-pointer flex-shrink-0 select-none shadow-md`;
+        
+        cardEl.innerHTML = `
+          <div class="flex justify-between items-start leading-none">
+            <span class="font-black text-sm tracking-tighter">${card.displayVal}</span>
+            <span class="text-xs">${card.icon}</span>
+          </div>
+          <div class="text-center my-auto">
+            <div class="text-lg leading-none">${card.icon}</div>
+            <div class="text-[8px] font-black uppercase tracking-tight mt-1 line-clamp-1">${card.name}</div>
+          </div>
+          <div class="text-[6.5px] font-bold text-center border-t border-current/20 pt-0.5 leading-tight opacity-80">
+            ${card.type === 'RED_HOT' ? 'BLUFF!' : (card.type === 'RESET' ? 'RESET' : 'VAL ' + card.val)}
+          </div>
+        `;
+
+        cardEl.onclick = () => {
+          if (!isMyTurn) return;
+          AudioEngine.playCardSlap();
+          if (GameState.selectedCardId === card.id) {
+            GameState.selectedCardId = null;
+            declarationPanel.classList.add('hidden');
+          } else {
+            GameState.selectedCardId = card.id;
+            openDeclarationPanel(card);
+          }
+          renderPlayerHand();
+        };
+
+        playerHandContainer.appendChild(cardEl);
+      });
+    }
+
+    function openDeclarationPanel(card) {
+      declarationPanel.classList.remove('hidden');
+      selectedCardLabel.textContent = `${card.name} (${card.displayVal})`;
+
+      // Truth hint
+      if (card.type === 'RED_HOT') {
+        selectedCardTruthHint.innerHTML = `<span class="text-red-400 font-bold">⚠️ Pure Contraband: You MUST Bluff!</span>`;
+      } else if (card.type === 'RESET') {
+        selectedCardTruthHint.innerHTML = `<span class="text-amber-400 font-bold">⚡ Truth: Resets count to 0</span>`;
+      } else if (card.val > GameState.activeDeclaredVal) {
+        selectedCardTruthHint.innerHTML = `<span class="text-emerald-400 font-bold">✓ Truth: Beats current ${GameState.activeDeclaredVal}</span>`;
+      } else {
+        selectedCardTruthHint.innerHTML = `<span class="text-amber-300 font-bold">⚠️ Bluff: Number ≤ current ${GameState.activeDeclaredVal}</span>`;
+      }
+
+      // Generate valid declaration buttons
+      declareButtonsContainer.innerHTML = '';
+      const minDeclare = GameState.activeDeclaredVal + 1;
+
+      // Resets button (if activeDeclaredVal >= 1, can declare Reset)
+      const resetBtn = document.createElement('button');
+      resetBtn.className = "bg-amber-950/80 hover:bg-amber-800 text-amber-200 border border-amber-700/80 text-[10px] font-black px-2.5 py-1 rounded transition";
+      resetBtn.innerHTML = "0 (RESET)";
+      resetBtn.onclick = () => selectDeclaredVal(0, true);
+      declareButtonsContainer.appendChild(resetBtn);
+
+      // Number buttons: must be > activeDeclaredVal (or 1..10 if pile is 0)
+      for (let v = 1; v <= 10; v++) {
+        if (v >= minDeclare) {
+          const btn = document.createElement('button');
+          const isTruth = (card.val === v);
+          btn.className = `text-[11px] font-black w-7 h-7 rounded flex items-center justify-center transition border ${
+            isTruth 
+              ? 'bg-emerald-950/90 hover:bg-emerald-800 text-emerald-300 border-emerald-500' 
+              : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700'
+          }`;
+          btn.textContent = v;
+          btn.onclick = () => selectDeclaredVal(v, false);
+          declareButtonsContainer.appendChild(btn);
+        }
+      }
+
+      // Default select truth if valid, else lowest valid bluff
+      if (card.type === 'RESET') {
+        selectDeclaredVal(0, true);
+      } else if (card.val >= minDeclare) {
+        selectDeclaredVal(card.val, false);
+      } else if (minDeclare <= 10) {
+        selectDeclaredVal(minDeclare, false);
+      } else {
+        selectDeclaredVal(0, true);
+      }
+    }
+
+    function selectDeclaredVal(val, isReset) {
+      GameState.selectedDeclaredVal = { val, isReset };
+      // Highlight button
+      Array.from(declareButtonsContainer.children).forEach(btn => {
+        const text = btn.textContent.trim();
+        if ((isReset && text.includes('RESET')) || (!isReset && text === val.toString())) {
+          btn.classList.add('ring-2', 'ring-sky-400', 'bg-sky-700');
+        } else {
+          btn.classList.remove('ring-2', 'ring-sky-400', 'bg-sky-700');
+        }
+      });
+    }
+
+    // CONFIRM PLAY ACTION
+    confirmPlayBtn.onclick = () => {
+      if (!GameState.selectedCardId || !GameState.selectedDeclaredVal) return;
+      const p0 = GameState.players[0];
+      const cardIdx = p0.hand.findIndex(c => c.id === GameState.selectedCardId);
+      if (cardIdx === -1) return;
+
+      const card = p0.hand.splice(cardIdx, 1)[0];
+      GameState.selectedCardId = null;
+      declarationPanel.classList.add('hidden');
+
+      executePlay(0, card, GameState.selectedDeclaredVal.val, GameState.selectedDeclaredVal.isReset);
+    };
+
+    function executePlay(playerId, card, declaredVal, declaredReset) {
+      AudioEngine.playCardSlap();
+      GameState.evidencePile.push(card);
+      GameState.consecutivePasses = 0;
+
+      const player = GameState.players[playerId];
+      const isLegal = declaredReset ? (card.type === 'RESET') : (card.val === declaredVal);
+
+      GameState.lastPlay = {
+        playerId,
+        card,
+        declaredVal,
+        declaredReset,
+        isLegal
+      };
+
+      if (declaredReset) {
+        GameState.activeDeclaredVal = 0;
+        if (card.isSmoke) {
+          GameState.turnDirection *= -1;
+          log(`💨 <strong>${player.name}</strong> played face-down and declared <strong>RESET (Smoke Bomb)</strong>! Play reverses!`, 'text-amber-400');
+        } else {
+          log(`🤝 <strong>${player.name}</strong> played face-down and declared <strong>RESET (The Fence)</strong>! Count reset to 0.`, 'text-amber-300');
+        }
+      } else {
+        GameState.activeDeclaredVal = declaredVal;
+        log(`🂠 <strong>${player.name}</strong> played face-down and declared: <strong class="text-amber-300">"${declaredVal}"</strong>`, 'text-slate-200');
       }
 
       updateUI();
 
       // Check if player emptied hand
-      if (hands[playerIdx].length === 0) {
-        logAnnouncement(`🚗💨 GETAWAY CAR! ${getPlayerName(playerIdx)} emptied their hand!`);
-        showRoundEndModal(playerIdx);
-        return;
+      if (player.hand.length === 0) {
+        log(`🚨 <strong>${player.name}</strong> has played their LAST CARD! Opportunity for inspection!`, 'text-red-400 font-black');
       }
 
       advanceTurn();
     }
 
-    function drawCard(playerIdx) {
-      if (deck.length === 0) {
-        if (discardPile.length > 1) {
-          const top = discardPile.pop();
-          deck = [...discardPile];
-          discardPile = [top];
-          for (let i = deck.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [deck[i], deck[j]] = [deck[j], deck[i]];
-          }
-          logAnnouncement("Locker reshuffled!");
-        }
+    // PASS & DRAW ACTION
+    passDrawBtn.onclick = () => {
+      AudioEngine.playCardSlap();
+      executePass(0);
+    };
+
+    function executePass(playerId) {
+      const player = GameState.players[playerId];
+      GameState.consecutivePasses++;
+
+      if (GameState.drawDeck.length > 0) {
+        const drawn = GameState.drawDeck.pop();
+        player.hand.push(drawn);
+        if (player.isHuman) sortPlayerHand();
+        log(`📥 <strong>${player.name}</strong> passed and drew 1 card from locker.`, 'text-slate-400');
+      } else {
+        log(`📥 <strong>${player.name}</strong> passed. (Locker empty).`, 'text-slate-400');
       }
 
-      if (deck.length > 0) {
-        const drawn = deck.pop();
-        hands[playerIdx].push(drawn);
-        logAnnouncement(`${getPlayerName(playerIdx)} drew 1 card from the Locker.`);
-        return drawn;
+      // Check table sweep (everyone passed)
+      if (GameState.consecutivePasses >= GameState.players.length) {
+        log(`🧹 <strong>Table Sweep!</strong> All thieves passed consecutively. Evidence Pile secured to Vault!`, 'text-emerald-400 font-bold');
+        GameState.evidencePile = [];
+        GameState.activeDeclaredVal = 0;
+        GameState.lastPlay = null;
+        GameState.consecutivePasses = 0;
       }
-      return null;
+
+      updateUI();
+      advanceTurn();
+    }
+
+    // INVESTIGATE ACTION
+    investigateBtn.onclick = () => {
+      executeInvestigation(0);
+    };
+
+    function executeInvestigation(investigatorId) {
+      if (!GameState.lastPlay || GameState.isInvestigatingAnimation) return;
+      GameState.isInvestigatingAnimation = true;
+      AudioEngine.playInvestigateAlert();
+
+      const investigator = GameState.players[investigatorId];
+      const accused = GameState.players[GameState.lastPlay.playerId];
+      const playedCard = GameState.lastPlay.card;
+      const wasLegal = GameState.lastPlay.isLegal;
+
+      log(`🔍🚨 <strong>${investigator.name} SHOUTS: "INVESTIGATE!"</strong> Accusing ${accused.name}...`, 'text-red-400 font-black text-xs');
+
+      // Reveal animation
+      revealCard.className = `absolute inset-0 rounded-xl shadow-2xl flex flex-col justify-between p-2 z-30 ${
+        playedCard.type === 'BLUE' ? 'card-blue' : (playedCard.type === 'RESET' ? 'card-special' : 'card-red')
+      }`;
+      revealCard.innerHTML = `
+        <div class="flex justify-between items-start leading-none">
+          <span class="font-black text-sm">${playedCard.displayVal}</span>
+          <span class="text-xs">${playedCard.icon}</span>
+        </div>
+        <div class="text-center my-auto">
+          <div class="text-2xl">${playedCard.icon}</div>
+          <div class="text-[9px] font-black uppercase mt-1">${playedCard.name}</div>
+        </div>
+        <div class="text-[7.5px] font-bold text-center border-t border-current/20 pt-0.5">
+          ACTUAL: ${playedCard.name}
+        </div>
+      `;
+      revealCard.classList.remove('hidden');
+
+      setTimeout(() => {
+        revealCard.classList.add('hidden');
+        GameState.isInvestigatingAnimation = false;
+
+        const redCardsInPile = GameState.evidencePile.filter(c => c.type === 'RED_NUM' || c.type === 'RED_HOT');
+
+        if (!wasLegal) {
+          // BLUFFER CAUGHT RED-HANDED!
+          AudioEngine.playCaughtBusted();
+          log(`🚨💥 <strong>CAUGHT RED-HANDED!</strong> ${accused.name} lied! Card was <strong>${playedCard.name}</strong> (Declared: ${GameState.lastPlay.declaredVal})!`, 'text-red-400 font-black');
+          log(`⚖️ <strong>${accused.name}</strong> takes ALL <strong>${redCardsInPile.length} Red Contraband</strong> cards into their Penalty Pile!`, 'text-rose-400 font-bold');
+
+          accused.penaltyPile.push(...redCardsInPile);
+          GameState.evidencePile = [];
+          GameState.activeDeclaredVal = 0;
+          GameState.lastPlay = null;
+          GameState.consecutivePasses = 0;
+
+          // Investigator leads next
+          GameState.activeTurnPlayer = investigatorId;
+        } else {
+          // FALSE ACCUSATION!
+          AudioEngine.playFalseAccusation();
+          log(`❌🛡️ <strong>FALSE ACCUSATION!</strong> ${accused.name} told the TRUTH! Card was indeed <strong>${playedCard.name}</strong>!`, 'text-emerald-400 font-black');
+          log(`⚖️ <strong>${investigator.name}</strong> takes ALL <strong>${redCardsInPile.length} Red Contraband</strong> cards into their Penalty Pile!`, 'text-amber-400 font-bold');
+
+          investigator.penaltyPile.push(...redCardsInPile);
+          GameState.evidencePile = [];
+          GameState.activeDeclaredVal = 0;
+          GameState.lastPlay = null;
+          GameState.consecutivePasses = 0;
+
+          // Did accused empty hand and tell truth?
+          if (accused.hand.length === 0) {
+            triggerRoundEnd(accused);
+            return;
+          }
+
+          // Accused leads next
+          GameState.activeTurnPlayer = accused.id;
+        }
+
+        updateUI();
+
+        if (!GameState.players[GameState.activeTurnPlayer].isHuman) {
+          setTimeout(botTurn, 1000);
+        }
+      }, 2200);
     }
 
     function advanceTurn() {
-      currentPlayer = getNextActivePlayer(currentPlayer);
-      turnCount++;
-      selectedCardIndex = null;
+      // Check if previous player played their last card and wasn't investigated
+      if (GameState.lastPlay && GameState.players[GameState.lastPlay.playerId].hand.length === 0) {
+        // Did the next player decide to challenge?
+        // Note: The next player has the right to challenge. If human, human sees investigate button!
+      }
+
+      // Next player in direction
+      GameState.activeTurnPlayer = (GameState.activeTurnPlayer + GameState.turnDirection + GameState.players.length) % GameState.players.length;
       updateUI();
 
-      if (currentPlayer === 0) {
-        logAnnouncement("Your turn! Play a higher number, match the item icon, or draw 1 card.");
-      } else {
-        setTimeout(playBotTurn, 750);
+      if (!GameState.players[GameState.activeTurnPlayer].isHuman) {
+        setTimeout(botTurn, 1100);
       }
     }
 
-    // Bot AI Turn for Option 3
-    function playBotTurn() {
-      if (eliminated[currentPlayer] || currentPlayer === 0) return;
-      const b = currentPlayer;
-      const hand = hands[b];
-      const top = getTopDiscard();
+    // BOT AI DECISION ENGINE
+    function botTurn() {
+      if (GameState.players[GameState.activeTurnPlayer].isHuman) return;
+      const bot = GameState.players[GameState.activeTurnPlayer];
 
-      // Find all playable cards in hand
-      const playable = [];
-      hand.forEach((card, idx) => {
-        const evalRes = evaluateCardPlayability(card);
-        if (evalRes.playable) {
-          playable.push({ card, idx, reason: evalRes.reason });
+      // 1. EVALUATE INVESTIGATION (CALL BLUFF)
+      if (GameState.lastPlay) {
+        const lastPlay = GameState.lastPlay;
+        const prevPlayer = GameState.players[lastPlay.playerId];
+        let suspicion = 0.16; // base rate
+
+        // Higher declared values are more suspicious
+        if (lastPlay.declaredVal >= 9) suspicion += 0.35;
+        else if (lastPlay.declaredVal >= 7) suspicion += 0.20;
+
+        // Reset declarations
+        if (lastPlay.declaredReset) suspicion += 0.25;
+
+        // Hand knowledge: if bot holds matching numbers
+        const matchingInHand = bot.hand.filter(c => c.val === lastPlay.declaredVal).length;
+        if (matchingInHand >= 2) suspicion += 0.40;
+        else if (matchingInHand >= 1) suspicion += 0.15;
+
+        // Opponent down to 0 cards: urgent challenge!
+        if (prevPlayer.hand.length === 0) suspicion += 0.35;
+
+        // Penalty risk: if pile has high red count, false accusation is punishing
+        const redInPile = GameState.evidencePile.filter(c => c.type === 'RED_NUM' || c.type === 'RED_HOT').length;
+        if (redInPile >= 3) suspicion -= 0.18;
+
+        if (Math.random() < suspicion) {
+          executeInvestigation(bot.id);
+          return;
         }
+      }
+
+      // If previous player played their last card and bot didn't investigate, round ends!
+      if (GameState.lastPlay && GameState.players[GameState.lastPlay.playerId].hand.length === 0) {
+        triggerRoundEnd(GameState.players[GameState.lastPlay.playerId]);
+        return;
+      }
+
+      // 2. CHOOSE CARD TO PLAY OR PASS
+      const minVal = GameState.activeDeclaredVal + 1;
+      const truthfulCards = bot.hand.filter(c => (c.type === 'BLUE' || c.type === 'RED_NUM') && c.val >= minVal)
+                                    .sort((a, b) => a.val - b.val);
+      const resets = bot.hand.filter(c => c.type === 'RESET');
+      const redHots = bot.hand.filter(c => c.type === 'RED_HOT');
+      const toxicReds = bot.hand.filter(c => c.type === 'RED_NUM' && c.val < minVal);
+
+      // Bot Bluff Priority: Try to dump Hot Evidence early/mid count!
+      if ((redHots.length > 0 || toxicReds.length > 0) && GameState.activeDeclaredVal <= 7 && Math.random() < 0.65) {
+        const cardToBluff = redHots.length > 0 ? redHots[0] : toxicReds[0];
+        const claim = Math.min(10, GameState.activeDeclaredVal + (Math.random() < 0.6 ? 1 : 2));
+        bot.hand.splice(bot.hand.indexOf(cardToBluff), 1);
+        executePlay(bot.id, cardToBluff, claim, false);
+      }
+      // Truthful play
+      else if (truthfulCards.length > 0) {
+        // Prefer playing Red numbered card to shed contraband safely!
+        const cardToPlay = truthfulCards.find(c => c.type === 'RED_NUM') || truthfulCards[0];
+        bot.hand.splice(bot.hand.indexOf(cardToPlay), 1);
+        executePlay(bot.id, cardToPlay, cardToPlay.val, false);
+      }
+      // Play Reset
+      else if (resets.length > 0 && GameState.activeDeclaredVal >= 5) {
+        const resetCard = resets[0];
+        bot.hand.splice(bot.hand.indexOf(resetCard), 1);
+        executePlay(bot.id, resetCard, 0, true);
+      }
+      // Desperate bluff
+      else if (GameState.activeDeclaredVal <= 8 && bot.hand.length > 0 && Math.random() < 0.40) {
+        const cardToBluff = bot.hand[0];
+        const claim = Math.min(10, GameState.activeDeclaredVal + 1);
+        bot.hand.splice(0, 1);
+        executePlay(bot.id, cardToBluff, claim, false);
+      }
+      // Pass & Draw
+      else {
+        executePass(bot.id);
+      }
+    }
+
+    // ROUND END TRIGGER
+    function triggerRoundEnd(escapee) {
+      AudioEngine.playEscapeFanfare();
+      document.getElementById('roundOverTitle').textContent = `${escapee.name} ESCAPED!`;
+      document.getElementById('roundOverSubtitle').textContent = `Speeding away in the getaway car with 0 strikes!`;
+
+      const scoreRows = document.getElementById('roundOverScores');
+      scoreRows.innerHTML = '';
+
+      let maxTotalRed = -1;
+      const scores = [];
+
+      GameState.players.forEach(p => {
+        const handRed = p.hand.filter(c => c.type === 'RED_NUM' || c.type === 'RED_HOT').length;
+        const penaltyRed = p.penaltyPile.length;
+        const totalRed = (p.id === escapee.id) ? 0 : (handRed + penaltyRed);
+
+        if (p.id !== escapee.id && totalRed > maxTotalRed) {
+          maxTotalRed = totalRed;
+        }
+
+        scores.push({ player: p, handRed, penaltyRed, totalRed });
       });
 
-      if (playable.length > 0) {
-        // Priority 1: Dump Red Contraband via Item Bridge or Climb!
-        const playableReds = playable.filter(p => p.card.color === 'RED');
-        if (playableReds.length > 0) {
-          playableReds.sort((a, b) => a.card.val - b.card.val);
-          playCard(b, playableReds[0].idx);
-          return;
+      let penalizedPlayers = [];
+      scores.forEach(s => {
+        const isEscaped = s.player.id === escapee.id;
+        const gotStrike = !isEscaped && s.totalRed === maxTotalRed && maxTotalRed > 0;
+        if (gotStrike) {
+          s.player.strikes++;
+          penalizedPlayers.push(s.player.name);
         }
 
-        // Priority 2: If we hold Red cards, drop Reset (0) to open dump window
-        const hasRedInHand = hand.some(c => c.color === 'RED');
-        const playableResets = playable.filter(p => p.card.val === 0);
-        if (hasRedInHand && playableResets.length > 0 && top.val >= 4) {
-          playCard(b, playableResets[0].idx);
-          return;
-        }
-
-        // Priority 3: Play via Item Bridge with low blue card
-        const bridges = playable.filter(p => p.reason === 'BRIDGE');
-        if (bridges.length > 0) {
-          bridges.sort((a, b) => a.card.val - b.card.val);
-          playCard(b, bridges[0].idx);
-          return;
-        }
-
-        // Priority 4: Climb with lowest legal Blue card
-        const climbs = playable.filter(p => p.reason === 'HIGHER');
-        if (climbs.length > 0) {
-          climbs.sort((a, b) => a.card.val - b.card.val);
-          playCard(b, climbs[0].idx);
-          return;
-        }
-
-        // Fallback
-        playCard(b, playable[0].idx);
-      } else {
-        // Can't play: draw 1 card
-        const drawn = drawCard(b);
-        updateUI();
-
-        if (drawn && evaluateCardPlayability(drawn).playable) {
-          setTimeout(() => {
-            const idx = hand.indexOf(drawn);
-            if (idx !== -1) {
-              logAnnouncement(`${getPlayerName(b)} immediately played drawn ${drawn.item} ${drawn.val}!`);
-              playCard(b, idx);
-            } else {
-              advanceTurn();
-            }
-          }, 450);
-        } else {
-          setTimeout(advanceTurn, 450);
-        }
-      }
-    }
-
-    // UI Updates
-    function updateUI() {
-      document.getElementById('round-counter').innerText = roundNumber;
-      document.getElementById('turn-counter').innerText = turnCount;
-      document.getElementById('deck-count').innerText = deck.length;
-
-      // Turn Order Indicator
-      const cameraLabel = document.getElementById('camera-label');
-      const cameraIcon = document.getElementById('camera-icon');
-      if (direction === 1) {
-        cameraLabel.innerText = "CLOCKWISE ↻";
-        cameraLabel.className = "text-xs font-black text-sky-400 leading-tight";
-        cameraIcon.innerText = "↻";
-      } else {
-        cameraLabel.innerText = "COUNTER-CW ↺";
-        cameraLabel.className = "text-xs font-black text-rose-400 leading-tight";
-        cameraIcon.innerText = "↺";
-      }
-
-      // Render Top Discard Card
-      const topCardEl = document.getElementById('top-discard-card');
-      const top = getTopDiscard();
-      if (top) {
-        let borderStyle = "border-blue-500 bg-blue-950/70";
-        let valColor = "text-blue-400";
-        let typeBadge = `${top.item} Loot`;
-
-        if (top.color === 'RED') {
-          borderStyle = "border-rose-500 bg-rose-950/80 red-evidence";
-          valColor = "text-rose-400";
-          typeBadge = `🚨 ${top.item} Contraband`;
-        } else if (top.color === 'SPECIAL') {
-          borderStyle = "border-amber-400 bg-amber-950/80 reset-pulse";
-          valColor = "text-amber-300";
-          typeBadge = "⚡ Reset (0)";
-        }
-
-        topCardEl.className = `w-[78px] h-[116px] rounded-xl border-2 p-1.5 flex flex-col justify-between items-center shadow-2xl relative transition-all ${borderStyle}`;
-        topCardEl.innerHTML = `
-          <div class="w-full flex justify-between items-center leading-none">
-            <span class="text-xs font-black ${valColor}">${top.val}</span>
-            <span class="text-[8px] font-black uppercase text-slate-300">${top.icon}</span>
-          </div>
-          <div class="flex flex-col items-center justify-center my-auto leading-none">
-            <span class="text-2xl">${top.icon}</span>
-            <span class="text-[9px] font-black text-white mt-1 uppercase text-center leading-tight truncate max-w-[68px]">${top.item} ${top.val > 0 ? top.val : ''}</span>
-            <span class="text-[6.5px] font-semibold text-slate-400 mt-0.5 text-center leading-tight">${top.sub || typeBadge}</span>
-          </div>
-          <div class="w-full flex justify-between items-center leading-none rotate-180 opacity-70">
-            <span class="text-xs font-black ${valColor}">${top.val}</span>
-            <span class="text-[8px] font-black uppercase text-slate-300">${top.icon}</span>
-          </div>
+        const row = document.createElement('div');
+        row.className = `grid grid-cols-4 items-center p-1.5 rounded ${gotStrike ? 'bg-red-950/80 border border-red-700 text-red-200' : (isEscaped ? 'bg-emerald-950/60 border border-emerald-800 text-emerald-300' : 'bg-slate-900 text-slate-300')}`;
+        row.innerHTML = `
+          <span class="font-bold truncate">${isEscaped ? '🚗 ' : ''}${s.player.name}</span>
+          <span class="text-center font-mono">${isEscaped ? '0' : s.handRed}</span>
+          <span class="text-center font-mono">${isEscaped ? '0' : s.penaltyRed}</span>
+          <span class="text-center font-black ${gotStrike ? 'text-red-400 font-mono text-sm' : ''}">${isEscaped ? 'CLEAN' : s.totalRed}</span>
         `;
-      }
-
-      // Render Opponent Bots
-      const botAreas = [null, document.getElementById('bot2-area'), document.getElementById('bot3-area'), document.getElementById('bot4-area')];
-      for (let b = 1; b < 4; b++) {
-        const area = botAreas[b];
-        const strikeBadge = document.getElementById(`bot${b+1}-strike-badge`);
-        const countBadge = document.getElementById(`bot${b+1}-count-badge`);
-        const pipsContainer = document.getElementById(`bot${b+1}-pips`);
-        const statusEl = document.getElementById(`bot${b+1}-status`);
-
-        if (eliminated[b]) {
-          area.className = "bg-slate-950/90 border border-rose-900/60 rounded-xl p-1.5 flex flex-col justify-between opacity-50";
-          strikeBadge.className = "text-[8px] font-black px-1 py-0.2 rounded border bg-rose-950 text-rose-400 border-rose-800";
-          strikeBadge.innerText = "BUSTED (OUT)";
-          countBadge.innerText = "0 cards";
-          pipsContainer.innerHTML = '';
-          statusEl.innerText = "In Prison 🚔";
-          continue;
-        }
-
-        const count = hands[b].length;
-        countBadge.innerHTML = `<span>🎴</span><span>${count} cards</span>`;
-        strikeBadge.innerText = `${strikes[b]}/3 Strikes`;
-        strikeBadge.className = (strikes[b] >= 2) 
-          ? "text-[8px] font-black px-1 py-0.2 rounded border bg-rose-950 text-rose-400 border-rose-700 animate-pulse"
-          : "text-[8px] font-black px-1 py-0.2 rounded border bg-slate-800 text-emerald-400 border-slate-700";
-
-        pipsContainer.innerHTML = '';
-        for (let i = 0; i < Math.min(count, 8); i++) {
-          const pip = document.createElement('div');
-          pip.className = 'w-1 h-3 rounded-sm bg-slate-600';
-          pipsContainer.appendChild(pip);
-        }
-
-        if (currentPlayer === b) {
-          area.className = "bg-slate-900 border-2 border-amber-400/90 rounded-xl p-1.5 flex flex-col justify-between shadow-lg shadow-amber-950/40 scale-[1.02] transition-all relative overflow-hidden";
-          statusEl.innerText = "Thinking...";
-          statusEl.className = "text-amber-300 font-bold truncate";
-        } else {
-          area.className = "bg-slate-900/80 border border-slate-800 rounded-xl p-1.5 flex flex-col justify-between transition-all relative overflow-hidden";
-          statusEl.innerText = "Waiting...";
-          statusEl.className = "text-slate-400 font-semibold truncate";
-        }
-      }
-
-      // Render Player 0 Strikes & Status
-      const playerTurnStatus = document.getElementById('player-turn-status');
-      const strikesContainer = document.getElementById('player-strikes-container');
-      strikesContainer.innerHTML = '';
-      for (let s = 0; s < 3; s++) {
-        const dot = document.createElement('span');
-        dot.className = (s < strikes[0]) ? "text-rose-500 font-black text-xs" : "text-slate-600 font-bold text-xs";
-        dot.innerText = (s < strikes[0]) ? "🚨" : "⚪";
-        strikesContainer.appendChild(dot);
-      }
-
-      if (currentPlayer === 0) {
-        playerTurnStatus.className = "px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold animate-pulse";
-        playerTurnStatus.innerText = "YOUR TURN";
-      } else {
-        playerTurnStatus.className = "px-1.5 py-0.2 rounded bg-slate-800 text-slate-500 text-[10px] font-bold";
-        playerTurnStatus.innerText = "WAITING";
-      }
-
-      // Action Buttons
-      const btnPlay = document.getElementById('btn-play-card');
-      const btnPlayText = document.getElementById('btn-play-text');
-      const btnDraw = document.getElementById('btn-draw-card');
-
-      if (currentPlayer === 0) {
-        btnDraw.disabled = false;
-        if (selectedCardIndex !== null) {
-          const card = hands[0][selectedCardIndex];
-          const evalRes = evaluateCardPlayability(card);
-          btnPlay.disabled = false;
-          btnPlay.className = "h-10 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black rounded-xl shadow-lg ring-2 ring-emerald-400 transition flex items-center justify-center gap-1.5 animate-bounce";
-          
-          if (evalRes.reason === 'BRIDGE') {
-            btnPlayText.innerText = `Bridge ${card.item} ${card.val} 🌉`;
-          } else if (evalRes.reason === 'RESET') {
-            btnPlayText.innerText = `Play Reset 0 ⚡`;
-          } else {
-            btnPlayText.innerText = `Play ${card.item} ${card.val}`;
-          }
-        } else {
-          btnPlay.disabled = true;
-          btnPlay.className = "h-10 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-25 disabled:pointer-events-none text-white text-xs font-black rounded-xl shadow-lg transition flex items-center justify-center gap-1.5";
-          btnPlayText.innerText = "Select Card to Play";
-        }
-      } else {
-        btnPlay.disabled = true;
-        btnDraw.disabled = true;
-      }
-
-      // Render Player Cards
-      renderPlayerHand();
-    }
-
-    function renderPlayerHand() {
-      const container = document.getElementById('player-hand');
-      container.innerHTML = '';
-      const top = getTopDiscard();
-
-      hands[0].forEach((c, idx) => {
-        const cardEl = document.createElement('div');
-        const evalRes = evaluateCardPlayability(c);
-        const playable = evalRes.playable;
-        const isSelected = (selectedCardIndex === idx);
-
-        let borderStyle = "border border-slate-700 bg-slate-800/90";
-
-        if (c.color === 'RED') {
-          borderStyle = "border-2 border-rose-500 bg-rose-950/80 red-evidence";
-        } else if (c.color === 'SPECIAL') {
-          borderStyle = "border-2 border-amber-400 bg-amber-950/80 reset-pulse";
-        } else if (c.color === 'BLUE') {
-          borderStyle = "border-2 border-blue-500 bg-blue-950/50";
-        }
-
-        if (isSelected) {
-          borderStyle += " ring-4 ring-emerald-400 -translate-y-3 shadow-2xl scale-105";
-        } else if (!playable) {
-          borderStyle += " opacity-40 grayscale-[40%]";
-        }
-
-        // 72px x 112px mobile card
-        cardEl.className = `w-[72px] h-[112px] sm:w-[84px] sm:h-[128px] shrink-0 rounded-xl p-1.5 flex flex-col justify-between items-center shadow-md cursor-pointer transition-all select-none relative ${borderStyle}`;
-
-        let statusPill = '';
-        if (evalRes.reason === 'BRIDGE') {
-          statusPill = `<span class="bg-sky-950 text-sky-300 border border-sky-400 px-1 py-0.2 rounded text-[7px] font-black uppercase tracking-wider animate-pulse">BRIDGE 🌉</span>`;
-        } else if (evalRes.reason === 'RESET') {
-          statusPill = `<span class="bg-amber-950 text-amber-300 border border-amber-500 px-1 py-0.2 rounded text-[7px] font-black uppercase tracking-wider">RESET 0</span>`;
-        } else if (evalRes.reason === 'HIGHER') {
-          statusPill = `<span class="bg-blue-950 text-blue-300 border border-blue-500 px-1 py-0.2 rounded text-[7px] font-black uppercase tracking-wider">> ${top.val}</span>`;
-        } else {
-          statusPill = `<span class="bg-slate-900/95 text-slate-500 border border-slate-700 px-1 py-0.2 rounded text-[7px] font-black uppercase tracking-wider">LOCKED</span>`;
-        }
-
-        cardEl.innerHTML = `
-          <!-- Top Row -->
-          <div class="w-full flex justify-between items-center leading-none">
-            <span class="text-xs font-black ${c.color === 'RED' ? 'text-rose-400' : (c.color === 'SPECIAL' ? 'text-amber-300' : 'text-blue-400')}">${c.val}</span>
-            ${statusPill}
-          </div>
-
-          <!-- Center Focus -->
-          <div class="flex flex-col items-center justify-center my-auto leading-none">
-            <span class="text-xl sm:text-2xl">${c.icon}</span>
-            <span class="text-[8px] sm:text-[9px] font-bold text-slate-200 mt-0.5 uppercase text-center leading-tight truncate max-w-[64px]">${c.item} ${c.val > 0 ? c.val : ''}</span>
-            <span class="text-[6.5px] font-medium text-slate-400 mt-0.5 text-center leading-none">${c.sub || (c.color === 'RED' ? 'Toxic Contraband' : 'Clean Loot')}</span>
-          </div>
-
-          <!-- Bottom Row Inverted -->
-          <div class="w-full flex justify-between items-center leading-none rotate-180 opacity-70">
-            <span class="text-xs font-black ${c.color === 'RED' ? 'text-rose-400' : (c.color === 'SPECIAL' ? 'text-amber-300' : 'text-blue-400')}">${c.val}</span>
-            ${statusPill}
-          </div>
-        `;
-
-        cardEl.onclick = () => {
-          if (currentPlayer !== 0) return;
-          if (!playable) {
-            logAnnouncement(`⚠️ Cannot play ${c.item} ${c.val}! Must be > ${top.val} OR match ${top.item} icon.`);
-            return;
-          }
-          selectedCardIndex = (selectedCardIndex === idx) ? null : idx;
-          if (selectedCardIndex !== null) {
-            if (evalRes.reason === 'BRIDGE') {
-              logAnnouncement(`Selected ${c.item} ${c.val}! Bridges pile from ${top.val} down to ${c.val}! Tap Play.`);
-            } else {
-              logAnnouncement(`Selected ${c.item} ${c.val}. Tap Play.`);
-            }
-          }
-          updateUI();
-        };
-
-        container.appendChild(cardEl);
+        scoreRows.appendChild(row);
       });
-    }
 
-    function logAnnouncement(msg) {
-      document.getElementById('announcement-banner').innerText = msg;
-    }
-
-    function showRoundEndModal(escapedPlayerIdx) {
-      const modal = document.getElementById('round-modal');
-      const icon = document.getElementById('modal-icon');
-      const title = document.getElementById('modal-title');
-      const desc = document.getElementById('modal-desc');
-      const scores = document.getElementById('modal-scores');
-      const nextBtn = document.getElementById('modal-next-btn');
-
-      const escapeName = getPlayerName(escapedPlayerIdx);
-      title.innerText = "GETAWAY CAR!";
-      desc.innerText = `${escapeName} shed all their cards and escaped into the night! The police swarm the scene!`;
-
-      // Check each player's hand for Red Contraband
-      let breakdownHtml = '';
-      for (let p = 0; p < numPlayers; p++) {
-        if (eliminated[p]) continue;
-        const name = getPlayerName(p);
-        const redCards = hands[p].filter(c => c.color === 'RED');
-        const hasRed = (redCards.length > 0);
-
-        if (p === escapedPlayerIdx) {
-          breakdownHtml += `
-            <div class="p-2 rounded-lg border-2 border-emerald-500 bg-emerald-950/70 flex justify-between items-center">
-              <div>
-                <span class="font-black text-emerald-300">${name}</span>
-                <span class="text-[10px] text-emerald-400 ml-1.5 font-bold">🏁 Emptied Hand</span>
-              </div>
-              <span class="px-2 py-0.5 bg-emerald-600 text-white font-black text-[9px] rounded uppercase">ESCAPED CLEAN!</span>
-            </div>
-          `;
-        } else if (hasRed) {
-          strikes[p]++;
-          const isOut = (strikes[p] >= 3);
-          if (isOut) eliminated[p] = true;
-
-          breakdownHtml += `
-            <div class="p-2 rounded-lg border-2 border-rose-500 bg-rose-950/80 flex justify-between items-center">
-              <div>
-                <span class="font-black text-rose-400">${name}</span>
-                <span class="text-[10px] text-rose-300 ml-1.5 font-mono">(${redCards.length} Red Contraband: ${redCards.map(c=>`${c.item} ${c.val}`).join(', ')})</span>
-              </div>
-              <div class="text-right">
-                <span class="px-1.5 py-0.5 bg-rose-600 text-white font-black text-[9px] rounded uppercase">🚨 CAUGHT RED-HANDED!</span>
-                <div class="text-[10px] text-rose-300 font-bold mt-0.5">+1 Strike (${strikes[p]}/3)${isOut ? ' • BUSTED OUT!' : ''}</div>
-              </div>
-            </div>
-          `;
-        } else {
-          breakdownHtml += `
-            <div class="p-2 rounded-lg border border-slate-800 bg-slate-900/60 flex justify-between items-center opacity-85">
-              <div>
-                <span class="font-bold text-slate-200">${name}</span>
-                <span class="text-[10px] text-slate-400 ml-1.5 font-mono">(${hands[p].length} cards, 0 Red)</span>
-              </div>
-              <div>
-                <span class="px-1.5 py-0.5 bg-emerald-950 text-emerald-400 border border-emerald-700/60 font-black text-[9px] rounded uppercase">🛡️ Clean (0 Strikes)</span>
-              </div>
-            </div>
-          `;
-        }
+      const strikeNotice = document.getElementById('strikeNotice');
+      if (penalizedPlayers.length > 0) {
+        strikeNotice.innerHTML = `🚨 <strong>${penalizedPlayers.join(', ')}</strong> caught with the most contraband (+1 Mugshot Strike)!`;
+      } else {
+        strikeNotice.innerHTML = `🛡️ Zero contraband remained! No strikes awarded.`;
       }
 
-      scores.innerHTML = breakdownHtml;
-
-      // Check tournament winner (last thief standing)
-      const activePlayers = [];
-      for (let p = 0; p < numPlayers; p++) {
-        if (!eliminated[p]) activePlayers.push(p);
-      }
-
-      if (activePlayers.length <= 1) {
-        const winner = activePlayers[0] !== undefined ? activePlayers[0] : escapedPlayerIdx;
-        icon.innerText = "🏆";
-        title.innerText = `${getPlayerName(winner)} WINS THE HEIST!`;
-        desc.innerText = "All other thieves have been arrested and sent to prison! Crowned Master Thief!";
-        nextBtn.innerHTML = `<span>NEW MATCH (RESET)</span> ↺`;
-        nextBtn.onclick = () => {
-          modal.classList.add('hidden');
-          resetEntireMatch();
+      // Check game over (any player at 3 strikes)
+      const bustedPlayer = GameState.players.find(p => p.strikes >= 3);
+      if (bustedPlayer) {
+        document.getElementById('nextRoundBtn').textContent = "MATCH OVER - SEE PRISON SENTENCE";
+        document.getElementById('nextRoundBtn').onclick = () => {
+          alert(`🔒 MATCH OVER!\n\n${bustedPlayer.name} has reached 3 Strikes and is SENT TO FEDERAL PRISON!\n\nAll other thieves split the loot!`);
+          roundOverModal.classList.add('hidden');
+          initMatch();
         };
       } else {
-        nextBtn.innerHTML = `<span>START ROUND ${roundNumber + 1}</span> ➡️`;
-        nextBtn.onclick = () => {
-          modal.classList.add('hidden');
-          roundNumber++;
-          starterPlayer = (starterPlayer + 1) % numPlayers;
-          initRound();
+        document.getElementById('nextRoundBtn').textContent = "NEXT ROUND ➔";
+        document.getElementById('nextRoundBtn').onclick = () => {
+          roundOverModal.classList.add('hidden');
+          GameState.roundNumber++;
+          startRound();
         };
       }
 
-      modal.classList.remove('hidden');
+      roundOverModal.classList.remove('hidden');
     }
 
-    // Play Selected Card Button
-    document.getElementById('btn-play-card').onclick = () => {
-      if (currentPlayer !== 0 || selectedCardIndex === null) return;
-      playCard(0, selectedCardIndex);
-    };
-
-    // Draw Card Button
-    document.getElementById('btn-draw-card').onclick = () => {
-      if (currentPlayer !== 0) return;
-      const drawn = drawCard(0);
-      updateUI();
-      if (drawn) {
-        if (evaluateCardPlayability(drawn).playable) {
-          selectedCardIndex = hands[0].length - 1;
-          logAnnouncement(`Drew playable ${drawn.item} ${drawn.val}! Tap Play or draw again.`);
-          updateUI();
-        } else {
-          logAnnouncement(`Drew ${drawn.item} ${drawn.val}. Cannot play, passing turn...`);
-          setTimeout(advanceTurn, 700);
-        }
+    // RESTART BUTTON
+    document.getElementById('restartBtn').onclick = () => {
+      if (confirm("Restart full match back to 0 strikes?")) {
+        initMatch();
       }
     };
 
-    document.getElementById('restart-match-btn').onclick = resetEntireMatch;
+    // RULES MODAL HANDLERS
+    document.getElementById('rulesBtn').onclick = () => rulesModal.classList.remove('hidden');
+    document.getElementById('closeRulesBtn').onclick = () => rulesModal.classList.add('hidden');
 
-    // Start Round 1
-    initRound();
+    // START ON LOAD
+    window.onload = () => {
+      initMatch();
+    };
   </script>
 </body>
 </html>

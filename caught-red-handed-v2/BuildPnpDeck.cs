@@ -7,12 +7,13 @@ namespace PnpDeckGeneratorV2
 {
     public class CardDef
     {
-        public int Val;
-        public string Item;
+        public int Val; // -1 for Hot Evidence, 0 for Reset, 1..10 for numbers
+        public string Title;
         public string Color; // RED, BLUE, SPECIAL
         public int Copies;
         public string Icon;
         public string Sub;
+        public string DisplayVal;
     }
 
     public class Program
@@ -22,29 +23,71 @@ namespace PnpDeckGeneratorV2
             string outHtmlPath = @"c:\Users\bazar\Documents\antigravity\lively-rutherford\caught-red-handed-v2\print_deck.html";
 
             var cardDefs = new List<CardDef>();
-            string[] items = new string[] { "Cash", "Diamond", "Watch", "Key", "Art", "Gold" };
-            string[] icons = new string[] { "💵", "💎", "⌚", "🗝️", "🖼️", "🧈" };
 
-            for (int i = 0; i < items.Length; i++)
-            {
-                string it = items[i];
-                string ic = icons[i];
+            // 1. Blue Clean Loot (36 Cards)
+            // Values 1..10
+            cardDefs.Add(new CardDef { Val = 1, Title = "Marked Cash", Color = "BLUE", Copies = 1, Icon = "💵", DisplayVal = "1", Sub = "Clean Loot • Zero Contraband" });
+            cardDefs.Add(new CardDef { Val = 1, Title = "Safe Gems", Color = "BLUE", Copies = 1, Icon = "💎", DisplayVal = "1", Sub = "Clean Loot • Zero Contraband" });
+            cardDefs.Add(new CardDef { Val = 1, Title = "Rolex Watch", Color = "BLUE", Copies = 1, Icon = "⌚", DisplayVal = "1", Sub = "Clean Loot • Zero Contraband" });
 
-                // Red Contraband: 1, 2
-                cardDefs.Add(new CardDef { Val = 1, Item = it, Color = "RED", Copies = 1, Icon = ic, Sub = "Petty Contraband" });
-                cardDefs.Add(new CardDef { Val = 2, Item = it, Color = "RED", Copies = 1, Icon = ic, Sub = "Grand Contraband" });
+            cardDefs.Add(new CardDef { Val = 2, Title = "Vault Key", Color = "BLUE", Copies = 1, Icon = "🗝️", DisplayVal = "2", Sub = "Clean Loot • Zero Contraband" });
+            cardDefs.Add(new CardDef { Val = 2, Title = "Gallery Art", Color = "BLUE", Copies = 1, Icon = "🖼️", DisplayVal = "2", Sub = "Clean Loot • Zero Contraband" });
+            cardDefs.Add(new CardDef { Val = 2, Title = "Gold Bullion", Color = "BLUE", Copies = 1, Icon = "🧈", DisplayVal = "2", Sub = "Clean Loot • Zero Contraband" });
 
-                // Blue Clean Loot: 3, 4, 5, 6, 7, 8
-                for (int v = 3; v <= 8; v++)
-                {
-                    cardDefs.Add(new CardDef { Val = v, Item = it, Color = "BLUE", Copies = 1, Icon = ic, Sub = "Clean Loot" });
-                }
-            }
+            cardDefs.Add(new CardDef { Val = 3, Title = "Marked Cash", Color = "BLUE", Copies = 1, Icon = "💵", DisplayVal = "3", Sub = "Clean Loot • Zero Contraband" });
+            cardDefs.Add(new CardDef { Val = 3, Title = "Safe Gems", Color = "BLUE", Copies = 1, Icon = "💎", DisplayVal = "3", Sub = "Clean Loot • Zero Contraband" });
+            cardDefs.Add(new CardDef { Val = 3, Title = "Rolex Watch", Color = "BLUE", Copies = 1, Icon = "⌚", DisplayVal = "3", Sub = "Clean Loot • Zero Contraband" });
+            cardDefs.Add(new CardDef { Val = 3, Title = "Vault Key", Color = "BLUE", Copies = 1, Icon = "🗝️", DisplayVal = "3", Sub = "Clean Loot • Zero Contraband" });
 
-            // Special Resets: 6 cards total (0)
-            cardDefs.Add(new CardDef { Val = 0, Item = "The Fence", Color = "SPECIAL", Copies = 2, Icon = "🤝", Sub = "Resets Pile to 0 & Wild Item" });
-            cardDefs.Add(new CardDef { Val = 0, Item = "Smoke Bomb", Color = "SPECIAL", Copies = 2, Icon = "💨🔄", Sub = "Resets to 0 & Flips Direction" });
-            cardDefs.Add(new CardDef { Val = 0, Item = "The Snitch", Color = "SPECIAL", Copies = 2, Icon = "🕵️🚨", Sub = "Resets to 0 & Next Draws 1" });
+            cardDefs.Add(new CardDef { Val = 4, Title = "Gallery Art", Color = "BLUE", Copies = 1, Icon = "🖼️", DisplayVal = "4", Sub = "Clean Loot • Zero Contraband" });
+            cardDefs.Add(new CardDef { Val = 4, Title = "Gold Bullion", Color = "BLUE", Copies = 1, Icon = "🧈", DisplayVal = "4", Sub = "Clean Loot • Zero Contraband" });
+            cardDefs.Add(new CardDef { Val = 4, Title = "Marked Cash", Color = "BLUE", Copies = 1, Icon = "💵", DisplayVal = "4", Sub = "Clean Loot • Zero Contraband" });
+            cardDefs.Add(new CardDef { Val = 4, Title = "Safe Gems", Color = "BLUE", Copies = 1, Icon = "💎", DisplayVal = "4", Sub = "Clean Loot • Zero Contraband" });
+
+            cardDefs.Add(new CardDef { Val = 5, Title = "Rolex Watch", Color = "BLUE", Copies = 1, Icon = "⌚", DisplayVal = "5", Sub = "Clean Loot • Zero Contraband" });
+            cardDefs.Add(new CardDef { Val = 5, Title = "Vault Key", Color = "BLUE", Copies = 1, Icon = "🗝️", DisplayVal = "5", Sub = "Clean Loot • Zero Contraband" });
+            cardDefs.Add(new CardDef { Val = 5, Title = "Gallery Art", Color = "BLUE", Copies = 1, Icon = "🖼️", DisplayVal = "5", Sub = "Clean Loot • Zero Contraband" });
+            cardDefs.Add(new CardDef { Val = 5, Title = "Gold Bullion", Color = "BLUE", Copies = 1, Icon = "🧈", DisplayVal = "5", Sub = "Clean Loot • Zero Contraband" });
+
+            cardDefs.Add(new CardDef { Val = 6, Title = "Marked Cash", Color = "BLUE", Copies = 1, Icon = "💵", DisplayVal = "6", Sub = "Clean Loot • Zero Contraband" });
+            cardDefs.Add(new CardDef { Val = 6, Title = "Safe Gems", Color = "BLUE", Copies = 1, Icon = "💎", DisplayVal = "6", Sub = "Clean Loot • Zero Contraband" });
+            cardDefs.Add(new CardDef { Val = 6, Title = "Rolex Watch", Color = "BLUE", Copies = 1, Icon = "⌚", DisplayVal = "6", Sub = "Clean Loot • Zero Contraband" });
+            cardDefs.Add(new CardDef { Val = 6, Title = "Vault Key", Color = "BLUE", Copies = 1, Icon = "🗝️", DisplayVal = "6", Sub = "Clean Loot • Zero Contraband" });
+
+            cardDefs.Add(new CardDef { Val = 7, Title = "Gallery Art", Color = "BLUE", Copies = 1, Icon = "🖼️", DisplayVal = "7", Sub = "Clean Loot • Zero Contraband" });
+            cardDefs.Add(new CardDef { Val = 7, Title = "Gold Bullion", Color = "BLUE", Copies = 1, Icon = "🧈", DisplayVal = "7", Sub = "Clean Loot • Zero Contraband" });
+            cardDefs.Add(new CardDef { Val = 7, Title = "Marked Cash", Color = "BLUE", Copies = 1, Icon = "💵", DisplayVal = "7", Sub = "Clean Loot • Zero Contraband" });
+            cardDefs.Add(new CardDef { Val = 7, Title = "Safe Gems", Color = "BLUE", Copies = 1, Icon = "💎", DisplayVal = "7", Sub = "Clean Loot • Zero Contraband" });
+
+            cardDefs.Add(new CardDef { Val = 8, Title = "Rolex Watch", Color = "BLUE", Copies = 1, Icon = "⌚", DisplayVal = "8", Sub = "Clean Loot • Zero Contraband" });
+            cardDefs.Add(new CardDef { Val = 8, Title = "Vault Key", Color = "BLUE", Copies = 1, Icon = "🗝️", DisplayVal = "8", Sub = "Clean Loot • Zero Contraband" });
+            cardDefs.Add(new CardDef { Val = 8, Title = "Gallery Art", Color = "BLUE", Copies = 1, Icon = "🖼️", DisplayVal = "8", Sub = "Clean Loot • Zero Contraband" });
+            cardDefs.Add(new CardDef { Val = 8, Title = "Gold Bullion", Color = "BLUE", Copies = 1, Icon = "🧈", DisplayVal = "8", Sub = "Clean Loot • Zero Contraband" });
+
+            cardDefs.Add(new CardDef { Val = 9, Title = "Marked Cash", Color = "BLUE", Copies = 1, Icon = "💵", DisplayVal = "9", Sub = "Clean Loot • Zero Contraband" });
+            cardDefs.Add(new CardDef { Val = 9, Title = "Safe Gems", Color = "BLUE", Copies = 1, Icon = "💎", DisplayVal = "9", Sub = "Clean Loot • Zero Contraband" });
+            cardDefs.Add(new CardDef { Val = 9, Title = "Gold Bullion", Color = "BLUE", Copies = 1, Icon = "🧈", DisplayVal = "9", Sub = "Clean Loot • Zero Contraband" });
+
+            cardDefs.Add(new CardDef { Val = 10, Title = "Vault Key", Color = "BLUE", Copies = 1, Icon = "🗝️", DisplayVal = "10", Sub = "Clean Loot • Zero Contraband" });
+            cardDefs.Add(new CardDef { Val = 10, Title = "Gallery Art", Color = "BLUE", Copies = 1, Icon = "🖼️", DisplayVal = "10", Sub = "Clean Loot • Zero Contraband" });
+            cardDefs.Add(new CardDef { Val = 10, Title = "Rolex Watch", Color = "BLUE", Copies = 1, Icon = "⌚", DisplayVal = "10", Sub = "Clean Loot • Zero Contraband" });
+
+            // 2. Numbered Red Contraband (8 Cards)
+            cardDefs.Add(new CardDef { Val = 1, Title = "Hot Cash", Color = "RED", Copies = 2, Icon = "💵🚨", DisplayVal = "1", Sub = "Petty Contraband • Legal if > previous!" });
+            cardDefs.Add(new CardDef { Val = 2, Title = "Blood Diamond", Color = "RED", Copies = 2, Icon = "💎🚨", DisplayVal = "2", Sub = "Petty Contraband • Legal if > previous!" });
+            cardDefs.Add(new CardDef { Val = 3, Title = "Hot Rolex", Color = "RED", Copies = 1, Icon = "⌚🚨", DisplayVal = "3", Sub = "Larceny Contraband • Legal if > previous!" });
+            cardDefs.Add(new CardDef { Val = 4, Title = "Master Key", Color = "RED", Copies = 1, Icon = "🗝️🚨", DisplayVal = "4", Sub = "Grand Larceny • Legal if > previous!" });
+            cardDefs.Add(new CardDef { Val = 5, Title = "Stolen Canvas", Color = "RED", Copies = 1, Icon = "🖼️🚨", DisplayVal = "5", Sub = "Syndicate Felony • Legal if > previous!" });
+            cardDefs.Add(new CardDef { Val = 6, Title = "Smuggled Gold", Color = "RED", Copies = 1, Icon = "🧈🚨", DisplayVal = "6", Sub = "Federal Evidence • Legal if > previous!" });
+
+            // 3. Unnumbered Hot Evidence (6 Cards)
+            cardDefs.Add(new CardDef { Val = -1, Title = "Crime Dossier", Color = "RED", Copies = 2, Icon = "📁🚨", DisplayVal = "🚨", Sub = "HOT EVIDENCE • NO NUMBER (MUST BLUFF!)" });
+            cardDefs.Add(new CardDef { Val = -1, Title = "Federal Bug", Color = "RED", Copies = 2, Icon = "🎙️🚨", DisplayVal = "🚨", Sub = "HOT EVIDENCE • NO NUMBER (MUST BLUFF!)" });
+            cardDefs.Add(new CardDef { Val = -1, Title = "Syndicate Seal", Color = "RED", Copies = 2, Icon = "💼🚨", DisplayVal = "🚨", Sub = "HOT EVIDENCE • NO NUMBER (MUST BLUFF!)" });
+
+            // 4. Tactical Resets (4 Cards)
+            cardDefs.Add(new CardDef { Val = 0, Title = "The Fence", Color = "SPECIAL", Copies = 2, Icon = "🤝0", DisplayVal = "0", Sub = "Resets Count to 0 • Next declares 1-10" });
+            cardDefs.Add(new CardDef { Val = 0, Title = "Smoke Bomb", Color = "SPECIAL", Copies = 2, Icon = "💨🔄", DisplayVal = "0", Sub = "Resets Count to 0 & REVERSES DIRECTION" });
 
             var deck = new List<CardDef>();
             foreach (var def in cardDefs)
@@ -59,15 +102,15 @@ namespace PnpDeckGeneratorV2
             sb.AppendLine("<html lang=\"en\">");
             sb.AppendLine("<head>");
             sb.AppendLine("  <meta charset=\"UTF-8\">");
-            sb.AppendLine("  <title>Caught Red-Handed V2: The Bridge & Shed Edition - Low-Ink PnP Deck (8.5x11)</title>");
+            sb.AppendLine("  <title>Caught Red-Handed V2: The Interrogation - Low-Ink PnP Deck (8.5x11)</title>");
             sb.AppendLine("  <style>");
             sb.AppendLine("    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap');");
             sb.AppendLine("    @page { size: letter portrait; margin: 0.25in 0.5in 0.25in 0.5in; }");
             sb.AppendLine("    * { box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }");
             sb.AppendLine("    body { margin: 0; padding: 0; font-family: 'Montserrat', system-ui, sans-serif; background: #f8fafc; color: #0f172a; }");
             sb.AppendLine("    .no-print-bar { background: #0f172a; color: #f8fafc; padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }");
-            sb.AppendLine("    .no-print-bar button { background: #0284c7; color: white; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 800; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background 0.2s; }");
-            sb.AppendLine("    .no-print-bar button:hover { background: #0369a1; }");
+            sb.AppendLine("    .no-print-bar button { background: #dc2626; color: white; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 800; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background 0.2s; }");
+            sb.AppendLine("    .no-print-bar button:hover { background: #b91c1c; }");
             sb.AppendLine("    @media print {");
             sb.AppendLine("      .no-print-bar, .sheet-header-label { display: none !important; }");
             sb.AppendLine("      body { background: #ffffff !important; margin: 0 !important; padding: 0 !important; }");
@@ -117,26 +160,26 @@ namespace PnpDeckGeneratorV2
             sb.AppendLine("    .card.special .pill { background: #ffffff; border-color: #d97706; color: #d97706; font-weight: 900; }");
 
             // Marker & Card Back Themes
-            sb.AppendLine("    .card.marker .card-inner { background: #ffffff; color: #0f172a; border-width: 1.5px; }");
+            sb.AppendLine("    .card.marker .card-inner { background: #ffffff; color: #0f172a; border: 2px solid #0f172a; }");
             sb.AppendLine("    .card.card-back .card-inner { background: #ffffff; border: 2px solid #0f172a; color: #0f172a; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0.15in; position: relative; }");
             sb.AppendLine("    .card-back-pattern { position: absolute; inset: 4px; border: 1px dashed #cbd5e1; border-radius: 5px; pointer-events: none; }");
             sb.AppendLine("  </style>");
             sb.AppendLine("</head>");
             sb.AppendLine("<body>");
             sb.AppendLine("  <div class=\"no-print-bar\">");
-            sb.AppendLine("    <div><span style=\"font-weight: 900; font-size: 16px; color: #38bdf8;\">CAUGHT RED-HANDED V2</span><span style=\"color: #94a3b8; font-size: 13px; margin-left: 8px;\">• 54-Card Bridge & Shed Deck (8.5\" x 11\")</span><span style=\"background:#059669; color:#fff; font-size:10px; font-weight:800; padding:2px 8px; border-radius:12px; margin-left:12px;\">🌱 ECO INK-SAVER</span></div>");
+            sb.AppendLine("    <div><span style=\"font-weight: 900; font-size: 16px; color: #f87171;\">CAUGHT RED-HANDED V2</span><span style=\"color: #94a3b8; font-size: 13px; margin-left: 8px;\">• The Interrogation Deck (8.5\" x 11\")</span><span style=\"background:#059669; color:#fff; font-size:10px; font-weight:800; padding:2px 8px; border-radius:12px; margin-left:12px;\">🌱 ECO INK-SAVER</span></div>");
             sb.AppendLine("    <button onclick=\"window.print()\">🖨️ PRINT DECK TO PDF / PRINTER</button>");
             sb.AppendLine("  </div>");
             sb.AppendLine("  <div class=\"sheet-wrapper\">");
 
             // 6 sheets of 9 cards = Exactly 54 play cards
             string[] sheetTitles = new string[] {
-                "Sheet 1 of 8: Cash & Diamonds (Reds 1,2 & Blues 3..8)",
-                "Sheet 2 of 8: Diamonds (Cont.) & Watches (Reds 1,2 & Blues 3..6)",
-                "Sheet 3 of 8: Watches (7,8) & Keys (Reds 1,2 & Blues 3..7)",
-                "Sheet 4 of 8: Key (8) & Art (Reds 1,2 & Blues 3..8)",
-                "Sheet 5 of 8: Gold (Reds 1,2 & Blues 3..8) & The Fence (0)",
-                "Sheet 6 of 8: The Fence (0), Smoke Bombs (0 🔄) & The Snitch (0 🚨)"
+                "Sheet 1 of 8: Clean Loot (Blues 1..3)",
+                "Sheet 2 of 8: Clean Loot (Blues 3..5)",
+                "Sheet 3 of 8: Clean Loot (Blues 6..8)",
+                "Sheet 4 of 8: Clean Loot (Blues 8..10)",
+                "Sheet 5 of 8: Numbered Red Contraband (1..6) & Hot Evidence",
+                "Sheet 6 of 8: Hot Evidence (🚨) & Tactical Resets (0)"
             };
 
             for (int s = 0; s < 6; s++)
@@ -147,62 +190,96 @@ namespace PnpDeckGeneratorV2
                 for (int c = 0; c < 9; c++)
                 {
                     int idx = s * 9 + c;
-                    sb.Append(RenderCardHtml(deck[idx]));
+                    sb.Append(RenderCard(deck[idx]));
                 }
 
                 sb.AppendLine("    </div>");
             }
 
-            // Sheet 7: Rules & Reference Cards (9 cards total)
-            sb.AppendLine("    <div class=\"sheet-header-label\">Sheet 7 of 8: V2 Rules, Turn Guides & Reference Cards</div>");
+            // Sheet 7: Reference / Aid Cards & Strike Trackers + Card Backs
+            sb.AppendLine("    <div class=\"sheet-header-label\">Sheet 7 of 8: Reference Aids & Strike Trackers</div>");
             sb.AppendLine("    <div class=\"sheet\">");
+            
+            // Reference Card 1
+            sb.AppendLine("      <div class=\"card marker\">");
+            sb.AppendLine("        <div class=\"card-inner\" style=\"padding: 8px; font-size: 7.5px; line-height: 1.25; display: flex; flex-direction: column; justify-content: space-between;\">");
+            sb.AppendLine("          <div style=\"border-bottom: 2px solid #0f172a; padding-bottom: 4px; text-align: center;\">");
+            sb.AppendLine("            <div style=\"font-size: 11px; font-weight: 900; color: #dc2626;\">🚨 TURN REFERENCE</div>");
+            sb.AppendLine("            <div style=\"font-size: 6.5px; font-weight: 700; color: #64748b;\">CAUGHT RED-HANDED V2</div>");
+            sb.AppendLine("          </div>");
+            sb.AppendLine("          <div style=\"margin-top: 4px;\">");
+            sb.AppendLine("            <b>ON YOUR TURN, CHOOSE 1:</b><br>");
+            sb.AppendLine("            <b>1. PLAY & DECLARE</b>: Play face-down & declare number &gt; previous (or declare Reset).<br>");
+            sb.AppendLine("            <b>2. INVESTIGATE!</b>: Challenge the previous player's card.<br>");
+            sb.AppendLine("            <b>3. PASS & DRAW</b>: Draw 1 card from locker. Turn ends.");
+            sb.AppendLine("          </div>");
+            sb.AppendLine("          <div style=\"background: #fef2f2; border: 1px solid #f87171; border-radius: 4px; padding: 4px; margin-top: 4px;\">");
+            sb.AppendLine("            <b style=\"color:#b91c1c;\">🔍 INVESTIGATION VERDICT:</b><br>");
+            sb.AppendLine("            • <b>ILLEGAL / LIE</b>: Bluffer takes ALL Red cards from evidence pile into Penalty Pile!<br>");
+            sb.AppendLine("            • <b>LEGAL / TRUTH</b>: Investigator takes ALL Red cards into Penalty Pile!<br>");
+            sb.AppendLine("            <i>(Blue & Reset cards are secured to Vault).</i>");
+            sb.AppendLine("          </div>");
+            sb.AppendLine("          <div style=\"background: #f0fdf4; border: 1px solid #86efac; border-radius: 4px; padding: 4px; margin-top: 4px;\">");
+            sb.AppendLine("            <b style=\"color:#15803d;\">🚗 GETAWAY CAR (ROUND END):</b><br>");
+            sb.AppendLine("            First to empty hand escapes (0 Strikes)! Remaining players count:<br>");
+            sb.AppendLine("            <code>(Red in Hand) + (Red in Penalty Pile)</code>.<br>");
+            sb.AppendLine("            <b>Most Red cards = 1 Strike! 3 Strikes = PRISON!</b>");
+            sb.AppendLine("          </div>");
+            sb.AppendLine("        </div>");
+            sb.AppendLine("      </div>");
 
-            // Card 1: Turn Guide
-            sb.AppendLine("      <div class=\"card marker\"><div class=\"card-inner\" style=\"border-color:#475569;\">");
-            sb.AppendLine("        <div class=\"header-block\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">📋</span><span class=\"index-val\" style=\"color:#0f172a;\">RULES</span></div><span class=\"index-type\" style=\"color:#64748b;\">Turn Guide</span></div><div class=\"pill\" style=\"background:#ffffff; border-color:#d97706; color:#b45309;\">V2 CORE</div></div></div>");
-            sb.AppendLine("        <div class=\"center-art\" style=\"margin:2px 0;\"><span style=\"font-size:9px; font-weight:900; color:#0f172a; text-transform:uppercase;\">CLIMB OR BRIDGE</span><div style=\"font-size:6.6px; text-align:left; margin-top:3px; line-height:1.32; color:#334155;\">• On your turn, discard 1 card meeting:<br>&nbsp;&nbsp;📈 <b>1. Climb by Number</b>: Play card > top discard!<br>&nbsp;&nbsp;🌉 <b>2. Item Bridge</b>: Match Item Icon of top card (even if number is lower!)<br>&nbsp;&nbsp;⚡ <b>3. Reset (0)</b>: Play on any card to reset to 0!<br>• <b>Can't Play?</b> Draw 1 card from Locker (may play immediately if legal).</div></div>");
-            sb.AppendLine("        <div class=\"header-block inverted\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">📋</span><span class=\"index-val\" style=\"color:#0f172a;\">RULES</span></div><span class=\"index-type\" style=\"color:#64748b;\">Turn Guide</span></div><div class=\"pill\" style=\"background:#ffffff; border-color:#d97706; color:#b45309;\">V2 CORE</div></div></div>");
-            sb.AppendLine("      </div></div>");
+            // Reference Card 2
+            sb.AppendLine("      <div class=\"card marker\">");
+            sb.AppendLine("        <div class=\"card-inner\" style=\"padding: 8px; font-size: 7.5px; line-height: 1.25; display: flex; flex-direction: column; justify-content: space-between;\">");
+            sb.AppendLine("          <div style=\"border-bottom: 2px solid #0f172a; padding-bottom: 4px; text-align: center;\">");
+            sb.AppendLine("            <div style=\"font-size: 11px; font-weight: 900; color: #0284c7;\">📋 DECK ARCHITECTURE</div>");
+            sb.AppendLine("            <div style=\"font-size: 6.5px; font-weight: 700; color: #64748b;\">54 CARDS TOTAL</div>");
+            sb.AppendLine("          </div>");
+            sb.AppendLine("          <div style=\"margin-top: 4px;\">");
+            sb.AppendLine("            <b>• 36 CLEAN LOOT (BLUE 1-10)</b>: Safe goods. Zero penalty points.<br><br>");
+            sb.AppendLine("            <b>• 8 NUMBERED RED (1-6)</b>: Low contraband. Can be played legally if &gt; previous number!<br><br>");
+            sb.AppendLine("            <b>• 6 HOT EVIDENCE (🚨 RED)</b>: Unnumbered toxic contraband. CANNOT match any number! Must bluff to shed!<br><br>");
+            sb.AppendLine("            <b>• 4 RESETS (0 SPECIAL)</b>: Resets count to 0. The Fence (0 🤝) & Smoke Bomb (0 💨🔄 reverses play).");
+            sb.AppendLine("          </div>");
+            sb.AppendLine("          <div style=\"background: #fffbeb; border: 1px solid #fcd34d; border-radius: 4px; padding: 4px; text-align:center; font-weight:800; color:#b45309;\">");
+            sb.AppendLine("            💡 TIP: Call bluff when the pile has few red cards; avoid false accusations when the pile is loaded!");
+            sb.AppendLine("          </div>");
+            sb.AppendLine("        </div>");
+            sb.AppendLine("      </div>");
 
-            // Card 2: Contraband & Elimination
-            sb.AppendLine("      <div class=\"card marker\"><div class=\"card-inner\" style=\"border-color:#dc2626;\">");
-            sb.AppendLine("        <div class=\"header-block\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">🚨</span><span class=\"index-val\" style=\"color:#dc2626;\">BUST</span></div><span class=\"index-type\" style=\"color:#b91c1c;\">Elimination</span></div><div class=\"pill\" style=\"background:#ffffff; border-color:#dc2626; color:#dc2626;\">3 STRIKES</div></div></div>");
-            sb.AppendLine("        <div class=\"center-art\" style=\"margin:2px 0;\"><span style=\"font-size:9px; font-weight:900; color:#dc2626; text-transform:uppercase;\">CAUGHT RED-HANDED!</span><div style=\"font-size:6.6px; text-align:left; margin-top:3px; line-height:1.32; color:#334155;\">• Round ends when any player empties hand (Getaway Car!).<br>• All remaining players reveal hands:<br>&nbsp;&nbsp;🚨 <b>Holding ANY Red (1 or 2)</b> = <b>+1 Strike!</b><br>&nbsp;&nbsp;🛡️ <b>Holding 0 Red</b> = <b>Escaped Clean (0 Strikes)!</b><br>• <b>3 Strikes = Eliminated!</b> Last survivor wins!</div></div>");
-            sb.AppendLine("        <div class=\"header-block inverted\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">🚨</span><span class=\"index-val\" style=\"color:#dc2626;\">BUST</span></div><span class=\"index-type\" style=\"color:#b91c1c;\">Elimination</span></div><div class=\"pill\" style=\"background:#ffffff; border-color:#dc2626; color:#dc2626;\">3 STRIKES</div></div></div>");
-            sb.AppendLine("      </div></div>");
-
-            // Card 3: The Reset Cards
-            sb.AppendLine("      <div class=\"card marker\"><div class=\"card-inner\" style=\"border-color:#d97706;\">");
-            sb.AppendLine("        <div class=\"header-block\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">⚡</span><span class=\"index-val\" style=\"color:#d97706;\">RESETS</span></div><span class=\"index-type\" style=\"color:#b45309;\">Tactics</span></div><div class=\"pill\" style=\"background:#ffffff; border-color:#d97706; color:#d97706;\">VALUE 0</div></div></div>");
-            sb.AppendLine("        <div class=\"center-art\" style=\"margin:2px 0;\"><span style=\"font-size:9px; font-weight:900; color:#b45309; text-transform:uppercase;\">TACTICAL RESET CARDS</span><div style=\"font-size:6.6px; text-align:left; margin-top:3px; line-height:1.32; color:#334155;\">Play on ANY card to reset count to 0 (Wild Item):<br>• <b>The Fence (2x)</b>: Resets to 0 & Wild Item!<br>• <b>Smoke Bomb (2x)</b>: Resets to 0 & reverses turn order 🔄!<br>• <b>The Snitch (2x)</b>: Resets to 0 & forces next player to draw 1 card 🚨!</div></div>");
-            sb.AppendLine("        <div class=\"header-block inverted\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">⚡</span><span class=\"index-val\" style=\"color:#d97706;\">RESETS</span></div><span class=\"index-type\" style=\"color:#b45309;\">Tactics</span></div><div class=\"pill\" style=\"background:#ffffff; border-color:#d97706; color:#d97706;\">VALUE 0</div></div></div>");
-            sb.AppendLine("      </div></div>");
-
-            // 6 Spare / Notes Cards to complete 9-card sheet
-            for (int k = 0; k < 6; k++)
+            // Strike Trackers (2 cards)
+            for (int t = 1; t <= 2; t++)
             {
-                sb.AppendLine("      <div class=\"card marker\"><div class=\"card-inner\" style=\"border-style:dashed; border-color:#94a3b8;\">");
-                sb.AppendLine("        <div class=\"header-block\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">🃏</span><span class=\"index-val\" style=\"color:#64748b;\">SPARE</span></div><span class=\"index-type\" style=\"color:#94a3b8;\">Blank</span></div></div></div>");
-                sb.AppendLine("        <div class=\"center-art\"><span class=\"art-icon\" style=\"opacity:0.25;\">🃏</span><span class=\"art-name\" style=\"color:#64748b;\">V2 REPLACEMENT</span><span class=\"art-tier\" style=\"color:#94a3b8;\">Custom action</span></div>");
-                sb.AppendLine("        <div class=\"header-block inverted\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">🃏</span><span class=\"index-val\" style=\"color:#64748b;\">SPARE</span></div><span class=\"index-type\" style=\"color:#94a3b8;\">Blank</span></div></div></div>");
-                sb.AppendLine("      </div></div>");
+                sb.AppendLine("      <div class=\"card marker\">");
+                sb.AppendLine("        <div class=\"card-inner\" style=\"padding: 8px; display: flex; flex-direction: column; justify-content: space-between; text-align: center;\">");
+                sb.AppendLine("          <div style=\"border-bottom: 2px solid #0f172a; padding-bottom: 4px;\">");
+                sb.AppendLine("            <div style=\"font-size: 12px; font-weight: 900; color: #dc2626;\">🚨 MUGSHOT TRACKER</div>");
+                sb.AppendLine(string.Format("            <div style=\"font-size: 7px; font-weight: 700; color: #64748b;\">PLAYER {0} DOSSIER</div>", t));
+                sb.AppendLine("          </div>");
+                sb.AppendLine("          <div style=\"display:flex; flex-direction:column; gap:6px; margin: auto 0;\">");
+                sb.AppendLine("            <div style=\"border:1.5px solid #cbd5e1; border-radius:6px; padding:4px; font-weight:800; font-size:8px;\">STRIKE 1: ⚠️ SUSPECT RECORD</div>");
+                sb.AppendLine("            <div style=\"border:1.5px solid #cbd5e1; border-radius:6px; padding:4px; font-weight:800; font-size:8px;\">STRIKE 2: 🚨 WANTED FUGITIVE</div>");
+                sb.AppendLine("            <div style=\"border:2px solid #dc2626; background:#fef2f2; border-radius:6px; padding:4px; font-weight:900; font-size:8.5px; color:#b91c1c;\">STRIKE 3: 🔒 FEDERAL PRISON!</div>");
+                sb.AppendLine("          </div>");
+                sb.AppendLine("          <div style=\"font-size:6.5px; font-weight:700; color:#64748b;\">Place token or paperclip on active strike level</div>");
+                sb.AppendLine("        </div>");
+                sb.AppendLine("      </div>");
+            }
+
+            // 5 Card Backs to fill Sheet 7
+            for (int b = 0; b < 5; b++)
+            {
+                sb.AppendLine(RenderCardBack());
             }
 
             sb.AppendLine("    </div>");
 
-            // Sheet 8: Card Backs
-            sb.AppendLine("    <div class=\"sheet-header-label\">Sheet 8 of 8: Card Backs (Printer-Friendly Minimal Ink • Print on reverse of Sheets 1–7)</div>");
+            // Sheet 8: 9 Card Backs for double-sided printing
+            sb.AppendLine("    <div class=\"sheet-header-label\">Sheet 8 of 8: Card Backs (For Duplex Printing)</div>");
             sb.AppendLine("    <div class=\"sheet\">");
             for (int b = 0; b < 9; b++)
             {
-                sb.AppendLine("      <div class=\"card card-back\">");
-                sb.AppendLine("        <div class=\"card-inner\">");
-                sb.AppendLine("          <div class=\"card-back-pattern\"></div>");
-                sb.AppendLine("          <span style=\"font-size:30px; z-index:2;\">🔒🚨</span>");
-                sb.AppendLine("          <div style=\"font-size:13px; font-weight:900; letter-spacing:1.5px; margin-top:8px; text-transform:uppercase; color:#0f172a; z-index:2;\">CAUGHT</div>");
-                sb.AppendLine("          <div style=\"font-size:10px; font-weight:800; color:#dc2626; letter-spacing:2px; text-transform:uppercase; z-index:2;\">RED-HANDED V2</div>");
-                sb.AppendLine("        </div>");
-                sb.AppendLine("      </div>");
+                sb.AppendLine(RenderCardBack());
             }
             sb.AppendLine("    </div>");
 
@@ -211,46 +288,39 @@ namespace PnpDeckGeneratorV2
             sb.AppendLine("</html>");
 
             File.WriteAllText(outHtmlPath, sb.ToString(), Encoding.UTF8);
-            Console.WriteLine("SUCCESS: Generated " + outHtmlPath);
+            Console.WriteLine("PnP Deck HTML successfully written to: " + outHtmlPath);
         }
 
-        public static string RenderCardHtml(CardDef card)
+        static string RenderCardBack()
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("      <div class=\"card card-back\">");
+            sb.AppendLine("        <div class=\"card-inner\">");
+            sb.AppendLine("          <div class=\"card-back-pattern\"></div>");
+            sb.AppendLine("          <div style=\"font-size: 28px; line-height: 1;\">🚨</div>");
+            sb.AppendLine("          <div style=\"font-size: 13px; font-weight: 900; letter-spacing: 1px; margin-top: 4px;\">CAUGHT</div>");
+            sb.AppendLine("          <div style=\"font-size: 10px; font-weight: 800; color: #dc2626; letter-spacing: 0.5px;\">RED-HANDED</div>");
+            sb.AppendLine("          <div style=\"font-size: 7px; font-weight: 800; color: #64748b; margin-top: 2px;\">V2: THE INTERROGATION</div>");
+            sb.AppendLine("        </div>");
+            sb.AppendLine("      </div>");
+            return sb.ToString();
+        }
+
+        static string RenderCard(CardDef card)
         {
             var sb = new StringBuilder();
             string colorClass = card.Color.ToLower();
+            string typeDisplay = (card.Color == "RED") ? "CONTRABAND"
+                               : (card.Color == "SPECIAL") ? "TACTICAL"
+                               : "CLEAN LOOT";
 
-            string typeDisplay = (card.Color == "RED") ? "Contraband" : ((card.Color == "SPECIAL") ? "Reset (0)" : "Clean Loot");
-            string pillHtml = "";
-            if (card.Color == "RED")
-            {
-                pillHtml = "<div class=\"pill\">🚨 DUMP VIA ITEM</div>";
-            }
-            else if (card.Color == "SPECIAL")
-            {
-                pillHtml = "<div class=\"pill\">⚡ RESET 0</div>";
-            }
-            else
-            {
-                pillHtml = string.Format("<div class=\"pill\">🔵 {0}</div>", card.Item.ToUpper());
-            }
+            string pillHtml = string.Format("<span class=\"pill\">{0}</span>", card.Color == "RED" ? "🚨 HOT" : (card.Color == "SPECIAL" ? "⚡ RESET" : "🛡️ SAFE"));
 
-            string ruleText = "";
-            if (card.Color == "RED")
-            {
-                ruleText = string.Format("Play if > top discard OR matches {0}! Caught in hand = 1 STRIKE!", card.Item);
-            }
-            else if (card.Color == "SPECIAL")
-            {
-                ruleText = card.Sub;
-            }
-            else
-            {
-                ruleText = string.Format("Play if > top discard OR matches {0} icon.", card.Item);
-            }
+            string ruleText = card.Sub;
 
-            string artTier = (card.Color == "RED") ? "🚨 Toxic Contraband"
-                           : (card.Color == "SPECIAL") ? "⚡ Tactical Action"
-                           : "Safe Loot";
+            string artTier = (card.Color == "RED") ? (card.Val == -1 ? "🚨 Pure Toxic Evidence" : "🚨 Numbered Contraband")
+                           : (card.Color == "SPECIAL") ? "⚡ Tactical Reset"
+                           : "Safe Clean Loot";
 
             sb.AppendLine(string.Format("      <div class=\"card {0}\">", colorClass));
             sb.AppendLine("        <div class=\"card-inner\">");
@@ -261,7 +331,7 @@ namespace PnpDeckGeneratorV2
             sb.AppendLine("              <div class=\"index-group\">");
             sb.AppendLine("                <div class=\"corner-top\">");
             sb.AppendLine(string.Format("                  <span class=\"corner-icon\">{0}</span>", card.Icon));
-            sb.AppendLine(string.Format("                  <span class=\"index-val\">{0}</span>", card.Val));
+            sb.AppendLine(string.Format("                  <span class=\"index-val\">{0}</span>", card.DisplayVal));
             sb.AppendLine("                </div>");
             sb.AppendLine(string.Format("                <span class=\"index-type\">{0}</span>", typeDisplay));
             sb.AppendLine("              </div>");
@@ -273,7 +343,7 @@ namespace PnpDeckGeneratorV2
             // Center Art
             sb.AppendLine("          <div class=\"center-art\">");
             sb.AppendLine(string.Format("            <span class=\"art-icon\">{0}</span>", card.Icon));
-            sb.AppendLine(string.Format("            <span class=\"art-name\">{0} {1}</span>", card.Item, (card.Val > 0 ? card.Val.ToString() : "")));
+            sb.AppendLine(string.Format("            <span class=\"art-name\">{0} {1}</span>", card.Title, (card.Val > 0 ? card.Val.ToString() : "")));
             sb.AppendLine(string.Format("            <span class=\"art-tier\">{0}</span>", artTier));
             sb.AppendLine("          </div>");
 
@@ -283,7 +353,7 @@ namespace PnpDeckGeneratorV2
             sb.AppendLine("              <div class=\"index-group\">");
             sb.AppendLine("                <div class=\"corner-top\">");
             sb.AppendLine(string.Format("                  <span class=\"corner-icon\">{0}</span>", card.Icon));
-            sb.AppendLine(string.Format("                  <span class=\"index-val\">{0}</span>", card.Val));
+            sb.AppendLine(string.Format("                  <span class=\"index-val\">{0}</span>", card.DisplayVal));
             sb.AppendLine("                </div>");
             sb.AppendLine(string.Format("                <span class=\"index-type\">{0}</span>", typeDisplay));
             sb.AppendLine("              </div>");

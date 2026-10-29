@@ -1,123 +1,167 @@
-# 🚨 Caught Red-Handed V2: The Bridge & Shed Edition
+# 🚨 Caught Red-Handed V2: The Interrogation
 
-**A Cutthroat Shedding & Climbing Game of Item Bridges, Dumping Contraband & Surviving the Feds**  
-*Players*: 2–6 (Optimized for 3–5) | *Ages*: 8+ | *Match Length*: ~15–25 mins | *Components*: 54 Play Cards + 2 Reference Cards
-
----
-
-## 1. The Core Premise: "If You're Caught Red-Handed, You're Out!"
-
-You and your crew are fleeing a multi-million-dollar syndicate robbery. To escape, you must **shed every single card from your hand**.
-
-* There is **one central Discard Pile**.
-* **The Bridge Discard Restriction**: On your turn, you can discard any card that satisfies **either** rule:
-  1. 📈 **Climb by Number**: Play a card with a **strictly higher number** than the top card ($> X$, any item!).
-  2. 🌉 **The Item Bridge**: Play a card that **matches the Item Icon** of the top card (Cash, Diamond, Watch, Key, Art, Gold)—**regardless of its number**!
-* **The Contraband Twist**: All **Red Contraband cards are LOW numbers (1 and 2)**. While high Blue numbers ($3$ through $8$) can climb, your Red Contraband can be dumped at **any time** by matching the active item!
-* **Tactical Reset Cards (Value 0)**: The Fence, Smoke Bomb, and The Snitch reset the pile to 0 and act as wild items.
-* **If you can't play, you must draw a card**.
-* When any player sheds their last card, the Getaway Car speeds off! Everyone else reveals their hand:
-  * 🚨 **Holding ANY Red Contraband? YOU ARE CAUGHT RED-HANDED (+1 Strike)!**
-  * 🛡️ **Holding 0 Red Cards (only Blue/Resets)? You escaped clean (0 Strikes)!**
-  * **3 Strikes and you are ELIMINATED!** Last thief standing wins!
+**A High-Stakes Face-Down Bluffing, Climbing & Investigation Card Game**  
+*Players*: 3–6 (Optimized for 3–5) | *Ages*: 8+ | *Match Length*: ~15–25 mins | *Components*: 54 Play Cards + 2 Reference Cards
 
 ---
 
-## 2. Deck Anatomy (54 Play Cards)
+## 1. The Core Premise: "Play It Cool or Face the Heat!"
 
-The deck features **6 Heist Items** (8 cards per item) and **6 Tactical Resets**:
+You and your syndicate crew have pulled off a multi-million-dollar heist, but the feds are closing in fast. The center table is the **Evidence Pile**. To escape in the getaway car, you must **shed every single card from your hand**.
+
+* Every card is played **FACE DOWN**.
+* As you play, you must look your fellow thieves in the eye and **declare what card you claim to have played**.
+* The declared number must be **strictly higher** than the previously declared number ($> X$).
+* **The Contraband Trap**: 
+  * **Clean Loot (Blue)** has numbers $1$ to $10$. Safe to play truthfully or bluffed.
+  * **Numbered Contraband (Red)** has low numbers $1$ to $6$. Hot goods that *can* be played legally if the count is low!
+  * **Unnumbered Contraband (Red `🚨 HOT EVIDENCE`)** has **NO NUMBERS AT ALL**. These cards are pure toxic evidence—they can **never** be played legally! To shed them, you **MUST BLUFF**!
+* **Instead of playing a card, you may shout: "INVESTIGATE!"**
+  * If the previous player was **lying / illegal**: They are **CAUGHT RED-HANDED**! They must take **ALL Red Contraband cards from the Evidence Pile into their personal Penalty Pile**!
+  * If the previous player was **telling the truth**: You made a **FALSE ACCUSATION**! You must take **ALL Red Contraband cards from the Evidence Pile into your personal Penalty Pile**!
+  * All Blue loot cards in the pile are secured and cleared away to the vault.
+* **The Getaway Race**: The first player to shed their last card triggers the **Getaway Car**! All remaining players reveal their hands:
+  $$\text{Total Contraband} = (\text{Red Cards in Hand}) + (\text{Red Cards in Penalty Pile})$$
+  The player(s) caught holding the most Red Contraband receive a **Mugshot Strike** (🚨 BUSTED!). **3 Strikes and you are sent to Federal Prison!**
+
+---
+
+## 2. Deck Anatomy (54 Play Cards + 2 Reference Cards)
+
+The deck consists of exactly **54 Play Cards** (printed on 6 standard 9-card sheets) plus 2 Reference Cards:
 
 ```
-6 Items × 8 Cards = 48 Play Cards + 6 Resets = Exactly 54 Cards
+36 Clean Loot (Blue) + 8 Numbered Red (1-6) + 6 Hot Evidence (Red) + 4 Resets (0) = 54 Play Cards
 ```
 
-### The 6 Heist Items:
-1. 💵 **Cash** (Marked Stacks)
-2. 💎 **Diamonds** (Blood Gems)
-3. ⌚ **Watches** (Tracked Rolexes)
-4. 🗝️ **Vault Keys** (Evidence Keys)
-5. 🖼️ **Art** (Stolen Canvases)
-6. 🧈 **Gold** (Hot Bullion)
+### A. Clean Loot (Blue) — 36 Cards
+* Values $1$ through $10$:
+  * **3 copies each**: Values 1, 2, 9, 10 (12 cards)
+  * **4 copies each**: Values 3, 4, 5, 6, 7, 8 (24 cards)
+* **Safe goods**: Blue cards carry zero penalty points. When cleared during an investigation or sweep, they go into the Vault (out of the round).
 
-### Card Breakdown per Item:
-| Card Type | Values | Copies / Item | Total Deck Count | Details |
-| :--- | :---: | :---: | :---: | :--- |
-| **Contraband (Red)** | **1, 2** | 2 cards | **12 cards** | **Toxic Evidence.** Low numbers ($1$ = Petty, $2$ = Grand). Can be dumped via Item Bridges! |
-| **Clean Loot (Blue)** | **3, 4, 5, 6, 7, 8** | 6 cards | **36 cards** | **Safe Ladders.** Values 3, 4, 5, 6, 7, 8. Used to climb numbers and choke opponents. |
-| **Tactical Resets (0)** | **0** | — | **6 cards** | **Wild Item Resets.** Played on any card to reset the count to 0: |
-| &nbsp;&nbsp;• **The Fence** | **0** | — | **2 cards** | Resets pile to 0 & acts as a Wild Item for the next player! |
-| &nbsp;&nbsp;• **Smoke Bomb** | **0 🔄** | — | **2 cards** | Resets pile to 0 **AND reverses direction of play** (↻ ↔ ↺)! |
-| &nbsp;&nbsp;• **The Snitch** | **0 🚨** | — | **2 cards** | Resets pile to 0 **AND forces next player to draw 1 card**! |
+### B. Numbered Contraband (Red) — 8 Cards
+* Values $1$ through $6$:
+  * **2 copies**: Red 1 (Petty Contraband)
+  * **2 copies**: Red 2 (Petty Contraband)
+  * **1 copy each**: Red 3, Red 4, Red 5, Red 6 (Larceny / Syndicate Contraband)
+* **The Double-Edged Sword**: If you have a Red 4 and the current bid is 2, you can honestly declare "Four!" and play it legally! If someone investigates you, they eat the penalty! But if caught in your hand at the end of the round, it counts toward your strike!
+
+### C. Unnumbered Contraband (Red `🚨 HOT EVIDENCE`) — 6 Cards
+* Value: **NONE** (`🚨 HOT EVIDENCE` / Syndicate Seal).
+* **Pure Toxic Goods**: These cards have no numerical rank. They can **never** match any number declaration!
+* To get rid of a Hot Evidence card, you **must bluff** by declaring a number higher than the previous card (or claiming a Reset).
+
+### D. Tactical Resets (0 / Special) — 4 Cards
+* **The Fence (2 cards, Value 0 🤝)**: Resets the declared count back to 0. (The next player may declare any number $\ge 1$).
+* **Smoke Bomb (2 cards, Value 0 💨🔄)**: Resets the declared count back to 0 **AND reverses the direction of play** (Clockwise ↔ Counter-Clockwise)!
+* Can be played legally by declaring "Reset" or "The Fence" / "Smoke Bomb".
 
 ---
 
 ## 3. Setup (30 Seconds)
 
-1. Shuffle all 54 cards.
-2. Deal **7 cards** face-down to each player.
-3. The remaining cards form the **Evidence Locker** (Draw Pile).
-4. Flip the top card of the Locker face-up to start the **Center Discard Pile**:
-   * *If it's a Reset card (0), it starts at 0 (Wild Item).*
-   * *If it's an Item card (e.g. Blue 5 Gold), play starts on that Item and Value.*
-5. Set play direction **Clockwise** (Pass/Play Left). Give each player **3 Strike tokens** (or track on scorecard).
+1. Shuffle all 54 play cards thoroughly.
+2. Deal **7 cards** face down to each player.
+3. Place the remaining cards face down in the center as the **Evidence Locker (Draw Pile)**.
+4. Leave room in the center for the face-down **Evidence Pile**, and a discard space for the **Vault**.
+5. Give each player a **Mugshot Tracker** (or use tokens for 3 Strikes).
+6. The player who most recently committed a petty crime (or random draw) goes first. Initial play direction is **Clockwise**.
 
 ---
 
 ## 4. Turn Structure
 
-On your turn, execute **one** of two choices:
+On your turn, you must take **ONE** of three actions:
 
-### Choice A: Play 1 Valid Card
-You may discard **1 card** from your hand onto the Center Discard Pile if it meets **any** of these 3 conditions:
+```mermaid
+flowchart TD
+    Start["Your Turn"] --> Choice{"Choose Action"}
+    Choice -->|"A"| Play["Play Card Face Down<br>& Declare Number (> previous)"]
+    Choice -->|"B"| Investigate["INVESTIGATE!<br>Challenge Previous Player"]
+    Choice -->|"C"| Pass["Pass & Draw 1 Card<br>from Evidence Locker"]
+    
+    Play --> NextP["Pass Turn to Next Player"]
+    Pass --> CheckSweep{"Did All Players Pass?"}
+    CheckSweep -->|"Yes"| Sweep["Clear Pile to Vault<br>Last Player Leads Fresh"]
+    CheckSweep -->|"No"| NextP
+    
+    Investigate --> Reveal["Flip Top Card Face-Up"]
+    Reveal --> CheckLegal{"Did Card Match Claim?"}
+    CheckLegal -->|"NO (Illegal / Hot Red)"| BlufferFails["🚨 CAUGHT RED-HANDED!<br>Bluffer takes ALL Red Cards from Pile.<br>Investigator leads next."]
+    CheckLegal -->|"YES (Legal Truth)"| AccuserFails["❌ FALSE ACCUSATION!<br>Investigator takes ALL Red Cards from Pile.<br>Truthful player leads next."]
+```
 
-1. 📈 **Higher Number Climb**: The card has a **strictly higher numerical value** than the top card of the discard pile ($> X$).
-   * *Example*: Top card is a **Gold 5**. You can play ANY item that is a **6, 7, or 8**!
-2. 🌉 **The Item Bridge**: The card **matches the Item Icon** of the top card—**even if its number is lower**!
-   * *Example*: Top card is a **Gold 7**. You can play a **Red 1 Gold** or **Red 2 Gold** because **Gold matches Gold**!
-   * *The Pivot*: Playing a low Red card bridges the pile from a 7 down to a 1, resetting the climbing ladder for the table!
-3. ⚡ **Tactical Reset (Value 0)**: You may play **The Fence**, **Smoke Bomb**, or **The Snitch** on **ANY card**!
-   * The count resets to **0** and resolves any special ability (reverse or force draw).
-   * Resets act as a **Wild Item**: the next player may play *any* card ($1$ through $8$) of *any* item!
+### Action A: Play Face Down & Declare
+1. Select **1 card** from your hand and place it **face down** onto the center Evidence Pile.
+2. **Make your declaration aloud**:
+   * **If declaring a number**: Your number must be **strictly greater** than the currently active declared number ($> X$).
+     * *Example*: If the active declaration is "5", you may declare "6", "7", "8", "9", or "10".
+     * *(If the pile is empty or was just reset to 0, you may declare any number $1$ through $10$)*.
+   * **If declaring a Reset**: You must declare "Reset" (or "The Fence" / "Smoke Bomb").
+3. Your play is now pending! Turn passes to the next player.
+
+### Action B: Investigate! (Call Bluff)
+If you suspect the player immediately before you was lying, shout: **"INVESTIGATE!"**
+
+1. **Flip the top card of the Evidence Pile face up for everyone to see**:
+2. **Determine the verdict**:
+   * **🚨 CAUGHT RED-HANDED! (Play was ILLEGAL)**:
+     * The card did **not** match the declaration (e.g. they claimed "7", but the card is a 3, a Blue 9, a Reset, or an unnumbered `🚨 HOT EVIDENCE` card).
+     * **Penalty**: The bluffer must pick up **ALL Red Contraband cards** currently in the entire Evidence Pile (including the flipped card) and place them face up in their personal **Penalty Pile**!
+     * **Loot Secured**: All Blue cards and Resets in the Evidence Pile are swept into the **Vault** (cleared from play).
+     * **Next Lead**: The successful Investigator leads the next turn on a fresh, empty pile!
+   * **❌ FALSE ACCUSATION! (Play was LEGAL)**:
+     * The card **did** match the declaration (e.g. they claimed "7", and the card is actually a 7—whether Blue 7 or Red 7!).
+     * **Penalty**: The **Investigator** must pick up **ALL Red Contraband cards** currently in the Evidence Pile and place them face up in their personal **Penalty Pile**!
+     * **Loot Secured**: All Blue cards and Resets are swept into the **Vault**.
+     * **Next Lead**: The truthful player who was falsely accused leads the next turn on a fresh, empty pile!
+
+*(Note: If a Smoke Bomb was revealed during an investigation and proved legal, reverse turn direction immediately)*.
+
+### Action C: Pass & Draw 1 Card
+If you cannot beat the current number (e.g. it is at 10), or do not want to bluff, and do not want to investigate:
+1. **Draw 1 card** from the Evidence Locker into your hand.
+2. Your turn ends.
+3. **Table Sweep Rule**: If all players consecutively pass without playing or challenging, the Evidence Pile is secured! All cards in the pile are swept into the Vault with zero penalties, and the player who played the uncontested top card leads fresh.
 
 ---
 
-### Choice B: Draw 1 Card (Pass)
-If you cannot play (or choose not to play):
-1. **Draw 1 card** from the Evidence Locker (Draw Pile) into your hand.
-2. If the drawn card is legally playable (higher number, matching item, or reset), you **may immediately play it**!
-3. If you still cannot play (or choose to hold it), your turn ends and play passes to the next player.
+## 5. Round End: The Getaway Car
 
-*(If the Locker draw pile runs dry, reshuffle all cards in the discard pile except the top active card to form a fresh draw pile).*
+A round ends when any player plays their **very last card** from their hand!
 
----
+### The Final Inspection
+1. When a player plays their last card, the next player in turn order has the immediate option to **Investigate** it!
+2. **If Investigated**:
+   * If the player was **bluffing** $\rightarrow$ They are caught red-handed! They take all Red cards in the pile into their penalty pile, pick their bluffed card back up into their hand, and **do NOT escape**! Play continues!
+   * If the player was **telling the truth** $\rightarrow$ False accusation! The investigator takes all Red cards into their penalty pile. The player's escape is sealed!
+3. **If Not Investigated (or passed)** $\rightarrow$ The player shouts:
+   > 🚗💨 **"GETAWAY CAR!"**
 
-## 5. End of Round: The Escape Check
+### Contraband Tally & Strikes
+The escaped driver gets away scot-free (**0 Strikes**)!  
+All other players must freeze and reveal all cards in their hand and personal penalty pile:
 
-A round ends immediately the instant **any player plays their very last card**! That player shouts:
+$$\text{Player Contraband Score} = (\text{Red Cards in Hand}) + (\text{Red Cards in Penalty Pile})$$
 
-> 🚗💨 **"GETAWAY CAR!"**
-
-Play stops instantly. All remaining players must **FREEZE** and reveal their hands:
-
-1. **The Getaway Driver**:
-   * Emptied their hand first! Escapes clean with **0 Strikes**.
-2. **Caught Red-Handed (Holding ANY Red Contraband)**:
-   * 🚨 **BUSTED!** If you hold **at least one Red Contraband card (1 or 2)**, you were caught with toxic evidence!
-   * You receive **1 Mugshot Strike**!
-3. **Escaped Clean (Holding ONLY Blue / Reset cards)**:
-   * 🛡️ Even if you didn't empty your hand, if you successfully dumped all your Red Contraband via bridges and only hold Clean Blue cards or Resets, the feds find zero evidence on you! **You escape clean with 0 Strikes!**
+* The player(s) with the **HIGHEST Contraband Score** receive **1 Mugshot Strike**!
+* *(In the event of a tie for highest score, all tied players receive 1 Strike)*.
+* *(If no remaining players hold any Red cards, no strikes are awarded)*.
 
 ---
 
 ## 6. Winning the Game
 
-* When a player receives their **3rd Strike**, they are **SENT TO PRISON (Eliminated)**!
-* The **last remaining player standing** who has not been eliminated wins the match and is crowned the **Master Thief**!
+* When any player accumulates **3 Mugshot Strikes**, the game ends immediately!
+* That player is **SENT TO FEDERAL PRISON**!
+* The player with the **fewest Mugshot Strikes** (most successful escapes and least contraband) is crowned the **Syndicate Mastermind**!
 
 ---
 
-## 7. Master Thief Tactics
+## 7. Mastermind Tactics & Bluffing Psychology
 
-* **The Contraband Pivot**: When an opponent plays a high Blue card in an item you hold contraband for, pounce on it! Dropping a Red 1 or Red 2 dumps your toxic liability and crashes the pile down to a low number.
-* **Item Starvation**: If you suspect the next player is holding a Red Watch or Red Key, avoid playing Watches or Keys! Play a high Cash or Gold card to starve their bridge!
-* **Reset Timing**: Save The Fence or Smoke Bomb for emergency escapes when your hand is choked with non-matching numbers.
+1. **The Numbered Red Gambit**: Because Red cards 1 through 6 have printed numbers, you can play them *truthfully*! When someone plays a 2, playing a Red 4 and boldly announcing "Four!" is 100% legal. If an opponent thinks you're dumping contraband and challenges you, they eat the penalty!
+2. **The Hot Evidence Dump**: Unnumbered `🚨 HOT EVIDENCE` cards are pure toxic waste. You *must* bluff to shed them. The best time to dump them is early in a sequence (e.g. declaring a 3 or 4) when opponents are reluctant to risk challenging for just 1 or 2 cards in the pile.
+3. **Escalation & the Snowball**: As the Evidence Pile grows to 5, 6, or 7 cards, the risk of challenging multiplies. If you suspect there are 3 Red cards buried in that pile, a false accusation is catastrophic! Use that fear to bluff higher numbers with impunity.
+4. **Card Counting**: There are only 3 copies of 9 and 10 in the entire deck. If you hold two 10s in your hand and someone confidently declares "10", there is a 66% chance they are bluffing!
