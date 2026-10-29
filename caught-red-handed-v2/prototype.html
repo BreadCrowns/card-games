@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Caught Red-Handed V2: The Heat — Shedding Edition</title>
+  <title>Caught Red-Handed V2: The Bridge & Shed Edition</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @keyframes pulse-red {
@@ -37,7 +37,7 @@
     <div class="flex items-center gap-1.5">
       <span class="text-lg">🚨</span>
       <h1 class="text-xs sm:text-sm font-black tracking-wider text-rose-500 uppercase leading-none">Caught Red-Handed <span class="text-amber-400">V2</span></h1>
-      <span class="text-[9px] bg-rose-500/20 text-rose-400 border border-rose-500/40 px-1.5 py-0.2 rounded-full font-black hidden sm:inline">THE HEAT</span>
+      <span class="text-[9px] bg-sky-500/20 text-sky-400 border border-sky-500/40 px-1.5 py-0.2 rounded-full font-black hidden sm:inline">ITEM BRIDGES</span>
     </div>
 
     <!-- Center Status & Round / Turn info -->
@@ -140,7 +140,7 @@
         </div>
       </div>
 
-      <!-- CENTER DISCARD PILE (The Active Climbing Card) -->
+      <!-- CENTER DISCARD PILE (The Active Climbing / Item Card) -->
       <div id="center-discard-area" class="flex flex-col items-center">
         <span class="text-[8px] font-black text-slate-400 uppercase tracking-wider mb-1">Active Discard</span>
         <div id="top-discard-card" class="w-[78px] h-[116px] rounded-xl border-2 p-1.5 flex flex-col justify-between items-center shadow-2xl relative transition-all bg-slate-900">
@@ -166,7 +166,7 @@
 
     <!-- Activity Ticker & Restriction Banner -->
     <div id="announcement-banner" class="w-full max-w-md mt-1.5 text-center text-[10.5px] font-semibold text-amber-300 truncate px-2 py-0.5 rounded-md bg-amber-950/40 border border-amber-900/40">
-      Play a card with value > current top card, or play a Reset (0)!
+      Play a card with value > top card OR match the Item Icon!
     </div>
   </div>
 
@@ -209,7 +209,7 @@
 
     <!-- Micro Rule Hint -->
     <div class="text-center text-[9px] text-slate-400 font-medium leading-none">
-      Must play <span class="text-emerald-400 font-bold">> Top Card</span> or <span class="text-amber-400 font-bold">Reset (0)</span> • 🚨 <span class="text-rose-400 font-bold">Caught holding Red (1,2,3) = Strike!</span> • <span class="text-slate-300 font-bold">3 Strikes = Out!</span>
+      Play <span class="text-emerald-400 font-bold">> Top Card</span> OR <span class="text-sky-400 font-bold">Match Item 🌉</span> • 🚨 <span class="text-rose-400 font-bold">Holding Red in hand = Strike!</span> • <span class="text-slate-300 font-bold">3 Strikes = Out!</span>
     </div>
 
   </div>
@@ -235,31 +235,18 @@
   </div>
 
   <script>
-    // CAUGHT RED-HANDED V2: THE HEAT (Shedding Edition)
-    // Red cards (1, 2, 3) are LOW Contraband.
-    // Blue cards (4 - 10) are HIGH Clean Loot.
-    // Reset cards (0) reset the discard pile to 0!
+    // CAUGHT RED-HANDED V2: THE BRIDGE & SHED EDITION
+    // 6 Items x 8 cards = 48 cards (Red 1,2 + Blue 3..8) + 6 Resets (0) = 54 cards total!
+    // Discard Rule: Play card if value > top card OR if Item matches top card (Item Bridge)!
     // If you're caught holding ANY Red card when someone empties hand, you get a Strike! (3 Strikes = Out).
 
-    const DECK_RECIPE = [
-      // Red Contraband: 12 cards total (1, 2, 3)
-      { val: 1, item: "Petty Pickpocket", icon: "👛", color: "RED", copies: 4, type: "CONTRABAND" },
-      { val: 2, item: "Hot Jewelry", icon: "⌚", color: "RED", copies: 4, type: "CONTRABAND" },
-      { val: 3, item: "Blood Diamond", icon: "💎", color: "RED", copies: 4, type: "CONTRABAND" },
-
-      // Clean Loot (Blue): 34 cards total (4 - 10)
-      { val: 4, item: "Cash Stack", icon: "💵", color: "BLUE", copies: 5, type: "CLEAN" },
-      { val: 5, item: "Vault Key", icon: "🗝️", color: "BLUE", copies: 5, type: "CLEAN" },
-      { val: 6, item: "Masterpiece", icon: "🖼️", color: "BLUE", copies: 5, type: "CLEAN" },
-      { val: 7, item: "Gold Ingot", icon: "🧈", color: "BLUE", copies: 5, type: "CLEAN" },
-      { val: 8, item: "Royal Crown", icon: "👑", color: "BLUE", copies: 5, type: "CLEAN" },
-      { val: 9, item: "Ancient Relic", icon: "🏺", color: "BLUE", copies: 5, type: "CLEAN" },
-      { val: 10, item: "Priceless Artifact", icon: "🗿", color: "BLUE", copies: 4, type: "CLEAN" },
-
-      // Special Resets: 8 cards total (0)
-      { val: 0, item: "The Fence", icon: "🤝", color: "SPECIAL", copies: 4, type: "RESET", sub: "Resets Pile to 0" },
-      { val: 0, item: "Smoke Bomb", icon: "💨🔄", color: "SPECIAL", copies: 2, type: "RESET_REVERSE", sub: "Resets to 0 & Flips 🔄" },
-      { val: 0, item: "The Snitch", icon: "🕵️🚨", color: "SPECIAL", copies: 2, type: "RESET_DRAW", sub: "Resets to 0 & Next Draws 1" }
+    const ITEMS = [
+      { name: "Cash", icon: "💵" },
+      { name: "Diamond", icon: "💎" },
+      { name: "Watch", icon: "⌚" },
+      { name: "Key", icon: "🗝️" },
+      { name: "Art", icon: "🖼️" },
+      { name: "Gold", icon: "🧈" }
     ];
 
     let numPlayers = 4;
@@ -274,23 +261,28 @@
     let turnCount = 1;
     let starterPlayer = 0;
     let selectedCardIndex = null;
-    let isWaitingForBot = false;
 
     function buildDeck() {
       const cards = [];
-      DECK_RECIPE.forEach(group => {
-        for (let i = 0; i < group.copies; i++) {
-          cards.push({
-            id: `${group.val}-${group.item}-${i}`,
-            val: group.val,
-            item: group.item,
-            icon: group.icon,
-            color: group.color,
-            type: group.type,
-            sub: group.sub || ""
-          });
+
+      ITEMS.forEach(it => {
+        // Red Contraband: 1, 2
+        cards.push({ val: 1, item: it.name, icon: it.icon, color: "RED", type: "CONTRABAND", sub: "Petty Contraband" });
+        cards.push({ val: 2, item: it.name, icon: it.icon, color: "RED", type: "CONTRABAND", sub: "Grand Contraband" });
+
+        // Blue Clean Loot: 3, 4, 5, 6, 7, 8
+        for (let v = 3; v <= 8; v++) {
+          cards.push({ val: v, item: it.name, icon: it.icon, color: "BLUE", type: "CLEAN", sub: "Clean Loot" });
         }
       });
+
+      // Special Resets: 6 cards total (0)
+      cards.push({ val: 0, item: "Wild", name: "The Fence", icon: "🤝", color: "SPECIAL", type: "RESET", sub: "Resets Pile to 0 & Wild" });
+      cards.push({ val: 0, item: "Wild", name: "The Fence", icon: "🤝", color: "SPECIAL", type: "RESET", sub: "Resets Pile to 0 & Wild" });
+      cards.push({ val: 0, item: "Wild", name: "Smoke Bomb", icon: "💨🔄", color: "SPECIAL", type: "RESET_REVERSE", sub: "Resets to 0 & Flips 🔄" });
+      cards.push({ val: 0, item: "Wild", name: "Smoke Bomb", icon: "💨🔄", color: "SPECIAL", type: "RESET_REVERSE", sub: "Resets to 0 & Flips 🔄" });
+      cards.push({ val: 0, item: "Wild", name: "The Snitch", icon: "🕵️🚨", color: "SPECIAL", type: "RESET_DRAW", sub: "Resets to 0 & Next Draws 1" });
+      cards.push({ val: 0, item: "Wild", name: "The Snitch", icon: "🕵️🚨", color: "SPECIAL", type: "RESET_DRAW", sub: "Resets to 0 & Next Draws 1" });
 
       // Fisher-Yates shuffle
       for (let i = cards.length - 1; i > 0; i--) {
@@ -307,7 +299,6 @@
       turnCount = 1;
       direction = 1;
       selectedCardIndex = null;
-      isWaitingForBot = false;
 
       // Deal 7 cards to each active player
       for (let i = 0; i < 7; i++) {
@@ -329,7 +320,7 @@
       }
 
       updateUI();
-      logAnnouncement(`Round ${roundNumber} begins! Discard pile starts at ${startCard.val} (${startCard.item}).`);
+      logAnnouncement(`Round ${roundNumber} begins! Top discard is ${startCard.item} ${startCard.val > 0 ? startCard.val : ''} (${startCard.icon}).`);
 
       if (currentPlayer !== 0) {
         setTimeout(playBotTurn, 800);
@@ -348,14 +339,18 @@
       return discardPile[discardPile.length - 1];
     }
 
-    // Check if a card is legally playable on top of current discard
-    function isCardPlayable(card) {
+    // Evaluation for Option 3:
+    // Playable if:
+    // 1. Reset card (val === 0)
+    // 2. Value > top.val
+    // 3. Item === top.item (Item Bridge!)
+    function evaluateCardPlayability(card) {
       const top = getTopDiscard();
-      if (!top) return true;
-      // Reset cards (val === 0) can ALWAYS be played!
-      if (card.val === 0) return true;
-      // Normal cards must have strictly higher value than top discard
-      return card.val > top.val;
+      if (!top) return { playable: true, reason: "OPEN" };
+      if (card.val === 0) return { playable: true, reason: "RESET" };
+      if (card.val > top.val) return { playable: true, reason: "HIGHER" };
+      if (top.item !== "Wild" && card.item === top.item) return { playable: true, reason: "BRIDGE" };
+      return { playable: false, reason: "LOCKED" };
     }
 
     function getPlayerName(p) {
@@ -373,14 +368,14 @@
 
     function playCard(playerIdx, cardIdx) {
       const card = hands[playerIdx].splice(cardIdx, 1)[0];
+      const topBefore = getTopDiscard();
       discardPile.push(card);
 
-      let extraAction = null;
+      const isBridge = (topBefore && topBefore.item !== "Wild" && card.item === topBefore.item && card.val <= topBefore.val);
 
-      // Check special reset effects
       if (card.type === 'RESET_REVERSE') {
         direction = -direction;
-        logAnnouncement(`🔄 SMOKE BOMB! ${getPlayerName(playerIdx)} reset pile to 0 & reversed play!`);
+        logAnnouncement(`🔄 SMOKE BOMB! ${getPlayerName(playerIdx)} reset pile to 0 & reversed play direction!`);
       } else if (card.type === 'RESET_DRAW') {
         const victim = getNextActivePlayer(playerIdx);
         if (deck.length > 0) {
@@ -388,9 +383,11 @@
         }
         logAnnouncement(`🚨 THE SNITCH! ${getPlayerName(playerIdx)} reset pile to 0 & forced ${getPlayerName(victim)} to draw 1 card!`);
       } else if (card.type === 'RESET') {
-        logAnnouncement(`🤝 THE FENCE! ${getPlayerName(playerIdx)} reset pile to 0! Low Contraband can now be dumped!`);
+        logAnnouncement(`🤝 THE FENCE! ${getPlayerName(playerIdx)} reset pile to 0 & wild item!`);
+      } else if (isBridge) {
+        logAnnouncement(`🌉 ITEM BRIDGE! ${getPlayerName(playerIdx)} matched ${card.item} and pivoted pile down to ${card.val}!`);
       } else {
-        logAnnouncement(`${getPlayerName(playerIdx)} played ${card.val} (${card.item}).`);
+        logAnnouncement(`${getPlayerName(playerIdx)} climbed pile with ${card.item} ${card.val}.`);
       }
 
       updateUI();
@@ -407,7 +404,6 @@
 
     function drawCard(playerIdx) {
       if (deck.length === 0) {
-        // Reshuffle discard pile except top card
         if (discardPile.length > 1) {
           const top = discardPile.pop();
           deck = [...discardPile];
@@ -436,30 +432,30 @@
       updateUI();
 
       if (currentPlayer === 0) {
-        logAnnouncement("Your turn! Play a card > top card, or draw 1.");
+        logAnnouncement("Your turn! Play a higher number, match the item icon, or draw 1 card.");
       } else {
         setTimeout(playBotTurn, 750);
       }
     }
 
-    // Bot AI Turn
+    // Bot AI Turn for Option 3
     function playBotTurn() {
       if (eliminated[currentPlayer] || currentPlayer === 0) return;
       const b = currentPlayer;
       const hand = hands[b];
       const top = getTopDiscard();
 
-      // 1. Find all playable cards in hand
+      // Find all playable cards in hand
       const playable = [];
       hand.forEach((card, idx) => {
-        if (isCardPlayable(card)) {
-          playable.push({ card, idx });
+        const evalRes = evaluateCardPlayability(card);
+        if (evalRes.playable) {
+          playable.push({ card, idx, reason: evalRes.reason });
         }
       });
 
       if (playable.length > 0) {
-        // Strategic selection:
-        // Priority A: If top card is 0 (or low <= 3), IMMEDIATELY DUMP lowest Red Contraband!
+        // Priority 1: Dump Red Contraband via Item Bridge or Climb!
         const playableReds = playable.filter(p => p.card.color === 'RED');
         if (playableReds.length > 0) {
           playableReds.sort((a, b) => a.card.val - b.card.val);
@@ -467,7 +463,7 @@
           return;
         }
 
-        // Priority B: If we hold Red cards, and have a Reset card, drop the Reset card to open window!
+        // Priority 2: If we hold Red cards, drop Reset (0) to open dump window
         const hasRedInHand = hand.some(c => c.color === 'RED');
         const playableResets = playable.filter(p => p.card.val === 0);
         if (hasRedInHand && playableResets.length > 0 && top.val >= 4) {
@@ -475,27 +471,34 @@
           return;
         }
 
-        // Priority C: Play lowest valid Blue card to climb steadily
-        const playableBlues = playable.filter(p => p.card.color === 'BLUE');
-        if (playableBlues.length > 0) {
-          playableBlues.sort((a, b) => a.card.val - b.card.val);
-          playCard(b, playableBlues[0].idx);
+        // Priority 3: Play via Item Bridge with low blue card
+        const bridges = playable.filter(p => p.reason === 'BRIDGE');
+        if (bridges.length > 0) {
+          bridges.sort((a, b) => a.card.val - b.card.val);
+          playCard(b, bridges[0].idx);
           return;
         }
 
-        // Fallback: play any legal card
+        // Priority 4: Climb with lowest legal Blue card
+        const climbs = playable.filter(p => p.reason === 'HIGHER');
+        if (climbs.length > 0) {
+          climbs.sort((a, b) => a.card.val - b.card.val);
+          playCard(b, climbs[0].idx);
+          return;
+        }
+
+        // Fallback
         playCard(b, playable[0].idx);
       } else {
         // Can't play: draw 1 card
         const drawn = drawCard(b);
         updateUI();
 
-        // If drawn card can be played, bot plays it!
-        if (drawn && isCardPlayable(drawn)) {
+        if (drawn && evaluateCardPlayability(drawn).playable) {
           setTimeout(() => {
             const idx = hand.indexOf(drawn);
             if (idx !== -1) {
-              logAnnouncement(`${getPlayerName(b)} immediately played drawn ${drawn.val} (${drawn.item})!`);
+              logAnnouncement(`${getPlayerName(b)} immediately played drawn ${drawn.item} ${drawn.val}!`);
               playCard(b, idx);
             } else {
               advanceTurn();
@@ -532,12 +535,12 @@
       if (top) {
         let borderStyle = "border-blue-500 bg-blue-950/70";
         let valColor = "text-blue-400";
-        let typeBadge = "Clean Loot";
+        let typeBadge = `${top.item} Loot`;
 
         if (top.color === 'RED') {
           borderStyle = "border-rose-500 bg-rose-950/80 red-evidence";
           valColor = "text-rose-400";
-          typeBadge = "🚨 Contraband";
+          typeBadge = `🚨 ${top.item} Contraband`;
         } else if (top.color === 'SPECIAL') {
           borderStyle = "border-amber-400 bg-amber-950/80 reset-pulse";
           valColor = "text-amber-300";
@@ -548,16 +551,16 @@
         topCardEl.innerHTML = `
           <div class="w-full flex justify-between items-center leading-none">
             <span class="text-xs font-black ${valColor}">${top.val}</span>
-            <span class="text-[7.5px] font-black uppercase text-slate-300">${top.icon}</span>
+            <span class="text-[8px] font-black uppercase text-slate-300">${top.icon}</span>
           </div>
           <div class="flex flex-col items-center justify-center my-auto leading-none">
             <span class="text-2xl">${top.icon}</span>
-            <span class="text-[9px] font-black text-white mt-1 uppercase text-center leading-tight truncate max-w-[68px]">${top.item}</span>
-            <span class="text-[7px] font-semibold text-slate-400 mt-0.5 text-center leading-tight">${top.sub || typeBadge}</span>
+            <span class="text-[9px] font-black text-white mt-1 uppercase text-center leading-tight truncate max-w-[68px]">${top.item} ${top.val > 0 ? top.val : ''}</span>
+            <span class="text-[6.5px] font-semibold text-slate-400 mt-0.5 text-center leading-tight">${top.sub || typeBadge}</span>
           </div>
           <div class="w-full flex justify-between items-center leading-none rotate-180 opacity-70">
             <span class="text-xs font-black ${valColor}">${top.val}</span>
-            <span class="text-[7.5px] font-black uppercase text-slate-300">${top.icon}</span>
+            <span class="text-[8px] font-black uppercase text-slate-300">${top.icon}</span>
           </div>
         `;
       }
@@ -634,9 +637,17 @@
         btnDraw.disabled = false;
         if (selectedCardIndex !== null) {
           const card = hands[0][selectedCardIndex];
+          const evalRes = evaluateCardPlayability(card);
           btnPlay.disabled = false;
           btnPlay.className = "h-10 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black rounded-xl shadow-lg ring-2 ring-emerald-400 transition flex items-center justify-center gap-1.5 animate-bounce";
-          btnPlayText.innerText = `Play ${card.val} (${card.item})`;
+          
+          if (evalRes.reason === 'BRIDGE') {
+            btnPlayText.innerText = `Bridge ${card.item} ${card.val} 🌉`;
+          } else if (evalRes.reason === 'RESET') {
+            btnPlayText.innerText = `Play Reset 0 ⚡`;
+          } else {
+            btnPlayText.innerText = `Play ${card.item} ${card.val}`;
+          }
         } else {
           btnPlay.disabled = true;
           btnPlay.className = "h-10 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-25 disabled:pointer-events-none text-white text-xs font-black rounded-xl shadow-lg transition flex items-center justify-center gap-1.5";
@@ -658,7 +669,8 @@
 
       hands[0].forEach((c, idx) => {
         const cardEl = document.createElement('div');
-        const playable = isCardPlayable(c);
+        const evalRes = evaluateCardPlayability(c);
+        const playable = evalRes.playable;
         const isSelected = (selectedCardIndex === idx);
 
         let borderStyle = "border border-slate-700 bg-slate-800/90";
@@ -681,14 +693,14 @@
         cardEl.className = `w-[72px] h-[112px] sm:w-[84px] sm:h-[128px] shrink-0 rounded-xl p-1.5 flex flex-col justify-between items-center shadow-md cursor-pointer transition-all select-none relative ${borderStyle}`;
 
         let statusPill = '';
-        if (!playable) {
-          statusPill = `<span class="bg-slate-900/95 text-slate-400 border border-slate-700 px-1 py-0.2 rounded text-[7px] font-black uppercase tracking-wider">≤ ${top.val}</span>`;
-        } else if (c.val === 0) {
+        if (evalRes.reason === 'BRIDGE') {
+          statusPill = `<span class="bg-sky-950 text-sky-300 border border-sky-400 px-1 py-0.2 rounded text-[7px] font-black uppercase tracking-wider animate-pulse">BRIDGE 🌉</span>`;
+        } else if (evalRes.reason === 'RESET') {
           statusPill = `<span class="bg-amber-950 text-amber-300 border border-amber-500 px-1 py-0.2 rounded text-[7px] font-black uppercase tracking-wider">RESET 0</span>`;
-        } else if (c.color === 'RED') {
-          statusPill = `<span class="bg-rose-950 text-rose-300 border border-rose-500 px-1 py-0.2 rounded text-[7px] font-black uppercase tracking-wider">🚨 HOT</span>`;
-        } else {
+        } else if (evalRes.reason === 'HIGHER') {
           statusPill = `<span class="bg-blue-950 text-blue-300 border border-blue-500 px-1 py-0.2 rounded text-[7px] font-black uppercase tracking-wider">> ${top.val}</span>`;
+        } else {
+          statusPill = `<span class="bg-slate-900/95 text-slate-500 border border-slate-700 px-1 py-0.2 rounded text-[7px] font-black uppercase tracking-wider">LOCKED</span>`;
         }
 
         cardEl.innerHTML = `
@@ -701,7 +713,7 @@
           <!-- Center Focus -->
           <div class="flex flex-col items-center justify-center my-auto leading-none">
             <span class="text-xl sm:text-2xl">${c.icon}</span>
-            <span class="text-[8px] sm:text-[9px] font-bold text-slate-200 mt-0.5 uppercase text-center leading-tight truncate max-w-[64px]">${c.item}</span>
+            <span class="text-[8px] sm:text-[9px] font-bold text-slate-200 mt-0.5 uppercase text-center leading-tight truncate max-w-[64px]">${c.item} ${c.val > 0 ? c.val : ''}</span>
             <span class="text-[6.5px] font-medium text-slate-400 mt-0.5 text-center leading-none">${c.sub || (c.color === 'RED' ? 'Toxic Contraband' : 'Clean Loot')}</span>
           </div>
 
@@ -715,12 +727,16 @@
         cardEl.onclick = () => {
           if (currentPlayer !== 0) return;
           if (!playable) {
-            logAnnouncement(`⚠️ Cannot play ${c.val} on ${top.val}! Must be strictly higher (or play a Reset 0).`);
+            logAnnouncement(`⚠️ Cannot play ${c.item} ${c.val}! Must be > ${top.val} OR match ${top.item} icon.`);
             return;
           }
           selectedCardIndex = (selectedCardIndex === idx) ? null : idx;
           if (selectedCardIndex !== null) {
-            logAnnouncement(`Selected ${c.val} (${c.item}). Tap Play.`);
+            if (evalRes.reason === 'BRIDGE') {
+              logAnnouncement(`Selected ${c.item} ${c.val}! Bridges pile from ${top.val} down to ${c.val}! Tap Play.`);
+            } else {
+              logAnnouncement(`Selected ${c.item} ${c.val}. Tap Play.`);
+            }
           }
           updateUI();
         };
@@ -772,7 +788,7 @@
             <div class="p-2 rounded-lg border-2 border-rose-500 bg-rose-950/80 flex justify-between items-center">
               <div>
                 <span class="font-black text-rose-400">${name}</span>
-                <span class="text-[10px] text-rose-300 ml-1.5 font-mono">(${redCards.length} Red Contraband: ${redCards.map(c=>c.val).join(', ')})</span>
+                <span class="text-[10px] text-rose-300 ml-1.5 font-mono">(${redCards.length} Red Contraband: ${redCards.map(c=>`${c.item} ${c.val}`).join(', ')})</span>
               </div>
               <div class="text-right">
                 <span class="px-1.5 py-0.5 bg-rose-600 text-white font-black text-[9px] rounded uppercase">🚨 CAUGHT RED-HANDED!</span>
@@ -838,12 +854,12 @@
       const drawn = drawCard(0);
       updateUI();
       if (drawn) {
-        if (isCardPlayable(drawn)) {
+        if (evaluateCardPlayability(drawn).playable) {
           selectedCardIndex = hands[0].length - 1;
-          logAnnouncement(`Drew playable ${drawn.val} (${drawn.item})! Tap Play or draw again.`);
+          logAnnouncement(`Drew playable ${drawn.item} ${drawn.val}! Tap Play or draw again.`);
           updateUI();
         } else {
-          logAnnouncement(`Drew ${drawn.val} (${drawn.item}). Cannot play, passing turn...`);
+          logAnnouncement(`Drew ${drawn.item} ${drawn.val}. Cannot play, passing turn...`);
           setTimeout(advanceTurn, 700);
         }
       }

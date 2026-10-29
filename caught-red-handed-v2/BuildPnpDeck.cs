@@ -21,27 +21,30 @@ namespace PnpDeckGeneratorV2
         {
             string outHtmlPath = @"c:\Users\bazar\Documents\antigravity\lively-rutherford\caught-red-handed-v2\print_deck.html";
 
-            var cardDefs = new List<CardDef>
+            var cardDefs = new List<CardDef>();
+            string[] items = new string[] { "Cash", "Diamond", "Watch", "Key", "Art", "Gold" };
+            string[] icons = new string[] { "💵", "💎", "⌚", "🗝️", "🖼️", "🧈" };
+
+            for (int i = 0; i < items.Length; i++)
             {
-                // Red Contraband: 12 cards total (1, 2, 3)
-                new CardDef { Val = 1, Item = "Pickpocket", Color = "RED", Copies = 4, Icon = "👛", Sub = "Toxic Contraband" },
-                new CardDef { Val = 2, Item = "Hot Jewelry", Color = "RED", Copies = 4, Icon = "⌚", Sub = "Toxic Contraband" },
-                new CardDef { Val = 3, Item = "Blood Diamond", Color = "RED", Copies = 4, Icon = "💎", Sub = "Toxic Contraband" },
+                string it = items[i];
+                string ic = icons[i];
 
-                // Clean Loot (Blue): 34 cards total (4 - 10)
-                new CardDef { Val = 4, Item = "Cash Stack", Color = "BLUE", Copies = 5, Icon = "💵", Sub = "Clean Loot" },
-                new CardDef { Val = 5, Item = "Vault Key", Color = "BLUE", Copies = 5, Icon = "🗝️", Sub = "Clean Loot" },
-                new CardDef { Val = 6, Item = "Masterpiece", Color = "BLUE", Copies = 5, Icon = "🖼️", Sub = "Clean Loot" },
-                new CardDef { Val = 7, Item = "Gold Ingot", Color = "BLUE", Copies = 5, Icon = "🧈", Sub = "Clean Loot" },
-                new CardDef { Val = 8, Item = "Royal Crown", Color = "BLUE", Copies = 5, Icon = "👑", Sub = "Clean Loot" },
-                new CardDef { Val = 9, Item = "Ancient Relic", Color = "BLUE", Copies = 5, Icon = "🏺", Sub = "Clean Loot" },
-                new CardDef { Val = 10, Item = "Priceless Artifact", Color = "BLUE", Copies = 4, Icon = "🗿", Sub = "Clean Loot" },
+                // Red Contraband: 1, 2
+                cardDefs.Add(new CardDef { Val = 1, Item = it, Color = "RED", Copies = 1, Icon = ic, Sub = "Petty Contraband" });
+                cardDefs.Add(new CardDef { Val = 2, Item = it, Color = "RED", Copies = 1, Icon = ic, Sub = "Grand Contraband" });
 
-                // Special Resets: 8 cards total (0)
-                new CardDef { Val = 0, Item = "The Fence", Color = "SPECIAL", Copies = 4, Icon = "🤝", Sub = "Resets Pile to 0" },
-                new CardDef { Val = 0, Item = "Smoke Bomb", Color = "SPECIAL", Copies = 2, Icon = "💨🔄", Sub = "Resets to 0 & Flips 🔄" },
-                new CardDef { Val = 0, Item = "The Snitch", Color = "SPECIAL", Copies = 2, Icon = "🕵️🚨", Sub = "Resets to 0 & Next Draws 1" }
-            };
+                // Blue Clean Loot: 3, 4, 5, 6, 7, 8
+                for (int v = 3; v <= 8; v++)
+                {
+                    cardDefs.Add(new CardDef { Val = v, Item = it, Color = "BLUE", Copies = 1, Icon = ic, Sub = "Clean Loot" });
+                }
+            }
+
+            // Special Resets: 6 cards total (0)
+            cardDefs.Add(new CardDef { Val = 0, Item = "The Fence", Color = "SPECIAL", Copies = 2, Icon = "🤝", Sub = "Resets Pile to 0 & Wild Item" });
+            cardDefs.Add(new CardDef { Val = 0, Item = "Smoke Bomb", Color = "SPECIAL", Copies = 2, Icon = "💨🔄", Sub = "Resets to 0 & Flips Direction" });
+            cardDefs.Add(new CardDef { Val = 0, Item = "The Snitch", Color = "SPECIAL", Copies = 2, Icon = "🕵️🚨", Sub = "Resets to 0 & Next Draws 1" });
 
             var deck = new List<CardDef>();
             foreach (var def in cardDefs)
@@ -56,7 +59,7 @@ namespace PnpDeckGeneratorV2
             sb.AppendLine("<html lang=\"en\">");
             sb.AppendLine("<head>");
             sb.AppendLine("  <meta charset=\"UTF-8\">");
-            sb.AppendLine("  <title>Caught Red-Handed V2: The Heat - Low-Ink PnP Poker Deck (8.5x11)</title>");
+            sb.AppendLine("  <title>Caught Red-Handed V2: The Bridge & Shed Edition - Low-Ink PnP Deck (8.5x11)</title>");
             sb.AppendLine("  <style>");
             sb.AppendLine("    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap');");
             sb.AppendLine("    @page { size: letter portrait; margin: 0.25in 0.5in 0.25in 0.5in; }");
@@ -121,19 +124,19 @@ namespace PnpDeckGeneratorV2
             sb.AppendLine("</head>");
             sb.AppendLine("<body>");
             sb.AppendLine("  <div class=\"no-print-bar\">");
-            sb.AppendLine("    <div><span style=\"font-weight: 900; font-size: 16px; color: #38bdf8;\">CAUGHT RED-HANDED V2</span><span style=\"color: #94a3b8; font-size: 13px; margin-left: 8px;\">• 54-Card Shedding Deck (8.5\" x 11\")</span><span style=\"background:#059669; color:#fff; font-size:10px; font-weight:800; padding:2px 8px; border-radius:12px; margin-left:12px;\">🌱 ECO INK-SAVER</span></div>");
+            sb.AppendLine("    <div><span style=\"font-weight: 900; font-size: 16px; color: #38bdf8;\">CAUGHT RED-HANDED V2</span><span style=\"color: #94a3b8; font-size: 13px; margin-left: 8px;\">• 54-Card Bridge & Shed Deck (8.5\" x 11\")</span><span style=\"background:#059669; color:#fff; font-size:10px; font-weight:800; padding:2px 8px; border-radius:12px; margin-left:12px;\">🌱 ECO INK-SAVER</span></div>");
             sb.AppendLine("    <button onclick=\"window.print()\">🖨️ PRINT DECK TO PDF / PRINTER</button>");
             sb.AppendLine("  </div>");
             sb.AppendLine("  <div class=\"sheet-wrapper\">");
 
             // 6 sheets of 9 cards = Exactly 54 play cards
             string[] sheetTitles = new string[] {
-                "Sheet 1 of 8: Red Contraband (1s & 2s) & Blue 4s",
-                "Sheet 2 of 8: Red Contraband (3s) & Blue 4s, 5s",
-                "Sheet 3 of 8: Blue Clean Loot (5s & 6s)",
-                "Sheet 4 of 8: Blue Clean Loot (6s, 7s & 8s)",
-                "Sheet 5 of 8: Blue Clean Loot (8s & 9s)",
-                "Sheet 6 of 8: Blue 10s & 8 Tactical Reset Cards (0)"
+                "Sheet 1 of 8: Cash & Diamonds (Reds 1,2 & Blues 3..8)",
+                "Sheet 2 of 8: Diamonds (Cont.) & Watches (Reds 1,2 & Blues 3..6)",
+                "Sheet 3 of 8: Watches (7,8) & Keys (Reds 1,2 & Blues 3..7)",
+                "Sheet 4 of 8: Key (8) & Art (Reds 1,2 & Blues 3..8)",
+                "Sheet 5 of 8: Gold (Reds 1,2 & Blues 3..8) & The Fence (0)",
+                "Sheet 6 of 8: The Fence (0), Smoke Bombs (0 🔄) & The Snitch (0 🚨)"
             };
 
             for (int s = 0; s < 6; s++)
@@ -157,21 +160,21 @@ namespace PnpDeckGeneratorV2
             // Card 1: Turn Guide
             sb.AppendLine("      <div class=\"card marker\"><div class=\"card-inner\" style=\"border-color:#475569;\">");
             sb.AppendLine("        <div class=\"header-block\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">📋</span><span class=\"index-val\" style=\"color:#0f172a;\">RULES</span></div><span class=\"index-type\" style=\"color:#64748b;\">Turn Guide</span></div><div class=\"pill\" style=\"background:#ffffff; border-color:#d97706; color:#b45309;\">V2 CORE</div></div></div>");
-            sb.AppendLine("        <div class=\"center-art\" style=\"margin:2px 0;\"><span style=\"font-size:9px; font-weight:900; color:#0f172a; text-transform:uppercase;\">CLIMBING & SHEDDING</span><div style=\"font-size:6.6px; text-align:left; margin-top:3px; line-height:1.32; color:#334155;\">• On your turn, execute 1 choice:<br>&nbsp;&nbsp;<b>1. Play 1 Card</b> > current top discard<br>&nbsp;&nbsp;<b>-OR- Play Reset Card (0)</b> on any card!<br>&nbsp;&nbsp;<b>2. Draw 1 Card</b> from Locker if unable/unwilling to play.<br>• If drawn card is legal, you may play it immediately!</div></div>");
+            sb.AppendLine("        <div class=\"center-art\" style=\"margin:2px 0;\"><span style=\"font-size:9px; font-weight:900; color:#0f172a; text-transform:uppercase;\">CLIMB OR BRIDGE</span><div style=\"font-size:6.6px; text-align:left; margin-top:3px; line-height:1.32; color:#334155;\">• On your turn, discard 1 card meeting:<br>&nbsp;&nbsp;📈 <b>1. Climb by Number</b>: Play card > top discard!<br>&nbsp;&nbsp;🌉 <b>2. Item Bridge</b>: Match Item Icon of top card (even if number is lower!)<br>&nbsp;&nbsp;⚡ <b>3. Reset (0)</b>: Play on any card to reset to 0!<br>• <b>Can't Play?</b> Draw 1 card from Locker (may play immediately if legal).</div></div>");
             sb.AppendLine("        <div class=\"header-block inverted\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">📋</span><span class=\"index-val\" style=\"color:#0f172a;\">RULES</span></div><span class=\"index-type\" style=\"color:#64748b;\">Turn Guide</span></div><div class=\"pill\" style=\"background:#ffffff; border-color:#d97706; color:#b45309;\">V2 CORE</div></div></div>");
             sb.AppendLine("      </div></div>");
 
             // Card 2: Contraband & Elimination
             sb.AppendLine("      <div class=\"card marker\"><div class=\"card-inner\" style=\"border-color:#dc2626;\">");
             sb.AppendLine("        <div class=\"header-block\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">🚨</span><span class=\"index-val\" style=\"color:#dc2626;\">BUST</span></div><span class=\"index-type\" style=\"color:#b91c1c;\">Elimination</span></div><div class=\"pill\" style=\"background:#ffffff; border-color:#dc2626; color:#dc2626;\">3 STRIKES</div></div></div>");
-            sb.AppendLine("        <div class=\"center-art\" style=\"margin:2px 0;\"><span style=\"font-size:9px; font-weight:900; color:#dc2626; text-transform:uppercase;\">CAUGHT RED-HANDED!</span><div style=\"font-size:6.6px; text-align:left; margin-top:3px; line-height:1.32; color:#334155;\">• Round ends when any player empties hand (Getaway Car!).<br>• All remaining players reveal hands:<br>&nbsp;&nbsp;🚨 <b>Holding ANY Red (1,2,3)</b> = <b>+1 Strike!</b><br>&nbsp;&nbsp;🛡️ <b>Holding 0 Red</b> = <b>Escaped Clean (0 Strikes)!</b><br>• <b>3 Strikes = Eliminated!</b> Last survivor wins!</div></div>");
+            sb.AppendLine("        <div class=\"center-art\" style=\"margin:2px 0;\"><span style=\"font-size:9px; font-weight:900; color:#dc2626; text-transform:uppercase;\">CAUGHT RED-HANDED!</span><div style=\"font-size:6.6px; text-align:left; margin-top:3px; line-height:1.32; color:#334155;\">• Round ends when any player empties hand (Getaway Car!).<br>• All remaining players reveal hands:<br>&nbsp;&nbsp;🚨 <b>Holding ANY Red (1 or 2)</b> = <b>+1 Strike!</b><br>&nbsp;&nbsp;🛡️ <b>Holding 0 Red</b> = <b>Escaped Clean (0 Strikes)!</b><br>• <b>3 Strikes = Eliminated!</b> Last survivor wins!</div></div>");
             sb.AppendLine("        <div class=\"header-block inverted\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">🚨</span><span class=\"index-val\" style=\"color:#dc2626;\">BUST</span></div><span class=\"index-type\" style=\"color:#b91c1c;\">Elimination</span></div><div class=\"pill\" style=\"background:#ffffff; border-color:#dc2626; color:#dc2626;\">3 STRIKES</div></div></div>");
             sb.AppendLine("      </div></div>");
 
             // Card 3: The Reset Cards
             sb.AppendLine("      <div class=\"card marker\"><div class=\"card-inner\" style=\"border-color:#d97706;\">");
             sb.AppendLine("        <div class=\"header-block\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">⚡</span><span class=\"index-val\" style=\"color:#d97706;\">RESETS</span></div><span class=\"index-type\" style=\"color:#b45309;\">Tactics</span></div><div class=\"pill\" style=\"background:#ffffff; border-color:#d97706; color:#d97706;\">VALUE 0</div></div></div>");
-            sb.AppendLine("        <div class=\"center-art\" style=\"margin:2px 0;\"><span style=\"font-size:9px; font-weight:900; color:#b45309; text-transform:uppercase;\">TACTICAL RESET CARDS</span><div style=\"font-size:6.6px; text-align:left; margin-top:3px; line-height:1.32; color:#334155;\">Play on ANY card to reset count to 0:<br>• <b>The Fence (4x)</b>: Resets to 0. Opens window to dump low Red cards!<br>• <b>Smoke Bomb (2x)</b>: Resets to 0 & reverses turn order 🔄!<br>• <b>The Snitch (2x)</b>: Resets to 0 & forces next player to draw 1 card 🚨!</div></div>");
+            sb.AppendLine("        <div class=\"center-art\" style=\"margin:2px 0;\"><span style=\"font-size:9px; font-weight:900; color:#b45309; text-transform:uppercase;\">TACTICAL RESET CARDS</span><div style=\"font-size:6.6px; text-align:left; margin-top:3px; line-height:1.32; color:#334155;\">Play on ANY card to reset count to 0 (Wild Item):<br>• <b>The Fence (2x)</b>: Resets to 0 & Wild Item!<br>• <b>Smoke Bomb (2x)</b>: Resets to 0 & reverses turn order 🔄!<br>• <b>The Snitch (2x)</b>: Resets to 0 & forces next player to draw 1 card 🚨!</div></div>");
             sb.AppendLine("        <div class=\"header-block inverted\"><div class=\"header-row\"><div class=\"index-group\"><div class=\"corner-top\"><span class=\"corner-icon\">⚡</span><span class=\"index-val\" style=\"color:#d97706;\">RESETS</span></div><span class=\"index-type\" style=\"color:#b45309;\">Tactics</span></div><div class=\"pill\" style=\"background:#ffffff; border-color:#d97706; color:#d97706;\">VALUE 0</div></div></div>");
             sb.AppendLine("      </div></div>");
 
@@ -216,11 +219,11 @@ namespace PnpDeckGeneratorV2
             var sb = new StringBuilder();
             string colorClass = card.Color.ToLower();
 
-            string typeDisplay = (card.Color == "RED") ? "Contraband" : ((card.Color == "SPECIAL") ? "Reset" : "Clean Loot");
+            string typeDisplay = (card.Color == "RED") ? "Contraband" : ((card.Color == "SPECIAL") ? "Reset (0)" : "Clean Loot");
             string pillHtml = "";
             if (card.Color == "RED")
             {
-                pillHtml = "<div class=\"pill\">🚨 TOXIC</div>";
+                pillHtml = "<div class=\"pill\">🚨 DUMP VIA ITEM</div>";
             }
             else if (card.Color == "SPECIAL")
             {
@@ -228,13 +231,13 @@ namespace PnpDeckGeneratorV2
             }
             else
             {
-                pillHtml = "<div class=\"pill\">🔵 CLEAN</div>";
+                pillHtml = string.Format("<div class=\"pill\">🔵 {0}</div>", card.Item.ToUpper());
             }
 
             string ruleText = "";
             if (card.Color == "RED")
             {
-                ruleText = "Must play > top card. Caught with this in hand = 1 STRIKE!";
+                ruleText = string.Format("Play if > top discard OR matches {0}! Caught in hand = 1 STRIKE!", card.Item);
             }
             else if (card.Color == "SPECIAL")
             {
@@ -242,10 +245,10 @@ namespace PnpDeckGeneratorV2
             }
             else
             {
-                ruleText = "Safe Loot. Must play > top card to climb discard pile.";
+                ruleText = string.Format("Play if > top discard OR matches {0} icon.", card.Item);
             }
 
-            string artTier = (card.Color == "RED") ? "🚨 Dangerous Evidence"
+            string artTier = (card.Color == "RED") ? "🚨 Toxic Contraband"
                            : (card.Color == "SPECIAL") ? "⚡ Tactical Action"
                            : "Safe Loot";
 
@@ -270,7 +273,7 @@ namespace PnpDeckGeneratorV2
             // Center Art
             sb.AppendLine("          <div class=\"center-art\">");
             sb.AppendLine(string.Format("            <span class=\"art-icon\">{0}</span>", card.Icon));
-            sb.AppendLine(string.Format("            <span class=\"art-name\">{0}</span>", card.Item));
+            sb.AppendLine(string.Format("            <span class=\"art-name\">{0} {1}</span>", card.Item, (card.Val > 0 ? card.Val.ToString() : "")));
             sb.AppendLine(string.Format("            <span class=\"art-tier\">{0}</span>", artTier));
             sb.AppendLine("          </div>");
 
