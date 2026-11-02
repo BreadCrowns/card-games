@@ -3,413 +3,352 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Caught Red-Handed — Pairs & The Snitch Edition</title>
+  <title>Caught Red-Handed — Black Market Edition</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @keyframes pulse-red {
       0%, 100% { box-shadow: 0 0 10px rgba(239, 68, 68, 0.6); }
-      50% { box-shadow: 0 0 18px rgba(239, 68, 68, 0.95); }
+      50% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.95); }
     }
-    .red-evidence {
+    .red-heat-glow {
       animation: pulse-red 2s infinite;
     }
-    @keyframes pulse-green {
-      0%, 100% { box-shadow: 0 0 10px rgba(16, 185, 129, 0.6); }
-      50% { box-shadow: 0 0 18px rgba(16, 185, 129, 0.9); }
+    @keyframes pulse-siren {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px #ef4444); }
+      50% { transform: scale(1.08); filter: drop-shadow(0 0 14px #f43f5e); }
     }
-    .green-wild {
-      animation: pulse-green 2.5s infinite;
+    .siren-active {
+      animation: pulse-siren 1.5s infinite;
     }
-    @keyframes pulse-amber {
-      0%, 100% { box-shadow: 0 0 10px rgba(245, 158, 11, 0.6); }
-      50% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.95); }
-    }
-    .snitch-pulse {
-      animation: pulse-amber 1.8s infinite;
-    }
-    /* Hide scrollbars for slick mobile card swiping */
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-    .no-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 h-screen max-h-[100dvh] w-screen flex flex-col font-sans select-none overflow-hidden touch-manipulation">
 
-  <!-- ZONE 1: Ultra-Compact Mobile Header (~40px) -->
-  <header class="bg-slate-900/95 border-b border-slate-800 px-3 py-1 flex justify-between items-center shadow shrink-0 h-10">
-    <div class="flex items-center gap-1.5">
-      <span class="text-lg">🚨</span>
-      <h1 class="text-xs sm:text-sm font-black tracking-wider text-rose-500 uppercase leading-none">Caught Red-Handed</h1>
-      <span class="text-[9px] bg-amber-500/20 text-amber-400 border border-amber-500/40 px-1.5 py-0.2 rounded-full font-black hidden sm:inline">PAIRS & SNITCH</span>
+  <!-- TOP HEADER (Compact Heist HUD) -->
+  <header class="bg-slate-900/95 border-b border-slate-800 px-3 py-1 flex justify-between items-center shadow shrink-0 h-11">
+    <div class="flex items-center gap-2">
+      <span class="text-xl">🚨</span>
+      <div>
+        <h1 class="text-xs sm:text-sm font-black tracking-wider text-rose-500 uppercase leading-none">Caught Red-Handed</h1>
+        <div class="text-[9px] text-amber-400 font-bold uppercase tracking-tight flex items-center gap-1">
+          <span>BLACK MARKET EDITION</span>
+          <span class="text-slate-500">•</span>
+          <span class="text-slate-400">KNIZIAN SPEC</span>
+        </div>
+      </div>
     </div>
 
-    <!-- Center Status & Round / Turn info -->
-    <div class="flex items-center gap-2 text-[10px] text-slate-300 font-mono">
-      <span>R<span id="round-counter" class="font-bold text-emerald-400">1</span></span>
-      <span class="text-slate-600">•</span>
-      <span>T<span id="turn-counter" class="font-bold text-amber-400">1</span></span>
-      <span class="text-slate-600">•</span>
-      <span id="header-target-label" class="text-amber-400 font-black">300 PTS WIN</span>
+    <!-- Match Progress & Dealer Indicator -->
+    <div class="flex items-center gap-2 text-[11px] font-mono">
+      <div class="bg-slate-800/80 px-2 py-0.5 rounded border border-slate-700/80 flex items-center gap-1.5">
+        <span class="text-slate-400">ROUND</span>
+        <span id="hud-round" class="font-black text-emerald-400">1/4</span>
+      </div>
+      <div class="bg-slate-800/80 px-2 py-0.5 rounded border border-slate-700/80 flex items-center gap-1.5">
+        <span class="text-slate-400">DEALER:</span>
+        <span id="hud-dealer" class="font-black text-amber-300">Player 1</span>
+      </div>
+      <div class="bg-slate-800/80 px-2 py-0.5 rounded border border-slate-700/80 flex items-center gap-1.5">
+        <span class="text-slate-400">FLOW:</span>
+        <span id="hud-flow" class="font-black text-cyan-400">↻ Clockwise</span>
+      </div>
     </div>
 
-    <button id="restart-match-btn" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-semibold rounded border border-slate-700 transition">
-      ↺ Reset
+    <button id="reset-match-btn" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-semibold rounded border border-slate-700 transition">
+      ↺ Reset Match
     </button>
   </header>
 
-  <!-- GAME MODE SELECTOR (4P Heist vs 2P Duel) -->
-  <div class="bg-slate-900/90 border-b border-slate-800 px-3 py-1 flex justify-between items-center shrink-0">
-    <div class="inline-flex rounded-lg p-0.5 bg-slate-950 border border-slate-800 text-[10px] font-bold">
-      <button id="mode-4p-btn" class="px-2.5 py-0.5 rounded-md bg-rose-600 text-white shadow transition font-black">
-        👥 4P Heist (54c)
-      </button>
-      <button id="mode-2p-btn" class="px-2.5 py-0.5 rounded-md text-slate-400 hover:text-slate-200 transition">
-        ⚔️ 2P Duel (28c)
-      </button>
+  <!-- MATCH STANDINGS BAR (Leaderboard) -->
+  <div class="bg-slate-900/80 border-b border-slate-800 px-3 py-1 flex items-center justify-between text-[11px] font-mono shrink-0">
+    <div class="flex items-center gap-3">
+      <span class="text-slate-400 text-[10px] uppercase font-bold">Total Cash:</span>
+      <div id="leaderboard-pills" class="flex items-center gap-2">
+        <!-- Rendered dynamically -->
+      </div>
     </div>
-
-    <!-- Match Scores Bar -->
-    <div id="header-match-scores" class="text-[10px] font-mono flex items-center gap-1.5 text-slate-400">
-      <!-- Injected dynamically -->
+    <div class="text-[10px] text-slate-400 flex items-center gap-2">
+      <span class="text-rose-400 font-bold">Rule:</span> Most Red Heat = ARREST ($0)!
     </div>
   </div>
 
-  <!-- ZONE 2: Bots Strip (Top Opponents) -->
-  <div class="bg-slate-900/60 border-b border-slate-800/80 px-2 py-1 shrink-0">
-    <div id="bots-grid" class="grid grid-cols-3 gap-1.5 max-w-xl mx-auto w-full">
-      
-      <!-- Bot 4 (Right Neighbor) -->
-      <div id="bot4-area" class="bg-slate-900/80 border border-slate-800 rounded-xl p-1.5 flex flex-col justify-between transition-all relative overflow-hidden">
-        <div class="flex items-center justify-between gap-1">
-          <div class="flex items-center gap-1 min-w-0">
-            <div class="w-4 h-4 rounded-full bg-teal-600 flex items-center justify-center font-black text-[9px] shrink-0">4</div>
-            <span class="text-[10px] font-bold text-slate-300 truncate">Bot 4</span>
-          </div>
-          <span id="bot4-mood-badge" class="text-[7.5px] font-black px-1 py-0.2 rounded border bg-slate-800 text-slate-400 truncate">⚖️ Balanced</span>
-        </div>
-        
-        <div class="flex items-center justify-between my-1">
-          <div id="bot4-count-badge" class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 flex items-center gap-1">
-            <span>🎴</span><span>7 cards</span>
-          </div>
-          <div id="bot4-pips" class="flex items-center gap-[2px]"></div>
-        </div>
-
-        <div class="flex items-center justify-between text-[9px] font-mono border-t border-slate-800/80 pt-0.5">
-          <span id="bot4-score-badge" class="text-emerald-400 font-semibold">Vault: 0</span>
-          <span id="bot4-match-total" class="text-amber-300/80 font-bold">0/300</span>
-        </div>
-      </div>
-
-      <!-- Bot 3 (Across) -->
-      <div id="bot3-area" class="bg-slate-900/80 border border-slate-800 rounded-xl p-1.5 flex flex-col justify-between transition-all relative overflow-hidden">
-        <div class="flex items-center justify-between gap-1">
-          <div class="flex items-center gap-1 min-w-0">
-            <div class="w-4 h-4 rounded-full bg-indigo-600 flex items-center justify-center font-black text-[9px] shrink-0">3</div>
-            <span class="text-[10px] font-bold text-slate-300 truncate">Bot 3</span>
-          </div>
-          <span id="bot3-mood-badge" class="text-[7.5px] font-black px-1 py-0.2 rounded border bg-slate-800 text-slate-400 truncate">⚖️ Balanced</span>
-        </div>
-
-        <div class="flex items-center justify-between my-1">
-          <div id="bot3-count-badge" class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 flex items-center gap-1">
-            <span>🎴</span><span>7 cards</span>
-          </div>
-          <div id="bot3-pips" class="flex items-center gap-[2px]"></div>
-        </div>
-
-        <div class="flex items-center justify-between text-[9px] font-mono border-t border-slate-800/80 pt-0.5">
-          <span id="bot3-score-badge" class="text-emerald-400 font-semibold">Vault: 0</span>
-          <span id="bot3-match-total" class="text-amber-300/80 font-bold">0/300</span>
-        </div>
-      </div>
-
-      <!-- Bot 2 (Left Neighbor) -->
-      <div id="bot2-area" class="bg-slate-900/80 border border-slate-800 rounded-xl p-1.5 flex flex-col justify-between transition-all relative overflow-hidden">
-        <div class="flex items-center justify-between gap-1">
-          <div class="flex items-center gap-1 min-w-0">
-            <div class="w-4 h-4 rounded-full bg-rose-600 flex items-center justify-center font-black text-[9px] shrink-0">2</div>
-            <span class="text-[10px] font-bold text-slate-300 truncate">Bot 2</span>
-          </div>
-          <span id="bot2-mood-badge" class="text-[7.5px] font-black px-1 py-0.2 rounded border bg-slate-800 text-slate-400 truncate">⚖️ Balanced</span>
-        </div>
-
-        <div class="flex items-center justify-between my-1">
-          <div id="bot2-count-badge" class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 flex items-center gap-1">
-            <span>🎴</span><span>7 cards</span>
-          </div>
-          <div id="bot2-pips" class="flex items-center gap-[2px]"></div>
-        </div>
-
-        <div class="flex items-center justify-between text-[9px] font-mono border-t border-slate-800/80 pt-0.5">
-          <span id="bot2-score-badge" class="text-emerald-400 font-semibold">Vault: 0</span>
-          <span id="bot2-match-total" class="text-amber-300/80 font-bold">0/300</span>
-        </div>
-      </div>
-
+  <!-- OPPONENTS STRIP (Top 3 Bots) -->
+  <div class="bg-slate-900/40 border-b border-slate-800/80 px-3 py-1.5 shrink-0">
+    <div id="opponents-grid" class="grid grid-cols-3 gap-2 max-w-4xl mx-auto w-full">
+      <!-- Opponent cards rendered dynamically -->
     </div>
   </div>
 
-  <!-- ZONE 3: Center Table Arena (Compact 90px–110px) -->
-  <div class="flex-1 flex flex-col justify-center items-center px-3 py-1 relative min-h-0">
-    <div class="w-full max-w-md flex justify-between items-center bg-slate-900/80 border border-slate-800/80 rounded-2xl p-2.5 shadow-xl backdrop-blur-sm relative">
-      
-      <!-- Direction Camera Card -->
-      <div id="camera-card" class="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-slate-950 border border-slate-800 shadow">
-        <div id="camera-icon" class="text-2xl transition-transform duration-500">📹</div>
-        <div class="flex flex-col text-left">
-          <span class="text-[8px] font-black text-slate-400 uppercase tracking-wider">Security Camera</span>
-          <span id="camera-label" class="text-xs font-black text-sky-400 leading-tight">PASS CLOCKWISE ↻</span>
-        </div>
-      </div>
-
-      <!-- Center Live Pass Indicator -->
-      <div id="pass-indicator-box" class="flex flex-col items-center justify-center text-center px-1">
-        <span class="text-[7.5px] font-bold text-slate-400 uppercase tracking-wider">Active Passing</span>
-        <div id="pass-arrow" class="text-sm font-black text-amber-400">➡️ Passing Left</div>
-      </div>
-
-      <!-- Evidence Locker (Draw Pile) -->
-      <div id="draw-deck" class="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-slate-950 border border-indigo-900/60 shadow cursor-pointer hover:border-indigo-500 transition active:scale-95 group">
-        <div class="relative">
-          <div class="w-6 h-8 bg-indigo-950 border-2 border-indigo-500 rounded flex items-center justify-center text-[10px] font-black text-indigo-300 shadow">
-            🔒
-          </div>
-          <div class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-rose-500 rounded-full animate-ping"></div>
-        </div>
-        <div class="flex flex-col text-left">
-          <span class="text-[8px] font-black text-indigo-400 uppercase tracking-wider">Locker</span>
-          <span class="text-xs font-mono font-black text-indigo-200"><span id="deck-count">26</span> left</span>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Activity Ticker & Raid Banner -->
-    <div id="announcement-banner" class="w-full max-w-md mt-1.5 text-center text-[10.5px] font-semibold text-amber-300/90 truncate px-2 py-0.5 rounded-md bg-amber-950/40 border border-amber-900/40">
-      Welcome to Caught Red-Handed! Tap Draw Card or tap the Locker.
-    </div>
-  </div>
-
-  <!-- ZONE 4: Bottom Mobile Cockpit (Player 0) -->
-  <div class="bg-slate-900/95 border-t border-slate-800 px-3 pt-1.5 pb-2 shrink-0 flex flex-col gap-1.5 max-w-2xl mx-auto w-full">
+  <!-- CENTER TABLE: THE STREET (BUYERS), THE COUNTDOWN PILE & EVIDENCE LOCKER -->
+  <div class="flex-1 min-h-0 px-3 py-2 flex flex-col justify-between max-w-4xl mx-auto w-full relative">
     
-    <!-- Player Status Bar -->
-    <div class="flex justify-between items-center px-1">
+    <!-- Street Header & Siren Fuse Status -->
+    <div class="flex items-center justify-between">
       <div class="flex items-center gap-2">
-        <div class="w-5 h-5 rounded-full bg-blue-600 flex items-center justify-center font-black text-[10px]">1</div>
-        <span class="text-xs font-black text-slate-200">YOU (Driver)</span>
-        <span id="player-turn-status" class="px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold">YOUR TURN</span>
+        <span class="text-xs font-black uppercase text-amber-400 tracking-wider">🛒 The Street (Active Buyers)</span>
+        <span class="text-[10px] text-slate-400 bg-slate-800/80 px-2 py-0.5 rounded border border-slate-700">Sell matching card face-up</span>
       </div>
 
-      <div class="flex items-center gap-3 text-xs font-mono">
-        <div class="flex items-center gap-1">
-          <span class="text-emerald-300">Vault: <span id="player-score-display" class="font-mono text-xs font-black">0</span> pts</span>
-          <span class="text-amber-400">Total: <span id="player-match-total" class="font-mono text-xs font-black">0</span>/300</span>
+      <!-- THE FUSE / COUNTDOWN PILE STATUS -->
+      <div id="fuse-box" class="bg-rose-950/60 border border-rose-800/80 px-3 py-1 rounded-lg flex items-center gap-2 shadow-inner">
+        <span class="text-base siren-active">🚨</span>
+        <div class="leading-none">
+          <div class="text-[9px] font-black uppercase text-rose-300">Countdown Fuse</div>
+          <div class="text-xs font-mono font-black text-rose-200">
+            <span id="fuse-count">5</span> CARDS LEFT
+          </div>
+        </div>
+        <div id="fuse-token-badge" class="bg-rose-600 text-white font-black text-[10px] px-1.5 py-0.5 rounded ml-1">
+          TOKEN [5]
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Buyers Slots (3 Slots: Drawer Top + 2 Street) -->
+    <div class="grid grid-cols-3 gap-3 my-auto">
+      
+      <!-- Buyer 1 -->
+      <div id="buyer-slot-0" onclick="selectBuyerSlot(0)" class="cursor-pointer bg-slate-900/90 border-2 border-slate-700 hover:border-amber-400 rounded-xl p-2.5 transition flex flex-col justify-between h-28 relative group shadow-md hover:shadow-amber-500/10">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- Buyer 2 -->
+      <div id="buyer-slot-1" onclick="selectBuyerSlot(1)" class="cursor-pointer bg-slate-900/90 border-2 border-slate-700 hover:border-amber-400 rounded-xl p-2.5 transition flex flex-col justify-between h-28 relative group shadow-md hover:shadow-amber-500/10">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- Buyer 3 -->
+      <div id="buyer-slot-2" onclick="selectBuyerSlot(2)" class="cursor-pointer bg-slate-900/90 border-2 border-slate-700 hover:border-amber-400 rounded-xl p-2.5 transition flex flex-col justify-between h-28 relative group shadow-md hover:shadow-amber-500/10">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+
+    <!-- Live Turn Banner / Game Log -->
+    <div id="action-banner" class="bg-slate-900/90 border border-slate-800 rounded-lg px-3 py-1.5 flex items-center justify-between text-xs font-mono shadow">
+      <div id="action-text" class="text-slate-200 truncate flex items-center gap-2">
+        <span class="text-emerald-400 font-bold">Turn 1:</span> Choose a matching card from hand to sell to an active Buyer!
+      </div>
+      <div id="turn-timer-badge" class="text-[10px] bg-slate-800 px-2 py-0.5 rounded text-amber-300 font-bold shrink-0">
+        Your Turn
+      </div>
+    </div>
+  </div>
+
+  <!-- PLAYER AREA (BOTTOM) -->
+  <div class="bg-slate-900/95 border-t border-slate-800 px-3 py-2 shrink-0">
+    <div class="max-w-4xl mx-auto flex flex-col gap-2">
+      
+      <!-- Player Stash & Stats Header -->
+      <div class="flex items-center justify-between text-xs">
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-1.5 font-bold">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
+            <span class="text-slate-200 font-black">YOU (Player 1)</span>
+            <span id="player-dealer-badge" class="hidden text-[9px] bg-amber-500 text-slate-950 font-black px-1.5 py-0.2 rounded">DEALER</span>
+          </div>
+          
+          <!-- Current Round Financial & Heat Pips -->
+          <div class="flex items-center gap-2 font-mono text-[11px]">
+            <span class="bg-emerald-950/80 border border-emerald-800 text-emerald-300 px-2 py-0.5 rounded font-black">
+              Banked: $<span id="p1-round-cash">0</span>
+            </span>
+            <span class="bg-rose-950/80 border border-rose-800 text-rose-300 px-2 py-0.5 rounded font-black flex items-center gap-1">
+              <span>Heat:</span>
+              <span id="p1-heat-val">0</span>
+              <span class="text-[9px] text-rose-400 font-normal">(Sold: <span id="p1-heat-sold">0</span> | Hand: <span id="p1-heat-hand">0</span>)</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Action / Step Guidance -->
+        <div id="step-instruction" class="text-[11px] font-bold text-amber-300">
+          Step 1: Select 1 card in hand to SELL
         </div>
       </div>
 
-      <!-- Banked Vault Pills Scroll -->
-      <div id="player-stash-container" class="flex items-center gap-1 overflow-x-auto max-w-[130px] sm:max-w-xs no-scrollbar">
+      <!-- Player Hand (Scrollable / Interactive) -->
+      <div id="player-hand" class="flex gap-2 overflow-x-auto pb-1 no-scrollbar pt-1 min-h-[96px] items-center">
         <!-- Rendered dynamically -->
       </div>
-    </div>
 
-    <!-- Ergonomic Mobile Action Controls Bar -->
-    <div class="flex flex-col gap-1 w-full" id="action-controls">
-      <!-- Tier 1: Draw, Pair, Skip, Snitch -->
-      <div class="grid grid-cols-5 gap-1.5 w-full">
-        <button id="btn-draw" class="h-9 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-25 disabled:pointer-events-none text-white text-[11px] font-black rounded-xl shadow transition flex items-center justify-center gap-1">
-          <span>📦</span> <span>1. Draw</span>
-        </button>
-        <button id="btn-pair" disabled class="col-span-2 h-9 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-25 disabled:pointer-events-none text-white text-[10.5px] font-black rounded-xl shadow transition flex items-center justify-center gap-1 truncate px-1">
-          <span>💰</span> <span id="btn-pair-text" class="truncate">2. Lay Pair</span>
-        </button>
-        <button id="btn-skip-pair" disabled class="h-9 bg-slate-800 hover:bg-slate-700 disabled:opacity-25 disabled:pointer-events-none text-slate-300 text-[11px] font-bold rounded-xl border border-slate-700 shadow transition flex items-center justify-center gap-1">
-          <span>Skip</span> ➡️
-        </button>
-        <button id="btn-snitch" disabled class="h-9 bg-amber-600 hover:bg-amber-500 disabled:opacity-20 disabled:pointer-events-none text-white text-[10.5px] font-black rounded-xl shadow transition flex items-center justify-center gap-1 border border-amber-400/80">
-          <span>🕵️</span> <span>SNITCH</span>
-        </button>
+      <!-- Action Confirmation & Auxiliary Buttons Bar -->
+      <div class="flex items-center justify-between pt-1 border-t border-slate-800/60">
+        <div class="flex items-center gap-2">
+          <button id="btn-sell" onclick="confirmSellAction()" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs rounded shadow transition disabled:opacity-40 disabled:cursor-not-allowed">
+            ✓ Sell Card to Buyer
+          </button>
+          <button id="btn-pass" onclick="confirmPassAction()" class="px-3 py-1 bg-amber-600 hover:bg-amber-500 text-white font-black text-xs rounded shadow transition disabled:opacity-40 disabled:cursor-not-allowed">
+            ✉️ Pass Selected Card
+          </button>
+          <button id="btn-skip-sell" onclick="skipSellAndPass()" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs rounded border border-slate-700 transition">
+            Skip Sale (Go to Pass)
+          </button>
+        </div>
+
+        <div class="text-[10px] text-slate-400 font-mono">
+          <span>🔵 Blue: $5 + Power | 🚨 Red: $15 (1 Heat Sold / 2 In Hand)</span>
+        </div>
       </div>
-
-      <!-- Tier 2: Pass Card -->
-      <div class="w-full">
-        <button id="btn-pass" disabled class="w-full h-8.5 bg-rose-600 hover:bg-rose-500 disabled:opacity-25 disabled:pointer-events-none text-white text-[11px] font-black rounded-xl shadow transition flex items-center justify-center gap-1.5">
-          <span>👉</span> <span>3. Pass Selected Card (Face Up!)</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- Touch Hand Carousel (Mobile optimized scale: 72px x 112px) -->
-    <div class="relative w-full overflow-hidden">
-      <div id="player-hand" class="flex gap-1.5 sm:gap-2 overflow-x-auto py-2 px-1 items-end justify-start sm:justify-center w-full no-scrollbar min-h-[120px]">
-        <!-- Cards rendered dynamically -->
-      </div>
-    </div>
-
-    <!-- Micro Rule Hint -->
-    <div class="text-center text-[9px] text-slate-400 font-medium leading-none">
-      Pairs need <span class="text-blue-400 font-bold">≥1 Blue</span> • 🕵️ <span class="text-amber-400 font-bold">Discard Snitch on turn to wipe most Red</span> • ⚡ <span class="text-sky-300 font-bold">Face-Up Intercept</span>
-    </div>
-
-  </div>
-
-  <!-- Snitch Police Raid Modal -->
-  <div id="snitch-modal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 flex items-center justify-center p-3 hidden">
-    <div class="bg-slate-900 border-2 border-amber-500 rounded-3xl max-w-sm sm:max-w-md w-full p-4 text-center shadow-2xl flex flex-col items-center gap-2.5 max-h-[90vh] overflow-y-auto">
-      <div class="w-12 h-12 rounded-full bg-amber-600/20 border-2 border-amber-500 flex items-center justify-center text-2xl shadow snitch-pulse">
-        🕵️🚨
-      </div>
-      <h3 id="snitch-modal-title" class="text-base font-black text-amber-400 uppercase tracking-wider">POLICE RAID TRIGGERED!</h3>
-      <p id="snitch-modal-desc" class="text-xs text-slate-300 leading-relaxed"></p>
-      
-      <!-- Players Hands and Red Cards Breakdown -->
-      <div id="snitch-modal-breakdown" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl p-3 flex flex-col gap-2 text-xs text-left">
-        <!-- Injected dynamically -->
-      </div>
-
-      <button id="btn-snitch-continue" class="w-full py-2.5 bg-amber-600 hover:bg-amber-500 text-white font-black text-xs rounded-xl shadow-lg transition flex items-center justify-center gap-1.5">
-        <span>PROCEED TO PASSING</span> ➡️
-      </button>
     </div>
   </div>
 
-  <!-- Intercept Modal (Recipient's Advantage) -->
-  <div id="intercept-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-slate-900 border-2 border-sky-500 rounded-3xl max-w-sm w-full p-4 text-center shadow-2xl animate-bounce-short">
-      <div class="text-3xl mb-1">⚡🚨</div>
-      <h3 class="text-sm font-black text-sky-400 uppercase tracking-wider">RECIPIENT'S ADVANTAGE!</h3>
-      <p id="intercept-desc" class="text-xs text-slate-300 mt-2 leading-relaxed">
-        You were passed a <b>Red Contraband</b> face up, and you hold the matching <b>Blue Card</b>!
+  <!-- MODAL: DEALER TOKEN SELECTION (Start of each round) -->
+  <div id="dealer-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-md w-full p-5 shadow-2xl flex flex-col gap-4">
+      <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
+        <span class="text-3xl">⏱️</span>
+        <div>
+          <h2 class="text-base font-black text-amber-400 uppercase">You Are The Dealer!</h2>
+          <p class="text-xs text-slate-300">Set the Fuse Length for Round <span id="modal-round-num">1</span></p>
+        </div>
+      </div>
+
+      <p class="text-xs text-slate-300 leading-relaxed">
+        Inspect your opening hand below. Choose one of the remaining <span class="text-amber-400 font-bold">Siren Countdown Tokens</span>. 
+        This determines how many cards form the countdown fuse before the <strong>RAID</strong> is called!
       </p>
-      <div id="intercept-cards-preview" class="flex justify-center items-center gap-2 my-3">
-        <!-- Rendered dynamically -->
+
+      <!-- Dealer's Hand Preview -->
+      <div>
+        <div class="text-[10px] font-bold text-slate-400 uppercase mb-1">Your Starting Hand Preview:</div>
+        <div id="modal-hand-preview" class="flex gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+          <!-- Rendered dynamically -->
+        </div>
       </div>
-      <div class="flex gap-2 mt-3">
-        <button id="btn-intercept-meld" class="flex-1 py-2.5 bg-sky-600 hover:bg-sky-500 text-white font-black text-xs rounded-xl shadow-lg transition flex items-center justify-center gap-1.5">
-          <span>⚡ SNAP PAIR (+PTS)</span>
-        </button>
-        <button id="btn-intercept-accept" class="px-3 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs rounded-xl border border-slate-700 transition">
-          Accept to Hand
-        </button>
+
+      <!-- Available Siren Tokens -->
+      <div>
+        <div class="text-[10px] font-bold text-slate-400 uppercase mb-1.5">Choose Countdown Fuse Token:</div>
+        <div id="modal-token-options" class="grid grid-cols-5 gap-2">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <div class="text-[10px] text-slate-400 italic">
+        *Tokens are used without replacement across the 4 rounds.
       </div>
     </div>
   </div>
 
-  <!-- Round End / Heist Result Modal -->
-  <div id="clean-modal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-3 z-50 hidden">
-    <div class="bg-slate-900 border-2 border-rose-500 rounded-3xl p-5 max-w-sm sm:max-w-md w-full text-center shadow-2xl flex flex-col items-center gap-3 max-h-[90vh] overflow-y-auto">
-      <div id="modal-icon" class="w-12 h-12 rounded-full bg-rose-600/20 border-2 border-rose-500 flex items-center justify-center text-2xl shadow">
-        🚗💨
-      </div>
-      <h2 id="modal-title" class="text-xl font-black text-rose-500 tracking-wider uppercase">"GETAWAY CAR!"</h2>
-      <p id="modal-desc" class="text-slate-300 text-[11px]">A player emptied their hand! The getaway car speeds off into the night!</p>
-      
-      <!-- Hands & Score Breakdown -->
-      <div id="modal-scores" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl p-3 flex flex-col gap-2 text-xs text-left">
-        <!-- Scores injected here -->
+  <!-- MODAL: ROUND OVER / RAID SUMMARY -->
+  <div id="raid-modal" class="hidden fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-900 border-2 border-rose-600 rounded-2xl max-w-lg w-full p-5 shadow-2xl flex flex-col gap-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-3xl siren-active">🚨</span>
+          <div>
+            <h2 class="text-lg font-black text-rose-500 uppercase">THE RAID HAS HIT!</h2>
+            <p class="text-xs text-slate-300">Police sweep the safehouse. Tallying Red Heat...</p>
+          </div>
+        </div>
+        <div class="text-xs font-mono font-bold text-slate-400">
+          Round <span id="raid-modal-round">1</span>
+        </div>
       </div>
 
-      <button id="modal-next-btn" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs rounded-xl shadow-lg transition flex items-center justify-center gap-2">
-        <span>NEXT ROUND</span> ➡️
+      <!-- Arrest / Heat Breakdown Table -->
+      <div id="raid-breakdown-body" class="flex flex-col gap-2">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <button id="raid-next-round-btn" onclick="startNextRound()" class="w-full py-2.5 bg-rose-600 hover:bg-rose-500 text-white font-black text-sm rounded-xl shadow-lg transition">
+        Continue to Next Round →
       </button>
     </div>
   </div>
 
+  <!-- JAVASCRIPT GAME ENGINE -->
   <script>
-    // Pairs & The Snitch Edition:
-    // Core melds require 2 cards and at least one Clean (Blue) card!
-    // On player's turn, instead of laying a pair, they may discard The Snitch to their score pile!
+    /* =========================================================================
+       1. GAME DATA & ECONOMIC SPECIFICATION (56-Card Architecture)
+       ========================================================================= */
     const ITEMS = [
-      { name: 'Cash', icon: '💵', isGrand: false, blueCopies: 4, redCopies: 2, redVal: 10 },
-      { name: 'Diamond', icon: '💎', isGrand: false, blueCopies: 4, redCopies: 2, redVal: 10 },
-      { name: 'Watch', icon: '⌚', isGrand: false, blueCopies: 4, redCopies: 2, redVal: 10 },
-      { name: 'Key', icon: '🗝️', isGrand: false, blueCopies: 4, redCopies: 2, redVal: 10 },
-      { name: 'Painting', icon: '🖼️', isGrand: true, blueCopies: 4, redCopies: 2, redVal: 15 },
-      { name: 'Gold', icon: '🧈', isGrand: true, blueCopies: 4, redCopies: 2, redVal: 15 },
-      { name: 'Crown', icon: '👑', isGrand: true, blueCopies: 3, redCopies: 2, redVal: 15 },
-      { name: 'Relic', icon: '🏺', isGrand: true, blueCopies: 3, redCopies: 2, redVal: 15 }
+      { id: 'cash', name: 'Cash', icon: '💵', bluePower: 'Bribe: Skip mandatory pass' },
+      { id: 'watch', name: 'Watch', icon: '⌚', bluePower: 'Alibi: Reverse table direction' },
+      { id: 'key', name: 'Key', icon: '🗝️', bluePower: 'Wiretap: Peek at target opponent hand' },
+      { id: 'diamond', name: 'Diamond', icon: '💎', bluePower: 'Vault: Protect 1 card permanently' },
+      { id: 'painting', name: 'Painting', icon: '🖼️', bluePower: 'Swap: Blind trade 1 card with opponent' },
+      { id: 'gold', name: 'Gold', icon: '🧈', bluePower: 'Launder: Discard 1 Red from hand safely' }
     ];
 
-    // Match State
-    let gameMode = '4P'; // '4P' (54 cards to 300 pts) or '2P' (28 cards to 200 pts)
-    let numPlayers = 4;
-    let targetMatchScore = 300;
-    let matchScores = [0, 0, 0, 0];
-    let roundNumber = 1;
-    let starterPlayer = 0; // Rotates each round
+    const BUYER_FLAVORS = [
+      { id: 'financial', label: 'FINANCIAL', desc: '+$5 Cash Payout Bonus', icon: '💰' },
+      { id: 'defensive', label: 'DEFENSIVE', desc: 'Flip 1 Sold Red in Stash to Blue (0 Heat)', icon: '🛡️' },
+      { id: 'offensive', label: 'OFFENSIVE', desc: 'Force target opponent to draw 1 card', icon: '⚡' }
+    ];
 
-    // Round State
+    const ALL_SIREN_TOKENS = [3, 4, 5, 6, 7];
+    let availableTokens = [...ALL_SIREN_TOKENS];
+
+    // State Variables
+    let matchRound = 1;
+    let dealerIndex = 0; // Rotates 0 -> 1 -> 2 -> 3
+    let turnDirection = 1; // 1 = Clockwise, -1 = Counter-Clockwise
+    let activePlayerIndex = 0;
+    let matchScores = [0, 0, 0, 0]; // Total money banked across rounds
+
     let deck = [];
-    let hands = [[], [], [], []]; // P0=User, P1=Bot2, P2=Bot3, P3=Bot4
-    let stashes = [[], [], [], []]; // Banked pairs for current round
-    let currentPlayer = 0;
-    let direction = 1; // 1 = Clockwise (Pass Left), -1 = Counter-Clockwise (Pass Right)
-    let turnCount = 1;
-    let selectedPassCardIndex = null;
-    let selectedPairIndices = []; // Stores user's selected 2 cards for laying a pair
-    let playerStep = 'DRAW'; // 'DRAW', 'PAIR', 'PASS'
-    let consecutiveTurnsWithoutMeld = 0; // Tracks standoff rule: full rotation without melds ends round
-    let playerMadeMeldThisTurn = false;
+    let countdownPile = [];
+    let activeTokenValue = 5;
+    let hands = [[], [], [], []];
+    let stashes = [[], [], [], []]; // Array of { card, buyer, isRedScrubbed }
+    let streetBuyers = [null, null, null]; // 3 active buyers
 
-    function setGameMode(mode) {
-      if (gameMode === mode) return;
-      gameMode = mode;
-      numPlayers = (mode === '2P') ? 2 : 4;
-      targetMatchScore = (mode === '2P') ? 200 : 300;
+    let playerStep = 'IDLE'; // 'SELECT_SELL', 'SELECT_PASS', 'SELECT_TARGET', 'BOT'
+    let selectedHandIndex = null;
+    let selectedBuyerIndex = null;
+    let pendingBluePower = null;
 
-      const btn4p = document.getElementById('mode-4p-btn');
-      const btn2p = document.getElementById('mode-2p-btn');
-      if (mode === '2P') {
-        btn2p.className = "px-2.5 py-0.5 rounded-md bg-amber-600 text-white shadow transition font-black";
-        btn4p.className = "px-2.5 py-0.5 rounded-md text-slate-400 hover:text-slate-200 transition";
-      } else {
-        btn4p.className = "px-2.5 py-0.5 rounded-md bg-rose-600 text-white shadow transition font-black";
-        btn2p.className = "px-2.5 py-0.5 rounded-md text-slate-400 hover:text-slate-200 transition";
-      }
-      resetEntireMatch();
-    }
-
-    // Build the playable deck (4P: 54 cards, 2P Duel: 28 cards)
+    /* =========================================================================
+       2. DECK & SETUP BUILDER
+       ========================================================================= */
     function buildDeck() {
       const cards = [];
-      const activeItems = (gameMode === '2P')
-        ? ITEMS.filter(it => !it.isGrand) // 4 Petty items (16 Blue, 8 Red)
-        : ITEMS; // All 8 items (30 Blue, 16 Red)
+      let cardUid = 1;
 
-      const wildsCount = (gameMode === '2P') ? 2 : 6;
-      const snitchCount = 2;
-
-      // 1. Clean Loot (Blue, 5 pts each)
-      activeItems.forEach(it => {
-        for (let i = 0; i < it.blueCopies; i++) {
-          cards.push({ type: 'LOOT', color: 'BLUE', item: it.name, icon: it.icon, val: 5, isGrand: it.isGrand, redVal: it.redVal });
+      // 24 Blue Cards (4 of each of the 6 items)
+      ITEMS.forEach(item => {
+        for (let i = 0; i < 4; i++) {
+          cards.push({
+            uid: cardUid++,
+            item: item.id,
+            name: item.name,
+            icon: item.icon,
+            color: 'BLUE',
+            val: 5,
+            power: item.bluePower,
+            // Buyer details on card back:
+            buyerDemand: item.id,
+            buyerDemandName: item.name,
+            buyerIcon: item.icon,
+            buyerFlavor: BUYER_FLAVORS[(cardUid + i) % BUYER_FLAVORS.length]
+          });
         }
       });
 
-      // 2. Red Contraband
-      activeItems.forEach(it => {
-        for (let i = 0; i < it.redCopies; i++) {
-          cards.push({ type: 'LOOT', color: 'RED', item: it.name, icon: it.icon, val: it.redVal, isGrand: it.isGrand });
+      // 18 Red Cards (3 of each of the 6 items)
+      ITEMS.forEach(item => {
+        for (let i = 0; i < 3; i++) {
+          cards.push({
+            uid: cardUid++,
+            item: item.id,
+            name: `Hot ${item.name}`,
+            icon: `🚨${item.icon}`,
+            color: 'RED',
+            val: 15,
+            power: null, // RED CARDS HAVE NO POWERS (Pure Greed/Liability)
+            // Buyer details on card back:
+            buyerDemand: item.id,
+            buyerDemandName: item.name,
+            buyerIcon: item.icon,
+            buyerFlavor: BUYER_FLAVORS[(cardUid + i) % BUYER_FLAVORS.length]
+          });
         }
       });
 
-      // 3. Green Counterfeit Wilds (0 pts, wild connector, flips direction)
-      for (let i = 0; i < wildsCount; i++) {
-        cards.push({ type: 'LOOT', color: 'GREEN', item: 'Wild', icon: '🎭🔄', val: 0, isGrand: false, isWild: true });
-      }
-
-      // 4. The Snitch (Take-That Police Raid Card)
-      for (let i = 0; i < snitchCount; i++) {
-        cards.push({ type: 'SPECIAL', color: 'SPECIAL', item: 'The Snitch', icon: '🕵️🚨', val: 0, isGrand: false, isSnitch: true });
-      }
-
-      // Shuffle Fisher-Yates
+      // Fisher-Yates Shuffle
       for (let i = cards.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [cards[i], cards[j]] = [cards[j], cards[i]];
@@ -417,1173 +356,701 @@
       return cards;
     }
 
-    function initRound() {
-      numPlayers = (gameMode === '2P') ? 2 : 4;
-      targetMatchScore = (gameMode === '2P') ? 200 : 300;
-      deck = buildDeck();
-      hands = [];
-      stashes = [];
-      for (let p = 0; p < numPlayers; p++) {
-        hands.push([]);
-        stashes.push([]);
-      }
-      currentPlayer = starterPlayer % numPlayers;
-      direction = 1;
-      turnCount = 1;
-      consecutiveTurnsWithoutMeld = 0;
-      playerMadeMeldThisTurn = false;
-      selectedPassCardIndex = null;
-      selectedPairIndices = [];
-      playerStep = (currentPlayer === 0) ? 'DRAW' : 'BOT';
+    function initMatch() {
+      matchRound = 1;
+      dealerIndex = 0;
+      matchScores = [0, 0, 0, 0];
+      availableTokens = [...ALL_SIREN_TOKENS];
+      initRound();
+    }
 
-      // Deal 7 cards each
-      for (let i = 0; i < 7; i++) {
-        for (let p = 0; p < numPlayers; p++) {
+    function initRound() {
+      deck = buildDeck();
+      turnDirection = 1;
+      hands = [[], [], [], []];
+      stashes = [[], [], [], []];
+      selectedHandIndex = null;
+      selectedBuyerIndex = null;
+      pendingBluePower = null;
+
+      // Deal 5 cards to each player
+      for (let c = 0; c < 5; c++) {
+        for (let p = 0; p < 4; p++) {
           hands[p].push(deck.pop());
         }
       }
 
-      updateUI();
-      const modeAnnouncement = (gameMode === '2P')
-        ? `⚔️ 2-Player Duel! 28 cards (4 Items + 2 Wilds + 2 Snitches). First to 200 pts!`
-        : `👥 Round ${roundNumber} begins! 54 cards (30 Blue, 16 Red, 6 Wild, 2 Snitch). Dealing 7 cards. First to 300 pts!`;
-      logAnnouncement(modeAnnouncement);
+      // Establish The Street: 3 Active Buyers
+      for (let b = 0; b < 3; b++) {
+        streetBuyers[b] = deck.pop();
+      }
 
-      if (currentPlayer !== 0) {
-        setTimeout(() => playBotTurn(currentPlayer), 600);
+      // Check if Player 1 is Dealer or Bot is Dealer
+      if (dealerIndex === 0) {
+        showDealerModal();
+      } else {
+        // Bot Dealer chooses a smart token (e.g. median of available)
+        const chosenToken = availableTokens[Math.floor(availableTokens.length / 2)] || availableTokens[0];
+        applyDealerTokenChoice(chosenToken);
       }
     }
 
-    function resetEntireMatch() {
-      matchScores = [0, 0, 0, 0];
-      roundNumber = 1;
-      starterPlayer = 0;
-      initRound();
-    }
+    function showDealerModal() {
+      document.getElementById('modal-round-num').textContent = matchRound;
+      
+      // Render Hand Preview
+      const previewEl = document.getElementById('modal-hand-preview');
+      previewEl.innerHTML = '';
+      hands[0].forEach(card => {
+        const cardBox = document.createElement('div');
+        const isRed = card.color === 'RED';
+        cardBox.className = `p-1.5 rounded-lg border text-center shrink-0 w-20 text-[10px] font-bold ${
+          isRed ? 'bg-rose-950/80 border-rose-700 text-rose-300' : 'bg-sky-950/80 border-sky-700 text-sky-300'
+        }`;
+        cardBox.innerHTML = `
+          <div class="text-lg">${card.icon}</div>
+          <div class="truncate">${card.name}</div>
+          <div class="text-[9px] opacity-75">${isRed ? '$15 (Hot)' : '$5 (Safe)'}</div>
+        `;
+        previewEl.appendChild(cardBox);
+      });
 
-    function drawFromDeck() {
-      return deck.pop() || null;
-    }
-
-    function calculateStashPoints(stash) {
-      return stash.reduce((sum, item) => sum + item.points, 0);
-    }
-
-    // Evaluates any 2 cards selected by the player against the Golden Pairing Law
-    function evaluateSelectedPair(c1, c2) {
-      if (!c1 || !c2) return { valid: false, error: "Select 2 cards." };
-
-      if (c1.color === 'SPECIAL' || c2.color === 'SPECIAL') {
-        return { valid: false, error: "The Snitch is played with the Snitch button, not as a pair!" };
-      }
-
-      let blue = null;
-      let other = null;
-
-      if (c1.color === 'BLUE' && c2.color !== 'BLUE') {
-        blue = c1; other = c2;
-      } else if (c2.color === 'BLUE' && c1.color !== 'BLUE') {
-        blue = c2; other = c1;
-      } else if (c1.color === 'BLUE' && c2.color === 'BLUE') {
-        if (c1.item === c2.item) {
-          return {
-            valid: true,
-            item: c1.item,
-            icon: c1.icon,
-            color: 'BLUE',
-            category: 'CLEAN',
-            points: 10,
-            flipsCamera: false,
-            label: `Clean ${c1.item}`
+      // Render Available Tokens
+      const tokenContainer = document.getElementById('modal-token-options');
+      tokenContainer.innerHTML = '';
+      ALL_SIREN_TOKENS.forEach(tok => {
+        const isAvail = availableTokens.includes(tok);
+        const btn = document.createElement('button');
+        btn.disabled = !isAvail;
+        btn.className = `p-2 rounded-xl border flex flex-col items-center justify-center font-black transition ${
+          isAvail 
+            ? 'bg-rose-600 hover:bg-rose-500 border-rose-400 text-white shadow-lg cursor-pointer' 
+            : 'bg-slate-800 border-slate-700 text-slate-500 opacity-40 cursor-not-allowed'
+        }`;
+        btn.innerHTML = `
+          <span class="text-xl leading-none">${tok}</span>
+          <span class="text-[9px] font-mono mt-0.5">${tok <= 4 ? 'Blitz' : 'Long'}</span>
+        `;
+        if (isAvail) {
+          btn.onclick = () => {
+            applyDealerTokenChoice(tok);
+            document.getElementById('dealer-modal').classList.add('hidden');
           };
+        }
+        tokenContainer.appendChild(btn);
+      });
+
+      document.getElementById('dealer-modal').classList.remove('hidden');
+    }
+
+    function applyDealerTokenChoice(chosenToken) {
+      activeTokenValue = chosenToken;
+      availableTokens = availableTokens.filter(t => t !== chosenToken);
+
+      // Create Countdown Pile from top cards of deck
+      countdownPile = [];
+      for (let i = 0; i < chosenToken; i++) {
+        if (deck.length > 0) {
+          countdownPile.push(deck.pop());
+        }
+      }
+
+      // Active player starts with Dealer
+      activePlayerIndex = dealerIndex;
+      logAction(`Round ${matchRound}: Dealer (Player ${dealerIndex + 1}) chose Siren Token [${chosenToken}]! ${chosenToken} cards in fuse.`);
+      
+      startTurn();
+    }
+
+    /* =========================================================================
+       3. TURN CYCLE & PLAYER LOGIC
+       ========================================================================= */
+    function startTurn() {
+      // Check if turn is Dealer and handle Countdown Pile draw
+      if (activePlayerIndex === dealerIndex) {
+        handleDealerCountdownDraw();
+        if (countdownPile.length === 0) {
+          // RAID TRIGGERED!
+          triggerPoliceRaid();
+          return;
+        }
+      }
+
+      updateUI();
+
+      if (activePlayerIndex === 0) {
+        playerStep = 'SELECT_SELL';
+        selectedHandIndex = null;
+        selectedBuyerIndex = null;
+        document.getElementById('step-instruction').textContent = "Step 1: Choose a card in hand to SELL (or Skip)";
+        logAction("Your turn! Pick a card from your hand that matches an active Buyer on The Street.");
+      } else {
+        playerStep = 'BOT';
+        document.getElementById('step-instruction').textContent = `Waiting for Bot ${activePlayerIndex + 1}...`;
+        setTimeout(() => executeBotTurn(activePlayerIndex), 750);
+      }
+    }
+
+    function handleDealerCountdownDraw() {
+      if (countdownPile.length === 0) return;
+
+      const drawnCard = countdownPile.pop();
+      const isP1 = dealerIndex === 0;
+
+      // Dealer decides: Keep or Plant to any opponent
+      if (isP1) {
+        // For human dealer: automatically keep if clean, plant hot cards to leader
+        if (drawnCard.color === 'BLUE') {
+          hands[0].push(drawnCard);
+          logAction(`⏱️ As Dealer, you drew from the Countdown Pile and kept safe ${drawnCard.name}! (${countdownPile.length} left)`);
         } else {
-          return { valid: false, error: `Must match (${c1.item} ≠ ${c2.item})!` };
+          // Plant to leader bot
+          const target = getRichestOpponent(0);
+          hands[target].push(drawnCard);
+          logAction(`⏱️ Informant Plant! As Dealer, you secretly planted a hot card onto Bot ${target + 1}! (${countdownPile.length} left)`);
         }
       } else {
-        return { valid: false, error: "Golden Law: Needs 1 Blue card!" };
-      }
-
-      // One Blue + Green Wild
-      if (other.color === 'GREEN') {
-        return {
-          valid: true,
-          item: `Wild (${blue.item})`,
-          icon: '🎭🔄',
-          color: 'GREEN',
-          category: 'WILD',
-          points: 5,
-          flipsCamera: true,
-          label: `Wild w/ ${blue.item}`
-        };
-      }
-
-      // One Blue + Red Contraband
-      if (other.color === 'RED') {
-        if (other.item === blue.item) {
-          const pts = blue.val + other.val;
-          return {
-            valid: true,
-            item: other.item,
-            icon: other.icon,
-            color: 'RED',
-            category: other.isGrand ? 'GRAND' : 'PETTY',
-            points: pts,
-            flipsCamera: false,
-            label: `Laundered ${other.item}`
-          };
+        // Bot Dealer AI
+        if (drawnCard.color === 'BLUE') {
+          hands[dealerIndex].push(drawnCard);
+          logAction(`⏱️ Bot ${dealerIndex + 1} (Dealer) drew from the Countdown Pile. (${countdownPile.length} left)`);
         } else {
-          return { valid: false, error: `Mismatch (${other.item} ≠ ${blue.item})!` };
+          // Plant to human or leading bot
+          hands[0].push(drawnCard);
+          logAction(`⏱️ Bot ${dealerIndex + 1} (Dealer) slid an extra card face-down to YOU! (${countdownPile.length} left)`);
         }
       }
-
-      return { valid: false, error: "Invalid combination!" };
     }
 
-    // Available candidate pairs for bot AI
-    function getCandidatePairs(playerIdx) {
-      const hand = hands[playerIdx];
-      const candidates = [];
-
-      const blues = hand.filter(c => c.color === 'BLUE');
-      const reds = hand.filter(c => c.color === 'RED');
-      const greens = hand.filter(c => c.color === 'GREEN');
-
-      if (blues.length === 0) return candidates;
-
-      // 1. Red + Blue
-      reds.forEach(r => {
-        const matchBlue = blues.find(b => b.item === r.item);
-        if (matchBlue) {
-          const pts = matchBlue.val + r.val;
-          candidates.push({
-            item: r.item,
-            icon: r.icon,
-            color: 'RED',
-            category: r.isGrand ? 'GRAND' : 'PETTY',
-            points: pts,
-            flipsCamera: false,
-            c1: r,
-            c2: matchBlue
-          });
+    function getRichestOpponent(excludeIndex) {
+      let bestIdx = (excludeIndex === 0) ? 1 : 0;
+      let maxCash = -1;
+      for (let p = 0; p < 4; p++) {
+        if (p === excludeIndex) continue;
+        const currentCash = calculateRoundCash(p);
+        if (currentCash > maxCash) {
+          maxCash = currentCash;
+          bestIdx = p;
         }
-      });
-
-      // 2. Blue + Blue
-      ITEMS.forEach(it => {
-        const itemBlues = blues.filter(b => b.item === it.name);
-        if (itemBlues.length >= 2) {
-          candidates.push({
-            item: it.name,
-            icon: it.icon,
-            color: 'BLUE',
-            category: 'CLEAN',
-            points: 10,
-            flipsCamera: false,
-            c1: itemBlues[0],
-            c2: itemBlues[1]
-          });
-        }
-      });
-
-      // 3. ANY Green Wild + ANY Blue
-      if (greens.length > 0 && blues.length > 0) {
-        const bestBlueToBurn = blues[0];
-        candidates.push({
-          item: `Wild (${bestBlueToBurn.item})`,
-          icon: '🎭🔄',
-          color: 'GREEN',
-          category: 'WILD',
-          points: 5,
-          flipsCamera: true,
-          c1: greens[0],
-          c2: bestBlueToBurn
-        });
       }
-
-      return candidates;
+      return bestIdx;
     }
 
-    // Dynamic Bot Mindset & Risk Calculation
-    function getBotMindset(b) {
-      const myScore = matchScores[b];
-      const maxScore = Math.max(...matchScores);
-      const leaderIdx = matchScores.indexOf(maxScore);
-      const deficit = maxScore - myScore;
+    /* =========================================================================
+       4. HUMAN PLAYER INTERACTION HANDLERS
+       ========================================================================= */
+    function selectHandCard(index) {
+      if (activePlayerIndex !== 0) return;
 
-      if (myScore === 0 && roundNumber > 1) {
-        return { val: 0.15, label: "🛡️ Cautious", class: "bg-blue-950/80 text-blue-300 border-blue-700/60" };
-      }
-      if (deficit >= 60) {
-        return { val: 0.25, label: "🛡️ Defensive", class: "bg-blue-950/80 text-blue-300 border-blue-700/60" };
-      }
-      if (b === leaderIdx && myScore > 0) {
-        const sorted = [...matchScores].sort((a, b) => b - a);
-        const lead = myScore - (sorted[1] || 0);
-        if (lead >= 40) return { val: 0.85, label: "👑 High Roller", class: "bg-amber-950/90 text-amber-300 border-amber-500/80" };
-        if (lead >= 20) return { val: 0.70, label: "👑 Aggressive", class: "bg-amber-950/80 text-amber-300 border-amber-600/70" };
-        return { val: 0.55, label: "👑 Leader", class: "bg-amber-950/60 text-amber-300 border-amber-700/60" };
-      }
-      if (maxScore >= 225 && b !== leaderIdx) {
-        return { val: 0.80, label: "⚡ Desperate", class: "bg-rose-950/80 text-rose-300 border-rose-600/70" };
-      }
-      return { val: 0.50, label: "⚖️ Balanced", class: "bg-slate-800 text-slate-400 border-slate-700" };
+      selectedHandIndex = index;
+      renderHand();
+      updateActionButtons();
     }
 
-    // Bot AI pair playing
-    function discardBotPairs(b) {
-      const hand = hands[b];
-      const candidates = getCandidatePairs(b);
+    function selectBuyerSlot(slotIndex) {
+      if (activePlayerIndex !== 0) return;
+      if (playerStep !== 'SELECT_SELL') return;
 
-      if (candidates.length > 0) {
-        candidates.sort((a, b) => b.points - a.points);
-        const best = candidates[0];
+      selectedBuyerIndex = slotIndex;
+      renderStreet();
+      updateActionButtons();
+    }
 
-        const idx1 = hand.indexOf(best.c1);
-        if (idx1 !== -1) hand.splice(idx1, 1);
-        const idx2 = hand.indexOf(best.c2);
-        if (idx2 !== -1) hand.splice(idx2, 1);
+    function updateActionButtons() {
+      const btnSell = document.getElementById('btn-sell');
+      const btnPass = document.getElementById('btn-pass');
 
-        stashes[b].push({
-          item: best.item,
-          icon: best.icon,
-          color: best.color,
-          points: best.points,
-          category: best.category
-        });
-
-        if (best.flipsCamera) {
-          direction = -direction;
-          logAnnouncement(`${getPlayerName(b)} banked ${best.item}! Passing direction reversed! 🔄`);
-        } else if (best.color === 'RED') {
-          logAnnouncement(`${getPlayerName(b)} laundered a ${best.item} pair (+${best.points} pts)!`);
+      if (playerStep === 'SELECT_SELL') {
+        btnPass.disabled = true;
+        if (selectedHandIndex !== null && selectedBuyerIndex !== null) {
+          const card = hands[0][selectedHandIndex];
+          const buyer = streetBuyers[selectedBuyerIndex];
+          const matches = card.item === buyer.buyerDemand;
+          btnSell.disabled = !matches;
+          if (!matches) {
+            document.getElementById('step-instruction').textContent = `⚠️ Mismatch: ${card.name} doesn't match Buyer's demand (${buyer.buyerDemandName})!`;
+          } else {
+            document.getElementById('step-instruction').textContent = `Ready to sell ${card.name} for $${card.val}! Click 'Sell Card'.`;
+          }
         } else {
-          logAnnouncement(`${getPlayerName(b)} banked a clean pair of ${best.item}s (+${best.points} pts).`);
+          btnSell.disabled = true;
         }
-        return true;
+      } else if (playerStep === 'SELECT_PASS') {
+        btnSell.disabled = true;
+        btnPass.disabled = (selectedHandIndex === null);
       }
-      return false;
     }
 
-    function checkWinCondition(playerIdx) {
-      if (hands[playerIdx].length === 0) {
-        logAnnouncement(`🚗💨 GETAWAY CAR! ${getPlayerName(playerIdx)} emptied their hand!`);
-        showRoundModal(playerIdx, 'EMPTY_HAND');
-        return true;
-      }
-      return false;
-    }
+    function confirmSellAction() {
+      if (selectedHandIndex === null || selectedBuyerIndex === null) return;
 
-    function getPlayerName(p) {
-      if (p === 0) return "You";
-      return `Bot ${p + 1}`;
-    }
+      const card = hands[0].splice(selectedHandIndex, 1)[0];
+      const buyer = streetBuyers[selectedBuyerIndex];
 
-    function getTargetNeighbor(p) {
-      if (numPlayers === 2) return 1 - p;
-      return (p + direction + 4) % 4;
-    }
+      // Execute Sale
+      executeSale(0, card, buyer, selectedBuyerIndex);
 
-    // Police Raid Execution (The Snitch On-Turn Action)
-    function triggerSnitchRaid(snitcherIdx, onResume) {
-      const snitchCardIdx = hands[snitcherIdx].findIndex(c => c.color === 'SPECIAL');
-      if (snitchCardIdx !== -1) {
-        hands[snitcherIdx].splice(snitchCardIdx, 1);
-      }
-
-      // Add The Snitch to snitcher's score pile (worth 0 pts)
-      stashes[snitcherIdx].push({
-        item: 'The Snitch',
-        icon: '🕵️🚨',
-        color: 'SPECIAL',
-        points: 0,
-        category: 'RAID'
-      });
-
-      playerMadeMeldThisTurn = true;
-      consecutiveTurnsWithoutMeld = 0;
-
-      // Count red cards in all hands
-      const redCounts = [];
-      for (let p = 0; p < numPlayers; p++) {
-        redCounts.push(hands[p].filter(c => c.color === 'RED').length);
-      }
-      const maxRed = Math.max(...redCounts);
-
-      const bustedPlayers = [];
-      const wipedAmounts = [];
-
-      for (let p = 0; p < numPlayers; p++) {
-        const isBusted = (redCounts[p] === maxRed && maxRed > 0);
-        const prevStashPts = calculateStashPoints(stashes[p]);
-        if (isBusted) {
-          bustedPlayers.push(p);
-          wipedAmounts.push(prevStashPts);
-          stashes[p] = []; // Entire vault wiped!
-        } else {
-          wipedAmounts.push(0);
-        }
-      }
-
-      showSnitchModal(snitcherIdx, redCounts, maxRed, bustedPlayers, wipedAmounts, onResume);
+      // Advance to Step 2: Pass
+      selectedHandIndex = null;
+      selectedBuyerIndex = null;
+      playerStep = 'SELECT_PASS';
+      document.getElementById('step-instruction').textContent = "Step 2: Choose 1 card from hand to PASS to neighbor";
       updateUI();
     }
 
-    function showSnitchModal(snitcherIdx, redCounts, maxRed, bustedPlayers, wipedAmounts, onResume) {
-      const modal = document.getElementById('snitch-modal');
-      const desc = document.getElementById('snitch-modal-desc');
-      const breakdown = document.getElementById('snitch-modal-breakdown');
-      const continueBtn = document.getElementById('btn-snitch-continue');
+    function skipSellAndPass() {
+      if (playerStep !== 'SELECT_SELL') return;
+      logAction("You chose not to sell any merchandise this turn.");
+      selectedHandIndex = null;
+      selectedBuyerIndex = null;
+      playerStep = 'SELECT_PASS';
+      document.getElementById('step-instruction').textContent = "Step 2: Choose 1 card from hand to PASS to neighbor";
+      updateUI();
+    }
 
-      const snitcherName = getPlayerName(snitcherIdx);
-      const isSelfSnitch = bustedPlayers.includes(snitcherIdx);
+    function confirmPassAction() {
+      if (selectedHandIndex === null) return;
 
-      desc.innerHTML = `<b>${snitcherName}</b> dropped <b>The Snitch</b> onto their score pile and called a Police Raid! All hands revealed!`;
+      const passedCard = hands[0].splice(selectedHandIndex, 1)[0];
+      const targetNeighbor = (4 + 0 + turnDirection) % 4;
 
-      let breakdownHtml = '';
-      for (let p = 0; p < numPlayers; p++) {
-        const name = getPlayerName(p);
-        const count = redCounts[p];
-        const isBusted = bustedPlayers.includes(p);
-        const wipedPts = wipedAmounts[p];
+      hands[targetNeighbor].push(passedCard);
+      logAction(`✉️ You passed a card face-down to ${getPlayerName(targetNeighbor)}!`);
 
-        if (isBusted) {
-          breakdownHtml += `
-            <div class="p-2 rounded-lg border-2 border-rose-500 bg-rose-950/70 flex justify-between items-center">
-              <div>
-                <span class="font-black text-rose-400">${name}</span>
-                <span class="text-[10px] text-slate-300 ml-1.5 font-mono">(${count} Red Cards)</span>
-              </div>
-              <div class="text-right">
-                <span class="px-1.5 py-0.5 bg-rose-600 text-white font-black text-[9px] rounded uppercase">🚨 BUSTED!</span>
-                <div class="text-[10px] text-rose-300 font-bold mt-0.5">Vault Wiped (${wipedPts} pts seized)</div>
-              </div>
-            </div>
-          `;
-        } else {
-          breakdownHtml += `
-            <div class="p-2 rounded-lg border border-slate-800 bg-slate-900/60 flex justify-between items-center opacity-85">
-              <div>
-                <span class="font-bold text-slate-300">${name}</span>
-                <span class="text-[10px] text-slate-400 ml-1.5 font-mono">(${count} Red)</span>
-              </div>
-              <div>
-                <span class="px-1.5 py-0.5 bg-emerald-950 text-emerald-400 border border-emerald-700/60 font-black text-[9px] rounded uppercase">🛡️ Clean</span>
-              </div>
-            </div>
-          `;
+      selectedHandIndex = null;
+      endTurn();
+    }
+
+    /* =========================================================================
+       5. SALE RESOLUTION & POWERS (Knizian Blueprint)
+       ========================================================================= */
+    function executeSale(playerIdx, card, buyer, streetSlotIdx) {
+      const isRed = card.color === 'RED';
+      const isBlue = card.color === 'BLUE';
+
+      const saleRecord = {
+        card: card,
+        buyer: buyer,
+        isRedScrubbed: false
+      };
+      stashes[playerIdx].push(saleRecord);
+
+      let logMsg = `${getPlayerName(playerIdx)} sold ${card.name} to ${buyer.buyerFlavor.label} Buyer ($${card.val})!`;
+
+      // 1. Resolve Buyer Bonus
+      if (buyer.buyerFlavor.id === 'financial') {
+        // +$5 Bonus Cash attached to record
+        saleRecord.bonusCash = 5;
+        logMsg += ` 💰 Buyer Bonus: +$5 extra cash!`;
+      } else if (buyer.buyerFlavor.id === 'defensive') {
+        // Flip 1 sold red card in stash to scrubbed (0 heat)
+        const unscrubbedRed = stashes[playerIdx].find(s => s.card.color === 'RED' && !s.isRedScrubbed);
+        if (unscrubbedRed) {
+          unscrubbedRed.isRedScrubbed = true;
+          logMsg += ` 🛡️ Buyer Bonus: 1 Hot Contraband scrubbed clean (0 Heat)!`;
+        }
+      } else if (buyer.buyerFlavor.id === 'offensive') {
+        // Force opponent with fewest cards to draw
+        const target = getOpponentWithFewestCards(playerIdx);
+        if (deck.length > 0) {
+          hands[target].push(deck.pop());
+          logMsg += ` ⚡ Buyer Bonus: Forced ${getPlayerName(target)} to draw 1 card!`;
         }
       }
 
-      if (isSelfSnitch) {
-        breakdownHtml += `
-          <div class="p-2 rounded-lg bg-amber-950/80 border border-amber-500 text-center text-amber-300 font-bold text-[11px]">
-            🤦 BACKFIRE! ${snitcherName} held the most Red cards and raided their own vault!
+      // 2. Resolve Blue Item Power (ONLY BLUE UNLOCKS POWERS!)
+      if (isBlue) {
+        logMsg += ` [BLUE POWER: ${card.power}]`;
+        applyBlueItemPower(playerIdx, card.item);
+      } else {
+        logMsg += ` (🚨 Stolen Contraband: NO POWER, +1 Heat!)`;
+      }
+
+      logAction(logMsg);
+
+      // Refill the Street slot with new card from deck
+      if (deck.length > 0) {
+        streetBuyers[streetSlotIdx] = deck.pop();
+      } else {
+        streetBuyers[streetSlotIdx] = null;
+      }
+    }
+
+    function applyBlueItemPower(playerIdx, itemId) {
+      if (itemId === 'cash') {
+        // Bribe: Skip pass if player wishes (handled automatically for bots or logged)
+        logAction(`💵 Bribe Power: Clean cash greased the wheels.`);
+      } else if (itemId === 'watch') {
+        // Alibi: Reverse direction
+        turnDirection = -turnDirection;
+        logAction(`⌚ Alibi Power: Passing direction reversed to ${turnDirection === 1 ? '↻ Clockwise' : '↺ Counter-Clockwise'}!`);
+      } else if (itemId === 'key') {
+        // Wiretap: Reveal target's hand
+        const target = (playerIdx + turnDirection + 4) % 4;
+        logAction(`🗝️ Wiretap Power: ${getPlayerName(playerIdx)} spied on ${getPlayerName(target)}'s cards!`);
+      } else if (itemId === 'diamond') {
+        logAction(`💎 Vault Power: Assets protected from seizure.`);
+      } else if (itemId === 'painting') {
+        logAction(`🖼️ Swap Power: Art appraisal executed.`);
+      } else if (itemId === 'gold') {
+        // Launder: Discard 1 Red from hand safely if player holds one
+        const redInHandIdx = hands[playerIdx].findIndex(c => c.color === 'RED');
+        if (redInHandIdx !== -1) {
+          const discardedRed = hands[playerIdx].splice(redInHandIdx, 1)[0];
+          logAction(`🧈 Launder Power: ${getPlayerName(playerIdx)} safely vaporized ${discardedRed.name} from hand!`);
+        }
+      }
+    }
+
+    function getOpponentWithFewestCards(playerIdx) {
+      let bestIdx = (playerIdx === 0) ? 1 : 0;
+      let minCards = 999;
+      for (let p = 0; p < 4; p++) {
+        if (p === playerIdx) continue;
+        if (hands[p].length < minCards) {
+          minCards = hands[p].length;
+          bestIdx = p;
+        }
+      }
+      return bestIdx;
+    }
+
+    /* =========================================================================
+       6. BOT TURN AI
+       ========================================================================= */
+    function executeBotTurn(botIdx) {
+      // 1. Try to find a valid sale
+      let sold = false;
+      for (let h = 0; h < hands[botIdx].length; h++) {
+        const card = hands[botIdx][h];
+        for (let b = 0; b < 3; b++) {
+          const buyer = streetBuyers[b];
+          if (buyer && card.item === buyer.buyerDemand) {
+            // Match found!
+            const chosenCard = hands[botIdx].splice(h, 1)[0];
+            executeSale(botIdx, chosenCard, buyer, b);
+            sold = true;
+            break;
+          }
+        }
+        if (sold) break;
+      }
+
+      if (!sold) {
+        logAction(`${getPlayerName(botIdx)} had no matching merch for active buyers.`);
+      }
+
+      // 2. Mandatory Pass
+      if (hands[botIdx].length > 0) {
+        // Bot passes Red if holding multiple, otherwise random
+        let passIdx = hands[botIdx].findIndex(c => c.color === 'RED');
+        if (passIdx === -1) passIdx = 0;
+
+        const passedCard = hands[botIdx].splice(passIdx, 1)[0];
+        const target = (4 + botIdx + turnDirection) % 4;
+        hands[target].push(passedCard);
+        logAction(`✉️ ${getPlayerName(botIdx)} passed a card face-down to ${getPlayerName(target)}.`);
+      }
+
+      setTimeout(endTurn, 500);
+    }
+
+    function endTurn() {
+      // Advance active player according to direction
+      activePlayerIndex = (4 + activePlayerIndex + turnDirection) % 4;
+      startTurn();
+    }
+
+    /* =========================================================================
+       7. RAID CALCULATION & MATCH SCORING
+       ========================================================================= */
+    function calculateTotalHeat(playerIdx) {
+      // 1 Heat per unscrubbed Red in Stash
+      const soldHeat = stashes[playerIdx].filter(s => s.card.color === 'RED' && !s.isRedScrubbed).length;
+      // 2 Heat per Red still stuck in hand!
+      const handHeat = hands[playerIdx].filter(c => c.color === 'RED').length * 2;
+      return { total: soldHeat + handHeat, sold: soldHeat, hand: handHeat };
+    }
+
+    function calculateRoundCash(playerIdx) {
+      return stashes[playerIdx].reduce((sum, s) => {
+        return sum + s.card.val + (s.bonusCash || 0);
+      }, 0);
+    }
+
+    function triggerPoliceRaid() {
+      logAction("🚨🚨 SIRENS! THE COUNTDOWN FUSE HIT ZERO! POLICE RAID IN PROGRESS! 🚨🚨");
+
+      // Calculate Heat for all 4 players
+      const heatScores = [];
+      for (let p = 0; p < 4; p++) {
+        heatScores.push(calculateTotalHeat(p));
+      }
+
+      // Find max heat
+      let maxHeat = -1;
+      heatScores.forEach(h => {
+        if (h.total > maxHeat) maxHeat = h.total;
+      });
+
+      // Arrest player(s) with max heat
+      const modalBreakdown = document.getElementById('raid-breakdown-body');
+      modalBreakdown.innerHTML = '';
+
+      document.getElementById('raid-modal-round').textContent = matchRound;
+
+      for (let p = 0; p < 4; p++) {
+        const isArrested = heatScores[p].total === maxHeat && maxHeat > 0;
+        const roundCash = calculateRoundCash(p);
+        const finalCash = isArrested ? 0 : roundCash;
+        
+        matchScores[p] += finalCash;
+
+        const row = document.createElement('div');
+        row.className = `p-2.5 rounded-xl border flex items-center justify-between text-xs font-mono ${
+          isArrested 
+            ? 'bg-rose-950/90 border-rose-600 text-rose-200' 
+            : 'bg-slate-800/80 border-slate-700 text-slate-200'
+        }`;
+
+        row.innerHTML = `
+          <div class="flex items-center gap-2">
+            <span class="text-base">${isArrested ? '🚔' : '💰'}</span>
+            <div>
+              <div class="font-black text-sm">${getPlayerName(p)}</div>
+              <div class="text-[10px] text-slate-400">
+                Heat: ${heatScores[p].total} (Sold: ${heatScores[p].sold} | Hand: ${heatScores[p].hand})
+              </div>
+            </div>
+          </div>
+          <div class="text-right">
+            ${isArrested 
+              ? '<span class="text-rose-400 font-black text-sm">ARRESTED ($0)</span>' 
+              : `<span class="text-emerald-400 font-black text-sm">+$${finalCash}</span>`}
+            <div class="text-[10px] text-slate-400">Total: $${matchScores[p]}</div>
+          </div>
+        `;
+        modalBreakdown.appendChild(row);
+      }
+
+      document.getElementById('raid-modal').classList.remove('hidden');
+    }
+
+    function startNextRound() {
+      document.getElementById('raid-modal').classList.add('hidden');
+
+      if (matchRound >= 4) {
+        // Match Complete!
+        concludeMatch();
+      } else {
+        matchRound++;
+        dealerIndex = (dealerIndex + 1) % 4;
+        initRound();
+      }
+    }
+
+    function concludeMatch() {
+      let maxScore = -1;
+      let winnerIdx = 0;
+      for (let p = 0; p < 4; p++) {
+        if (matchScores[p] > maxScore) {
+          maxScore = matchScores[p];
+          winnerIdx = p;
+        }
+      }
+
+      alert(`🏆 HEIST SYNDICATE MATCH COMPLETE!\n\nWinner: ${getPlayerName(winnerIdx)} with $${maxScore} total banked cash!\n\nThanks for playing the Black Market Edition.`);
+      initMatch();
+    }
+
+    /* =========================================================================
+       8. UI RENDERING ENGINE
+       ========================================================================= */
+    function updateUI() {
+      document.getElementById('hud-round').textContent = `${matchRound}/4`;
+      document.getElementById('hud-dealer').textContent = getPlayerName(dealerIndex);
+      document.getElementById('hud-flow').textContent = turnDirection === 1 ? '↻ Clockwise' : '↺ Counter-Clockwise';
+
+      document.getElementById('fuse-count').textContent = countdownPile.length;
+      document.getElementById('fuse-token-badge').textContent = `TOKEN [${activeTokenValue}]`;
+
+      // Leaderboard Pills
+      const leadEl = document.getElementById('leaderboard-pills');
+      leadEl.innerHTML = '';
+      for (let p = 0; p < 4; p++) {
+        const pill = document.createElement('span');
+        pill.className = `px-2 py-0.5 rounded text-[10px] font-bold ${
+          p === 0 ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-slate-800 text-slate-300'
+        }`;
+        pill.textContent = `${getPlayerName(p)}: $${matchScores[p]}`;
+        leadEl.appendChild(pill);
+      }
+
+      // Player Dealer Badge
+      if (dealerIndex === 0) {
+        document.getElementById('player-dealer-badge').classList.remove('hidden');
+      } else {
+        document.getElementById('player-dealer-badge').classList.add('hidden');
+      }
+
+      // Player 1 Round Stats
+      document.getElementById('p1-round-cash').textContent = calculateRoundCash(0);
+      const p1Heat = calculateTotalHeat(0);
+      document.getElementById('p1-heat-val').textContent = p1Heat.total;
+      document.getElementById('p1-heat-sold').textContent = p1Heat.sold;
+      document.getElementById('p1-heat-hand').textContent = p1Heat.hand;
+
+      renderOpponents();
+      renderStreet();
+      renderHand();
+      updateActionButtons();
+    }
+
+    function renderOpponents() {
+      const container = document.getElementById('opponents-grid');
+      container.innerHTML = '';
+
+      for (let p = 1; p < 4; p++) {
+        const isTurn = (activePlayerIndex === p);
+        const isDealer = (dealerIndex === p);
+        const heat = calculateTotalHeat(p);
+        const cash = calculateRoundCash(p);
+
+        const botCard = document.createElement('div');
+        botCard.className = `bg-slate-900/90 border rounded-xl p-2 flex flex-col justify-between transition-all ${
+          isTurn ? 'border-amber-400 shadow-md shadow-amber-500/20' : 'border-slate-800'
+        }`;
+
+        botCard.innerHTML = `
+          <div class="flex items-center justify-between text-[11px] font-bold">
+            <div class="flex items-center gap-1.5 min-w-0">
+              <span class="w-2 h-2 rounded-full ${isTurn ? 'bg-amber-400 animate-ping' : 'bg-slate-600'}"></span>
+              <span class="text-slate-200 truncate">Bot ${p + 1}</span>
+              ${isDealer ? '<span class="text-[8px] bg-amber-500 text-slate-950 px-1 rounded font-black">DEALER</span>' : ''}
+            </div>
+            <span class="text-[10px] text-emerald-400 font-mono font-bold">$${cash}</span>
+          </div>
+
+          <div class="flex items-center justify-between my-1 text-[10px] font-mono text-slate-400">
+            <span>🎴 ${hands[p].length} cards</span>
+            <span class="text-rose-400 font-bold">🔥 Heat: ${heat.total}</span>
+          </div>
+
+          <!-- Stash pips preview -->
+          <div class="flex gap-1 overflow-x-auto no-scrollbar py-0.5">
+            ${stashes[p].map(s => {
+              const isRed = s.card.color === 'RED' && !s.isRedScrubbed;
+              return `<span class="text-xs px-1 py-0.2 rounded border ${isRed ? 'bg-rose-950 border-rose-700 text-rose-300' : 'bg-sky-950 border-sky-700 text-sky-300'}">${s.card.icon}</span>`;
+            }).join('') || '<span class="text-[9px] text-slate-600 italic">No sales yet</span>'}
+          </div>
+        `;
+        container.appendChild(botCard);
+      }
+    }
+
+    function renderStreet() {
+      for (let b = 0; b < 3; b++) {
+        const slotEl = document.getElementById(`buyer-slot-${b}`);
+        const buyer = streetBuyers[b];
+
+        if (!buyer) {
+          slotEl.innerHTML = `<div class="m-auto text-xs text-slate-600 font-mono italic">Market Empty</div>`;
+          slotEl.className = "bg-slate-950/60 border-2 border-dashed border-slate-800 rounded-xl p-2.5 flex items-center justify-center h-28";
+          continue;
+        }
+
+        const isSelected = (selectedBuyerIndex === b);
+        const flavor = buyer.buyerFlavor;
+
+        slotEl.className = `cursor-pointer bg-slate-900/95 border-2 rounded-xl p-2.5 transition flex flex-col justify-between h-28 relative group shadow-md ${
+          isSelected ? 'border-amber-400 ring-2 ring-amber-400/50 bg-slate-800' : 'border-slate-700 hover:border-slate-500'
+        }`;
+
+        slotEl.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-1.5">
+              <span class="text-xl">${buyer.buyerIcon}</span>
+              <span class="text-xs font-black text-slate-200">Wants ${buyer.buyerDemandName}</span>
+            </div>
+            <span class="text-[9px] font-black px-1.5 py-0.5 rounded border ${
+              flavor.id === 'financial' ? 'bg-amber-950 border-amber-700 text-amber-300' :
+              flavor.id === 'defensive' ? 'bg-blue-950 border-blue-700 text-blue-300' :
+              'bg-purple-950 border-purple-700 text-purple-300'
+            }">${flavor.icon} ${flavor.label}</span>
+          </div>
+
+          <div class="text-[10px] text-slate-300 leading-snug my-1">
+            ${flavor.desc}
+          </div>
+
+          <div class="text-[9px] text-slate-500 font-mono flex items-center justify-between border-t border-slate-800/80 pt-1">
+            <span>Face-Down Buyer</span>
+            <span class="text-amber-400 font-bold">${isSelected ? '✓ SELECTED' : 'Click to Target'}</span>
           </div>
         `;
       }
-
-      breakdown.innerHTML = breakdownHtml;
-
-      continueBtn.onclick = () => {
-        modal.classList.add('hidden');
-        if (onResume) onResume();
-      };
-
-      modal.classList.remove('hidden');
     }
 
-    // Intercept check for Pairs (Holding matching Blue card for incoming Red card)
-    function showInterceptModal(senderIdx, passedCard, matchingBlueIdx, onMeld, onAccept) {
-      const modal = document.getElementById('intercept-modal');
-      const desc = document.getElementById('intercept-desc');
-      const preview = document.getElementById('intercept-cards-preview');
-      const meldBtn = document.getElementById('btn-intercept-meld');
-      const acceptBtn = document.getElementById('btn-intercept-accept');
-
-      const blueCard = hands[0][matchingBlueIdx];
-      const pts = blueCard.val + passedCard.val;
-
-      desc.innerHTML = `<b>${getPlayerName(senderIdx)}</b> passed you <b>${passedCard.item} (${passedCard.icon})</b> face up!<br>You hold matching <b>Blue ${blueCard.item}</b> in your hand!`;
-
-      preview.innerHTML = `
-        <div class="px-2.5 py-1.5 rounded-lg border-2 border-rose-500 bg-rose-950/70 text-center text-xs">
-          <div class="text-xl">${passedCard.icon}</div>
-          <div class="text-[9px] font-black text-rose-400 uppercase">Passed Red</div>
-          <div class="text-[8px] text-slate-300 font-bold">+${passedCard.val} pts</div>
-        </div>
-        <div class="text-lg font-black text-sky-400">+</div>
-        <div class="px-2.5 py-1.5 rounded-lg border-2 border-blue-500 bg-blue-950/70 text-center text-xs">
-          <div class="text-xl">${blueCard.icon}</div>
-          <div class="text-[9px] font-black text-blue-400 uppercase">Your Blue</div>
-          <div class="text-[8px] text-slate-300 font-bold">+5 pts</div>
-        </div>
-        <div class="text-lg font-black text-emerald-400">=</div>
-        <div class="px-2.5 py-1.5 rounded-lg border-2 border-emerald-500 bg-emerald-950/70 text-center text-xs font-black text-emerald-300">
-          <div class="text-xl">💰</div>
-          <div class="text-[9px] uppercase">Laundered</div>
-          <div class="text-[10px] font-black text-emerald-300">+${pts} PTS</div>
-        </div>
-      `;
-
-      meldBtn.onclick = () => {
-        modal.classList.add('hidden');
-        hands[0].splice(matchingBlueIdx, 1);
-        stashes[0].push({
-          item: passedCard.item,
-          icon: passedCard.icon,
-          color: 'RED',
-          points: pts,
-          category: passedCard.isGrand ? 'GRAND' : 'PETTY'
-        });
-        consecutiveTurnsWithoutMeld = 0;
-        logAnnouncement(`⚡ INTERCEPT! You snap-matched incoming ${passedCard.item} with your Blue ${passedCard.item} (+${pts} pts)! Contraband never touched your hand!`);
-        onMeld();
-      };
-
-      acceptBtn.onclick = () => {
-        modal.classList.add('hidden');
-        onAccept();
-      };
-
-      modal.classList.remove('hidden');
-    }
-
-    function executePassCard(senderIdx, targetIdx, passedCard, onComplete) {
-      if (checkWinCondition(senderIdx)) return;
-
-      const cardDesc = (passedCard.color === 'RED')
-        ? `RED Contraband (${passedCard.item})`
-        : ((passedCard.color === 'GREEN') ? 'Counterfeit Wild 🎭' : ((passedCard.color === 'SPECIAL') ? 'The Snitch 🕵️' : `Clean ${passedCard.item}`));
-
-      // Recipient Advantage: Check if target holds matching BLUE card for incoming RED card
-      const matchingBlueIdx = (passedCard.color === 'RED')
-        ? hands[targetIdx].findIndex(c => c.color === 'BLUE' && c.item === passedCard.item)
-        : -1;
-
-      if (matchingBlueIdx !== -1) {
-        if (targetIdx === 0) {
-          showInterceptModal(senderIdx, passedCard, matchingBlueIdx, () => {
-            updateUI();
-            if (checkWinCondition(0)) return;
-            if (deck.length === 0 && consecutiveTurnsWithoutMeld >= numPlayers) {
-              showRoundModal(-1, 'STANDOFF');
-              return;
-            }
-            if (onComplete) onComplete();
-          }, () => {
-            hands[0].push(passedCard);
-            logAnnouncement(`You accepted the passed ${cardDesc} into your hand.`);
-            updateUI();
-            if (deck.length === 0 && consecutiveTurnsWithoutMeld >= numPlayers) {
-              showRoundModal(-1, 'STANDOFF');
-              return;
-            }
-            if (onComplete) onComplete();
-          });
-          return;
-        } else {
-          // Bot Intercept
-          const matchBlue = hands[targetIdx].splice(matchingBlueIdx, 1)[0];
-          const pts = matchBlue.val + passedCard.val;
-          stashes[targetIdx].push({
-            item: passedCard.item,
-            icon: passedCard.icon,
-            color: 'RED',
-            points: pts,
-            category: passedCard.isGrand ? 'GRAND' : 'PETTY'
-          });
-          consecutiveTurnsWithoutMeld = 0;
-          logAnnouncement(`⚡ INTERCEPT! ${getPlayerName(targetIdx)} snap-matched passed RED ${passedCard.item} with their Blue ${passedCard.item} (+${pts} pts)! Contraband neutralized!`);
-          updateUI();
-          if (checkWinCondition(targetIdx)) return;
-          if (deck.length === 0 && consecutiveTurnsWithoutMeld >= numPlayers) {
-            showRoundModal(-1, 'STANDOFF');
-            return;
-          }
-          setTimeout(() => { if (onComplete) onComplete(); }, 750);
-          return;
-        }
-      }
-
-      // Normal acceptance
-      hands[targetIdx].push(passedCard);
-      logAnnouncement(`${getPlayerName(senderIdx)} passed ${cardDesc} face up to ${getPlayerName(targetIdx)}.`);
-      updateUI();
-      if (deck.length === 0 && consecutiveTurnsWithoutMeld >= numPlayers) {
-        showRoundModal(-1, 'STANDOFF');
-        return;
-      }
-      if (onComplete) onComplete();
-    }
-
-    // Bot AI Turn
-    function playBotTurn(b) {
-      if (checkWinCondition(b)) return;
-
-      logAnnouncement(`${getPlayerName(b)} is drawing...`);
-      setTimeout(() => {
-        const card = drawFromDeck();
-        if (card) hands[b].push(card);
-
-        // Check if Bot wants to play The Snitch instead of laying a pair
-        const botHasSnitch = hands[b].some(c => c.color === 'SPECIAL');
-        if (botHasSnitch) {
-          const myRedCount = hands[b].filter(c => c.color === 'RED').length;
-          const maxOppVault = Math.max(...stashes.map((s, idx) => idx !== b ? calculateStashPoints(s) : 0));
-          // Bot plays Snitch if opponent has >= 15 pts in vault and bot has <= 1 red card
-          if (maxOppVault >= 15 && myRedCount <= 1) {
-            triggerSnitchRaid(b, () => {
-              resumeBotTurnAfterMeld(b);
-            });
-            return;
-          }
-        }
-
-        const botMeld = discardBotPairs(b);
-        if (botMeld) {
-          consecutiveTurnsWithoutMeld = 0;
-        } else {
-          consecutiveTurnsWithoutMeld++;
-        }
-        updateUI();
-
-        resumeBotTurnAfterMeld(b);
-      }, 400);
-    }
-
-    function resumeBotTurnAfterMeld(b) {
-      if (checkWinCondition(b)) return;
-      if (deck.length === 0 && consecutiveTurnsWithoutMeld >= numPlayers) {
-        showRoundModal(-1, 'STANDOFF');
-        return;
-      }
-
-      setTimeout(() => {
-        if (hands[b].length > 0) {
-          const targetP = getTargetNeighbor(b);
-          const hand = hands[b];
-          const mindset = getBotMindset(b);
-          const curMatchLeader = matchScores.indexOf(Math.max(...matchScores));
-          const passingToLeader = (targetP === curMatchLeader && matchScores[curMatchLeader] > 0);
-          const minOppHand = hands.filter((_, idx) => idx !== b).reduce((min, h) => Math.min(min, h.length), 99);
-          const myBanked = calculateStashPoints(stashes[b]);
-
-          let bestCardIdx = 0;
-          let maxUrgency = -9999;
-
-          hand.forEach((card, idx) => {
-            let score = 0;
-
-            if (card.color === 'RED') {
-              score += (1.0 - mindset.val) * 60;
-              if (minOppHand <= 3) score += (4 - minOppHand) * 35;
-              if (myBanked >= 20) score += 30;
-              score += (card.val === 15 ? 15 : 5) * (1.2 - mindset.val);
-              if (passingToLeader) score += 55;
-              if (mindset.val > 0.7 && minOppHand > 3) score -= 35;
-            } else if (card.color === 'SPECIAL') {
-              score -= 40; // Hold onto snitch
-            } else if (card.color === 'GREEN') {
-              score += mindset.val * 30;
-              const bluesCount = hand.filter(c => c.color === 'BLUE').length;
-              if (bluesCount === 0) score += 20;
-            } else if (card.color === 'BLUE') {
-              score += 20;
-              const sameItemBlues = hand.filter(c => c.color === 'BLUE' && c.item === card.item).length;
-              if (sameItemBlues >= 2) score -= 40;
-            }
-
-            if (score > maxUrgency) {
-              maxUrgency = score;
-              bestCardIdx = idx;
-            }
-          });
-
-          const passed = hands[b].splice(bestCardIdx, 1)[0];
-          executePassCard(b, targetP, passed, () => {
-            advanceTurn();
-          });
-        } else {
-          advanceTurn();
-        }
-      }, 500);
-    }
-
-    function advanceTurn() {
-      if (numPlayers === 2) {
-        currentPlayer = 1 - currentPlayer;
-      } else {
-        currentPlayer = (currentPlayer + direction + 4) % 4;
-      }
-      turnCount++;
-      updateUI();
-
-      if (currentPlayer === 0) {
-        playerStep = 'DRAW';
-        selectedPairIndices = [];
-        selectedPassCardIndex = null;
-        logAnnouncement("Your turn! Tap Draw Card or tap the Locker.");
-        updateUI();
-      } else {
-        setTimeout(() => playBotTurn(currentPlayer), 350);
-      }
-    }
-
-    // UI Updates
-    function updateUI() {
-      document.getElementById('round-counter').innerText = roundNumber;
-      document.getElementById('turn-counter').innerText = turnCount;
-      document.getElementById('deck-count').innerText = deck.length;
-
-      // Header match scoreboard
-      const scoreHeader = document.getElementById('header-match-scores');
-      const targetLabel = document.getElementById('header-target-label');
-      if (numPlayers === 2) {
-        scoreHeader.innerHTML = `
-          <span class="${matchScores[0] >= 150 ? 'text-amber-300 font-black' : 'text-slate-300'}">You:${matchScores[0]}</span>
-          <span class="text-slate-600">vs</span>
-          <span class="${matchScores[1] >= 150 ? 'text-amber-300 font-black' : 'text-slate-400'}">Rival:${matchScores[1]}</span>
-        `;
-        if (targetLabel) targetLabel.innerText = "200 PTS WIN";
-      } else {
-        scoreHeader.innerHTML = `
-          <span class="${matchScores[0] >= 225 ? 'text-amber-300 font-black' : 'text-slate-300'}">You:${matchScores[0]}</span>
-          <span class="text-slate-600">|</span>
-          <span class="${matchScores[1] >= 225 ? 'text-amber-300 font-black' : 'text-slate-400'}">B2:${matchScores[1]}</span>
-          <span class="text-slate-600">|</span>
-          <span class="${matchScores[2] >= 225 ? 'text-amber-300 font-black' : 'text-slate-400'}">B3:${matchScores[2]}</span>
-          <span class="text-slate-600">|</span>
-          <span class="${matchScores[3] >= 225 ? 'text-amber-300 font-black' : 'text-slate-400'}">B4:${matchScores[3]}</span>
-        `;
-        if (targetLabel) targetLabel.innerText = "300 PTS WIN";
-      }
-
-      // Camera Card Indicator
-      const cameraLabel = document.getElementById('camera-label');
-      const cameraIcon = document.getElementById('camera-icon');
-      const passArrow = document.getElementById('pass-arrow');
-      if (direction === 1) {
-        cameraLabel.innerText = "PASS CLOCKWISE ↻";
-        cameraLabel.className = "text-xs font-black text-sky-400 leading-tight";
-        cameraIcon.style.transform = "rotate(0deg)";
-        passArrow.innerText = (numPlayers === 2) ? "➡️ Passing to Rival" : "➡️ Passing Left (Bot 2)";
-      } else {
-        cameraLabel.innerText = "COUNTER-CLOCKWISE ↺";
-        cameraLabel.className = "text-xs font-black text-rose-400 leading-tight";
-        cameraIcon.style.transform = "rotate(180deg)";
-        passArrow.innerText = (numPlayers === 2) ? "⬅️ Passing to Rival" : "⬅️ Passing Right (Bot 4)";
-      }
-
-      // Update Bots UI
-      const botAreas = [null, document.getElementById('bot2-area'), document.getElementById('bot3-area'), document.getElementById('bot4-area')];
-      for (let b = 1; b < 4; b++) {
-        if (b >= numPlayers) {
-          if (botAreas[b]) botAreas[b].style.display = 'none';
-          continue;
-        }
-        if (botAreas[b]) botAreas[b].style.display = 'flex';
-
-        const area = botAreas[b];
-        const countBadge = document.getElementById(`bot${b+1}-count-badge`);
-        const scoreBadge = document.getElementById(`bot${b+1}-score-badge`);
-        const totalBadge = document.getElementById(`bot${b+1}-match-total`);
-        const moodBadge = document.getElementById(`bot${b+1}-mood-badge`);
-        const pipsContainer = document.getElementById(`bot${b+1}-pips`);
-
-        const cardCount = hands[b].length;
-        countBadge.innerHTML = `<span>🎴</span><span>${cardCount} cards</span>`;
-        scoreBadge.innerText = `Vault: ${calculateStashPoints(stashes[b])}`;
-        totalBadge.innerText = `${matchScores[b]}/${targetMatchScore}`;
-
-        const mindset = getBotMindset(b);
-        moodBadge.innerText = mindset.label;
-        moodBadge.className = `text-[7.5px] font-black px-1 py-0.2 rounded border truncate ${mindset.class}`;
-
-        pipsContainer.innerHTML = '';
-        for (let i = 0; i < Math.min(cardCount, 8); i++) {
-          const pip = document.createElement('div');
-          pip.className = 'w-1 h-3 rounded-sm bg-slate-600';
-          pipsContainer.appendChild(pip);
-        }
-
-        if (currentPlayer === b) {
-          area.className = "bg-slate-900 border-2 border-amber-400/90 rounded-xl p-1.5 flex flex-col justify-between shadow-lg shadow-amber-950/40 scale-[1.02] transition-all relative overflow-hidden";
-        } else {
-          area.className = "bg-slate-900/80 border border-slate-800 rounded-xl p-1.5 flex flex-col justify-between transition-all relative overflow-hidden";
-        }
-      }
-
-      // Player Score & Stashes
-      const playerScoreDisplay = document.getElementById('player-score-display');
-      const playerMatchTotal = document.getElementById('player-match-total');
-      const statusTag = document.getElementById('player-turn-status');
-      const playerStashContainer = document.getElementById('player-stash-container');
-
-      playerScoreDisplay.innerText = calculateStashPoints(stashes[0]);
-      playerMatchTotal.innerText = `${matchScores[0]}/${targetMatchScore}`;
-
-      playerStashContainer.innerHTML = '';
-      stashes[0].forEach(p => {
-        const badge = document.createElement('div');
-        let style = 'bg-blue-950/80 border-blue-600 text-blue-300';
-        if (p.color === 'RED') style = 'bg-rose-950/80 border-rose-600 text-rose-300';
-        else if (p.color === 'GREEN') style = 'bg-emerald-950/80 border-emerald-600 text-emerald-300';
-        else if (p.color === 'SPECIAL') style = 'bg-amber-950/80 border-amber-500 text-amber-300';
-
-        badge.className = `px-1.5 py-0.5 rounded text-[9px] font-bold border flex items-center gap-0.5 shrink-0 ${style}`;
-        badge.innerHTML = `<span>${p.icon}</span><span>+${p.points}</span>`;
-        playerStashContainer.appendChild(badge);
-      });
-
-      if (currentPlayer === 0) {
-        statusTag.className = "px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold animate-pulse";
-        statusTag.innerText = "YOUR TURN";
-      } else {
-        statusTag.className = "px-1.5 py-0.2 rounded bg-slate-800 text-slate-500 text-[10px] font-bold";
-        statusTag.innerText = "WAITING";
-      }
-
-      // Snitch Button: Can only be played on player's turn during Step 2 (instead of laying a pair)
-      const btnSnitch = document.getElementById('btn-snitch');
-      const userHasSnitch = hands[0].some(c => c.color === 'SPECIAL');
-      const canPlaySnitch = (currentPlayer === 0 && playerStep === 'PAIR' && userHasSnitch);
-      btnSnitch.disabled = !canPlaySnitch;
-      if (canPlaySnitch) {
-        btnSnitch.className = "h-9 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-[10.5px] rounded-xl shadow-lg border-2 border-amber-300 flex items-center justify-center gap-1 snitch-pulse";
-      } else {
-        btnSnitch.className = "h-9 bg-amber-600 hover:bg-amber-500 disabled:opacity-20 disabled:pointer-events-none text-white text-[10.5px] font-black rounded-xl shadow transition flex items-center justify-center gap-1 border border-amber-400/80";
-      }
-
-      // Dynamic Controls State for Pair Selection
-      const btnDraw = document.getElementById('btn-draw');
-      const btnPair = document.getElementById('btn-pair');
-      const btnSkipPair = document.getElementById('btn-skip-pair');
-      const btnPass = document.getElementById('btn-pass');
-      const btnPairText = document.getElementById('btn-pair-text');
-
-      if (currentPlayer === 0) {
-        btnDraw.disabled = (playerStep !== 'DRAW');
-        btnSkipPair.disabled = (playerStep !== 'PAIR');
-
-        if (playerStep === 'PAIR') {
-          if (selectedPairIndices.length === 2) {
-            const c1 = hands[0][selectedPairIndices[0]];
-            const c2 = hands[0][selectedPairIndices[1]];
-            const evalRes = evaluateSelectedPair(c1, c2);
-
-            if (evalRes.valid) {
-              btnPair.disabled = false;
-              btnPair.className = "col-span-2 h-9 bg-emerald-600 hover:bg-emerald-500 text-white text-[10.5px] font-black rounded-xl shadow-lg ring-2 ring-emerald-400 transition flex items-center justify-center gap-1 animate-bounce";
-              btnPairText.innerText = `Bank ${evalRes.label} (+${evalRes.points}pts${evalRes.flipsCamera ? ' & 🔄' : ''})`;
-            } else {
-              btnPair.disabled = true;
-              btnPair.className = "col-span-2 h-9 bg-slate-800 text-rose-400 border border-rose-800/60 text-[10px] font-bold rounded-xl shadow opacity-80 cursor-not-allowed flex items-center justify-center gap-1";
-              btnPairText.innerText = `Invalid (${evalRes.error})`;
-            }
-          } else if (selectedPairIndices.length === 1) {
-            btnPair.disabled = true;
-            btnPair.className = "col-span-2 h-9 bg-emerald-950/40 text-emerald-400 border border-emerald-800/50 text-[10.5px] font-bold rounded-xl shadow flex items-center justify-center gap-1 cursor-not-allowed";
-            btnPairText.innerText = "Tap 2nd Card (1/2)";
-          } else {
-            btnPair.disabled = true;
-            btnPair.className = "col-span-2 h-9 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-25 disabled:pointer-events-none text-white text-[10.5px] font-bold rounded-xl shadow transition flex items-center justify-center gap-1";
-            btnPairText.innerText = "2. Lay Pair (or Snitch)";
-          }
-        } else {
-          btnPair.disabled = true;
-          btnPair.className = "col-span-2 h-9 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-25 disabled:pointer-events-none text-white text-[10.5px] font-bold rounded-xl shadow transition flex items-center justify-center gap-1";
-          btnPairText.innerText = "2. Lay Pair";
-        }
-
-        btnPass.disabled = (playerStep !== 'PASS' || selectedPassCardIndex === null);
-      } else {
-        btnDraw.disabled = true;
-        btnPair.disabled = true;
-        btnSkipPair.disabled = true;
-        btnPass.disabled = true;
-      }
-
-      // Render Player Cards
-      renderPlayerHand();
-    }
-
-    function renderPlayerHand() {
+    function renderHand() {
       const container = document.getElementById('player-hand');
       container.innerHTML = '';
 
-      const evalRes = (selectedPairIndices.length === 2 && playerStep === 'PAIR')
-        ? evaluateSelectedPair(hands[0][selectedPairIndices[0]], hands[0][selectedPairIndices[1]])
-        : null;
+      hands[0].forEach((card, idx) => {
+        const isSelected = (selectedHandIndex === idx);
+        const isRed = card.color === 'RED';
 
-      hands[0].forEach((c, idx) => {
         const cardEl = document.createElement('div');
-        const isPassSelected = (playerStep === 'PASS' && selectedPassCardIndex === idx);
-        const pairSelectionIndex = (playerStep === 'PAIR') ? selectedPairIndices.indexOf(idx) : -1;
-        const isPairSelected = (pairSelectionIndex !== -1);
-
-        let borderStyle = "border border-slate-700 bg-slate-800/90";
-
-        if (c.color === 'RED') {
-          borderStyle = (c.val === 15)
-            ? "border-2 border-amber-400 bg-rose-950/70 red-evidence" 
-            : "border-2 border-rose-500 bg-rose-950/50 red-evidence";
-        } else if (c.color === 'GREEN') {
-          borderStyle = "border-2 border-emerald-400 bg-emerald-950/60 green-wild";
-        } else if (c.color === 'BLUE') {
-          borderStyle = "border-2 border-blue-500/80 bg-blue-950/40";
-        } else if (c.color === 'SPECIAL') {
-          borderStyle = "border-2 border-amber-400 bg-slate-900 snitch-pulse";
-        }
-
-        // Selection Visual Styling
-        if (isPassSelected) {
-          borderStyle += " ring-4 ring-rose-400 -translate-y-3 shadow-2xl scale-105";
-        } else if (isPairSelected) {
-          if (selectedPairIndices.length === 2) {
-            if (evalRes && evalRes.valid) {
-              borderStyle += " ring-4 ring-emerald-400 bg-emerald-950/90 -translate-y-3.5 shadow-2xl scale-105";
-            } else {
-              borderStyle += " ring-4 ring-rose-500 bg-rose-950/90 -translate-y-3 shadow-xl";
-            }
-          } else {
-            borderStyle += " ring-4 ring-amber-400 bg-amber-950/70 -translate-y-3 shadow-xl scale-105";
-          }
-        }
-
-        // Scaled mobile card size: 72px x 112px
-        cardEl.className = `w-[72px] h-[112px] sm:w-[84px] sm:h-[128px] shrink-0 rounded-xl p-1.5 flex flex-col justify-between items-center shadow-md cursor-pointer transition-all select-none relative ${borderStyle}`;
-        
-        let badgeText = '';
-        let targetPill = '';
-
-        if (c.color === 'RED') {
-          badgeText = `<span class="${c.val === 15 ? 'text-amber-300' : 'text-rose-400'} font-black text-[9px]">+${c.val}</span>`;
-          targetPill = `<span class="${c.val === 15 ? 'bg-amber-950/90 text-amber-300 border-amber-600/80' : 'bg-rose-950/90 text-rose-400 border-rose-700/80'} border px-1 py-0.2 rounded text-[7px] font-black uppercase tracking-wider">NEEDS 🔵</span>`;
-        } else if (c.color === 'GREEN') {
-          badgeText = `<span class="text-emerald-400 font-black text-[9px]">WILD</span>`;
-          targetPill = `<span class="bg-blue-950/95 text-blue-300 border border-blue-400/90 px-1 py-0.2 rounded text-[7px] font-black uppercase tracking-wider shadow">🔵 CONNECTOR</span>`;
-        } else if (c.color === 'BLUE') {
-          badgeText = `<span class="text-blue-400 font-black text-[9px]">+5</span>`;
-          const targetVal = c.redVal || (c.isGrand ? 15 : 10);
-          targetPill = (c.isGrand)
-            ? `<span class="bg-amber-950/95 text-amber-300 border border-amber-500/90 px-1 py-0.2 rounded text-[7px] font-black flex items-center gap-0.5 shadow">🔴 15</span>`
-            : `<span class="bg-rose-950/90 text-rose-300 border border-rose-600/80 px-1 py-0.2 rounded text-[7px] font-black flex items-center gap-0.5 shadow">🔴 10</span>`;
-        } else if (c.color === 'SPECIAL') {
-          badgeText = `<span class="text-amber-400 font-black text-[9px]">RAID</span>`;
-          targetPill = `<span class="bg-rose-950/95 text-rose-300 border border-rose-500 px-1 py-0.2 rounded text-[7px] font-black uppercase tracking-wider">ON TURN</span>`;
-        }
-
-        let typeSubtitle = '';
-        if (c.color === 'RED') typeSubtitle = (c.val === 15) ? '👑 Grand Hot (+15)' : '⭐ Petty Hot (+10)';
-        else if (c.color === 'GREEN') typeSubtitle = 'Connects Blue • Flips 🔄';
-        else if (c.color === 'BLUE') typeSubtitle = (c.isGrand) ? '👑 Grand Clean' : '⭐ Petty Clean';
-        else if (c.color === 'SPECIAL') typeSubtitle = '⚡ On-Turn Fed Raid';
-
-        // Badges for active selection
-        let selectionPill = '';
-        if (isPairSelected) {
-          const pillColor = (selectedPairIndices.length === 2 && evalRes && !evalRes.valid) ? 'bg-rose-600' : 'bg-amber-500';
-          selectionPill = `<div class="absolute -top-2 px-1.5 py-0.2 ${pillColor} text-white font-black text-[8px] rounded-full shadow tracking-wider uppercase">Pair #${pairSelectionIndex + 1}</div>`;
-        } else if (isPassSelected) {
-          selectionPill = `<div class="absolute -top-2 px-1.5 py-0.2 bg-rose-600 text-white font-black text-[8px] rounded-full shadow tracking-wider uppercase">Pass 👉</div>`;
-        }
+        cardEl.onclick = () => selectHandCard(idx);
+        cardEl.className = `cursor-pointer p-2 rounded-xl border-2 shrink-0 w-28 h-24 flex flex-col justify-between transition-all select-none ${
+          isSelected 
+            ? 'border-amber-400 ring-2 ring-amber-400/50 scale-105 z-10' 
+            : isRed 
+              ? 'bg-rose-950/80 border-rose-800 hover:border-rose-600 text-rose-200' 
+              : 'bg-sky-950/80 border-sky-800 hover:border-sky-600 text-sky-200'
+        }`;
 
         cardEl.innerHTML = `
-          ${selectionPill}
-          <!-- Upright Top Header -->
-          <div class="w-full flex justify-between items-center leading-none">
-            <div class="flex items-center gap-0.5">
-              <span class="text-xs leading-none">${c.icon}</span>
-              ${badgeText}
-            </div>
-            ${targetPill}
+          <div class="flex items-center justify-between">
+            <span class="text-lg leading-none">${card.icon}</span>
+            <span class="text-xs font-black font-mono ${isRed ? 'text-rose-400' : 'text-sky-400'}">$${card.val}</span>
           </div>
 
-          <!-- Center Focus -->
-          <div class="flex flex-col items-center justify-center my-auto leading-none">
-            <span class="text-xl sm:text-2xl leading-none">${c.icon}</span>
-            <span class="text-[8px] sm:text-[9px] font-bold text-slate-200 mt-0.5 uppercase text-center leading-tight truncate max-w-[64px]">${c.item}</span>
-            <span class="text-[6.5px] font-medium text-slate-400 mt-0.5 text-center leading-none">${typeSubtitle}</span>
+          <div>
+            <div class="text-xs font-black truncate">${card.name}</div>
+            <div class="text-[8.5px] leading-tight ${isRed ? 'text-rose-300' : 'text-sky-300'} line-clamp-2">
+              ${isRed ? '🚨 NO POWER (1 Heat Sold / 2 in Hand)' : card.power}
+            </div>
           </div>
 
-          <!-- Inverted Bottom Header (180° Rotational Symmetry) -->
-          <div class="w-full flex justify-between items-center leading-none rotate-180 opacity-70">
-            <div class="flex items-center gap-0.5">
-              <span class="text-xs leading-none">${c.icon}</span>
-              ${badgeText}
-            </div>
-            ${targetPill}
+          <div class="text-[8px] font-mono text-slate-400 flex items-center justify-between border-t border-slate-800 pt-0.5">
+            <span>${isRed ? 'HOT' : 'SAFE'}</span>
+            <span class="font-bold">${isSelected ? '● ACTIVE' : ''}</span>
           </div>
         `;
-
-        cardEl.onclick = () => {
-          if (currentPlayer !== 0) return;
-
-          if (playerStep === 'PAIR') {
-            const pos = selectedPairIndices.indexOf(idx);
-            if (pos !== -1) {
-              selectedPairIndices.splice(pos, 1);
-            } else {
-              if (selectedPairIndices.length < 2) {
-                selectedPairIndices.push(idx);
-              } else {
-                selectedPairIndices[1] = idx;
-              }
-            }
-
-            if (selectedPairIndices.length === 1) {
-              logAnnouncement(`Selected ${hands[0][selectedPairIndices[0]].item}. Tap a second card to pair, or tap 'Skip'.`);
-            } else if (selectedPairIndices.length === 2) {
-              const res = evaluateSelectedPair(hands[0][selectedPairIndices[0]], hands[0][selectedPairIndices[1]]);
-              if (res.valid) {
-                logAnnouncement(`Valid: ${res.label} (+${res.points} pts${res.flipsCamera ? ' & 🔄' : ''})! Tap Bank Pair.`);
-              } else {
-                logAnnouncement(`⚠️ ${res.error}`);
-              }
-            } else {
-              logAnnouncement("Tap 2 cards to bank a pair (needs a Blue card!), or tap 'Skip', or tap 'SNITCH'.");
-            }
-
-            updateUI();
-          } else if (playerStep === 'PASS') {
-            selectedPassCardIndex = (selectedPassCardIndex === idx) ? null : idx;
-            if (selectedPassCardIndex !== null) {
-              const pCard = hands[0][selectedPassCardIndex];
-              logAnnouncement(`Selected ${pCard.item} to pass. Tap '3. Pass Selected Card'.`);
-            } else {
-              logAnnouncement("Tap 1 card to select for passing.");
-            }
-            updateUI();
-          }
-        };
 
         container.appendChild(cardEl);
       });
     }
 
-    function logAnnouncement(msg) {
-      document.getElementById('announcement-banner').innerText = msg;
+    function logAction(msg) {
+      document.getElementById('action-text').textContent = msg;
     }
 
-    function showRoundModal(winnerIdx, endReason = 'NORMAL') {
-      const modal = document.getElementById('clean-modal');
-      const icon = document.getElementById('modal-icon');
-      const title = document.getElementById('modal-title');
-      const desc = document.getElementById('modal-desc');
-      const scores = document.getElementById('modal-scores');
-      const nextBtn = document.getElementById('modal-next-btn');
-
-      const isStandoff = (endReason === 'STANDOFF' || winnerIdx === -1);
-      
-      // Calculate Red Contraband held by each player
-      const redCounts = [];
-      for (let p = 0; p < numPlayers; p++) {
-        redCounts.push(hands[p].filter(c => c.color === 'RED').length);
-      }
-      const maxRed = Math.max(...redCounts);
-
-      const roundPointsEarned = new Array(numPlayers).fill(0);
-      const caughtPlayers = [];
-
-      for (let p = 0; p < numPlayers; p++) {
-        const redCards = redCounts[p];
-        const bankedPoints = calculateStashPoints(stashes[p]);
-
-        // Penalty Rule: Only player(s) holding the MOST (or tied for most) Red cards bust!
-        const isCaught = (redCards === maxRed && maxRed > 0);
-
-        if (isCaught) {
-          roundPointsEarned[p] = 0; // Caught Red-Handed! 0 points for this round!
-          caughtPlayers.push(p);
-        } else {
-          roundPointsEarned[p] = bankedPoints;
-        }
-
-        matchScores[p] += roundPointsEarned[p];
-      }
-
-      // Check match winner
-      const highestScore = Math.max(...matchScores);
-      const isMatchOver = highestScore >= targetMatchScore;
-
-      if (isMatchOver) {
-        icon.innerText = "🏆";
-        const winnerP = matchScores.indexOf(highestScore);
-        title.innerText = `${getPlayerName(winnerP)} WINS THE HEIST!`;
-        desc.innerText = `Reached ${highestScore} points! Crowned Master Thief!`;
-      } else if (isStandoff) {
-        icon.innerText = "🚨";
-        title.innerText = "STANDOFF! POLICE SURROUND YOU!";
-        desc.innerText = "The Locker ran dry and an entire orbit passed without any meld or snitch! Sirens wail!";
-      } else {
-        icon.innerText = "🚗💨";
-        title.innerText = "GETAWAY CAR!";
-        desc.innerText = `${getPlayerName(winnerIdx)} emptied their hand and escaped into the night!`;
-      }
-
-      let scoresHtml = '';
-      for (let p = 0; p < numPlayers; p++) {
-        const name = getPlayerName(p);
-        const redCount = redCounts[p];
-        const earned = roundPointsEarned[p];
-        const total = matchScores[p];
-        const isCaught = caughtPlayers.includes(p);
-
-        if (isCaught) {
-          scoresHtml += `
-            <div class="p-2 rounded-lg border-2 border-rose-500 bg-rose-950/70 flex justify-between items-center">
-              <div>
-                <span class="font-black text-rose-400">${name}</span>
-                <span class="text-[10px] text-rose-300 ml-1.5 font-bold">(${redCount} Red Contraband)</span>
-              </div>
-              <div class="text-right">
-                <span class="px-1.5 py-0.5 bg-rose-600 text-white font-black text-[9px] rounded uppercase">CAUGHT RED-HANDED!</span>
-                <div class="text-[10px] text-slate-300 mt-0.5">+0 pts (Total: <span class="font-bold text-amber-300">${total}</span>)</div>
-              </div>
-            </div>
-          `;
-        } else {
-          scoresHtml += `
-            <div class="p-2 rounded-lg border border-slate-800 bg-slate-900/60 flex justify-between items-center">
-              <div>
-                <span class="font-bold text-slate-200">${name}</span>
-                <span class="text-[10px] text-slate-400 ml-1.5 font-mono">(${redCount} Red)</span>
-              </div>
-              <div class="text-right">
-                <span class="px-1.5 py-0.5 bg-emerald-950 text-emerald-400 border border-emerald-700/60 font-black text-[9px] rounded uppercase">ESCAPED CLEAN!</span>
-                <div class="text-[10px] text-slate-300 mt-0.5">+${earned} pts (Total: <span class="font-bold text-amber-300">${total}</span>)</div>
-              </div>
-            </div>
-          `;
-        }
-      }
-
-      scores.innerHTML = scoresHtml;
-
-      if (isMatchOver) {
-        nextBtn.innerHTML = `<span>NEW MATCH (RESET)</span> ↺`;
-        nextBtn.onclick = () => {
-          modal.classList.add('hidden');
-          resetEntireMatch();
-        };
-      } else {
-        nextBtn.innerHTML = `<span>NEXT ROUND (R${roundNumber + 1})</span> ➡️`;
-        nextBtn.onclick = () => {
-          modal.classList.add('hidden');
-          roundNumber++;
-          starterPlayer = (starterPlayer + 1) % numPlayers;
-          initRound();
-        };
-      }
-
-      modal.classList.remove('hidden');
+    function getPlayerName(p) {
+      return p === 0 ? "You (Player 1)" : `Bot ${p + 1}`;
     }
 
-    function handleDrawAction() {
-      if (currentPlayer !== 0 || playerStep !== 'DRAW') return;
-      const card = drawFromDeck();
-      if (card) hands[0].push(card);
-      logAnnouncement("You drew a card! Tap 2 cards to bank a pair, or tap 'SNITCH' to raid, or tap 'Skip'.");
-      playerStep = 'PAIR';
-      selectedPairIndices = [];
-      updateUI();
-    }
-
-    document.getElementById('btn-draw').onclick = handleDrawAction;
-    document.getElementById('draw-deck').onclick = handleDrawAction;
-
-    // User banks the chosen Pair
-    document.getElementById('btn-pair').onclick = () => {
-      if (currentPlayer !== 0 || playerStep !== 'PAIR' || selectedPairIndices.length !== 2) return;
-      
-      const idx1 = selectedPairIndices[0];
-      const idx2 = selectedPairIndices[1];
-      const c1 = hands[0][idx1];
-      const c2 = hands[0][idx2];
-
-      const evalRes = evaluateSelectedPair(c1, c2);
-      if (!evalRes.valid) return;
-
-      const first = Math.max(idx1, idx2);
-      const second = Math.min(idx1, idx2);
-      hands[0].splice(first, 1);
-      hands[0].splice(second, 1);
-
-      stashes[0].push({
-        item: evalRes.item,
-        icon: evalRes.icon,
-        color: evalRes.color,
-        points: evalRes.points,
-        category: evalRes.category
-      });
-
-      playerMadeMeldThisTurn = true;
-      consecutiveTurnsWithoutMeld = 0;
-
-      if (evalRes.flipsCamera) {
-        direction = -direction;
-        logAnnouncement(`You banked ${evalRes.label}! Passing direction reversed! 🔄`);
-      } else if (evalRes.color === 'RED') {
-        logAnnouncement(`You laundered a ${evalRes.item} pair! Massive +${evalRes.points} points banked!`);
-      } else {
-        logAnnouncement(`You banked a clean pair of ${evalRes.item}s (+${evalRes.points} pts).`);
+    // Attach Reset Listener
+    document.getElementById('reset-match-btn').onclick = () => {
+      if (confirm("Reset the entire 4-round match?")) {
+        initMatch();
       }
-
-      selectedPairIndices = [];
-      updateUI();
-
-      if (checkWinCondition(0)) return;
-
-      playerStep = 'PASS';
-      logAnnouncement("Pair banked! Now tap 1 card in your hand to pass face up to your neighbor.");
-      updateUI();
     };
 
-    // User skips Pair laying
-    document.getElementById('btn-skip-pair').onclick = () => {
-      if (currentPlayer !== 0 || playerStep !== 'PAIR') return;
-      selectedPairIndices = [];
-      playerStep = 'PASS';
-      logAnnouncement("Skipped pair. Now tap 1 card in your hand to pass face up to your neighbor.");
-      updateUI();
+    // Auto-boot on load
+    window.onload = () => {
+      initMatch();
     };
-
-    // User plays The Snitch on their turn instead of laying a pair
-    document.getElementById('btn-snitch').onclick = () => {
-      if (currentPlayer !== 0 || playerStep !== 'PAIR') return;
-      selectedPairIndices = [];
-      triggerSnitchRaid(0, () => {
-        if (checkWinCondition(0)) return;
-        playerStep = 'PASS';
-        logAnnouncement("Snitch raid completed! Now tap 1 card in your hand to pass face up.");
-        updateUI();
-      });
-    };
-
-    // User passes selected card
-    document.getElementById('btn-pass').onclick = () => {
-      if (currentPlayer !== 0 || playerStep !== 'PASS' || selectedPassCardIndex === null) return;
-      const targetP = getTargetNeighbor(0);
-      const passedCard = hands[0].splice(selectedPassCardIndex, 1)[0];
-
-      if (!playerMadeMeldThisTurn) {
-        consecutiveTurnsWithoutMeld++;
-      }
-
-      selectedPassCardIndex = null;
-      updateUI();
-
-      executePassCard(0, targetP, passedCard, () => {
-        advanceTurn();
-      });
-    };
-
-    document.getElementById('mode-4p-btn').onclick = () => setGameMode('4P');
-    document.getElementById('mode-2p-btn').onclick = () => setGameMode('2P');
-    document.getElementById('restart-match-btn').onclick = resetEntireMatch;
-
-    // Auto-init
-    initRound();
   </script>
 </body>
 </html>
