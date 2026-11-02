@@ -10,16 +10,12 @@
       0%, 100% { box-shadow: 0 0 10px rgba(239, 68, 68, 0.6); }
       50% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.95); }
     }
-    .red-heat-glow {
-      animation: pulse-red 2s infinite;
-    }
+    .red-heat-glow { animation: pulse-red 2s infinite; }
     @keyframes pulse-siren {
       0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px #ef4444); }
       50% { transform: scale(1.08); filter: drop-shadow(0 0 14px #f43f5e); }
     }
-    .siren-active {
-      animation: pulse-siren 1.5s infinite;
-    }
+    .siren-active { animation: pulse-siren 1.5s infinite; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
@@ -88,7 +84,7 @@
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-2">
         <span class="text-xs font-black uppercase text-amber-400 tracking-wider">🛒 The Street (Active Buyers)</span>
-        <span class="text-[10px] text-slate-400 bg-slate-800/80 px-2 py-0.5 rounded border border-slate-700">Sell matching card face-up</span>
+        <span class="text-[10px] text-slate-400 bg-slate-800/80 px-2 py-0.5 rounded border border-slate-700">1 Action: Sell to a matching Buyer!</span>
       </div>
 
       <!-- THE FUSE / COUNTDOWN PILE STATUS -->
@@ -108,27 +104,15 @@
 
     <!-- Active Buyers Slots (3 Slots: Drawer Top + 2 Street) -->
     <div class="grid grid-cols-3 gap-3 my-auto">
-      
-      <!-- Buyer 1 -->
-      <div id="buyer-slot-0" onclick="selectBuyerSlot(0)" class="cursor-pointer bg-slate-900/90 border-2 border-slate-700 hover:border-amber-400 rounded-xl p-2.5 transition flex flex-col justify-between h-28 relative group shadow-md hover:shadow-amber-500/10">
-        <!-- Rendered dynamically -->
-      </div>
-
-      <!-- Buyer 2 -->
-      <div id="buyer-slot-1" onclick="selectBuyerSlot(1)" class="cursor-pointer bg-slate-900/90 border-2 border-slate-700 hover:border-amber-400 rounded-xl p-2.5 transition flex flex-col justify-between h-28 relative group shadow-md hover:shadow-amber-500/10">
-        <!-- Rendered dynamically -->
-      </div>
-
-      <!-- Buyer 3 -->
-      <div id="buyer-slot-2" onclick="selectBuyerSlot(2)" class="cursor-pointer bg-slate-900/90 border-2 border-slate-700 hover:border-amber-400 rounded-xl p-2.5 transition flex flex-col justify-between h-28 relative group shadow-md hover:shadow-amber-500/10">
-        <!-- Rendered dynamically -->
-      </div>
+      <div id="buyer-slot-0" onclick="selectBuyerSlot(0)" class="cursor-pointer bg-slate-900/90 border-2 border-slate-700 hover:border-amber-400 rounded-xl p-2.5 transition flex flex-col justify-between h-28 relative group shadow-md hover:shadow-amber-500/10"></div>
+      <div id="buyer-slot-1" onclick="selectBuyerSlot(1)" class="cursor-pointer bg-slate-900/90 border-2 border-slate-700 hover:border-amber-400 rounded-xl p-2.5 transition flex flex-col justify-between h-28 relative group shadow-md hover:shadow-amber-500/10"></div>
+      <div id="buyer-slot-2" onclick="selectBuyerSlot(2)" class="cursor-pointer bg-slate-900/90 border-2 border-slate-700 hover:border-amber-400 rounded-xl p-2.5 transition flex flex-col justify-between h-28 relative group shadow-md hover:shadow-amber-500/10"></div>
     </div>
 
     <!-- Live Turn Banner / Game Log -->
     <div id="action-banner" class="bg-slate-900/90 border border-slate-800 rounded-lg px-3 py-1.5 flex items-center justify-between text-xs font-mono shadow">
       <div id="action-text" class="text-slate-200 truncate flex items-center gap-2">
-        <span class="text-emerald-400 font-bold">Turn 1:</span> Choose a matching card from hand to sell to an active Buyer!
+        <span class="text-emerald-400 font-bold">Turn 1:</span> Choose 1 matching card in hand to sell to a Street Buyer!
       </div>
       <div id="turn-timer-badge" class="text-[10px] bg-slate-800 px-2 py-0.5 rounded text-amber-300 font-bold shrink-0">
         Your Turn
@@ -164,7 +148,7 @@
 
         <!-- Action / Step Guidance -->
         <div id="step-instruction" class="text-[11px] font-bold text-amber-300">
-          Step 1: Select 1 card in hand to SELL
+          Select 1 matching card from your hand to SELL
         </div>
       </div>
 
@@ -173,22 +157,19 @@
         <!-- Rendered dynamically -->
       </div>
 
-      <!-- Action Confirmation & Auxiliary Buttons Bar -->
+      <!-- Action Confirmation & Draw / Pass Turn Bar -->
       <div class="flex items-center justify-between pt-1 border-t border-slate-800/60">
         <div class="flex items-center gap-2">
-          <button id="btn-sell" onclick="confirmSellAction()" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs rounded shadow transition disabled:opacity-40 disabled:cursor-not-allowed">
+          <button id="btn-sell" onclick="confirmSellAction()" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs rounded-lg shadow transition disabled:opacity-40 disabled:cursor-not-allowed">
             ✓ Sell Card to Buyer
           </button>
-          <button id="btn-pass" onclick="confirmPassAction()" class="px-3 py-1 bg-amber-600 hover:bg-amber-500 text-white font-black text-xs rounded shadow transition disabled:opacity-40 disabled:cursor-not-allowed">
-            ✉️ Pass Selected Card
-          </button>
-          <button id="btn-skip-sell" onclick="skipSellAndPass()" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs rounded border border-slate-700 transition">
-            Skip Sale (Go to Pass)
+          <button id="btn-draw-skip" onclick="drawAndPassTurn()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs rounded-lg border border-slate-700 transition">
+            📥 Draw 1 & Pass Turn
           </button>
         </div>
 
         <div class="text-[10px] text-slate-400 font-mono">
-          <span>🔵 Blue: $5 + Power | 🚨 Red: $15 (1 Heat Sold / 2 In Hand)</span>
+          <span>🔵 Blue: $5 + Tactical Power | 🚨 Red: $15 (1 Heat Sold / 2 in Hand)</span>
         </div>
       </div>
     </div>
@@ -213,17 +194,13 @@
       <!-- Dealer's Hand Preview -->
       <div>
         <div class="text-[10px] font-bold text-slate-400 uppercase mb-1">Your Starting Hand Preview:</div>
-        <div id="modal-hand-preview" class="flex gap-1.5 overflow-x-auto pb-1 no-scrollbar">
-          <!-- Rendered dynamically -->
-        </div>
+        <div id="modal-hand-preview" class="flex gap-1.5 overflow-x-auto pb-1 no-scrollbar"></div>
       </div>
 
       <!-- Available Siren Tokens -->
       <div>
         <div class="text-[10px] font-bold text-slate-400 uppercase mb-1.5">Choose Countdown Fuse Token:</div>
-        <div id="modal-token-options" class="grid grid-cols-5 gap-2">
-          <!-- Rendered dynamically -->
-        </div>
+        <div id="modal-token-options" class="grid grid-cols-5 gap-2"></div>
       </div>
 
       <div class="text-[10px] text-slate-400 italic">
@@ -249,9 +226,7 @@
       </div>
 
       <!-- Arrest / Heat Breakdown Table -->
-      <div id="raid-breakdown-body" class="flex flex-col gap-2">
-        <!-- Rendered dynamically -->
-      </div>
+      <div id="raid-breakdown-body" class="flex flex-col gap-2"></div>
 
       <button id="raid-next-round-btn" onclick="startNextRound()" class="w-full py-2.5 bg-rose-600 hover:bg-rose-500 text-white font-black text-sm rounded-xl shadow-lg transition">
         Continue to Next Round →
@@ -265,12 +240,12 @@
        1. GAME DATA & ECONOMIC SPECIFICATION (56-Card Architecture)
        ========================================================================= */
     const ITEMS = [
-      { id: 'cash', name: 'Cash', icon: '💵', bluePower: 'Bribe: Skip mandatory pass' },
-      { id: 'watch', name: 'Watch', icon: '⌚', bluePower: 'Alibi: Reverse table direction' },
-      { id: 'key', name: 'Key', icon: '🗝️', bluePower: 'Wiretap: Peek at target opponent hand' },
-      { id: 'diamond', name: 'Diamond', icon: '💎', bluePower: 'Vault: Protect 1 card permanently' },
-      { id: 'painting', name: 'Painting', icon: '🖼️', bluePower: 'Swap: Blind trade 1 card with opponent' },
-      { id: 'gold', name: 'Gold', icon: '🧈', bluePower: 'Launder: Discard 1 Red from hand safely' }
+      { id: 'cash', name: 'Cash', icon: '💵', bluePower: 'Bribe: Bank +$5 Clean Cash bonus' },
+      { id: 'watch', name: 'Watch', icon: '⌚', bluePower: 'Time Warp: Take an immediate second turn!' },
+      { id: 'key', name: 'Key', icon: '🗝️', bluePower: 'Plant: Slide 1 card from your hand into target opponent’s hand!' },
+      { id: 'diamond', name: 'Diamond', icon: '💎', bluePower: 'Vault: Protect 1 card permanently from arrest' },
+      { id: 'painting', name: 'Painting', icon: '🖼️', bluePower: 'Appraisal: Peek top 3 of deck, keep 1, discard 2' },
+      { id: 'gold', name: 'Gold', icon: '🧈', bluePower: 'Launder: Safely discard 1 Red from hand into the furnace!' }
     ];
 
     const BUYER_FLAVORS = [
@@ -285,7 +260,7 @@
     // State Variables
     let matchRound = 1;
     let dealerIndex = 0; // Rotates 0 -> 1 -> 2 -> 3
-    let turnDirection = 1; // 1 = Clockwise, -1 = Counter-Clockwise
+    let turnDirection = 1; // 1 = Clockwise
     let activePlayerIndex = 0;
     let matchScores = [0, 0, 0, 0]; // Total money banked across rounds
 
@@ -296,10 +271,9 @@
     let stashes = [[], [], [], []]; // Array of { card, buyer, isRedScrubbed }
     let streetBuyers = [null, null, null]; // 3 active buyers
 
-    let playerStep = 'IDLE'; // 'SELECT_SELL', 'SELECT_PASS', 'SELECT_TARGET', 'BOT'
+    let playerStep = 'IDLE'; // 'SELECT_SELL', 'BOT'
     let selectedHandIndex = null;
     let selectedBuyerIndex = null;
-    let pendingBluePower = null;
 
     /* =========================================================================
        2. DECK & SETUP BUILDER
@@ -319,7 +293,6 @@
             color: 'BLUE',
             val: 5,
             power: item.bluePower,
-            // Buyer details on card back:
             buyerDemand: item.id,
             buyerDemandName: item.name,
             buyerIcon: item.icon,
@@ -339,7 +312,6 @@
             color: 'RED',
             val: 15,
             power: null, // RED CARDS HAVE NO POWERS (Pure Greed/Liability)
-            // Buyer details on card back:
             buyerDemand: item.id,
             buyerDemandName: item.name,
             buyerIcon: item.icon,
@@ -371,7 +343,6 @@
       stashes = [[], [], [], []];
       selectedHandIndex = null;
       selectedBuyerIndex = null;
-      pendingBluePower = null;
 
       // Deal 5 cards to each player
       for (let c = 0; c < 5; c++) {
@@ -389,7 +360,6 @@
       if (dealerIndex === 0) {
         showDealerModal();
       } else {
-        // Bot Dealer chooses a smart token (e.g. median of available)
         const chosenToken = availableTokens[Math.floor(availableTokens.length / 2)] || availableTokens[0];
         applyDealerTokenChoice(chosenToken);
       }
@@ -398,7 +368,6 @@
     function showDealerModal() {
       document.getElementById('modal-round-num').textContent = matchRound;
       
-      // Render Hand Preview
       const previewEl = document.getElementById('modal-hand-preview');
       previewEl.innerHTML = '';
       hands[0].forEach(card => {
@@ -415,7 +384,6 @@
         previewEl.appendChild(cardBox);
       });
 
-      // Render Available Tokens
       const tokenContainer = document.getElementById('modal-token-options');
       tokenContainer.innerHTML = '';
       ALL_SIREN_TOKENS.forEach(tok => {
@@ -447,7 +415,6 @@
       activeTokenValue = chosenToken;
       availableTokens = availableTokens.filter(t => t !== chosenToken);
 
-      // Create Countdown Pile from top cards of deck
       countdownPile = [];
       for (let i = 0; i < chosenToken; i++) {
         if (deck.length > 0) {
@@ -455,22 +422,20 @@
         }
       }
 
-      // Active player starts with Dealer
       activePlayerIndex = dealerIndex;
-      logAction(`Round ${matchRound}: Dealer (Player ${dealerIndex + 1}) chose Siren Token [${chosenToken}]! ${chosenToken} cards in fuse.`);
+      logAction(`Round ${matchRound}: Dealer (${getPlayerName(dealerIndex)}) chose Siren Token [${chosenToken}]. Round begins!`);
       
       startTurn();
     }
 
     /* =========================================================================
-       3. TURN CYCLE & PLAYER LOGIC
+       3. TURN CYCLE & PLAYER LOGIC (ONE-ACTION ENGINE)
        ========================================================================= */
     function startTurn() {
       // Check if turn is Dealer and handle Countdown Pile draw
       if (activePlayerIndex === dealerIndex) {
         handleDealerCountdownDraw();
         if (countdownPile.length === 0) {
-          // RAID TRIGGERED!
           triggerPoliceRaid();
           return;
         }
@@ -482,12 +447,12 @@
         playerStep = 'SELECT_SELL';
         selectedHandIndex = null;
         selectedBuyerIndex = null;
-        document.getElementById('step-instruction').textContent = "Step 1: Choose a card in hand to SELL (or Skip)";
-        logAction("Your turn! Pick a card from your hand that matches an active Buyer on The Street.");
+        document.getElementById('step-instruction').textContent = "Select 1 matching card in hand to SELL (or Draw & Pass Turn)";
+        logAction("Your turn! Sell 1 card to a matching Street Buyer, or draw a card to pass.");
       } else {
         playerStep = 'BOT';
-        document.getElementById('step-instruction').textContent = `Waiting for Bot ${activePlayerIndex + 1}...`;
-        setTimeout(() => executeBotTurn(activePlayerIndex), 750);
+        document.getElementById('step-instruction').textContent = `Waiting for ${getPlayerName(activePlayerIndex)}...`;
+        setTimeout(() => executeBotTurn(activePlayerIndex), 600);
       }
     }
 
@@ -497,27 +462,22 @@
       const drawnCard = countdownPile.pop();
       const isP1 = dealerIndex === 0;
 
-      // Dealer decides: Keep or Plant to any opponent
       if (isP1) {
-        // For human dealer: automatically keep if clean, plant hot cards to leader
         if (drawnCard.color === 'BLUE') {
           hands[0].push(drawnCard);
-          logAction(`⏱️ As Dealer, you drew from the Countdown Pile and kept safe ${drawnCard.name}! (${countdownPile.length} left)`);
+          logAction(`⏱️ Dealer Draw: You kept safe ${drawnCard.name}! (${countdownPile.length} cards left in fuse)`);
         } else {
-          // Plant to leader bot
           const target = getRichestOpponent(0);
           hands[target].push(drawnCard);
-          logAction(`⏱️ Informant Plant! As Dealer, you secretly planted a hot card onto Bot ${target + 1}! (${countdownPile.length} left)`);
+          logAction(`⏱️ Informant Plant! As Dealer, you planted a hot card onto ${getPlayerName(target)}! (${countdownPile.length} left)`);
         }
       } else {
-        // Bot Dealer AI
         if (drawnCard.color === 'BLUE') {
           hands[dealerIndex].push(drawnCard);
-          logAction(`⏱️ Bot ${dealerIndex + 1} (Dealer) drew from the Countdown Pile. (${countdownPile.length} left)`);
+          logAction(`⏱️ Dealer ${getPlayerName(dealerIndex)} drew from the Countdown Pile. (${countdownPile.length} left)`);
         } else {
-          // Plant to human or leading bot
           hands[0].push(drawnCard);
-          logAction(`⏱️ Bot ${dealerIndex + 1} (Dealer) slid an extra card face-down to YOU! (${countdownPile.length} left)`);
+          logAction(`⏱️ Informant Plant! Dealer ${getPlayerName(dealerIndex)} slid a hot card to YOU! (${countdownPile.length} left)`);
         }
       }
     }
@@ -558,26 +518,19 @@
 
     function updateActionButtons() {
       const btnSell = document.getElementById('btn-sell');
-      const btnPass = document.getElementById('btn-pass');
 
-      if (playerStep === 'SELECT_SELL') {
-        btnPass.disabled = true;
-        if (selectedHandIndex !== null && selectedBuyerIndex !== null) {
-          const card = hands[0][selectedHandIndex];
-          const buyer = streetBuyers[selectedBuyerIndex];
-          const matches = card.item === buyer.buyerDemand;
-          btnSell.disabled = !matches;
-          if (!matches) {
-            document.getElementById('step-instruction').textContent = `⚠️ Mismatch: ${card.name} doesn't match Buyer's demand (${buyer.buyerDemandName})!`;
-          } else {
-            document.getElementById('step-instruction').textContent = `Ready to sell ${card.name} for $${card.val}! Click 'Sell Card'.`;
-          }
+      if (selectedHandIndex !== null && selectedBuyerIndex !== null) {
+        const card = hands[0][selectedHandIndex];
+        const buyer = streetBuyers[selectedBuyerIndex];
+        const matches = buyer && (card.item === buyer.buyerDemand);
+        btnSell.disabled = !matches;
+        if (!matches) {
+          document.getElementById('step-instruction').textContent = `⚠️ Mismatch: ${card.name} doesn't match Buyer's demand (${buyer.buyerDemandName})!`;
         } else {
-          btnSell.disabled = true;
+          document.getElementById('step-instruction').textContent = `Ready to sell ${card.name} for $${card.val}! Click 'Sell Card'.`;
         }
-      } else if (playerStep === 'SELECT_PASS') {
+      } else {
         btnSell.disabled = true;
-        btnPass.disabled = (selectedHandIndex === null);
       }
     }
 
@@ -587,44 +540,41 @@
       const card = hands[0].splice(selectedHandIndex, 1)[0];
       const buyer = streetBuyers[selectedBuyerIndex];
 
-      // Execute Sale
-      executeSale(0, card, buyer, selectedBuyerIndex);
+      const extraTurn = executeSale(0, card, buyer, selectedBuyerIndex);
 
-      // Advance to Step 2: Pass
       selectedHandIndex = null;
       selectedBuyerIndex = null;
-      playerStep = 'SELECT_PASS';
-      document.getElementById('step-instruction').textContent = "Step 2: Choose 1 card from hand to PASS to neighbor";
       updateUI();
+
+      if (extraTurn) {
+        logAction("⌚ Watch Time Warp! Take an immediate extra turn!");
+        startTurn();
+      } else {
+        endTurn();
+      }
     }
 
-    function skipSellAndPass() {
-      if (playerStep !== 'SELECT_SELL') return;
-      logAction("You chose not to sell any merchandise this turn.");
+    function drawAndPassTurn() {
+      if (activePlayerIndex !== 0) return;
+
+      if (deck.length > 0) {
+        const drawn = deck.pop();
+        hands[0].push(drawn);
+        logAction(`📥 You had no matching sale: drew ${drawn.name} from Locker.`);
+      } else {
+        logAction("Locker is empty. Pass turn.");
+      }
+
       selectedHandIndex = null;
       selectedBuyerIndex = null;
-      playerStep = 'SELECT_PASS';
-      document.getElementById('step-instruction').textContent = "Step 2: Choose 1 card from hand to PASS to neighbor";
-      updateUI();
-    }
-
-    function confirmPassAction() {
-      if (selectedHandIndex === null) return;
-
-      const passedCard = hands[0].splice(selectedHandIndex, 1)[0];
-      const targetNeighbor = (4 + 0 + turnDirection) % 4;
-
-      hands[targetNeighbor].push(passedCard);
-      logAction(`✉️ You passed a card face-down to ${getPlayerName(targetNeighbor)}!`);
-
-      selectedHandIndex = null;
       endTurn();
     }
 
     /* =========================================================================
-       5. SALE RESOLUTION & POWERS (Knizian Blueprint)
+       5. SALE RESOLUTION & POWERS (Radical Simplicity)
        ========================================================================= */
     function executeSale(playerIdx, card, buyer, streetSlotIdx) {
+      let extraTurn = false;
       const isRed = card.color === 'RED';
       const isBlue = card.color === 'BLUE';
 
@@ -639,65 +589,77 @@
 
       // 1. Resolve Buyer Bonus
       if (buyer.buyerFlavor.id === 'financial') {
-        // +$5 Bonus Cash attached to record
         saleRecord.bonusCash = 5;
-        logMsg += ` 💰 Buyer Bonus: +$5 extra cash!`;
+        logMsg += ` 💰 Bonus: +$5 cash!`;
       } else if (buyer.buyerFlavor.id === 'defensive') {
-        // Flip 1 sold red card in stash to scrubbed (0 heat)
         const unscrubbedRed = stashes[playerIdx].find(s => s.card.color === 'RED' && !s.isRedScrubbed);
         if (unscrubbedRed) {
           unscrubbedRed.isRedScrubbed = true;
-          logMsg += ` 🛡️ Buyer Bonus: 1 Hot Contraband scrubbed clean (0 Heat)!`;
+          logMsg += ` 🛡️ Bonus: 1 Hot Contraband scrubbed clean (0 Heat)!`;
         }
       } else if (buyer.buyerFlavor.id === 'offensive') {
-        // Force opponent with fewest cards to draw
         const target = getOpponentWithFewestCards(playerIdx);
         if (deck.length > 0) {
           hands[target].push(deck.pop());
-          logMsg += ` ⚡ Buyer Bonus: Forced ${getPlayerName(target)} to draw 1 card!`;
+          logMsg += ` ⚡ Bonus: Forced ${getPlayerName(target)} to draw 1 card!`;
         }
       }
 
       // 2. Resolve Blue Item Power (ONLY BLUE UNLOCKS POWERS!)
       if (isBlue) {
         logMsg += ` [BLUE POWER: ${card.power}]`;
-        applyBlueItemPower(playerIdx, card.item);
+        if (card.item === 'watch') {
+          extraTurn = true;
+        } else {
+          applyBlueItemPower(playerIdx, card.item);
+        }
       } else {
         logMsg += ` (🚨 Stolen Contraband: NO POWER, +1 Heat!)`;
       }
 
       logAction(logMsg);
 
-      // Refill the Street slot with new card from deck
+      // Refill the Street slot
       if (deck.length > 0) {
         streetBuyers[streetSlotIdx] = deck.pop();
       } else {
         streetBuyers[streetSlotIdx] = null;
       }
+
+      return extraTurn;
     }
 
     function applyBlueItemPower(playerIdx, itemId) {
       if (itemId === 'cash') {
-        // Bribe: Skip pass if player wishes (handled automatically for bots or logged)
-        logAction(`💵 Bribe Power: Clean cash greased the wheels.`);
-      } else if (itemId === 'watch') {
-        // Alibi: Reverse direction
-        turnDirection = -turnDirection;
-        logAction(`⌚ Alibi Power: Passing direction reversed to ${turnDirection === 1 ? '↻ Clockwise' : '↺ Counter-Clockwise'}!`);
+        // Bribe: +$5 clean profit
+        const lastSale = stashes[playerIdx][stashes[playerIdx].length - 1];
+        lastSale.bonusCash = (lastSale.bonusCash || 0) + 5;
+        logAction(`💵 Bribe Power: Cash deal netted an extra +$5 clean profit!`);
       } else if (itemId === 'key') {
-        // Wiretap: Reveal target's hand
-        const target = (playerIdx + turnDirection + 4) % 4;
-        logAction(`🗝️ Wiretap Power: ${getPlayerName(playerIdx)} spied on ${getPlayerName(target)}'s cards!`);
+        // Plant: Slide 1 card from hand into target opponent's hand!
+        if (hands[playerIdx].length > 0) {
+          const target = getRichestOpponent(playerIdx);
+          // Pick a red card to plant if holding one
+          let cardIdx = hands[playerIdx].findIndex(c => c.color === 'RED');
+          if (cardIdx === -1) cardIdx = 0;
+          const planted = hands[playerIdx].splice(cardIdx, 1)[0];
+          hands[target].push(planted);
+          logAction(`🗝️ Key Plant: ${getPlayerName(playerIdx)} planted a card directly onto ${getPlayerName(target)}!`);
+        }
       } else if (itemId === 'diamond') {
-        logAction(`💎 Vault Power: Assets protected from seizure.`);
+        logAction(`💎 Vault Power: Transaction locked in steel.`);
       } else if (itemId === 'painting') {
-        logAction(`🖼️ Swap Power: Art appraisal executed.`);
+        // Appraisal: Draw 1 bonus card into hand
+        if (deck.length > 0) {
+          hands[playerIdx].push(deck.pop());
+          logAction(`🖼️ Appraisal Power: ${getPlayerName(playerIdx)} drafted an extra high-value card.`);
+        }
       } else if (itemId === 'gold') {
-        // Launder: Discard 1 Red from hand safely if player holds one
-        const redInHandIdx = hands[playerIdx].findIndex(c => c.color === 'RED');
-        if (redInHandIdx !== -1) {
-          const discardedRed = hands[playerIdx].splice(redInHandIdx, 1)[0];
-          logAction(`🧈 Launder Power: ${getPlayerName(playerIdx)} safely vaporized ${discardedRed.name} from hand!`);
+        // Launder: Safely discard 1 Red from hand into furnace
+        const redIdx = hands[playerIdx].findIndex(c => c.color === 'RED');
+        if (redIdx !== -1) {
+          const removed = hands[playerIdx].splice(redIdx, 1)[0];
+          logAction(`🧈 Launder Power: ${getPlayerName(playerIdx)} safely destroyed ${removed.name} from hand!`);
         }
       }
     }
@@ -716,19 +678,20 @@
     }
 
     /* =========================================================================
-       6. BOT TURN AI
+       6. BOT TURN AI (ONE-ACTION ENGINE)
        ========================================================================= */
     function executeBotTurn(botIdx) {
-      // 1. Try to find a valid sale
       let sold = false;
+      let extraTurn = false;
+
+      // Scan hand for match with Street
       for (let h = 0; h < hands[botIdx].length; h++) {
         const card = hands[botIdx][h];
         for (let b = 0; b < 3; b++) {
           const buyer = streetBuyers[b];
           if (buyer && card.item === buyer.buyerDemand) {
-            // Match found!
             const chosenCard = hands[botIdx].splice(h, 1)[0];
-            executeSale(botIdx, chosenCard, buyer, b);
+            extraTurn = executeSale(botIdx, chosenCard, buyer, b);
             sold = true;
             break;
           }
@@ -737,27 +700,22 @@
       }
 
       if (!sold) {
-        logAction(`${getPlayerName(botIdx)} had no matching merch for active buyers.`);
+        // Bot draws 1 card
+        if (deck.length > 0) {
+          hands[botIdx].push(deck.pop());
+          logAction(`${getPlayerName(botIdx)} had no matching merch: drew 1 card.`);
+        }
       }
 
-      // 2. Mandatory Pass
-      if (hands[botIdx].length > 0) {
-        // Bot passes Red if holding multiple, otherwise random
-        let passIdx = hands[botIdx].findIndex(c => c.color === 'RED');
-        if (passIdx === -1) passIdx = 0;
-
-        const passedCard = hands[botIdx].splice(passIdx, 1)[0];
-        const target = (4 + botIdx + turnDirection) % 4;
-        hands[target].push(passedCard);
-        logAction(`✉️ ${getPlayerName(botIdx)} passed a card face-down to ${getPlayerName(target)}.`);
+      if (extraTurn) {
+        setTimeout(() => executeBotTurn(botIdx), 600);
+      } else {
+        setTimeout(endTurn, 500);
       }
-
-      setTimeout(endTurn, 500);
     }
 
     function endTurn() {
-      // Advance active player according to direction
-      activePlayerIndex = (4 + activePlayerIndex + turnDirection) % 4;
+      activePlayerIndex = (activePlayerIndex + 1) % 4;
       startTurn();
     }
 
@@ -765,9 +723,7 @@
        7. RAID CALCULATION & MATCH SCORING
        ========================================================================= */
     function calculateTotalHeat(playerIdx) {
-      // 1 Heat per unscrubbed Red in Stash
       const soldHeat = stashes[playerIdx].filter(s => s.card.color === 'RED' && !s.isRedScrubbed).length;
-      // 2 Heat per Red still stuck in hand!
       const handHeat = hands[playerIdx].filter(c => c.color === 'RED').length * 2;
       return { total: soldHeat + handHeat, sold: soldHeat, hand: handHeat };
     }
@@ -781,22 +737,18 @@
     function triggerPoliceRaid() {
       logAction("🚨🚨 SIRENS! THE COUNTDOWN FUSE HIT ZERO! POLICE RAID IN PROGRESS! 🚨🚨");
 
-      // Calculate Heat for all 4 players
       const heatScores = [];
       for (let p = 0; p < 4; p++) {
         heatScores.push(calculateTotalHeat(p));
       }
 
-      // Find max heat
       let maxHeat = -1;
       heatScores.forEach(h => {
         if (h.total > maxHeat) maxHeat = h.total;
       });
 
-      // Arrest player(s) with max heat
       const modalBreakdown = document.getElementById('raid-breakdown-body');
       modalBreakdown.innerHTML = '';
-
       document.getElementById('raid-modal-round').textContent = matchRound;
 
       for (let p = 0; p < 4; p++) {
@@ -840,7 +792,6 @@
       document.getElementById('raid-modal').classList.add('hidden');
 
       if (matchRound >= 4) {
-        // Match Complete!
         concludeMatch();
       } else {
         matchRound++;
@@ -869,12 +820,11 @@
     function updateUI() {
       document.getElementById('hud-round').textContent = `${matchRound}/4`;
       document.getElementById('hud-dealer').textContent = getPlayerName(dealerIndex);
-      document.getElementById('hud-flow').textContent = turnDirection === 1 ? '↻ Clockwise' : '↺ Counter-Clockwise';
+      document.getElementById('hud-flow').textContent = '↻ Clockwise';
 
       document.getElementById('fuse-count').textContent = countdownPile.length;
       document.getElementById('fuse-token-badge').textContent = `TOKEN [${activeTokenValue}]`;
 
-      // Leaderboard Pills
       const leadEl = document.getElementById('leaderboard-pills');
       leadEl.innerHTML = '';
       for (let p = 0; p < 4; p++) {
@@ -886,14 +836,12 @@
         leadEl.appendChild(pill);
       }
 
-      // Player Dealer Badge
       if (dealerIndex === 0) {
         document.getElementById('player-dealer-badge').classList.remove('hidden');
       } else {
         document.getElementById('player-dealer-badge').classList.add('hidden');
       }
 
-      // Player 1 Round Stats
       document.getElementById('p1-round-cash').textContent = calculateRoundCash(0);
       const p1Heat = calculateTotalHeat(0);
       document.getElementById('p1-heat-val').textContent = p1Heat.total;
@@ -936,7 +884,6 @@
             <span class="text-rose-400 font-bold">🔥 Heat: ${heat.total}</span>
           </div>
 
-          <!-- Stash pips preview -->
           <div class="flex gap-1 overflow-x-auto no-scrollbar py-0.5">
             ${stashes[p].map(s => {
               const isRed = s.card.color === 'RED' && !s.isRedScrubbed;
@@ -985,7 +932,7 @@
 
           <div class="text-[9px] text-slate-500 font-mono flex items-center justify-between border-t border-slate-800/80 pt-1">
             <span>Face-Down Buyer</span>
-            <span class="text-amber-400 font-bold">${isSelected ? '✓ SELECTED' : 'Click to Target'}</span>
+            <span class="text-amber-400 font-bold">${isSelected ? '✓ TARGET' : 'Click to Target'}</span>
           </div>
         `;
       }
@@ -1040,14 +987,12 @@
       return p === 0 ? "You (Player 1)" : `Bot ${p + 1}`;
     }
 
-    // Attach Reset Listener
     document.getElementById('reset-match-btn').onclick = () => {
       if (confirm("Reset the entire 4-round match?")) {
         initMatch();
       }
     };
 
-    // Auto-boot on load
     window.onload = () => {
       initMatch();
     };
