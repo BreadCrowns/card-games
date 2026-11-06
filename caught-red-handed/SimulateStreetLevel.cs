@@ -16,6 +16,7 @@ namespace CaughtRedHandedSim
         public int Req { get; set; }
         public bool IsDiscerning { get; set; }
         public string Power { get; set; }
+        public string Name { get; set; }
     }
 
     class StreetSetup
@@ -55,53 +56,77 @@ namespace CaughtRedHandedSim
     {
         static Random rng = new Random(42);
 
+        // 72-Card Merchandise Deck
         static List<Card> BuildMerchandiseDeck()
         {
             List<Card> deck = new List<Card>();
             int id = 1;
-            int[] blueVals = new int[] { 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 8, 8 };
-            foreach (int v in blueVals)
-                deck.Add(new Card { Id = id++, Color = "BLUE", Val = v });
 
-            int[] redVals = new int[] { 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 10, 10 };
-            foreach (int v in redVals)
-                deck.Add(new Card { Id = id++, Color = "RED", Val = v });
+            // 44 Blue Clean Cards: Values 2-8
+            // 6 copies of 2-7 (36) + 8 copies of 8 (8) = 44 cards
+            for (int val = 2; val <= 7; val++)
+            {
+                for (int i = 0; i < 6; i++)
+                    deck.Add(new Card { Id = id++, Color = "BLUE", Val = val });
+            }
+            for (int i = 0; i < 8; i++)
+                deck.Add(new Card { Id = id++, Color = "BLUE", Val = 8 });
+
+            // 28 Red Contraband Cards: Values 5-10
+            // 4 copies of 5,6,7,8,9 (20) + 8 copies of 10 = 28 cards
+            for (int val = 5; val <= 9; val++)
+            {
+                for (int i = 0; i < 4; i++)
+                    deck.Add(new Card { Id = id++, Color = "RED", Val = val });
+            }
+            for (int i = 0; i < 8; i++)
+                deck.Add(new Card { Id = id++, Color = "RED", Val = 10 });
 
             Shuffle(deck);
             return deck;
         }
 
+        // 34 Buyer Contracts + Police Ladder
         static StreetSetup BuildStreetDeck(int round)
         {
-            List<Buyer> allBuyers = new List<Buyer>
-            {
-                new Buyer { Req = 3, IsDiscerning = false, Power = null },
-                new Buyer { Req = 4, IsDiscerning = false, Power = null },
-                new Buyer { Req = 5, IsDiscerning = false, Power = null },
-                new Buyer { Req = 6, IsDiscerning = false, Power = null },
-                new Buyer { Req = 7, IsDiscerning = false, Power = null },
-                new Buyer { Req = 8, IsDiscerning = false, Power = null },
+            List<Buyer> allBuyers = new List<Buyer>();
 
-                new Buyer { Req = 4, IsDiscerning = true, Power = "DISCARD" },
-                new Buyer { Req = 5, IsDiscerning = true, Power = "DRAW" },
-                new Buyer { Req = 6, IsDiscerning = true, Power = "PASS" },
-                new Buyer { Req = 7, IsDiscerning = true, Power = "DISCARD" },
-                new Buyer { Req = 8, IsDiscerning = true, Power = "PASS" },
-                new Buyer { Req = 9, IsDiscerning = true, Power = "DRAW" },
-                new Buyer { Req = 10, IsDiscerning = true, Power = "DISCARD" },
-                new Buyer { Req = 10, IsDiscerning = true, Power = "PASS" }
-            };
+            // 16 Gullible Buyers (Values 3-8, 2-3 copies each)
+            int[] gullibleReqs = { 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8 };
+            foreach (int req in gullibleReqs)
+                allBuyers.Add(new Buyer { Req = req, IsDiscerning = false, Power = null, Name = "Gullible Buyer" });
+
+            // 18 Discerning Buyers with Powers (Values 4-10)
+            allBuyers.Add(new Buyer { Req = 4, IsDiscerning = true, Power = "DISCARD", Name = "Smuggler" });
+            allBuyers.Add(new Buyer { Req = 4, IsDiscerning = true, Power = "DRAW", Name = "Pawn Broker" });
+            allBuyers.Add(new Buyer { Req = 5, IsDiscerning = true, Power = "DRAW", Name = "Appraiser" });
+            allBuyers.Add(new Buyer { Req = 5, IsDiscerning = true, Power = "PASS", Name = "Informant" });
+            allBuyers.Add(new Buyer { Req = 6, IsDiscerning = true, Power = "PASS", Name = "Shadow Broker" });
+            allBuyers.Add(new Buyer { Req = 6, IsDiscerning = true, Power = "DISCARD", Name = "Fence" });
+            allBuyers.Add(new Buyer { Req = 7, IsDiscerning = true, Power = "DISCARD", Name = "Elite Collector" });
+            allBuyers.Add(new Buyer { Req = 7, IsDiscerning = true, Power = "DRAW", Name = "Auctioneer" });
+            allBuyers.Add(new Buyer { Req = 8, IsDiscerning = true, Power = "PASS", Name = "Mob Kingpin" });
+            allBuyers.Add(new Buyer { Req = 8, IsDiscerning = true, Power = "DISCARD", Name = "Syndicate Boss" });
+            allBuyers.Add(new Buyer { Req = 9, IsDiscerning = true, Power = "DRAW", Name = "Int'l Fence" });
+            allBuyers.Add(new Buyer { Req = 9, IsDiscerning = true, Power = "PASS", Name = "Diplomat" });
+            allBuyers.Add(new Buyer { Req = 10, IsDiscerning = true, Power = "DISCARD", Name = "Master Fence" });
+            allBuyers.Add(new Buyer { Req = 10, IsDiscerning = true, Power = "PASS", Name = "Market Mogul" });
+            allBuyers.Add(new Buyer { Req = 10, IsDiscerning = true, Power = "DRAW", Name = "Billionaire" });
+            allBuyers.Add(new Buyer { Req = 5, IsDiscerning = true, Power = "DISCARD", Name = "Safehouse Fixer" });
+            allBuyers.Add(new Buyer { Req = 7, IsDiscerning = true, Power = "PASS", Name = "Underworld Courier" });
+            allBuyers.Add(new Buyer { Req = 8, IsDiscerning = true, Power = "DRAW", Name = "Banker" });
 
             Shuffle(allBuyers);
 
+            // 3 starting street buyers
             List<Buyer> street = new List<Buyer> { allBuyers[0], allBuyers[1], allBuyers[2] };
 
             List<object> deckCards = new List<object>();
             for (int i = 3; i < allBuyers.Count; i++)
                 deckCards.Add(allBuyers[i]);
 
-            // Police ladder: R1: 3 cops, R2: 4 cops, R3: 5 cops, R4: 6 cops
-            int[] policeCounts = new int[] { 3, 4, 5, 6 };
+            // Police ladder: R1: 3 cops, R2: 3 cops, R3: 4 cops, R4: 5 cops
+            int[] policeCounts = new int[] { 3, 3, 4, 5 };
             int copCount = policeCounts[Math.Min(round - 1, 3)];
             for (int c = 0; c < copCount; c++)
                 deckCards.Add("POLICE");
@@ -145,7 +170,7 @@ namespace CaughtRedHandedSim
             for (int m = 0; m < matches; m++)
             {
                 int[] matchScores = new int[4];
-                int startingSeat = m % 4; // Rotate starting player across rounds/matches
+                int startingSeat = m % 4;
 
                 for (int round = 1; round <= 4; round++)
                 {
@@ -190,9 +215,9 @@ namespace CaughtRedHandedSim
                         turnsThisRound++;
 
                         // Decision Logic: Cash Out?
-                        // Under 3 strikes: Players cash out when police strikes == 2 (1 slot remaining) and hand is clean!
+                        // Under 3 strikes: Players cash out when police strikes == 2 (1 slot remaining) and hand is clean and banked >= 3 buyers!
                         int redsInHand = hands[activePlayer].Count(c => c.Color == "RED");
-                        if (policeStrikes >= 2 && redsInHand == 0 && stashes[activePlayer].Count >= 2)
+                        if (policeStrikes >= 2 && redsInHand == 0 && stashes[activePlayer].Count >= 3)
                         {
                             cashedOut[activePlayer] = true;
                             report.TotalEarlyCashOuts++;
@@ -206,7 +231,7 @@ namespace CaughtRedHandedSim
                         List<Card> bestCombo = null;
 
                         for (int s = 0; s < street.Count; s++)
-                        {
+                            {
                             Buyer b = street[s];
                             if (b == null) continue;
 
@@ -280,16 +305,14 @@ namespace CaughtRedHandedSim
                                 }
                             }
 
-                            // Refill Street Slot
                             if (streetDeck.Count > 0)
                             {
                                 object refCard = streetDeck.Pop();
                                 if (refCard is string && (string)refCard == "POLICE")
                                 {
                                     policeStrikes++;
-                                    street[buyerSlot] = null; // Block this slot!
+                                    street[buyerSlot] = null;
 
-                                    // OPTION 2: 3-STRIKE RAID TRIGGER!
                                     if (policeStrikes >= 3)
                                     {
                                         roundOver = true;
@@ -362,7 +385,7 @@ namespace CaughtRedHandedSim
             report.AvgWinningScore = (double)totalWinScores / report.TotalMatches;
 
             Console.WriteLine("==================================================================");
-            Console.WriteLine("   CAUGHT RED-HANDED: 3-STRIKE RAID HARNESS (10,000 MATCHES)      ");
+            Console.WriteLine("   CAUGHT RED-HANDED: 5-7 TURNS/PLAYER SIMULATION (10,000 MATCHES)");
             Console.WriteLine("==================================================================");
             Console.WriteLine("Total Matches Simulated : {0:N0} (40,000 Rounds)", report.TotalMatches);
             Console.WriteLine("Average Turns per Round : {0:F1} turns (~{1:F1} turns per player)", report.AvgRoundTurns, report.AvgRoundTurns / 4.0);
@@ -372,9 +395,9 @@ namespace CaughtRedHandedSim
             Console.WriteLine("Police Raids (3 Cops)   : {0:N0} ({1:P1})", report.TotalPoliceRaids, (double)report.TotalPoliceRaids / report.TotalRounds);
             Console.WriteLine("Clean Getaways (All Out): {0:N0} ({1:P1})", report.TotalCleanGetaways, (double)report.TotalCleanGetaways / report.TotalRounds);
             Console.WriteLine("  * Round 1 Raids (3 Cops): {0:N0} ({1:P1})", report.Round1Raids, (double)report.Round1Raids / report.TotalMatches);
-            Console.WriteLine("  * Round 2 Raids (4 Cops): {0:N0} ({1:P1})", report.Round2Raids, (double)report.Round2Raids / report.TotalMatches);
-            Console.WriteLine("  * Round 3 Raids (5 Cops): {0:N0} ({1:P1})", report.Round3Raids, (double)report.Round3Raids / report.TotalMatches);
-            Console.WriteLine("  * Round 4 Raids (6 Cops): {0:N0} ({1:P1})", report.Round4Raids, (double)report.Round4Raids / report.TotalMatches);
+            Console.WriteLine("  * Round 2 Raids (3 Cops): {0:N0} ({1:P1})", report.Round2Raids, (double)report.Round2Raids / report.TotalMatches);
+            Console.WriteLine("  * Round 3 Raids (4 Cops): {0:N0} ({1:P1})", report.Round3Raids, (double)report.Round3Raids / report.TotalMatches);
+            Console.WriteLine("  * Round 4 Raids (5 Cops): {0:N0} ({1:P1})", report.Round4Raids, (double)report.Round4Raids / report.TotalMatches);
             Console.WriteLine();
             Console.WriteLine("--- PLAYER ACTION DYNAMICS ---");
             int totalSales = report.TotalSingleCardsUsed + report.TotalCombosUsed;

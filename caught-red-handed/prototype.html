@@ -191,7 +191,7 @@
        1. SPECIFICATION & DATA MODEL
        ========================================================================= */
     const TOTAL_ROUNDS = 4;
-    const POLICE_LADDER = [3, 4, 5, 6]; // Police cards per round (R1: 3, R2: 4, R3: 5, R4: 6)
+    const POLICE_LADDER = [3, 3, 4, 5]; // Scaled police ladder for 5-7 turns per player (24-26 round turns)
 
     let matchRound = 1;
     let matchScores = [0, 0, 0, 0];
@@ -200,36 +200,44 @@
     // State Variables for Active Round
     let merchandiseDeck = [];
     let streetDeck = [];
-    let streetSlots = [null, null, null]; // 3 slots (Buyer card OR 'POLICE')
+    let streetSlots = [null, null, null];
     let policeStrikeCount = 0;
 
     let hands = [[], [], [], []];
-    let scoreStashes = [[], [], [], []]; // Array of Buyer cards claimed
-    let soldHeatCounts = [0, 0, 0, 0];   // Discerning sales heat accumulated
+    let scoreStashes = [[], [], [], []];
+    let soldHeatCounts = [0, 0, 0, 0];
     let cashedOutStatus = [false, false, false, false];
 
     // Interaction State
-    let selectedHandIndices = []; // Multi-select array for combo
+    let selectedHandIndices = [];
     let selectedBuyerSlot = null;
 
     /* =========================================================================
-       2. DECK BUILDER & SETUP
+       2. DECK BUILDER & SETUP (72 Merch + 40 Street = 112 Cards)
        ========================================================================= */
     function buildMerchandiseDeck() {
       const cards = [];
       let uid = 1;
 
-      // 22 Blue Clean Cards (Values 2-8)
-      const blueValues = [2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8];
-      blueValues.forEach(val => {
-        cards.push({ uid: uid++, color: 'BLUE', val: val, name: `Clean Loot [${val}]`, icon: '💎' });
-      });
+      // 44 Blue Clean Cards (Values 2-8, 6 copies of 2-7 + 8 copies of 8)
+      for (let v = 2; v <= 7; v++) {
+        for (let i = 0; i < 6; i++) {
+          cards.push({ uid: uid++, color: 'BLUE', val: v, name: `Clean Loot [${v}]`, icon: '💎' });
+        }
+      }
+      for (let i = 0; i < 8; i++) {
+        cards.push({ uid: uid++, color: 'BLUE', val: 8, name: `Clean Loot [8]`, icon: '💎' });
+      }
 
-      // 14 Red Contraband Cards (Values 5-10)
-      const redValues = [5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 10, 10];
-      redValues.forEach(val => {
-        cards.push({ uid: uid++, color: 'RED', val: val, name: `Hot Contraband [${val}]`, icon: '🚨' });
-      });
+      // 28 Red Contraband Cards (Values 5-10, 4 copies of 5-9 + 8 copies of 10)
+      for (let v = 5; v <= 9; v++) {
+        for (let i = 0; i < 4; i++) {
+          cards.push({ uid: uid++, color: 'RED', val: v, name: `Hot Contraband [${v}]`, icon: '🚨' });
+        }
+      }
+      for (let i = 0; i < 8; i++) {
+        cards.push({ uid: uid++, color: 'RED', val: 10, name: `Hot Contraband [10]`, icon: '🚨' });
+      }
 
       return shuffle(cards);
     }
@@ -238,35 +246,41 @@
       const buyers = [];
       let uid = 100;
 
-      // 14 Buyer Contracts: Mix of Gullible (🟢) and Discerning (🔍 with Powers)
-      const buyerDefs = [
-        { req: 3, isDiscerning: false, power: null, name: "Pawnshop Tourist" },
-        { req: 4, isDiscerning: false, power: null, name: "Street Hustler" },
-        { req: 5, isDiscerning: false, power: null, name: "Flea Market Dealer" },
-        { req: 6, isDiscerning: false, power: null, name: "Underground Fence" },
-        { req: 7, isDiscerning: false, power: null, name: "Corrupt Broker" },
-        { req: 8, isDiscerning: false, power: null, name: "Syndicate Boss" },
-        
-        // Discerning Buyers with Powers
-        { req: 4, isDiscerning: true, power: 'DISCARD', powerLabel: '🗑️ Discard 1 Card', name: "Smuggler" },
-        { req: 5, isDiscerning: true, power: 'DRAW', powerLabel: '📥 Draw 1 Card', name: "Antiques Appraiser" },
-        { req: 6, isDiscerning: true, power: 'PASS', powerLabel: '✉️ Pass 1 Card', name: "Shadow Broker" },
-        { req: 7, isDiscerning: true, power: 'DISCARD', powerLabel: '🗑️ Discard 1 Card', name: "Elite Collector" },
-        { req: 8, isDiscerning: true, power: 'PASS', powerLabel: '✉️ Pass 1 Card', name: "Mob Kingpin" },
-        { req: 9, isDiscerning: true, power: 'DRAW', powerLabel: '📥 Draw 1 Card', name: "International Fence" },
-        { req: 10, isDiscerning: true, power: 'DISCARD', powerLabel: '🗑️ Discard 1 Card', name: "Master Fence" },
-        { req: 10, isDiscerning: true, power: 'PASS', powerLabel: '✉️ Pass 1 Card', name: "Black Market Mogul" }
-      ];
-
-      buyerDefs.forEach(b => {
-        buyers.push({ uid: uid++, type: 'BUYER', ...b });
+      // 16 Gullible Buyers (Values 3-8, 2-3 copies each)
+      const gullibleReqs = [3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8];
+      gullibleReqs.forEach(req => {
+        buyers.push({ uid: uid++, type: 'BUYER', req: req, isDiscerning: false, power: null, name: "Gullible Buyer" });
       });
 
-      // 3 Safe Starting Buyers for The Street (Dealt before adding Cops)
+      // 18 Discerning Buyers with Powers (Values 4-10)
+      const discerningDefs = [
+        { req: 4, power: 'DISCARD', powerLabel: '🗑️ Discard 1 Card', name: "Smuggler" },
+        { req: 4, power: 'DRAW', powerLabel: '📥 Draw 1 Card', name: "Pawn Broker" },
+        { req: 5, power: 'DRAW', powerLabel: '📥 Draw 1 Card', name: "Appraiser" },
+        { req: 5, power: 'PASS', powerLabel: '✉️ Pass 1 Card', name: "Informant" },
+        { req: 6, power: 'PASS', powerLabel: '✉️ Pass 1 Card', name: "Shadow Broker" },
+        { req: 6, power: 'DISCARD', powerLabel: '🗑️ Discard 1 Card', name: "Fence" },
+        { req: 7, power: 'DISCARD', powerLabel: '🗑️ Discard 1 Card', name: "Elite Collector" },
+        { req: 7, power: 'DRAW', powerLabel: '📥 Draw 1 Card', name: "Auctioneer" },
+        { req: 8, power: 'PASS', powerLabel: '✉️ Pass 1 Card', name: "Mob Kingpin" },
+        { req: 8, power: 'DISCARD', powerLabel: '🗑️ Discard 1 Card', name: "Syndicate Boss" },
+        { req: 9, power: 'DRAW', powerLabel: '📥 Draw 1 Card', name: "Int'l Fence" },
+        { req: 9, power: 'PASS', powerLabel: '✉️ Pass 1 Card', name: "Diplomat" },
+        { req: 10, power: 'DISCARD', powerLabel: '🗑️ Discard 1 Card', name: "Master Fence" },
+        { req: 10, power: 'PASS', powerLabel: '✉️ Pass 1 Card', name: "Market Mogul" },
+        { req: 10, power: 'DRAW', powerLabel: '📥 Draw 1 Card', name: "Billionaire" },
+        { req: 5, power: 'DISCARD', powerLabel: '🗑️ Discard 1 Card', name: "Safehouse Fixer" },
+        { req: 7, power: 'PASS', powerLabel: '✉️ Pass 1 Card', name: "Underworld Courier" },
+        { req: 8, power: 'DRAW', powerLabel: '📥 Draw 1 Card', name: "Banker" }
+      ];
+
+      discerningDefs.forEach(b => {
+        buyers.push({ uid: uid++, type: 'BUYER', isDiscerning: true, ...b });
+      });
+
       const shuffledBuyers = shuffle(buyers);
       const startingStreet = [shuffledBuyers.pop(), shuffledBuyers.pop(), shuffledBuyers.pop()];
 
-      // Add Cops according to round ladder
       const copsCount = POLICE_LADDER[round - 1] || 4;
       const streetDeckCards = [...shuffledBuyers];
       for (let c = 0; c < copsCount; c++) {

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Caught Red-Handed: Street Level Edition — Low-Ink PnP Poker Deck (8.5x11)</title>
+  <title>Caught Red-Handed: Street Level Edition — 112-Card PnP Poker Deck (8.5x11)</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap');
     @page { size: letter portrait; margin: 0.25in 0.5in 0.25in 0.5in; }
@@ -34,7 +34,6 @@
       margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.1em; 
     }
     
-    /* 3x3 Poker Layout (2.5in x 3.5in on 8.5x11) */
     .sheet { 
       width: 7.5in; height: 10.5in; display: grid; 
       grid-template-columns: repeat(3, 2.5in); grid-template-rows: repeat(3, 3.5in); 
@@ -100,7 +99,7 @@
       <span style="font-size: 20px;">🚨</span>
       <div>
         <div style="font-weight: 900; font-size: 15px; letter-spacing: 0.5px;">CAUGHT RED-HANDED: STREET LEVEL EDITION</div>
-        <div style="font-size: 11px; opacity: 0.8;">56 Cards Total &bull; 36 Merchandise + 20 Street/Police Cards &bull; Low-Ink Format</div>
+        <div style="font-size: 11px; opacity: 0.8;">112 Cards Total (72 Merchandise + 40 Street/Police) &bull; 5-7 Turns/Player Balance &bull; Low-Ink Format</div>
       </div>
     </div>
     <button onclick="window.print()">
@@ -113,64 +112,89 @@
   <script>
     const allCards = [];
 
-    // 1. 22 Blue Clean Cards (Values 2-8)
-    const blueValues = [2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 8, 8];
-    blueValues.forEach(val => {
+    // 1. 44 Blue Clean Cards (Values 2-8, 6 copies of 2-7 + 8 copies of 8)
+    for (let v = 2; v <= 7; v++) {
+      for (let i = 0; i < 6; i++) {
+        allCards.push({
+          name: `Clean Loot`,
+          icon: "💎",
+          val: `[${v}]`,
+          type: "CLEAN MERCH",
+          power: "Safe Currency (0 Heat). Use as single or combo component to meet Buyer threshold.",
+          colorClass: "blue"
+        });
+      }
+    }
+    for (let i = 0; i < 8; i++) {
       allCards.push({
         name: `Clean Loot`,
         icon: "💎",
-        val: `[${val}]`,
+        val: `[8]`,
         type: "CLEAN MERCH",
         power: "Safe Currency (0 Heat). Use as single or combo component to meet Buyer threshold.",
         colorClass: "blue"
       });
-    });
+    }
 
-    // 2. 14 Red Contraband Cards (Values 5-10)
-    const redValues = [5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 10, 10];
-    redValues.forEach(val => {
+    // 2. 28 Red Contraband Cards (Values 5-10, 4 copies of 5-9 + 8 copies of 10)
+    for (let v = 5; v <= 9; v++) {
+      for (let i = 0; i < 4; i++) {
+        allCards.push({
+          name: `Hot Contraband`,
+          icon: "🚨",
+          val: `[${v}]`,
+          type: "CONTRABAND",
+          power: "High-Value Bargain! 0 Heat to Gullible, +1 Heat to Discerning, +2 Heat if held in hand at Raid!",
+          colorClass: "red"
+        });
+      }
+    }
+    for (let i = 0; i < 8; i++) {
       allCards.push({
         name: `Hot Contraband`,
         icon: "🚨",
-        val: `[${val}]`,
+        val: `[10]`,
         type: "CONTRABAND",
         power: "High-Value Bargain! 0 Heat to Gullible, +1 Heat to Discerning, +2 Heat if held in hand at Raid!",
         colorClass: "red"
       });
-    });
+    }
 
-    // 3. 6 Gullible Buyer Cards (Values 3-8)
-    const gullibleBuyers = [
-      { req: 3, name: "Pawnshop Tourist" },
-      { req: 4, name: "Street Hustler" },
-      { req: 5, name: "Flea Market Dealer" },
-      { req: 6, name: "Underground Fence" },
-      { req: 7, name: "Corrupt Broker" },
-      { req: 8, name: "Syndicate Boss" }
-    ];
-    gullibleBuyers.forEach(b => {
+    // 3. 16 Gullible Buyer Cards (Values 3-8)
+    const gullibleReqs = [3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8];
+    gullibleReqs.forEach((req, idx) => {
       allCards.push({
-        name: b.name,
+        name: `Pawn Dealer #${idx + 1}`,
         icon: "🟢",
-        val: `REQ [${b.req}]`,
+        val: `REQ [${req}]`,
         type: "GULLIBLE BUYER",
-        power: `Worth ${b.req} Points. FOOLABLE: Takes Red Contraband with ZERO Heat! (No powers).`,
+        power: `Worth ${req} Points. FOOLABLE: Takes Red Contraband with ZERO Heat! (No powers).`,
         colorClass: "buyer-gullible"
       });
     });
 
-    // 4. 8 Discerning Buyer Cards (Values 4-10 with Powers)
-    const discerningBuyers = [
-      { req: 4, name: "Smuggler", power: "🗑️ DISCARD 1 Card from Hand" },
-      { req: 5, name: "Appraiser", power: "📥 DRAW 1 Card from Deck" },
-      { req: 6, name: "Shadow Broker", power: "✉️ PASS 1 Card to Opponent" },
-      { req: 7, name: "Elite Collector", power: "🗑️ DISCARD 1 Card from Hand" },
-      { req: 8, name: "Mob Kingpin", power: "✉️ PASS 1 Card to Opponent" },
-      { req: 9, name: "Int'l Fence", power: "📥 DRAW 1 Card from Deck" },
-      { req: 10, name: "Master Fence", power: "🗑️ DISCARD 1 Card from Hand" },
-      { req: 10, name: "Market Mogul", power: "✉️ PASS 1 Card to Opponent" }
+    // 4. 18 Discerning Buyer Cards (Values 4-10 with Powers)
+    const discerningDefs = [
+      { req: 4, power: "🗑️ DISCARD 1 Card from Hand", name: "Smuggler" },
+      { req: 4, power: "📥 DRAW 1 Card from Deck", name: "Pawn Broker" },
+      { req: 5, power: "📥 DRAW 1 Card from Deck", name: "Appraiser" },
+      { req: 5, power: "✉️ PASS 1 Card to Opponent", name: "Informant" },
+      { req: 6, power: "✉️ PASS 1 Card to Opponent", name: "Shadow Broker" },
+      { req: 6, power: "🗑️ DISCARD 1 Card from Hand", name: "Fence" },
+      { req: 7, power: "🗑️ DISCARD 1 Card from Hand", name: "Elite Collector" },
+      { req: 7, power: "📥 DRAW 1 Card from Deck", name: "Auctioneer" },
+      { req: 8, power: "✉️ PASS 1 Card to Opponent", name: "Mob Kingpin" },
+      { req: 8, power: "🗑️ DISCARD 1 Card from Hand", name: "Syndicate Boss" },
+      { req: 9, power: "📥 DRAW 1 Card from Deck", name: "Int'l Fence" },
+      { req: 9, power: "✉️ PASS 1 Card to Opponent", name: "Diplomat" },
+      { req: 10, power: "🗑️ DISCARD 1 Card from Hand", name: "Master Fence" },
+      { req: 10, power: "✉️ PASS 1 Card to Opponent", name: "Market Mogul" },
+      { req: 10, power: "📥 DRAW 1 Card from Deck", name: "Billionaire" },
+      { req: 5, power: "🗑️ DISCARD 1 Card from Hand", name: "Safehouse Fixer" },
+      { req: 7, power: "✉️ PASS 1 Card to Opponent", name: "Underworld Courier" },
+      { req: 8, power: "📥 DRAW 1 Card from Deck", name: "Banker" }
     ];
-    discerningBuyers.forEach(b => {
+    discerningDefs.forEach(b => {
       allCards.push({
         name: b.name,
         icon: "🔍",
@@ -193,7 +217,7 @@
       });
     }
 
-    // Render sheets (9 cards per sheet, 7 sheets total for 56 cards)
+    // Render sheets (9 cards per sheet, 13 sheets total for 112 cards)
     const container = document.getElementById('deck-container');
     const totalSheets = Math.ceil(allCards.length / 9);
 

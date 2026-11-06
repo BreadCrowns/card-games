@@ -5,10 +5,11 @@
 
 ## 1. High-Level Overview
 * **Players**: 3–5 (Optimized for 4)
-* **Match Length**: Exactly 4 rounds (~15–20 minutes total)
-* **Components**: 56 Standard Poker Cards
-  * **Merchandise Deck**: 36 Cards (Clean Blue Loot & Hot Red Contraband)
-  * **Street Deck**: 20 Cards (14 Buyer Contracts + 6 Police Raid Cards)
+* **Match Length**: Exactly 4 rounds (~20–25 minutes total)
+* **Components**: 112 Standard Poker Cards (Standard 2-Sheet Tuckbox Format)
+  * **Merchandise Deck**: 72 Cards (44 Clean Blue Loot & 28 Hot Red Contraband)
+  * **Street Deck**: 40 Cards (34 Buyer Contracts + 6 Police Raid Cards)
+* **Pacing Target**: **~24–26 total turns per round (~6 to 6.5 turns per player)**.
 * **Core Turn**: Choose **1 of 3 Actions**:  
   1. **Sell to a Buyer** (Single card or strict combo)  
   2. **Re-supply** (Draw 1 card from Merchandise Deck)  
@@ -17,37 +18,39 @@
 
 ---
 
-## 2. Component & Deck Breakdown (56 Cards)
+## 2. Component & Deck Breakdown (112 Cards)
 
-### A. The Merchandise Deck (36 Cards)
-Dealt to players' hands. Used as currency to meet Buyer thresholds.
-* **Clean Loot (Blue)** &mdash; **22 Cards**:
-  * Moderate values: `[2, 2, 2]`, `[3, 3, 3]`, `[4, 4, 4]`, `[5, 5, 5]`, `[6, 6, 6]`, `[7, 7, 7]`, `[8, 8, 8, 8]`
+### A. The Merchandise Deck (72 Cards)
+Dealt to players' hands (5 starting cards each) and drawn during Re-supply actions.
+* **Clean Loot (Blue)** &mdash; **44 Cards**:
+  * Values `[2, 3, 4, 5, 6, 7]` (6 copies each = 36 cards)
+  * Value `[8]` (8 copies = 8 cards)
   * **Safe Currency**: Always 0 Heat.
-* **Stolen Contraband (Red)** &mdash; **14 Cards**:
-  * High values: `[5, 5]`, `[6, 6]`, `[7, 7]`, `[8, 8]`, `[9, 9]`, `[10, 10, 10, 10]`
+* **Stolen Contraband (Red)** &mdash; **28 Cards**:
+  * Values `[5, 6, 7, 8, 9]` (4 copies each = 20 cards)
+  * Value `[10]` (8 copies = 8 cards)
   * **High Value, High Risk**: Needed to satisfy expensive Buyers.
   * **Heat Rules**:
     * **0 Heat** if sold to a Gullible Buyer.
     * **+1 Heat per card** if sold to a Discerning Buyer.
     * **+2 Heat per card** if caught still holding it in hand when the Raid hits!
 
-### B. The Street Deck (20 Cards)
+### B. The Street Deck (40 Cards)
 Sits in the center of the table. Refills the 3 active market slots on The Street.
-* **Buyer Contracts** &mdash; **14 Cards**:
+* **Buyer Contracts** &mdash; **34 Cards**:
   * **Minimum Value Threshold**: `[3]` to `[10]`. (This is also the exact point value of the card!).
   * **Two Buyer Archetypes**:
-    1. **Gullible Buyers (🟢)**: Willingly buy Red Contraband with **0 Heat** added! *(No special powers).*
-    2. **Discerning Buyers (🔍)**: Add **+1 Heat per Red card** in the transaction, BUT grant **1 Public Power**:
+    1. **Gullible Buyers (🟢)** &mdash; 16 Cards: Values `[3]` to `[8]` (2–3 copies each). Willingly buy Red Contraband with **0 Heat** added! *(No special powers).*
+    2. **Discerning Buyers (🔍)** &mdash; 18 Cards: Values `[4]` to `[10]`. Add **+1 Heat per Red card** in the transaction, BUT grant **1 Public Power**:
        * 📥 **Draw**: Draw 1 extra card from the Merchandise Deck.
        * 🗑️ **Discard**: Immediately discard 1 card from your hand into the scrap heap (incinerates a hot Red card!).
        * ✉️ **Pass**: Choose 1 card from your hand and slide it face-down to any active opponent.
 * **Police Raid Cards (🚨)** &mdash; **6 Cards**:
   * Seeded into the Street Deck across rounds:
-    * **Round 1**: 3 Police Cards (74% raid chance, room to breathe)
-    * **Round 2**: 4 Police Cards (86% raid chance)
-    * **Round 3**: 5 Police Cards (92% raid chance)
-    * **Round 4**: 6 Police Cards (96% raid chance, maximum danger!)
+    * **Round 1**: 3 Police Cards (Relaxed opening, high getaway rate)
+    * **Round 2**: 3 Police Cards
+    * **Round 3**: 4 Police Cards (Tighter margins)
+    * **Round 4**: 5 Police Cards (The five-alarm finale!)
 
 ---
 
@@ -56,7 +59,7 @@ Sits in the center of the table. Refills the 3 active market slots on The Street
 1. **Deal Hands**: Deal **5 Merchandise Cards** face-down to each player.
 2. **Setup The Street Deck**:
    * Deal **3 Buyer Cards** face-up in a row to establish **The Street**.
-   * Shuffle the round's designated number of **Police Cards** into the remaining Buyer cards to form the face-down **Street Deck**.
+   * Shuffle the round's designated number of **Police Cards** into the remaining 31 Buyer cards to form the face-down **Street Deck**.
 3. **Starting Player**: Rotates each round (Player 1 $\rightarrow$ 2 $\rightarrow$ 3 $\rightarrow$ 4).
 4. **No Automatic Refill**: Players do **not** draw cards after selling. Hands are finite!
 
@@ -86,7 +89,7 @@ On your turn, choose **ONE** action:
   * Take the Buyer card into your **Score Stash**. *(Points equal the Buyer's printed number; merchandise spent is discarded).*
   * *If Gullible (🟢)*: Add **0 Heat**, regardless of Red cards spent!
   * *If Discerning (🔍)*: Add **+1 Heat for EACH Red card** included in the sale, then **execute the Buyer's Power** (Draw, Discard, or Pass)!
-* **Refill The Street**: Flip the top card of the Street Deck to refill the slot. *(See Section 5 for Police flips!)*
+* **Refill The Street**: Flip the top card of the Street Deck to refill the slot.
 
 ### Action 2: Re-Supply
 * If you cannot (or choose not to) sell, draw **1 card** from the Merchandise Deck into your hand.
