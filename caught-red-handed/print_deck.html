@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Caught Red-Handed: Black Market Edition — Low-Ink PnP Poker Deck (8.5x11)</title>
+  <title>Caught Red-Handed: Street Level Edition — Low-Ink PnP Poker Deck (8.5x11)</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap');
     @page { size: letter portrait; margin: 0.25in 0.5in 0.25in 0.5in; }
@@ -63,18 +63,25 @@
     .card.red .val { color: #e11d48; }
     .card.red .badge { background: #fff1f2; border: 1px solid #e11d48; color: #be123c; }
 
-    /* SIREN TOKENS */
-    .card.token .card-inner { border-color: #f59e0b; color: #b45309; }
-    .card.token .val { color: #d97706; }
+    /* GULLIBLE BUYER (GREEN) */
+    .card.buyer-gullible .card-inner { border-color: #16a34a; color: #15803d; }
+    .card.buyer-gullible .val { color: #16a34a; }
+    .card.buyer-gullible .badge { background: #f0fdf4; border: 1px solid #16a34a; color: #16a34a; }
 
-    /* BUYER BACK */
-    .card.buyer .card-inner { border-color: #475569; color: #334155; }
-    .card.buyer .val { color: #475569; }
+    /* DISCERNING BUYER (AMBER/PURPLE) */
+    .card.buyer-discerning .card-inner { border-color: #d97706; color: #b45309; }
+    .card.buyer-discerning .val { color: #d97706; }
+    .card.buyer-discerning .badge { background: #fffbeb; border: 1px solid #d97706; color: #b45309; }
+
+    /* POLICE RAID (RED/BLACK) */
+    .card.police .card-inner { border-color: #dc2626; color: #991b1b; }
+    .card.police .val { color: #dc2626; }
+    .card.police .badge { background: #fee2e2; border: 1px solid #dc2626; color: #991b1b; }
 
     .corner-index { display: flex; justify-content: space-between; align-items: flex-start; }
     .corner-left { display: flex; align-items: center; gap: 4px; }
     .icon { font-size: 16px; line-height: 1; }
-    .val { font-size: 14px; font-weight: 900; line-height: 1; }
+    .val { font-size: 15px; font-weight: 900; line-height: 1; }
     .badge { font-size: 7.5px; font-weight: 800; padding: 2px 5px; border-radius: 4px; text-transform: uppercase; }
 
     .center-body { text-align: center; margin: auto 0; }
@@ -92,8 +99,8 @@
     <div style="display: flex; align-items: center; gap: 10px;">
       <span style="font-size: 20px;">🚨</span>
       <div>
-        <div style="font-weight: 900; font-size: 15px; letter-spacing: 0.5px;">CAUGHT RED-HANDED: BLACK MARKET EDITION</div>
-        <div style="font-size: 11px; opacity: 0.8;">56 Cards Total &bull; Single-Action PnP Poker Deck &bull; Low-Ink Format</div>
+        <div style="font-weight: 900; font-size: 15px; letter-spacing: 0.5px;">CAUGHT RED-HANDED: STREET LEVEL EDITION</div>
+        <div style="font-size: 11px; opacity: 0.8;">56 Cards Total &bull; 36 Merchandise + 20 Street/Police Cards &bull; Low-Ink Format</div>
       </div>
     </div>
     <button onclick="window.print()">
@@ -101,82 +108,90 @@
     </button>
   </div>
 
-  <div id="deck-container">
-    <!-- Generated dynamically below -->
-  </div>
+  <div id="deck-container"></div>
 
   <script>
-    const BLUE_ITEMS = [
-      { name: "Cash Stack", icon: "💵", val: "$5", type: "CLEAN", power: "Bribe: Bank +$5 Clean Cash bonus" },
-      { name: "Gold Watch", icon: "⌚", val: "$5", type: "CLEAN", power: "Time Warp: Take an immediate second turn!" },
-      { name: "Vault Key", icon: "🗝️", val: "$5", type: "CLEAN", power: "Plant: Slide 1 card from hand into opponent's hand!" },
-      { name: "Diamond", icon: "💎", val: "$5", type: "CLEAN", power: "Vault: Protect 1 card permanently from arrest" },
-      { name: "Masterpiece", icon: "🖼️", val: "$5", type: "CLEAN", power: "Appraisal: Draft 1 bonus card into your hand" },
-      { name: "Gold Ingot", icon: "🧈", val: "$5", type: "CLEAN", power: "Launder: Safely discard 1 Red from hand into furnace!" }
-    ];
-
-    const RED_ITEMS = [
-      { name: "Hot Cash", icon: "🚨💵", val: "$15", type: "CONTRABAND", power: "NO POWER (1 Heat Sold / 2 in Hand)" },
-      { name: "Tracked Watch", icon: "🚨⌚", val: "$15", type: "CONTRABAND", power: "NO POWER (1 Heat Sold / 2 in Hand)" },
-      { name: "Evidence Key", icon: "🚨🗝️", val: "$15", type: "CONTRABAND", power: "NO POWER (1 Heat Sold / 2 in Hand)" },
-      { name: "Blood Diamond", icon: "🚨💎", val: "$15", type: "CONTRABAND", power: "NO POWER (1 Heat Sold / 2 in Hand)" },
-      { name: "Stolen Art", icon: "🚨🖼️", val: "$15", type: "CONTRABAND", power: "NO POWER (1 Heat Sold / 2 in Hand)" },
-      { name: "Hot Gold", icon: "🚨🧈", val: "$15", type: "CONTRABAND", power: "NO POWER (1 Heat Sold / 2 in Hand)" }
-    ];
-
-    const TOKENS = [3, 4, 5, 6, 7];
-
     const allCards = [];
 
-    // 1. 24 Blue Cards (4 copies of each of the 6 items)
-    BLUE_ITEMS.forEach(item => {
-      for (let i = 0; i < 4; i++) {
-        allCards.push({ ...item, colorClass: 'blue' });
-      }
-    });
-
-    // 2. 18 Red Cards (3 copies of each of the 6 items)
-    RED_ITEMS.forEach(item => {
-      for (let i = 0; i < 3; i++) {
-        allCards.push({ ...item, colorClass: 'red' });
-      }
-    });
-
-    // 3. 5 Siren Countdown Tokens
-    TOKENS.forEach(tok => {
+    // 1. 22 Blue Clean Cards (Values 2-8)
+    const blueValues = [2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 8, 8];
+    blueValues.forEach(val => {
       allCards.push({
-        name: `Siren Token [${tok}]`,
-        icon: "🚨⏱️",
-        val: `${tok} CARDS`,
-        type: "DEALER FUSE",
-        power: `Dealer sets Countdown Pile to ${tok} cards. When empty: RAID!`,
-        colorClass: 'token'
+        name: `Clean Loot`,
+        icon: "💎",
+        val: `[${val}]`,
+        type: "CLEAN MERCH",
+        power: "Safe Currency (0 Heat). Use as single or combo component to meet Buyer threshold.",
+        colorClass: "blue"
       });
     });
 
-    // 4. 9 Buyer Reference Cards (for tabletop use if not using card backs)
-    const BUYER_NAMES = [
-      { name: "Cash Buyer", icon: "💵", flavor: "FINANCIAL: +$5 Bonus" },
-      { name: "Watch Buyer", icon: "⌚", flavor: "DEFENSIVE: Flip 1 Red to Blue" },
-      { name: "Key Buyer", icon: "🗝️", flavor: "OFFENSIVE: Force 1 Draw" },
-      { name: "Diamond Buyer", icon: "💎", flavor: "FINANCIAL: +$5 Bonus" },
-      { name: "Art Buyer", icon: "🖼️", flavor: "DEFENSIVE: Flip 1 Red to Blue" },
-      { name: "Gold Buyer", icon: "🧈", flavor: "OFFENSIVE: Force 1 Draw" },
-      { name: "Rule Summary #1", icon: "📋", flavor: "Turn: Sell 1 card to Buyer or Draw 1" },
-      { name: "Rule Summary #2", icon: "🚔", flavor: "Raid: Highest Heat Arrested ($0)!" },
-      { name: "Score Tracker", icon: "🏆", flavor: "Tally cash across 4 rounds to win!" }
-    ];
+    // 2. 14 Red Contraband Cards (Values 5-10)
+    const redValues = [5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 10, 10];
+    redValues.forEach(val => {
+      allCards.push({
+        name: `Hot Contraband`,
+        icon: "🚨",
+        val: `[${val}]`,
+        type: "CONTRABAND",
+        power: "High-Value Bargain! 0 Heat to Gullible, +1 Heat to Discerning, +2 Heat if held in hand at Raid!",
+        colorClass: "red"
+      });
+    });
 
-    BUYER_NAMES.forEach(b => {
+    // 3. 6 Gullible Buyer Cards (Values 3-8)
+    const gullibleBuyers = [
+      { req: 3, name: "Pawnshop Tourist" },
+      { req: 4, name: "Street Hustler" },
+      { req: 5, name: "Flea Market Dealer" },
+      { req: 6, name: "Underground Fence" },
+      { req: 7, name: "Corrupt Broker" },
+      { req: 8, name: "Syndicate Boss" }
+    ];
+    gullibleBuyers.forEach(b => {
       allCards.push({
         name: b.name,
-        icon: b.icon,
-        val: "BUYER",
-        type: "MARKET",
-        power: b.flavor,
-        colorClass: 'buyer'
+        icon: "🟢",
+        val: `REQ [${b.req}]`,
+        type: "GULLIBLE BUYER",
+        power: `Worth ${b.req} Points. FOOLABLE: Takes Red Contraband with ZERO Heat! (No powers).`,
+        colorClass: "buyer-gullible"
       });
     });
+
+    // 4. 8 Discerning Buyer Cards (Values 4-10 with Powers)
+    const discerningBuyers = [
+      { req: 4, name: "Smuggler", power: "🗑️ DISCARD 1 Card from Hand" },
+      { req: 5, name: "Appraiser", power: "📥 DRAW 1 Card from Deck" },
+      { req: 6, name: "Shadow Broker", power: "✉️ PASS 1 Card to Opponent" },
+      { req: 7, name: "Elite Collector", power: "🗑️ DISCARD 1 Card from Hand" },
+      { req: 8, name: "Mob Kingpin", power: "✉️ PASS 1 Card to Opponent" },
+      { req: 9, name: "Int'l Fence", power: "📥 DRAW 1 Card from Deck" },
+      { req: 10, name: "Master Fence", power: "🗑️ DISCARD 1 Card from Hand" },
+      { req: 10, name: "Market Mogul", power: "✉️ PASS 1 Card to Opponent" }
+    ];
+    discerningBuyers.forEach(b => {
+      allCards.push({
+        name: b.name,
+        icon: "🔍",
+        val: `REQ [${b.req}]`,
+        type: "DISCERNING BUYER",
+        power: `Worth ${b.req} Points. DISCERNING: +1 Heat per Red card. UNLOCKS POWER: ${b.power}`,
+        colorClass: "buyer-discerning"
+      });
+    });
+
+    // 5. 6 Police Patrol Cards
+    for (let c = 1; c <= 6; c++) {
+      allCards.push({
+        name: `Police Patrol`,
+        icon: "🚨🚔",
+        val: `STRIKE`,
+        type: "POLICE RAID",
+        power: `1st Card: Blocks this Street slot! 2nd Card: RAID! Round ends instantly. Highest Heat ARRESTED ($0).`,
+        colorClass: "police"
+      });
+    }
 
     // Render sheets (9 cards per sheet, 7 sheets total for 56 cards)
     const container = document.getElementById('deck-container');

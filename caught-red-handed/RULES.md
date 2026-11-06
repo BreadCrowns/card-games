@@ -1,89 +1,123 @@
-# 🚨 Caught Red-Handed: The Black Market Edition
-*A Fast-Paced Knizian Heist Card Game of Liquidating Contraband & Surviving the Police Raid*
+# 🚨 Caught Red-Handed: Street Level Edition
+*A Knizian Heist Card Game of Valuation, Contraband Combos & The Getaway Car*
 
 ---
 
-## 1. High-Level Summary
+## 1. High-Level Overview
 * **Players**: 3–5 (Optimized for 4)
-* **Match Length**: Exactly $N$ rounds (1 round per player as Dealer, ~12–15 minutes total)
-* **Components**: 56 Standard Poker Cards (42 Play Cards + 5 Siren Tokens + 9 Reference/Buyer Markers)
-* **Core Loop**: **Single Action per Turn** &mdash; Liquidate 1 matching card from your hand to an active Street Buyer. No mandatory passing!
-* **Win Condition**: Accumulate the **most cash** across $N$ rounds without getting arrested.
+* **Match Length**: Exactly 4 rounds (~15–20 minutes total)
+* **Components**: 56 Standard Poker Cards
+  * **Merchandise Deck**: 36 Cards (Clean Blue Loot & Hot Red Contraband)
+  * **Street Deck**: 20 Cards (14 Buyer Contracts + 6 Police Raid Cards)
+* **Core Turn**: Choose **1 of 3 Actions**:  
+  1. **Sell to a Buyer** (Single card or strict combo)  
+  2. **Re-supply** (Draw 1 card from Merchandise Deck)  
+  3. **Cash Out** (Jump in the Getaway Car and lock your score!)
+* **Win Condition**: Accumulate the **highest sum of Buyer contract points** across 4 rounds without getting arrested.
 
 ---
 
-## 2. The Knizian Economic Spectrum (Blue vs. Red)
+## 2. Component & Deck Breakdown (56 Cards)
 
-Every turn presents an agonizing choice between **Safe Control ($5 + Power)** versus **Reckless Profit ($15 + Danger)**:
+### A. The Merchandise Deck (36 Cards)
+Dealt to players' hands. Used as currency to meet Buyer thresholds.
+* **Clean Loot (Blue)** &mdash; **22 Cards**:
+  * Moderate values: `[2, 2, 2]`, `[3, 3, 3]`, `[4, 4, 4]`, `[5, 5, 5]`, `[6, 6, 6]`, `[7, 7, 7]`, `[8]`
+  * **Safe Currency**: Always 0 Heat.
+* **Stolen Contraband (Red)** &mdash; **14 Cards**:
+  * High values: `[5, 5]`, `[6, 6]`, `[7, 7]`, `[8, 8]`, `[9, 9]`, `[10, 10, 10, 10]`
+  * **High Value, High Risk**: Needed to satisfy expensive Buyers.
+  * **Heat Rules**:
+    * **0 Heat** if sold to a Gullible Buyer.
+    * **+1 Heat per card** if sold to a Discerning Buyer.
+    * **+2 Heat per card** if caught still holding it in hand when the Raid hits!
 
-| Category | Count & Items | Cash Payout | Heat Added | Special Powers |
-| :--- | :--- | :---: | :---: | :--- |
-| **Blue (Clean Loot)** | **24 Cards**<br>6 Items $\times$ 4 copies<br>💵 Cash, ⌚ Watch, 🗝️ Key, 💎 Diamond, 🖼️ Painting, 🧈 Gold | **$5** | **0 Heat** | **UNLOCKS TACTICAL POWERS!**<br>💵 *Bribe*: Skip mandatory draw on future turn<br>⌚ *Time Warp*: Take an immediate 2nd turn<br>🗝️ *Plant*: Force target opponent to take 1 card from your hand<br>💎 *Vault*: Protect 1 sold item permanently from seizure<br>🖼️ *Appraisal*: Reveal top 3 cards of Locker, keep 1, discard 2<br>🧈 *Launder*: Safely discard 1 Red card from hand into furnace |
-| **Red (Stolen Contraband)** | **18 Cards**<br>6 Items $\times$ 3 copies | **$15** | **1 Heat (Sold)**<br>**2 Heat (Held in Hand)** | **NO POWERS!**<br>Pure financial greed ($15) and pure radioactive liability. |
-| **Buyer Backs (On Table)** | Displayed on the back of all cards | N/A | N/A | **3 Distinct Buyer Archetypes**:<br>1. 💰 *Financial*: +$5 Cash Bonus on transaction<br>2. 🛡️ *Defensive*: Flip 1 Sold Red in Stash to Blue (0 Heat)<br>3. ⚡ *Offensive*: Force target opponent to draw 1 card from Locker |
-| **Siren Tokens** | 5 Tokens (`[3]`, `[4]`, `[5]`, `[6]`, `[7]`) | N/A | N/A | Non-repeating tokens used by Dealer to set Countdown Pile fuse |
+### B. The Street Deck (20 Cards)
+Sits in the center of the table. Refills the 3 active market slots on The Street.
+* **Buyer Contracts** &mdash; **14 Cards**:
+  * **Minimum Value Threshold**: `[3]` to `[10]`. (This is also the exact point value of the card!).
+  * **Two Buyer Archetypes**:
+    1. **Gullible Buyers (🟢)**: Willingly buy Red Contraband with **0 Heat** added! *(No special powers).*
+    2. **Discerning Buyers (🔍)**: Add **+1 Heat per Red card** in the transaction, BUT grant **1 Public Power**:
+       * 📥 **Draw**: Draw 1 extra card from the Merchandise Deck.
+       * 🗑️ **Discard**: Immediately discard 1 card from your hand into the scrap heap (incinerates a hot Red card!).
+       * ✉️ **Pass**: Choose 1 card from your hand and slide it face-down to any active opponent.
+* **Police Raid Cards (🚨)** &mdash; **6 Cards**:
+  * Seeded into the Street Deck across rounds:
+    * **Round 1**: 3 Police Cards
+    * **Round 2**: 4 Police Cards
+    * **Round 3**: 5 Police Cards
+    * **Round 4**: 6 Police Cards (Maximum heat!)
 
 ---
 
 ## 3. Setup (Each Round)
 
-1. **Deal Hands**: Deal **5 cards** face-down to each player.
-2. **The Street (Active Buyers)**:
-   * Place the remaining deck (Evidence Locker) face-down. The top card's back is **Buyer #1**.
-   * Deal 2 cards face-down next to it as **Buyer #2** and **Buyer #3**.
-3. **The Dealer's Lever**:
-   * The Dealer inspects their 5-card opening hand.
-   * From the available Siren Tokens (`[3]`, `[4]`, `[5]`, `[6]`, `[7]`), the Dealer selects **one**. That token is discarded from the match (non-repeating).
-   * The Dealer counts out that exact number of cards from the top of the deck to form the face-down **Countdown Pile** in the center.
+1. **Deal Hands**: Deal **5 Merchandise Cards** face-down to each player.
+2. **Setup The Street Deck**:
+   * Deal **3 Buyer Cards** face-up in a row to establish **The Street**.
+   * Shuffle the round's designated number of **Police Cards** into the remaining Buyer cards to form the face-down **Street Deck**.
+3. **No Automatic Refill**: Players do **not** draw cards after selling. Hands are finite!
 
 ---
 
-## 4. Turn Anatomy: Radical Simplicity
+## 4. Turn Anatomy: 1 of 3 Actions
 
-On your turn, execute **ONE SINGLE ACTION**:
+On your turn, choose **ONE** action:
 
 ```
-[ YOUR TURN ] ──▶ PLAY 1 CARD TO A MATCHING BUYER ──▶ (DONE / NEXT TURN)
+                  ┌──────────────────────────────────────────────┐
+                  │              YOUR TURN CHOICES               │
+                  ├──────────────────────────────────────────────┤
+                  │ 1. SELL MERCHANDISE (Single or Combo)        │
+                  │ 2. RE-SUPPLY (Draw 1 Merchandise Card)       │
+                  │ 3. CASH OUT (Jump in the Getaway Car!)       │
+                  └──────────────────────────────────────────────┘
 ```
 
-1. **Select 1 Card from Hand**:
-   * Match the card's item (Cash, Watch, Key, Diamond, Painting, Gold) to an active Buyer demanding that item on The Street.
-2. **Execute Transaction**:
-   * Take the face-down Buyer card and place it into your personal **Stash** in front of you.
-   * Place your sold Merchandise **face-up on top of it**.
-   * *If Blue*: Bank **$5**, add **0 Heat**, and **TRIGGER ITS POWER**!
-   * *If Red*: Bank **$15**, add **1 Heat**, and **NO POWER TRIGGERS**.
-3. **Resolve Buyer Bonus**:
-   * 💰 *Financial*: Add +$5 bonus to this sale record.
-   * 🛡️ *Defensive*: Flip 1 existing sold Red card in your stash to clean Blue (erasing 1 Heat).
-   * ⚡ *Offensive*: Force any target opponent to draw 1 card from the Evidence Locker!
-4. **Refill the Street**:
-   * Slide the top card from the Evidence Locker face-down into the empty Buyer slot.
-5. **Turn Ends**: Immediately pass the turn clockwise. *(No mandatory passing!)*
+### Action 1: Sell to a Buyer
+* Choose 1 active Buyer on The Street.
+* Play 1 or more Merchandise cards from your hand whose **sum meets or exceeds the Buyer's threshold**.
+* **The Minimal Surcharge Rule (No Wasteful Dumping)**:
+  * You **cannot** include any card that is not strictly necessary to cross the threshold.
+  * *Example*: For a `5` Buyer, `2 + 4 = 6` is legal. But `2 + 4 + 4 = 10` is **illegal** because the extra 4 is unneeded and cannot be smuggled in to dump heat!
+* **Resolve Heat & Points**:
+  * Take the Buyer card into your **Score Stash**. *(Points equal the Buyer's printed number; merchandise spent is discarded).*
+  * *If Gullible (🟢)*: Add **0 Heat**, regardless of Red cards spent!
+  * *If Discerning (🔍)*: Add **+1 Heat for EACH Red card** included in the sale, then **execute the Buyer's Power** (Draw, Discard, or Pass)!
+* **Refill The Street**: Flip the top card of the Street Deck to refill the slot. *(See Section 5 for Police flips!)*
 
-> *Note on Skipping: If you have no matching cards or choose not to sell, simply draw 1 card from the Evidence Locker into your hand and pass the turn.*
+### Action 2: Re-Supply
+* If you cannot (or choose not to) sell, draw **1 card** from the Merchandise Deck into your hand.
+* *Risk*: Drawing cards increases your inventory, but risks top-decking a hot Red card that you may get stuck with!
 
----
-
-## 5. The Dealer & The Countdown Clock
-
-When the turn order circles back to the Dealer:
-1. The Dealer draws the top card of the center **Countdown Pile**.
-2. **The Informant's Choice**: The Dealer inspects the card and may either **keep it** or **slide it face-down to ANY opponent** as an extra burden!
-3. If that was the **final card** of the Countdown Pile:
-   👉 **THE SIRENS SOUND! POLICE RAID! THE ROUND FREEZES IMMEDIATELY!**
+### Action 3: Cash Out (The Getaway Car)
+* Declare **"I'M CASHING OUT!"** and step back from the table.
+* You take no more turns for the remainder of the round.
+* You cannot gain more points, but you **cannot be targeted by opponents' Pass powers or draw new cards**.
+* Your current score and hand are locked.
 
 ---
 
-## 6. The Raid & Scoring
+## 5. The Two-Strike Police Raid
 
-When the Countdown Pile runs out, all players reveal their hands:
+Whenever a Street slot is refilled from the Street Deck:
+* **Strike 1 (1st Police Card Flipped)**:
+  * The siren sounds! The Police card is placed face-up in that Street slot.
+  * **That slot is now BLOCKED**. Only 2 active Buyers remain open on The Street!
+* **Strike 2 (2nd Police Card Flipped)**:
+  * 👉 **FREEZE! POLICE RAID! THE ROUND ENDS IMMEDIATELY!**
 
-$$\mathbf{Total\ Red\ Heat} = (\text{Red Cards Sold in Stash} \times 1) + (\text{Red Cards Stuck in Hand} \times 2)$$
+---
+
+## 6. Scoring & The Arrest
+
+When the round ends (either via Cop #2 or all players Cashing Out):
+$$\mathbf{Total\ Red\ Heat} = (\text{Heat from Discerning Sales}) + (\text{Red Cards in Hand} \times 2)$$
 
 1. **The Arrest**:
-   * The player(s) with the **HIGHEST Total Red Heat** are **ARRESTED**! Their round earnings are confiscated (**$0 for the round**).
+   * The player(s) with the **HIGHEST Total Red Heat** are **ARRESTED**! Their score for this round is **0 Points**.
 2. **The Haul**:
-   * All surviving clean syndicates tally their total banked cash and add it to their running match score.
+   * All surviving clean syndicates sum the values of the Buyer contracts in their score stashes and add them to their match total.
 3. **Match Victory**:
-   * After $N$ rounds (each player has dealt once), the player with the highest total cash wins the match!
+   * Play 4 rounds. The player with the highest total points across all 4 rounds wins the game!
