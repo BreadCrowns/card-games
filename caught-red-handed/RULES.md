@@ -22,7 +22,7 @@
 ### A. The Merchandise Deck (36 Cards)
 Dealt to players' hands. Used as currency to meet Buyer thresholds.
 * **Clean Loot (Blue)** &mdash; **22 Cards**:
-  * Moderate values: `[2, 2, 2]`, `[3, 3, 3]`, `[4, 4, 4]`, `[5, 5, 5]`, `[6, 6, 6]`, `[7, 7, 7]`, `[8]`
+  * Moderate values: `[2, 2, 2]`, `[3, 3, 3]`, `[4, 4, 4]`, `[5, 5, 5]`, `[6, 6, 6]`, `[7, 7, 7]`, `[8, 8, 8, 8]`
   * **Safe Currency**: Always 0 Heat.
 * **Stolen Contraband (Red)** &mdash; **14 Cards**:
   * High values: `[5, 5]`, `[6, 6]`, `[7, 7]`, `[8, 8]`, `[9, 9]`, `[10, 10, 10, 10]`
@@ -44,10 +44,10 @@ Sits in the center of the table. Refills the 3 active market slots on The Street
        * ✉️ **Pass**: Choose 1 card from your hand and slide it face-down to any active opponent.
 * **Police Raid Cards (🚨)** &mdash; **6 Cards**:
   * Seeded into the Street Deck across rounds:
-    * **Round 1**: 3 Police Cards
-    * **Round 2**: 4 Police Cards
-    * **Round 3**: 5 Police Cards
-    * **Round 4**: 6 Police Cards (Maximum heat!)
+    * **Round 1**: 3 Police Cards (74% raid chance, room to breathe)
+    * **Round 2**: 4 Police Cards (86% raid chance)
+    * **Round 3**: 5 Police Cards (92% raid chance)
+    * **Round 4**: 6 Police Cards (96% raid chance, maximum danger!)
 
 ---
 
@@ -57,7 +57,8 @@ Sits in the center of the table. Refills the 3 active market slots on The Street
 2. **Setup The Street Deck**:
    * Deal **3 Buyer Cards** face-up in a row to establish **The Street**.
    * Shuffle the round's designated number of **Police Cards** into the remaining Buyer cards to form the face-down **Street Deck**.
-3. **No Automatic Refill**: Players do **not** draw cards after selling. Hands are finite!
+3. **Starting Player**: Rotates each round (Player 1 $\rightarrow$ 2 $\rightarrow$ 3 $\rightarrow$ 4).
+4. **No Automatic Refill**: Players do **not** draw cards after selling. Hands are finite!
 
 ---
 
@@ -99,20 +100,23 @@ On your turn, choose **ONE** action:
 
 ---
 
-## 5. The Two-Strike Police Raid
+## 5. The Three-Strike Police Raid
 
 Whenever a Street slot is refilled from the Street Deck:
 * **Strike 1 (1st Police Card Flipped)**:
-  * The siren sounds! The Police card is placed face-up in that Street slot.
-  * **That slot is now BLOCKED**. Only 2 active Buyers remain open on The Street!
+  * Police Patrol arrives! The card is placed in that slot, **BLOCKING IT**.
+  * Only 2 active Buyers remain on The Street.
 * **Strike 2 (2nd Police Card Flipped)**:
-  * 👉 **FREEZE! POLICE RAID! THE ROUND ENDS IMMEDIATELY!**
+  * A second Police cruiser arrives! **BLOCKS A SECOND SLOT**.
+  * **Only 1 single Buyer remains on the entire Street!** Panic sets in.
+* **Strike 3 (3rd Police Card Flipped)**:
+  * 👉 **FREEZE! THREE STRIKES! POLICE RAID! THE ROUND ENDS IMMEDIATELY!**
 
 ---
 
 ## 6. Scoring & The Arrest
 
-When the round ends (either via Cop #2 or all players Cashing Out):
+When the round ends (either via Cop #3 or all players Cashing Out):
 $$\mathbf{Total\ Red\ Heat} = (\text{Heat from Discerning Sales}) + (\text{Red Cards in Hand} \times 2)$$
 
 1. **The Arrest**:
